@@ -48,7 +48,7 @@ test('screening host publishes its capability matrix', () => {
   assert.equal(capabilities.isolation.agent_cleanup, true);
   assert.ok(capabilities.includes.includes('atomicsHelper.js'));
   assert.ok(capabilities.includes.includes('asyncHelpers.js'));
-  assert.equal(capabilities.flags.module, 'static-syntax-only');
+  assert.equal(capabilities.flags.module, 'module-goal');
   assert.equal(capabilities.negative.parse, 'SyntaxError');
 });
 
@@ -127,6 +127,11 @@ $262.agent.getReportAsync().then(function(value) {
       variants: ['module'],
     },
     {
+      name: 'module-top-level-await.js',
+      source: '/*---\nflags: [module, async]\n---*/\nassert.sameValue(this, undefined);\nassert.sameValue({ [await Promise.resolve("key")]: 42 }.key, 42);\n$DONE();\n',
+      variants: ['module'],
+    },
+    {
       name: 'module-missing-dependency.js',
       source: '/*---\nflags: [module]\n---*/\nimport "./missing_FIXTURE.js";\n',
       variants: ['module'],
@@ -175,7 +180,7 @@ function prepare(cwd) {
   const planned = run([
     'screen-plan', '--run-id', runId, '--upstream', cwd, '--output', screenPlan,
   ], cwd);
-  assert.equal(planned.variant_count, 13);
+  assert.equal(planned.variant_count, 14);
   return { runId, screenPlan };
 }
 
@@ -212,7 +217,7 @@ test('screening host streams one importable JSON result per stdout line', async 
       child.on('close', resolve);
     });
     assert.equal(code, 0);
-    assert.equal(lines.length, 13);
+    assert.equal(lines.length, 14);
 
     for (const line of lines) {
       // The regression: indented serialization would split a record across
@@ -232,7 +237,8 @@ test('screening host streams one importable JSON result per stdout line', async 
     assert.deepEqual(outcomeFor('async-fixture.js'), ['pass', 'pass']);
     assert.deepEqual(outcomeFor('agent-fixture.js'), ['pass', 'pass']);
     assert.deepEqual(outcomeFor('module-fixture.js'), ['pass']);
-    assert.deepEqual(outcomeFor('module-goal-only.js'), ['unsupported']);
+    assert.deepEqual(outcomeFor('module-goal-only.js'), ['pass']);
+    assert.deepEqual(outcomeFor('module-top-level-await.js'), ['pass']);
     assert.deepEqual(outcomeFor('module-missing-dependency.js'), ['unsupported']);
     assert.deepEqual(outcomeFor('parse-negative.js'), ['pass', 'pass']);
     for (const result of outcomes.filter((value) => value.path.endsWith('parse-negative.js'))) {
@@ -241,7 +247,7 @@ test('screening host streams one importable JSON result per stdout line', async 
     }
 
     const report = run(['report', '--run-id', runId], cwd);
-    assert.equal(report.counts.attempts, 13);
+    assert.equal(report.counts.attempts, 14);
     // Only the fixture whose variants all passed under the active provenance is
     // accepted; the gaps and the load failure stay in failure clusters.
     assert.deepEqual(report.accepted, [
@@ -249,9 +255,11 @@ test('screening host streams one importable JSON result per stdout line', async 
       `test/${area}/agent-fixture.js`,
       `test/${area}/async-fixture.js`,
       `test/${area}/module-fixture.js`,
+      `test/${area}/module-goal-only.js`,
+      `test/${area}/module-top-level-await.js`,
       `test/${area}/parse-negative.js`,
     ]);
-    assert.ok(report.failure_clusters['harness-gap'].length >= 2);
+    assert.ok(report.failure_clusters['harness-gap'].length >= 1);
     assert.ok(report.failure_clusters['infrastructure-error'].length >= 2);
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
@@ -347,7 +355,7 @@ test('results imported before an interruption survive and only resume pending wo
     const pending = run([
       'screen-plan', '--run-id', runId, '--upstream', cwd, '--output', resumed,
     ], cwd);
-    assert.equal(pending.variant_count, 11);
+    assert.equal(pending.variant_count, 12);
     const remaining = JSON.parse(fs.readFileSync(resumed)).candidates
       .flatMap((candidate) => candidate.variants.map(
         (variant) => `${candidate.path}#${variant}`));

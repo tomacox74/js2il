@@ -472,10 +472,8 @@ public class ModuleLoader
 
         var moduleRecord = BuildModuleRecord(ast, moduleDependencies);
 
-        // Native static ESM: every module with static import/export syntax is lowered natively (direct
-        // compiler/runtime linking, no source rewrite or injected JavaScript helpers). Modules without
-        // static module syntax fall through to the (now no-op for those) legacy path.
-        var usesNativeStaticEsm = IsNativeStaticEsmEligible(moduleRecord);
+        // An explicit Module goal also needs ESM execution semantics without import/export syntax.
+        var usesNativeStaticEsm = parseAsModule || IsNativeStaticEsmEligible(moduleRecord);
 
         var rewrittenSource = jsSource;
         var topLevelDebugSpanOverrides = new List<TopLevelDebugSpanOverride>();

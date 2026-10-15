@@ -251,15 +251,16 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 218 (0xda)
+		// Code size: 232 (0xe8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_DefinePropertyReplacement_Dispatch/Scope,
 			[1] object,
 			[2] object[],
 			[3] class Modules.Math_DefinePropertyReplacement_Dispatch/FunctionExpression_L2C9/FunctionObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Math_DefinePropertyReplacement_Dispatch/Scope::.ctor()
@@ -283,53 +284,57 @@
 		IL_002a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Math_DefinePropertyReplacement_Dispatch/FunctionExpression_L2C9/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_002f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Math_DefinePropertyReplacement_Dispatch/FunctionExpression_L2C9/FunctionObject>(!!0)
 		IL_0034: stloc.3
-		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_003a: dup
-		IL_003b: ldstr "value"
-		IL_0040: ldloc.3
-		IL_0041: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0046: dup
-		IL_0047: ldstr "configurable"
-		IL_004c: ldc.i4.1
-		IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0052: dup
-		IL_0053: ldstr "writable"
-		IL_0058: ldc.i4.1
-		IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.1
-		IL_0061: ldstr "sqrt"
-		IL_0066: ldloc.s 4
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_006d: pop
-		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0073: stloc.s 5
-		IL_0075: ldstr "Math"
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0084: volatile.
-		IL_0086: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_008b: brfalse IL_00ad
+		IL_0035: ldloc.3
+		IL_0036: ldstr "value"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0040: stloc.s 4
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0047: dup
+		IL_0048: ldstr "value"
+		IL_004d: ldloc.s 4
+		IL_004f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0054: dup
+		IL_0055: ldstr "configurable"
+		IL_005a: ldc.i4.1
+		IL_005b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0060: dup
+		IL_0061: ldstr "writable"
+		IL_0066: ldc.i4.1
+		IL_0067: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_006c: stloc.s 5
+		IL_006e: ldloc.1
+		IL_006f: ldstr "sqrt"
+		IL_0074: ldloc.s 5
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_007b: pop
+		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0081: stloc.s 6
+		IL_0083: ldstr "Math"
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0092: volatile.
+		IL_0094: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_0099: brfalse IL_00bb
 
-		IL_0090: ldstr "sqrt"
-		IL_0095: ldc.r8 9
-		IL_009e: box [System.Runtime]System.Double
-		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00a8: br IL_00cf
+		IL_009e: ldstr "sqrt"
+		IL_00a3: ldc.r8 9
+		IL_00ac: box [System.Runtime]System.Double
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00b6: br IL_00dd
 
-		IL_00ad: ldstr "sqrt"
-		IL_00b2: ldc.r8 9
-		IL_00bb: box [System.Runtime]System.Double
-		IL_00c0: ldstr "Math_DefinePropertyReplacement_Dispatch:Modules.Math_DefinePropertyReplacement_Dispatch:__js_module_init__:18"
-		IL_00c5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_00bb: ldstr "sqrt"
+		IL_00c0: ldc.r8 9
+		IL_00c9: box [System.Runtime]System.Double
+		IL_00ce: ldstr "Math_DefinePropertyReplacement_Dispatch:Modules.Math_DefinePropertyReplacement_Dispatch:__js_module_init__:20"
+		IL_00d3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_00cf: stloc.1
-		IL_00d0: ldloc.s 5
-		IL_00d2: ldloc.1
-		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d8: pop
-		IL_00d9: ret
+		IL_00dd: stloc.1
+		IL_00de: ldloc.s 6
+		IL_00e0: ldloc.1
+		IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e6: pop
+		IL_00e7: ret
 	} // end of method Math_DefinePropertyReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_DefinePropertyReplacement_Dispatch

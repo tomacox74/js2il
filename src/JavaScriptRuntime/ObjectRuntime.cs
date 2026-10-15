@@ -173,6 +173,14 @@ namespace JavaScriptRuntime
                 enumerable: true);
         }
 
+        public static object DefineObjectLiteralDataPropertyWithoutNameInference(object target, object? prop, object? value)
+            => DefineDataPropertyCore(
+                target,
+                ToPropertyKeyString(prop),
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
+                enumerable: true);
+
         public static object DefineObjectLiteralDataProperty(object target, string prop, double value)
             => DefineDataPropertyCore(
                 target,
@@ -191,7 +199,7 @@ namespace JavaScriptRuntime
 
         public static object DefineObjectLiteralDataProperty(object target, string prop, object? value)
         {
-            ConfigureFunctionNameFromPropertyKey(prop, value);
+            ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(prop), value);
             return DefineDataPropertyCore(
                 target,
                 prop,

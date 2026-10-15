@@ -5725,7 +5725,7 @@ namespace JavaScriptRuntime
 
         public static object SpreadIntoObjectLiteral(object target, object? source)
         {
-            return CopyEnumerableOwnProperties(target, source, (key, value) => ObjectRuntime.DefineObjectLiteralDataProperty(target, key, value));
+            return CopyEnumerableOwnProperties(target, source, (key, value) => DefineObjectLiteralDataPropertyWithoutNameInference(target, key, value));
         }
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
@@ -5759,7 +5759,7 @@ namespace JavaScriptRuntime
             }
 
             // Ordinary object: enumerate all own enumerable properties (backing store + descriptors).
-            if (source is JsObject)
+            if (source is JsObject or Proxy)
             {
                 var srcSeen = new HashSet<string>(StringComparer.Ordinal);
                 EnumerateOwnEnumerableProperties(source, srcSeen, (key, value) =>

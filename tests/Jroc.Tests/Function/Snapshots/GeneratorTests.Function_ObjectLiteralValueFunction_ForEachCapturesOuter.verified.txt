@@ -804,7 +804,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 303 (0x12f)
+		// Code size: 331 (0x14b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/Scope,
@@ -813,9 +813,9 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] object[],
 			[5] class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/FunctionObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[7] class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject,
-			[8] object
+			[6] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[8] class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject
 		)
 
 		IL_0000: newobj instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/Scope::.ctor()
@@ -840,89 +840,97 @@
 		IL_0029: ldc.i4.0
 		IL_002a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_DocumentLike/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_002f: stloc.s 5
-		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0036: dup
-		IL_0037: ldstr "value"
-		IL_003c: ldloc.s 5
-		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0043: stloc.s 6
-		IL_0045: newobj instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/ObjectLiterals/L3C20_DocumentLike::.ctor()
-		IL_004a: stloc.1
-		IL_004b: ldloc.1
-		IL_004c: ldloc.s 6
-		IL_004e: callvirt instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/ObjectLiterals/L3C20_DocumentLike::set__preremoveNodeIterators(object)
-		IL_0053: ldc.i4.1
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: dup
-		IL_005a: ldc.i4.0
-		IL_005b: ldloc.0
-		IL_005c: stelem.ref
-		IL_005d: stloc.s 4
-		IL_005f: newobj instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject::.ctor()
-		IL_0064: ldc.i4.1
-		IL_0065: conv.r8
-		IL_0066: ldstr ""
-		IL_006b: ldc.i4.0
-		IL_006c: ldc.i4.0
-		IL_006d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0072: stloc.s 7
-		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0079: dup
-		IL_007a: ldstr "_preremove"
-		IL_007f: ldloc.s 7
-		IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0086: stloc.2
-		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_008c: dup
-		IL_008d: ldstr "_nodeIterators"
-		IL_0092: ldc.i4.1
-		IL_0093: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0098: dup
-		IL_0099: ldloc.2
-		IL_009a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00a4: stloc.3
-		IL_00a5: volatile.
-		IL_00a7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_00ac: brfalse IL_00c1
+		IL_0031: ldloc.s 5
+		IL_0033: ldstr "value"
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_003d: stloc.s 6
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0044: dup
+		IL_0045: ldstr "value"
+		IL_004a: ldloc.s 6
+		IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0051: stloc.s 7
+		IL_0053: newobj instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/ObjectLiterals/L3C20_DocumentLike::.ctor()
+		IL_0058: stloc.1
+		IL_0059: ldloc.1
+		IL_005a: ldloc.s 7
+		IL_005c: callvirt instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/ObjectLiterals/L3C20_DocumentLike::set__preremoveNodeIterators(object)
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldloc.0
+		IL_006a: stelem.ref
+		IL_006b: stloc.s 4
+		IL_006d: newobj instance void Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject::.ctor()
+		IL_0072: ldc.i4.1
+		IL_0073: conv.r8
+		IL_0074: ldstr ""
+		IL_0079: ldc.i4.0
+		IL_007a: ldc.i4.0
+		IL_007b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter/FunctionExpression_iterator/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0080: stloc.s 8
+		IL_0082: ldloc.s 8
+		IL_0084: ldstr "_preremove"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_008e: stloc.s 6
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0095: dup
+		IL_0096: ldstr "_preremove"
+		IL_009b: ldloc.s 6
+		IL_009d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00a2: stloc.2
+		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00a8: dup
+		IL_00a9: ldstr "_nodeIterators"
+		IL_00ae: ldc.i4.1
+		IL_00af: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00b4: dup
+		IL_00b5: ldloc.2
+		IL_00b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00bb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c0: stloc.3
+		IL_00c1: volatile.
+		IL_00c3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00c8: brfalse IL_00dd
 
-		IL_00b1: ldloc.1
-		IL_00b2: ldstr "_preremoveNodeIterators"
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00bc: br IL_00d6
+		IL_00cd: ldloc.1
+		IL_00ce: ldstr "_preremoveNodeIterators"
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d8: br IL_00f2
 
-		IL_00c1: ldloc.1
-		IL_00c2: ldstr "_preremoveNodeIterators"
-		IL_00c7: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter:__js_module_init__:20"
-		IL_00cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00dd: ldloc.1
+		IL_00de: ldstr "_preremoveNodeIterators"
+		IL_00e3: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter:__js_module_init__:24"
+		IL_00e8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00d6: stloc.s 8
-		IL_00d8: volatile.
-		IL_00da: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_00df: brfalse IL_00f5
+		IL_00f2: stloc.s 6
+		IL_00f4: volatile.
+		IL_00f6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_00fb: brfalse IL_0111
 
-		IL_00e4: ldloc.s 8
-		IL_00e6: ldstr "value"
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f0: br IL_010b
+		IL_0100: ldloc.s 6
+		IL_0102: ldstr "value"
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010c: br IL_0127
 
-		IL_00f5: ldloc.s 8
-		IL_00f7: ldstr "value"
-		IL_00fc: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter:__js_module_init__:22"
-		IL_0101: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0111: ldloc.s 6
+		IL_0113: ldstr "value"
+		IL_0118: ldstr "Function_ObjectLiteralValueFunction_ForEachCapturesOuter:Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter:__js_module_init__:26"
+		IL_011d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_010b: stloc.s 8
-		IL_010d: ldloc.s 8
-		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0114: ldstr "call"
-		IL_0119: ldloc.3
-		IL_011a: ldc.r8 42
-		IL_0123: box [System.Runtime]System.Double
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_012d: pop
-		IL_012e: ret
+		IL_0127: stloc.s 6
+		IL_0129: ldloc.s 6
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0130: ldstr "call"
+		IL_0135: ldloc.3
+		IL_0136: ldc.r8 42
+		IL_013f: box [System.Runtime]System.Double
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0149: pop
+		IL_014a: ret
 	} // end of method Function_ObjectLiteralValueFunction_ForEachCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_ObjectLiteralValueFunction_ForEachCapturesOuter

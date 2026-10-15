@@ -89,6 +89,7 @@ public sealed record CallableSemantics
             HasLegacyCallerArguments = !hasRestrictedFunctionProperties
                 && callableKind is CallableKind.FunctionDeclaration
                     or CallableKind.FunctionExpression
+                && !isMethodDefinition
                 && !isAsync
                 && !isGenerator,
             HasSimpleParameters = parameters.All(parameter => parameter is Identifier),

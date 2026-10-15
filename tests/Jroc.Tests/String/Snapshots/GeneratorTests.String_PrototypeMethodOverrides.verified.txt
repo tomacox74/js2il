@@ -1732,7 +1732,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 3704 (0xe78)
+		// Code size: 3760 (0xeb0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_PrototypeMethodOverrides/Scope,
@@ -1765,13 +1765,14 @@
 			[27] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L36C10/FunctionObject,
 			[28] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L42C26/FunctionObject,
 			[29] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L51C9/FunctionObject,
-			[30] bool,
-			[31] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject,
-			[32] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject,
-			[33] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[34] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject,
-			[35] object,
-			[36] float64
+			[30] object,
+			[31] bool,
+			[32] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject,
+			[33] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject,
+			[34] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[35] class Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject,
+			[36] object,
+			[37] float64
 		)
 
 		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
@@ -1935,1035 +1936,1051 @@
 		IL_019c: ldc.i4.0
 		IL_019d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L19C11/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_01a2: stloc.s 24
-		IL_01a4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_01a9: dup
-		IL_01aa: ldstr "value"
-		IL_01af: ldloc.s 24
-		IL_01b1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_01b6: stloc.s 25
-		IL_01b8: ldloc.s 4
-		IL_01ba: ldstr "trim"
-		IL_01bf: ldloc.s 25
-		IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_01c6: pop
-		IL_01c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01cc: stloc.s 21
-		IL_01ce: ldloc.s 4
-		IL_01d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01d5: stloc.s 20
-		IL_01d7: ldc.i4.0
-		IL_01d8: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_01dd: brfalse IL_020f
+		IL_01a4: ldloc.s 24
+		IL_01a6: ldstr "value"
+		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_01b0: stloc.s 20
+		IL_01b2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01b7: dup
+		IL_01b8: ldstr "value"
+		IL_01bd: ldloc.s 20
+		IL_01bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_01c4: stloc.s 25
+		IL_01c6: ldloc.s 4
+		IL_01c8: ldstr "trim"
+		IL_01cd: ldloc.s 25
+		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_01d4: pop
+		IL_01d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01da: stloc.s 21
+		IL_01dc: ldloc.s 4
+		IL_01de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01e3: stloc.s 20
+		IL_01e5: ldc.i4.0
+		IL_01e6: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_01eb: brfalse IL_021d
 
-		IL_01e2: ldloc.s 20
-		IL_01e4: isinst [System.Runtime]System.String
-		IL_01e9: dup
-		IL_01ea: brtrue IL_0202
-
-		IL_01ef: pop
 		IL_01f0: ldloc.s 20
-		IL_01f2: ldstr "trim"
-		IL_01f7: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_01fc: dup
-		IL_01fd: brfalse IL_020e
+		IL_01f2: isinst [System.Runtime]System.String
+		IL_01f7: dup
+		IL_01f8: brtrue IL_0210
 
-		IL_0202: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-		IL_0207: stloc.s 20
-		IL_0209: br IL_021d
+		IL_01fd: pop
+		IL_01fe: ldloc.s 20
+		IL_0200: ldstr "trim"
+		IL_0205: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_020a: dup
+		IL_020b: brfalse IL_021c
 
-		IL_020e: pop
+		IL_0210: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+		IL_0215: stloc.s 20
+		IL_0217: br IL_022b
 
-		IL_020f: ldloc.s 20
-		IL_0211: ldstr "trim"
-		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_021b: stloc.s 20
+		IL_021c: pop
 
-		IL_021d: ldloc.s 21
-		IL_021f: ldloc.s 20
-		IL_0221: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0226: pop
-		IL_0227: ldc.i4.1
-		IL_0228: newarr [System.Runtime]System.Object
-		IL_022d: dup
-		IL_022e: ldc.i4.0
-		IL_022f: ldloc.0
-		IL_0230: stelem.ref
-		IL_0231: stloc.s 19
-		IL_0233: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_customPrototype/FunctionObject::.ctor()
-		IL_0238: ldc.i4.0
-		IL_0239: conv.r8
-		IL_023a: ldstr ""
-		IL_023f: ldc.i4.0
-		IL_0240: ldc.i4.0
-		IL_0241: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_customPrototype/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0246: stloc.s 26
-		IL_0248: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_024d: dup
-		IL_024e: ldstr "trim"
-		IL_0253: ldloc.s 26
-		IL_0255: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_025a: stloc.s 5
-		IL_025c: ldstr "String"
-		IL_0261: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0266: stloc.s 20
-		IL_0268: ldloc.s 20
-		IL_026a: dup
-		IL_026b: ldstr "custom-source"
-		IL_0270: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
-		IL_0275: stloc.s 6
-		IL_0277: ldloc.s 6
-		IL_0279: ldloc.s 5
-		IL_027b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
-		IL_0280: pop
-		IL_0281: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0286: stloc.s 21
-		IL_0288: ldloc.s 6
-		IL_028a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_028f: stloc.s 20
-		IL_0291: ldc.i4.0
-		IL_0292: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0297: brfalse IL_02c9
+		IL_021d: ldloc.s 20
+		IL_021f: ldstr "trim"
+		IL_0224: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0229: stloc.s 20
 
-		IL_029c: ldloc.s 20
-		IL_029e: isinst [System.Runtime]System.String
-		IL_02a3: dup
-		IL_02a4: brtrue IL_02bc
+		IL_022b: ldloc.s 21
+		IL_022d: ldloc.s 20
+		IL_022f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0234: pop
+		IL_0235: ldc.i4.1
+		IL_0236: newarr [System.Runtime]System.Object
+		IL_023b: dup
+		IL_023c: ldc.i4.0
+		IL_023d: ldloc.0
+		IL_023e: stelem.ref
+		IL_023f: stloc.s 19
+		IL_0241: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_customPrototype/FunctionObject::.ctor()
+		IL_0246: ldc.i4.0
+		IL_0247: conv.r8
+		IL_0248: ldstr ""
+		IL_024d: ldc.i4.0
+		IL_024e: ldc.i4.0
+		IL_024f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_customPrototype/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0254: stloc.s 26
+		IL_0256: ldloc.s 26
+		IL_0258: ldstr "trim"
+		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0262: stloc.s 20
+		IL_0264: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0269: dup
+		IL_026a: ldstr "trim"
+		IL_026f: ldloc.s 20
+		IL_0271: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0276: stloc.s 5
+		IL_0278: ldstr "String"
+		IL_027d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0282: stloc.s 20
+		IL_0284: ldloc.s 20
+		IL_0286: dup
+		IL_0287: ldstr "custom-source"
+		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct1(object, object, object)
+		IL_0291: stloc.s 6
+		IL_0293: ldloc.s 6
+		IL_0295: ldloc.s 5
+		IL_0297: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_029c: pop
+		IL_029d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a2: stloc.s 21
+		IL_02a4: ldloc.s 6
+		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_02ab: stloc.s 20
+		IL_02ad: ldc.i4.0
+		IL_02ae: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_02b3: brfalse IL_02e5
 
-		IL_02a9: pop
-		IL_02aa: ldloc.s 20
-		IL_02ac: ldstr "trim"
-		IL_02b1: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-		IL_02b6: dup
-		IL_02b7: brfalse IL_02c8
+		IL_02b8: ldloc.s 20
+		IL_02ba: isinst [System.Runtime]System.String
+		IL_02bf: dup
+		IL_02c0: brtrue IL_02d8
 
-		IL_02bc: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-		IL_02c1: stloc.s 20
-		IL_02c3: br IL_02d7
+		IL_02c5: pop
+		IL_02c6: ldloc.s 20
+		IL_02c8: ldstr "trim"
+		IL_02cd: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+		IL_02d2: dup
+		IL_02d3: brfalse IL_02e4
 
-		IL_02c8: pop
+		IL_02d8: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+		IL_02dd: stloc.s 20
+		IL_02df: br IL_02f3
 
-		IL_02c9: ldloc.s 20
-		IL_02cb: ldstr "trim"
-		IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_02d5: stloc.s 20
+		IL_02e4: pop
 
-		IL_02d7: ldloc.s 21
-		IL_02d9: ldloc.s 20
-		IL_02db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02e0: pop
-		IL_02e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02e6: stloc.s 21
-		IL_02e8: ldnull
-		IL_02e9: ldstr "  uncertain  "
-		IL_02ee: call object Modules.String_PrototypeMethodOverrides/callTrim::__js_call__(object, object)
-		IL_02f3: stloc.s 20
-		IL_02f5: ldloc.s 21
-		IL_02f7: ldloc.s 20
-		IL_02f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02fe: pop
-		IL_02ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0304: stloc.s 21
-		IL_0306: ldc.i4.1
-		IL_0307: newarr [System.Runtime]System.Object
-		IL_030c: dup
-		IL_030d: ldc.i4.0
-		IL_030e: ldloc.0
-		IL_030f: stelem.ref
-		IL_0310: stloc.s 19
-		IL_0312: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L36C10/FunctionObject::.ctor()
-		IL_0317: ldc.i4.0
-		IL_0318: conv.r8
-		IL_0319: ldstr ""
-		IL_031e: ldc.i4.0
-		IL_031f: ldc.i4.0
-		IL_0320: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L36C10/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0325: stloc.s 27
-		IL_0327: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_032c: dup
-		IL_032d: ldstr "trim"
-		IL_0332: ldloc.s 27
-		IL_0334: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0339: stloc.s 25
-		IL_033b: ldnull
-		IL_033c: ldloc.s 25
-		IL_033e: call object Modules.String_PrototypeMethodOverrides/callTrim::__js_call__(object, object)
-		IL_0343: stloc.s 20
-		IL_0345: ldloc.s 21
-		IL_0347: ldloc.s 20
-		IL_0349: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_034e: pop
-		IL_034f: ldstr "String"
-		IL_0354: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0359: volatile.
-		IL_035b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_0360: brfalse IL_0374
+		IL_02e5: ldloc.s 20
+		IL_02e7: ldstr "trim"
+		IL_02ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_02f1: stloc.s 20
 
-		IL_0365: ldstr "prototype"
-		IL_036a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_036f: br IL_0388
+		IL_02f3: ldloc.s 21
+		IL_02f5: ldloc.s 20
+		IL_02f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02fc: pop
+		IL_02fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0302: stloc.s 21
+		IL_0304: ldnull
+		IL_0305: ldstr "  uncertain  "
+		IL_030a: call object Modules.String_PrototypeMethodOverrides/callTrim::__js_call__(object, object)
+		IL_030f: stloc.s 20
+		IL_0311: ldloc.s 21
+		IL_0313: ldloc.s 20
+		IL_0315: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_031a: pop
+		IL_031b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0320: stloc.s 21
+		IL_0322: ldc.i4.1
+		IL_0323: newarr [System.Runtime]System.Object
+		IL_0328: dup
+		IL_0329: ldc.i4.0
+		IL_032a: ldloc.0
+		IL_032b: stelem.ref
+		IL_032c: stloc.s 19
+		IL_032e: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L36C10/FunctionObject::.ctor()
+		IL_0333: ldc.i4.0
+		IL_0334: conv.r8
+		IL_0335: ldstr ""
+		IL_033a: ldc.i4.0
+		IL_033b: ldc.i4.0
+		IL_033c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L36C10/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0341: stloc.s 27
+		IL_0343: ldloc.s 27
+		IL_0345: ldstr "trim"
+		IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_034f: stloc.s 20
+		IL_0351: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0356: dup
+		IL_0357: ldstr "trim"
+		IL_035c: ldloc.s 20
+		IL_035e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0363: stloc.s 25
+		IL_0365: ldnull
+		IL_0366: ldloc.s 25
+		IL_0368: call object Modules.String_PrototypeMethodOverrides/callTrim::__js_call__(object, object)
+		IL_036d: stloc.s 20
+		IL_036f: ldloc.s 21
+		IL_0371: ldloc.s 20
+		IL_0373: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0378: pop
+		IL_0379: ldstr "String"
+		IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0383: volatile.
+		IL_0385: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_038a: brfalse IL_039e
 
-		IL_0374: ldstr "prototype"
-		IL_0379: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:91"
-		IL_037e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_038f: ldstr "prototype"
+		IL_0394: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0399: br IL_03b2
 
-		IL_0388: stloc.s 20
-		IL_038a: volatile.
-		IL_038c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0391: brfalse IL_03a7
+		IL_039e: ldstr "prototype"
+		IL_03a3: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:97"
+		IL_03a8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_03ad: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0396: ldloc.s 20
-		IL_0398: ldstr "charAt"
-		IL_039d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_03a2: br IL_03bd
+		IL_03b2: stloc.s 20
+		IL_03b4: volatile.
+		IL_03b6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_03bb: brfalse IL_03d1
 
-		IL_03a7: ldloc.s 20
-		IL_03a9: ldstr "charAt"
-		IL_03ae: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:93"
-		IL_03b3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_03b8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_03c0: ldloc.s 20
+		IL_03c2: ldstr "charAt"
+		IL_03c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03cc: br IL_03e7
 
-		IL_03bd: stloc.s 7
-		IL_03bf: ldstr "String"
-		IL_03c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03c9: volatile.
-		IL_03cb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_03d0: brfalse IL_03e4
+		IL_03d1: ldloc.s 20
+		IL_03d3: ldstr "charAt"
+		IL_03d8: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:99"
+		IL_03dd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_03e2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_03d5: ldstr "prototype"
-		IL_03da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_03df: br IL_03f8
+		IL_03e7: stloc.s 7
+		IL_03e9: ldstr "String"
+		IL_03ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03f3: volatile.
+		IL_03f5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_03fa: brfalse IL_040e
 
-		IL_03e4: ldstr "prototype"
-		IL_03e9: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:99"
-		IL_03ee: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_03ff: ldstr "prototype"
+		IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0409: br IL_0422
 
-		IL_03f8: stloc.s 20
-		IL_03fa: ldc.i4.1
-		IL_03fb: newarr [System.Runtime]System.Object
-		IL_0400: dup
-		IL_0401: ldc.i4.0
-		IL_0402: ldloc.0
-		IL_0403: stelem.ref
-		IL_0404: stloc.s 19
-		IL_0406: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L42C26/FunctionObject::.ctor()
-		IL_040b: ldc.i4.1
-		IL_040c: conv.r8
-		IL_040d: ldstr ""
-		IL_0412: ldc.i4.0
-		IL_0413: ldc.i4.0
-		IL_0414: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L42C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0419: stloc.s 28
-		IL_041b: ldloc.s 20
-		IL_041d: ldstr "charAt"
-		IL_0422: ldloc.s 28
+		IL_040e: ldstr "prototype"
+		IL_0413: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:105"
+		IL_0418: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_041d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0422: stloc.s 20
 		IL_0424: ldc.i4.1
-		IL_0425: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_042a: pop
-		IL_042b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0430: stloc.s 21
-		IL_0432: ldc.i4.0
-		IL_0433: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0438: brfalse IL_0457
+		IL_0425: newarr [System.Runtime]System.Object
+		IL_042a: dup
+		IL_042b: ldc.i4.0
+		IL_042c: ldloc.0
+		IL_042d: stelem.ref
+		IL_042e: stloc.s 19
+		IL_0430: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L42C26/FunctionObject::.ctor()
+		IL_0435: ldc.i4.1
+		IL_0436: conv.r8
+		IL_0437: ldstr ""
+		IL_043c: ldc.i4.0
+		IL_043d: ldc.i4.0
+		IL_043e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L42C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0443: stloc.s 28
+		IL_0445: ldloc.s 20
+		IL_0447: ldstr "charAt"
+		IL_044c: ldloc.s 28
+		IL_044e: ldc.i4.1
+		IL_044f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0454: pop
+		IL_0455: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_045a: stloc.s 21
+		IL_045c: ldc.i4.0
+		IL_045d: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0462: brfalse IL_0481
 
-		IL_043d: ldstr "abc"
-		IL_0442: ldc.r8 1
-		IL_044b: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
-		IL_0450: stloc.s 20
-		IL_0452: br IL_0476
+		IL_0467: ldstr "abc"
+		IL_046c: ldc.r8 1
+		IL_0475: call string [JavaScriptRuntime]JavaScriptRuntime.String::CharAt(string, float64)
+		IL_047a: stloc.s 20
+		IL_047c: br IL_04a0
 
-		IL_0457: ldstr "abc"
-		IL_045c: ldstr "charAt"
-		IL_0461: ldc.r8 1
-		IL_046a: box [System.Runtime]System.Double
-		IL_046f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0474: stloc.s 20
+		IL_0481: ldstr "abc"
+		IL_0486: ldstr "charAt"
+		IL_048b: ldc.r8 1
+		IL_0494: box [System.Runtime]System.Double
+		IL_0499: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_049e: stloc.s 20
 
-		IL_0476: ldloc.s 21
-		IL_0478: ldloc.s 20
-		IL_047a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_047f: pop
-		IL_0480: ldstr "String"
-		IL_0485: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_048a: volatile.
-		IL_048c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0491: brfalse IL_04a5
+		IL_04a0: ldloc.s 21
+		IL_04a2: ldloc.s 20
+		IL_04a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04a9: pop
+		IL_04aa: ldstr "String"
+		IL_04af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04b4: volatile.
+		IL_04b6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_04bb: brfalse IL_04cf
 
-		IL_0496: ldstr "prototype"
-		IL_049b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04a0: br IL_04b9
+		IL_04c0: ldstr "prototype"
+		IL_04c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04ca: br IL_04e3
 
-		IL_04a5: ldstr "prototype"
-		IL_04aa: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:114"
-		IL_04af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_04b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_04cf: ldstr "prototype"
+		IL_04d4: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:120"
+		IL_04d9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_04de: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04b9: stloc.s 20
-		IL_04bb: ldloc.s 20
-		IL_04bd: ldstr "charAt"
-		IL_04c2: ldloc.s 7
-		IL_04c4: ldc.i4.1
-		IL_04c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_04ca: pop
-		IL_04cb: ldstr "String"
-		IL_04d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04d5: volatile.
-		IL_04d7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_04dc: brfalse IL_04f0
+		IL_04e3: stloc.s 20
+		IL_04e5: ldloc.s 20
+		IL_04e7: ldstr "charAt"
+		IL_04ec: ldloc.s 7
+		IL_04ee: ldc.i4.1
+		IL_04ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_04f4: pop
+		IL_04f5: ldstr "String"
+		IL_04fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04ff: volatile.
+		IL_0501: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0506: brfalse IL_051a
 
-		IL_04e1: ldstr "prototype"
-		IL_04e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04eb: br IL_0504
+		IL_050b: ldstr "prototype"
+		IL_0510: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0515: br IL_052e
 
-		IL_04f0: ldstr "prototype"
-		IL_04f5: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:121"
-		IL_04fa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_04ff: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_051a: ldstr "prototype"
+		IL_051f: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:127"
+		IL_0524: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0529: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0504: stloc.s 20
-		IL_0506: ldloc.s 20
-		IL_0508: ldstr "trim"
-		IL_050d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
-		IL_0512: stloc.s 8
-		IL_0514: ldstr "String"
-		IL_0519: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_051e: volatile.
-		IL_0520: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0525: brfalse IL_0539
+		IL_052e: stloc.s 20
+		IL_0530: ldloc.s 20
+		IL_0532: ldstr "trim"
+		IL_0537: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_053c: stloc.s 8
+		IL_053e: ldstr "String"
+		IL_0543: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0548: volatile.
+		IL_054a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_054f: brfalse IL_0563
 
-		IL_052a: ldstr "prototype"
-		IL_052f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0534: br IL_054d
+		IL_0554: ldstr "prototype"
+		IL_0559: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_055e: br IL_0577
 
-		IL_0539: ldstr "prototype"
-		IL_053e: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:129"
-		IL_0543: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0548: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0563: ldstr "prototype"
+		IL_0568: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:135"
+		IL_056d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0572: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_054d: stloc.s 20
-		IL_054f: ldc.i4.1
-		IL_0550: newarr [System.Runtime]System.Object
-		IL_0555: dup
-		IL_0556: ldc.i4.0
-		IL_0557: ldloc.0
-		IL_0558: stelem.ref
-		IL_0559: stloc.s 19
-		IL_055b: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L51C9/FunctionObject::.ctor()
-		IL_0560: ldc.i4.0
-		IL_0561: conv.r8
-		IL_0562: ldstr ""
-		IL_0567: ldc.i4.0
-		IL_0568: ldc.i4.0
-		IL_0569: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L51C9/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_056e: stloc.s 29
-		IL_0570: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0575: dup
-		IL_0576: ldstr "configurable"
-		IL_057b: ldc.i4.1
-		IL_057c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0581: dup
-		IL_0582: ldstr "get"
-		IL_0587: ldloc.s 29
-		IL_0589: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_058e: stloc.s 25
-		IL_0590: ldloc.s 20
-		IL_0592: ldstr "trim"
-		IL_0597: ldloc.s 25
-		IL_0599: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_059e: pop
-		IL_059f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05a4: stloc.s 21
-		IL_05a6: ldc.i4.0
-		IL_05a7: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_05ac: brfalse IL_05c2
+		IL_0577: stloc.s 20
+		IL_0579: ldc.i4.1
+		IL_057a: newarr [System.Runtime]System.Object
+		IL_057f: dup
+		IL_0580: ldc.i4.0
+		IL_0581: ldloc.0
+		IL_0582: stelem.ref
+		IL_0583: stloc.s 19
+		IL_0585: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L51C9/FunctionObject::.ctor()
+		IL_058a: ldc.i4.0
+		IL_058b: conv.r8
+		IL_058c: ldstr ""
+		IL_0591: ldc.i4.0
+		IL_0592: ldc.i4.0
+		IL_0593: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L51C9/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0598: stloc.s 29
+		IL_059a: ldloc.s 29
+		IL_059c: ldstr "get"
+		IL_05a1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_05a6: stloc.s 30
+		IL_05a8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_05ad: dup
+		IL_05ae: ldstr "configurable"
+		IL_05b3: ldc.i4.1
+		IL_05b4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_05b9: dup
+		IL_05ba: ldstr "get"
+		IL_05bf: ldloc.s 30
+		IL_05c1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_05c6: stloc.s 25
+		IL_05c8: ldloc.s 20
+		IL_05ca: ldstr "trim"
+		IL_05cf: ldloc.s 25
+		IL_05d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_05d6: pop
+		IL_05d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05dc: stloc.s 21
+		IL_05de: ldc.i4.0
+		IL_05df: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_05e4: brfalse IL_05fa
 
-		IL_05b1: ldstr " abc "
-		IL_05b6: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-		IL_05bb: stloc.s 20
-		IL_05bd: br IL_05d3
+		IL_05e9: ldstr " abc "
+		IL_05ee: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+		IL_05f3: stloc.s 20
+		IL_05f5: br IL_060b
 
-		IL_05c2: ldstr " abc "
-		IL_05c7: ldstr "trim"
-		IL_05cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_05d1: stloc.s 20
+		IL_05fa: ldstr " abc "
+		IL_05ff: ldstr "trim"
+		IL_0604: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0609: stloc.s 20
 
-		IL_05d3: ldloc.s 21
-		IL_05d5: ldloc.s 20
-		IL_05d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05dc: pop
-		IL_05dd: ldstr "String"
-		IL_05e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_05e7: volatile.
-		IL_05e9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_05ee: brfalse IL_0602
+		IL_060b: ldloc.s 21
+		IL_060d: ldloc.s 20
+		IL_060f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0614: pop
+		IL_0615: ldstr "String"
+		IL_061a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_061f: volatile.
+		IL_0621: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0626: brfalse IL_063a
 
-		IL_05f3: ldstr "prototype"
-		IL_05f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05fd: br IL_0616
+		IL_062b: ldstr "prototype"
+		IL_0630: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0635: br IL_064e
 
-		IL_0602: ldstr "prototype"
-		IL_0607: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:145"
-		IL_060c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-		IL_0611: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_063a: ldstr "prototype"
+		IL_063f: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:153"
+		IL_0644: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+		IL_0649: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0616: stloc.s 20
-		IL_0618: ldloc.s 20
-		IL_061a: ldstr "trim"
-		IL_061f: ldloc.s 8
-		IL_0621: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_0626: pop
-		IL_0627: ldstr "String"
-		IL_062c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0631: volatile.
-		IL_0633: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_0638: brfalse IL_064c
+		IL_064e: stloc.s 20
+		IL_0650: ldloc.s 20
+		IL_0652: ldstr "trim"
+		IL_0657: ldloc.s 8
+		IL_0659: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_065e: pop
+		IL_065f: ldstr "String"
+		IL_0664: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0669: volatile.
+		IL_066b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0670: brfalse IL_0684
 
-		IL_063d: ldstr "prototype"
-		IL_0642: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0647: br IL_0660
+		IL_0675: ldstr "prototype"
+		IL_067a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_067f: br IL_0698
 
-		IL_064c: ldstr "prototype"
-		IL_0651: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:152"
-		IL_0656: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_065b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0684: ldstr "prototype"
+		IL_0689: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:160"
+		IL_068e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0693: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0660: stloc.s 20
-		IL_0662: volatile.
-		IL_0664: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_0669: brfalse IL_067f
+		IL_0698: stloc.s 20
+		IL_069a: volatile.
+		IL_069c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_06a1: brfalse IL_06b7
 
-		IL_066e: ldloc.s 20
-		IL_0670: ldstr "toUpperCase"
-		IL_0675: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_067a: br IL_0695
+		IL_06a6: ldloc.s 20
+		IL_06a8: ldstr "toUpperCase"
+		IL_06ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06b2: br IL_06cd
 
-		IL_067f: ldloc.s 20
-		IL_0681: ldstr "toUpperCase"
-		IL_0686: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:154"
-		IL_068b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_0690: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_06b7: ldloc.s 20
+		IL_06b9: ldstr "toUpperCase"
+		IL_06be: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:162"
+		IL_06c3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_06c8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0695: stloc.s 9
-		IL_0697: ldstr "Object"
-		IL_069c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_06a1: volatile.
-		IL_06a3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_06a8: brfalse IL_06bc
+		IL_06cd: stloc.s 9
+		IL_06cf: ldstr "Object"
+		IL_06d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_06d9: volatile.
+		IL_06db: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_06e0: brfalse IL_06f4
 
-		IL_06ad: ldstr "prototype"
-		IL_06b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_06b7: br IL_06d0
+		IL_06e5: ldstr "prototype"
+		IL_06ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06ef: br IL_0708
 
-		IL_06bc: ldstr "prototype"
-		IL_06c1: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:160"
-		IL_06c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_06cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_06f4: ldstr "prototype"
+		IL_06f9: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:168"
+		IL_06fe: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_0703: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_06d0: stloc.s 20
-		IL_06d2: volatile.
-		IL_06d4: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_06d9: brfalse IL_06ef
+		IL_0708: stloc.s 20
+		IL_070a: volatile.
+		IL_070c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_0711: brfalse IL_0727
 
-		IL_06de: ldloc.s 20
-		IL_06e0: ldstr "toUpperCase"
-		IL_06e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_06ea: br IL_0705
+		IL_0716: ldloc.s 20
+		IL_0718: ldstr "toUpperCase"
+		IL_071d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0722: br IL_073d
 
-		IL_06ef: ldloc.s 20
-		IL_06f1: ldstr "toUpperCase"
-		IL_06f6: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:162"
-		IL_06fb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_0700: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0727: ldloc.s 20
+		IL_0729: ldstr "toUpperCase"
+		IL_072e: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:170"
+		IL_0733: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_0738: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0705: stloc.s 10
-		IL_0707: ldstr "String"
-		IL_070c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0711: volatile.
-		IL_0713: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_0718: brfalse IL_072c
+		IL_073d: stloc.s 10
+		IL_073f: ldstr "String"
+		IL_0744: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0749: volatile.
+		IL_074b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0750: brfalse IL_0764
 
-		IL_071d: ldstr "prototype"
-		IL_0722: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0727: br IL_0740
+		IL_0755: ldstr "prototype"
+		IL_075a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_075f: br IL_0778
 
-		IL_072c: ldstr "prototype"
-		IL_0731: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:168"
-		IL_0736: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_073b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0764: ldstr "prototype"
+		IL_0769: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:176"
+		IL_076e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0773: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0740: stloc.s 20
-		IL_0742: ldloc.s 20
-		IL_0744: ldstr "toUpperCase"
-		IL_0749: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_074e: stloc.s 30
-		IL_0750: ldstr "Object"
-		IL_0755: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_075a: volatile.
-		IL_075c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_0761: brfalse IL_0775
+		IL_0778: stloc.s 20
+		IL_077a: ldloc.s 20
+		IL_077c: ldstr "toUpperCase"
+		IL_0781: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_0786: stloc.s 31
+		IL_0788: ldstr "Object"
+		IL_078d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0792: volatile.
+		IL_0794: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_0799: brfalse IL_07ad
 
-		IL_0766: ldstr "prototype"
-		IL_076b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0770: br IL_0789
+		IL_079e: ldstr "prototype"
+		IL_07a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_07a8: br IL_07c1
 
-		IL_0775: ldstr "prototype"
-		IL_077a: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:176"
-		IL_077f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_0784: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_07ad: ldstr "prototype"
+		IL_07b2: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:184"
+		IL_07b7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_07bc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0789: stloc.s 20
-		IL_078b: ldc.i4.1
-		IL_078c: newarr [System.Runtime]System.Object
-		IL_0791: dup
-		IL_0792: ldc.i4.0
-		IL_0793: ldloc.0
-		IL_0794: stelem.ref
-		IL_0795: stloc.s 19
-		IL_0797: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject::.ctor()
-		IL_079c: ldc.i4.0
-		IL_079d: conv.r8
-		IL_079e: ldstr ""
-		IL_07a3: ldc.i4.0
-		IL_07a4: ldc.i4.0
-		IL_07a5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_07aa: stloc.s 31
-		IL_07ac: ldloc.s 20
-		IL_07ae: ldstr "toUpperCase"
-		IL_07b3: ldloc.s 31
-		IL_07b5: ldc.i4.1
-		IL_07b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_07bb: pop
-		IL_07bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_07c1: stloc.s 21
-		IL_07c3: ldc.i4.0
-		IL_07c4: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_07c9: brfalse IL_07df
+		IL_07c1: stloc.s 20
+		IL_07c3: ldc.i4.1
+		IL_07c4: newarr [System.Runtime]System.Object
+		IL_07c9: dup
+		IL_07ca: ldc.i4.0
+		IL_07cb: ldloc.0
+		IL_07cc: stelem.ref
+		IL_07cd: stloc.s 19
+		IL_07cf: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject::.ctor()
+		IL_07d4: ldc.i4.0
+		IL_07d5: conv.r8
+		IL_07d6: ldstr ""
+		IL_07db: ldc.i4.0
+		IL_07dc: ldc.i4.0
+		IL_07dd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L64C31/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_07e2: stloc.s 32
+		IL_07e4: ldloc.s 20
+		IL_07e6: ldstr "toUpperCase"
+		IL_07eb: ldloc.s 32
+		IL_07ed: ldc.i4.1
+		IL_07ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_07f3: pop
+		IL_07f4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07f9: stloc.s 21
+		IL_07fb: ldc.i4.0
+		IL_07fc: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0801: brfalse IL_0817
 
-		IL_07ce: ldstr "abc"
-		IL_07d3: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
-		IL_07d8: stloc.s 20
-		IL_07da: br IL_07f0
+		IL_0806: ldstr "abc"
+		IL_080b: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
+		IL_0810: stloc.s 20
+		IL_0812: br IL_0828
 
-		IL_07df: ldstr "abc"
-		IL_07e4: ldstr "toUpperCase"
-		IL_07e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_07ee: stloc.s 20
+		IL_0817: ldstr "abc"
+		IL_081c: ldstr "toUpperCase"
+		IL_0821: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0826: stloc.s 20
 
-		IL_07f0: ldloc.s 21
-		IL_07f2: ldloc.s 20
-		IL_07f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_07f9: pop
-		IL_07fa: ldstr "String"
-		IL_07ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0804: volatile.
-		IL_0806: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_080b: brfalse IL_081f
+		IL_0828: ldloc.s 21
+		IL_082a: ldloc.s 20
+		IL_082c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0831: pop
+		IL_0832: ldstr "String"
+		IL_0837: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_083c: volatile.
+		IL_083e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0843: brfalse IL_0857
 
-		IL_0810: ldstr "prototype"
-		IL_0815: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_081a: br IL_0833
+		IL_0848: ldstr "prototype"
+		IL_084d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0852: br IL_086b
 
-		IL_081f: ldstr "prototype"
-		IL_0824: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:190"
-		IL_0829: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_082e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0857: ldstr "prototype"
+		IL_085c: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:198"
+		IL_0861: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0866: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0833: stloc.s 20
-		IL_0835: ldloc.s 20
-		IL_0837: ldstr "toUpperCase"
-		IL_083c: ldloc.s 9
-		IL_083e: ldc.i4.1
-		IL_083f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0844: pop
-		IL_0845: ldloc.s 10
-		IL_0847: stloc.s 20
-		IL_0849: ldloc.s 20
-		IL_084b: ldnull
-		IL_084c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0851: stloc.s 30
-		IL_0853: ldloc.s 30
-		IL_0855: brfalse IL_08a8
+		IL_086b: stloc.s 20
+		IL_086d: ldloc.s 20
+		IL_086f: ldstr "toUpperCase"
+		IL_0874: ldloc.s 9
+		IL_0876: ldc.i4.1
+		IL_0877: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_087c: pop
+		IL_087d: ldloc.s 10
+		IL_087f: stloc.s 20
+		IL_0881: ldloc.s 20
+		IL_0883: ldnull
+		IL_0884: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0889: stloc.s 31
+		IL_088b: ldloc.s 31
+		IL_088d: brfalse IL_08e0
 
-		IL_085a: ldstr "Object"
-		IL_085f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0864: volatile.
-		IL_0866: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_086b: brfalse IL_087f
+		IL_0892: ldstr "Object"
+		IL_0897: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_089c: volatile.
+		IL_089e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_08a3: brfalse IL_08b7
 
-		IL_0870: ldstr "prototype"
-		IL_0875: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_087a: br IL_0893
+		IL_08a8: ldstr "prototype"
+		IL_08ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_08b2: br IL_08cb
 
-		IL_087f: ldstr "prototype"
-		IL_0884: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:202"
-		IL_0889: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_088e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_08b7: ldstr "prototype"
+		IL_08bc: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:210"
+		IL_08c1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_08c6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0893: stloc.s 20
-		IL_0895: ldloc.s 20
-		IL_0897: ldstr "toUpperCase"
-		IL_089c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_08a1: stloc.s 30
-		IL_08a3: br IL_08f3
+		IL_08cb: stloc.s 20
+		IL_08cd: ldloc.s 20
+		IL_08cf: ldstr "toUpperCase"
+		IL_08d4: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_08d9: stloc.s 31
+		IL_08db: br IL_092b
 
-		IL_08a8: ldstr "Object"
-		IL_08ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_08b2: volatile.
-		IL_08b4: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_08b9: brfalse IL_08cd
+		IL_08e0: ldstr "Object"
+		IL_08e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_08ea: volatile.
+		IL_08ec: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_08f1: brfalse IL_0905
 
-		IL_08be: ldstr "prototype"
-		IL_08c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_08c8: br IL_08e1
+		IL_08f6: ldstr "prototype"
+		IL_08fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0900: br IL_0919
 
-		IL_08cd: ldstr "prototype"
-		IL_08d2: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:212"
-		IL_08d7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_08dc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0905: ldstr "prototype"
+		IL_090a: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:220"
+		IL_090f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_0914: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_08e1: stloc.s 20
-		IL_08e3: ldloc.s 20
-		IL_08e5: ldstr "toUpperCase"
-		IL_08ea: ldloc.s 10
-		IL_08ec: ldc.i4.1
-		IL_08ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_08f2: pop
+		IL_0919: stloc.s 20
+		IL_091b: ldloc.s 20
+		IL_091d: ldstr "toUpperCase"
+		IL_0922: ldloc.s 10
+		IL_0924: ldc.i4.1
+		IL_0925: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_092a: pop
 
-		IL_08f3: ldstr "String"
-		IL_08f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_08fd: volatile.
-		IL_08ff: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_0904: brfalse IL_0918
+		IL_092b: ldstr "String"
+		IL_0930: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0935: volatile.
+		IL_0937: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_093c: brfalse IL_0950
 
-		IL_0909: ldstr "prototype"
-		IL_090e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0913: br IL_092c
+		IL_0941: ldstr "prototype"
+		IL_0946: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_094b: br IL_0964
 
-		IL_0918: ldstr "prototype"
-		IL_091d: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:220"
-		IL_0922: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_0927: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0950: ldstr "prototype"
+		IL_0955: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:228"
+		IL_095a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_095f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_092c: stloc.s 20
-		IL_092e: volatile.
-		IL_0930: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_0935: brfalse IL_094b
+		IL_0964: stloc.s 20
+		IL_0966: volatile.
+		IL_0968: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_096d: brfalse IL_0983
 
-		IL_093a: ldloc.s 20
-		IL_093c: ldstr "includes"
-		IL_0941: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0946: br IL_0961
+		IL_0972: ldloc.s 20
+		IL_0974: ldstr "includes"
+		IL_0979: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_097e: br IL_0999
 
-		IL_094b: ldloc.s 20
-		IL_094d: ldstr "includes"
-		IL_0952: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:222"
-		IL_0957: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_095c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0983: ldloc.s 20
+		IL_0985: ldstr "includes"
+		IL_098a: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:230"
+		IL_098f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_0994: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0961: stloc.s 11
-		IL_0963: ldstr "String"
-		IL_0968: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_096d: volatile.
-		IL_096f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_0974: brfalse IL_0988
+		IL_0999: stloc.s 11
+		IL_099b: ldstr "String"
+		IL_09a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_09a5: volatile.
+		IL_09a7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_09ac: brfalse IL_09c0
 
-		IL_0979: ldstr "prototype"
-		IL_097e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0983: br IL_099c
+		IL_09b1: ldstr "prototype"
+		IL_09b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_09bb: br IL_09d4
 
-		IL_0988: ldstr "prototype"
-		IL_098d: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:228"
-		IL_0992: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_0997: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_09c0: ldstr "prototype"
+		IL_09c5: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:236"
+		IL_09ca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_09cf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_099c: stloc.s 20
-		IL_099e: ldloc.s 20
-		IL_09a0: ldstr "includes"
-		IL_09a5: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-		IL_09aa: stloc.s 30
+		IL_09d4: stloc.s 20
+		IL_09d6: ldloc.s 20
+		IL_09d8: ldstr "includes"
+		IL_09dd: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_09e2: stloc.s 31
 		.try
 		{
-			IL_09ac: nop
-			IL_09ad: ldc.i4.0
-			IL_09ae: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_09b3: brfalse IL_09cd
+			IL_09e4: nop
+			IL_09e5: ldc.i4.0
+			IL_09e6: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_09eb: brfalse IL_0a05
 
-			IL_09b8: ldstr "abc"
-			IL_09bd: ldstr "a"
-			IL_09c2: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-			IL_09c7: pop
-			IL_09c8: br IL_09e2
+			IL_09f0: ldstr "abc"
+			IL_09f5: ldstr "a"
+			IL_09fa: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+			IL_09ff: pop
+			IL_0a00: br IL_0a1a
 
-			IL_09cd: ldstr "abc"
-			IL_09d2: ldstr "includes"
-			IL_09d7: ldstr "a"
-			IL_09dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_09e1: pop
+			IL_0a05: ldstr "abc"
+			IL_0a0a: ldstr "includes"
+			IL_0a0f: ldstr "a"
+			IL_0a14: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0a19: pop
 
-			IL_09e2: leave IL_0a64
+			IL_0a1a: leave IL_0a9c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_09e7: stloc.s 12
-			IL_09e9: ldloc.s 12
-			IL_09eb: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_09f0: dup
-			IL_09f1: brtrue IL_0a07
+			IL_0a1f: stloc.s 12
+			IL_0a21: ldloc.s 12
+			IL_0a23: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0a28: dup
+			IL_0a29: brtrue IL_0a3f
 
-			IL_09f6: pop
-			IL_09f7: ldloc.s 12
-			IL_09f9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_09fe: dup
-			IL_09ff: brtrue IL_0a13
+			IL_0a2e: pop
+			IL_0a2f: ldloc.s 12
+			IL_0a31: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0a36: dup
+			IL_0a37: brtrue IL_0a4b
 
-			IL_0a04: pop
-			IL_0a05: rethrow
+			IL_0a3c: pop
+			IL_0a3d: rethrow
 
-			IL_0a07: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0a0c: stloc.s 13
-			IL_0a0e: br IL_0a15
+			IL_0a3f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0a44: stloc.s 13
+			IL_0a46: br IL_0a4d
 
-			IL_0a13: stloc.s 13
+			IL_0a4b: stloc.s 13
 
-			IL_0a15: ldloc.s 13
-			IL_0a17: stloc.s 14
-			IL_0a19: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0a1e: stloc.s 21
-			IL_0a20: volatile.
-			IL_0a22: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_0a27: brfalse IL_0a3d
+			IL_0a4d: ldloc.s 13
+			IL_0a4f: stloc.s 14
+			IL_0a51: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0a56: stloc.s 21
+			IL_0a58: volatile.
+			IL_0a5a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_0a5f: brfalse IL_0a75
 
-			IL_0a2c: ldloc.s 14
-			IL_0a2e: ldstr "name"
-			IL_0a33: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0a38: br IL_0a53
+			IL_0a64: ldloc.s 14
+			IL_0a66: ldstr "name"
+			IL_0a6b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0a70: br IL_0a8b
 
-			IL_0a3d: ldloc.s 14
-			IL_0a3f: ldstr "name"
-			IL_0a44: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:249"
-			IL_0a49: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_0a4e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0a75: ldloc.s 14
+			IL_0a77: ldstr "name"
+			IL_0a7c: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:257"
+			IL_0a81: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_0a86: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0a53: stloc.s 20
-			IL_0a55: ldloc.s 21
-			IL_0a57: ldloc.s 20
-			IL_0a59: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0a5e: pop
-			IL_0a5f: leave IL_0a64
+			IL_0a8b: stloc.s 20
+			IL_0a8d: ldloc.s 21
+			IL_0a8f: ldloc.s 20
+			IL_0a91: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0a96: pop
+			IL_0a97: leave IL_0a9c
 		} // end handler
 
-		IL_0a64: ldstr "String"
-		IL_0a69: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0a6e: volatile.
-		IL_0a70: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0a75: brfalse IL_0a89
+		IL_0a9c: ldstr "String"
+		IL_0aa1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0aa6: volatile.
+		IL_0aa8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_0aad: brfalse IL_0ac1
 
-		IL_0a7a: ldstr "prototype"
-		IL_0a7f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0a84: br IL_0a9d
+		IL_0ab2: ldstr "prototype"
+		IL_0ab7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0abc: br IL_0ad5
 
-		IL_0a89: ldstr "prototype"
-		IL_0a8e: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:259"
-		IL_0a93: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0a98: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0ac1: ldstr "prototype"
+		IL_0ac6: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:267"
+		IL_0acb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_0ad0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0a9d: stloc.s 20
-		IL_0a9f: ldloc.s 20
-		IL_0aa1: ldstr "includes"
-		IL_0aa6: ldloc.s 11
-		IL_0aa8: ldc.i4.1
-		IL_0aa9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0aae: pop
-		IL_0aaf: ldstr "String"
-		IL_0ab4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0ab9: volatile.
-		IL_0abb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_0ac0: brfalse IL_0ad4
+		IL_0ad5: stloc.s 20
+		IL_0ad7: ldloc.s 20
+		IL_0ad9: ldstr "includes"
+		IL_0ade: ldloc.s 11
+		IL_0ae0: ldc.i4.1
+		IL_0ae1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0ae6: pop
+		IL_0ae7: ldstr "String"
+		IL_0aec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0af1: volatile.
+		IL_0af3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_0af8: brfalse IL_0b0c
 
-		IL_0ac5: ldstr "prototype"
-		IL_0aca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0acf: br IL_0ae8
+		IL_0afd: ldstr "prototype"
+		IL_0b02: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0b07: br IL_0b20
 
-		IL_0ad4: ldstr "prototype"
-		IL_0ad9: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:266"
-		IL_0ade: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_0ae3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0b0c: ldstr "prototype"
+		IL_0b11: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:274"
+		IL_0b16: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_0b1b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0ae8: stloc.s 20
-		IL_0aea: volatile.
-		IL_0aec: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_0af1: brfalse IL_0b07
+		IL_0b20: stloc.s 20
+		IL_0b22: volatile.
+		IL_0b24: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_0b29: brfalse IL_0b3f
 
-		IL_0af6: ldloc.s 20
-		IL_0af8: ldstr "startsWith"
-		IL_0afd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0b02: br IL_0b1d
+		IL_0b2e: ldloc.s 20
+		IL_0b30: ldstr "startsWith"
+		IL_0b35: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0b3a: br IL_0b55
 
-		IL_0b07: ldloc.s 20
-		IL_0b09: ldstr "startsWith"
-		IL_0b0e: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:268"
-		IL_0b13: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_0b18: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0b3f: ldloc.s 20
+		IL_0b41: ldstr "startsWith"
+		IL_0b46: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:276"
+		IL_0b4b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_0b50: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0b1d: stloc.s 15
-		IL_0b1f: ldstr "String"
-		IL_0b24: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0b29: volatile.
-		IL_0b2b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_0b30: brfalse IL_0b44
+		IL_0b55: stloc.s 15
+		IL_0b57: ldstr "String"
+		IL_0b5c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0b61: volatile.
+		IL_0b63: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+		IL_0b68: brfalse IL_0b7c
 
-		IL_0b35: ldstr "prototype"
-		IL_0b3a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0b3f: br IL_0b58
+		IL_0b6d: ldstr "prototype"
+		IL_0b72: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0b77: br IL_0b90
 
-		IL_0b44: ldstr "prototype"
-		IL_0b49: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:274"
-		IL_0b4e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_0b53: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0b7c: ldstr "prototype"
+		IL_0b81: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:282"
+		IL_0b86: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+		IL_0b8b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0b58: stloc.s 20
-		IL_0b5a: ldc.i4.1
-		IL_0b5b: newarr [System.Runtime]System.Object
-		IL_0b60: dup
-		IL_0b61: ldc.i4.0
-		IL_0b62: ldloc.0
-		IL_0b63: stelem.ref
-		IL_0b64: stloc.s 19
-		IL_0b66: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject::.ctor()
-		IL_0b6b: ldc.i4.1
-		IL_0b6c: conv.r8
-		IL_0b6d: ldstr ""
-		IL_0b72: ldc.i4.0
-		IL_0b73: ldc.i4.0
-		IL_0b74: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0b79: stloc.s 32
-		IL_0b7b: ldloc.s 20
-		IL_0b7d: ldstr "startsWith"
-		IL_0b82: ldloc.s 32
-		IL_0b84: ldc.i4.1
-		IL_0b85: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0b8a: pop
-		IL_0b8b: volatile.
-		IL_0b8d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_0b92: brfalse IL_0bab
+		IL_0b90: stloc.s 20
+		IL_0b92: ldc.i4.1
+		IL_0b93: newarr [System.Runtime]System.Object
+		IL_0b98: dup
+		IL_0b99: ldc.i4.0
+		IL_0b9a: ldloc.0
+		IL_0b9b: stelem.ref
+		IL_0b9c: stloc.s 19
+		IL_0b9e: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject::.ctor()
+		IL_0ba3: ldc.i4.1
+		IL_0ba4: conv.r8
+		IL_0ba5: ldstr ""
+		IL_0baa: ldc.i4.0
+		IL_0bab: ldc.i4.0
+		IL_0bac: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L85C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0bb1: stloc.s 33
+		IL_0bb3: ldloc.s 20
+		IL_0bb5: ldstr "startsWith"
+		IL_0bba: ldloc.s 33
+		IL_0bbc: ldc.i4.1
+		IL_0bbd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0bc2: pop
+		IL_0bc3: volatile.
+		IL_0bc5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_0bca: brfalse IL_0be3
 
-		IL_0b97: ldstr "abc"
-		IL_0b9c: ldstr "startsWith"
-		IL_0ba1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0ba6: br IL_0bc4
+		IL_0bcf: ldstr "abc"
+		IL_0bd4: ldstr "startsWith"
+		IL_0bd9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0bde: br IL_0bfc
 
-		IL_0bab: ldstr "abc"
-		IL_0bb0: ldstr "startsWith"
-		IL_0bb5: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:282"
-		IL_0bba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_0bbf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0be3: ldstr "abc"
+		IL_0be8: ldstr "startsWith"
+		IL_0bed: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:290"
+		IL_0bf2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_0bf7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0bc4: stloc.s 16
-		IL_0bc6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0bcb: stloc.s 21
-		IL_0bcd: ldloc.s 16
-		IL_0bcf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0bd4: ldstr "call"
-		IL_0bd9: ldstr "abc"
-		IL_0bde: ldstr "a"
-		IL_0be3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0be8: stloc.s 20
-		IL_0bea: ldloc.s 21
-		IL_0bec: ldloc.s 20
-		IL_0bee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0bf3: pop
-		IL_0bf4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0bf9: stloc.s 21
-		IL_0bfb: ldloc.s 16
-		IL_0bfd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0c02: ldc.i4.1
-		IL_0c03: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0c08: dup
-		IL_0c09: ldstr "b"
-		IL_0c0e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0c13: stloc.s 33
-		IL_0c15: ldstr "apply"
-		IL_0c1a: ldstr "abc"
-		IL_0c1f: ldloc.s 33
-		IL_0c21: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0c26: stloc.s 20
-		IL_0c28: ldloc.s 21
-		IL_0c2a: ldloc.s 20
-		IL_0c2c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0c31: pop
-		IL_0c32: ldstr "String"
-		IL_0c37: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0c3c: volatile.
-		IL_0c3e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_0c43: brfalse IL_0c57
+		IL_0bfc: stloc.s 16
+		IL_0bfe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0c03: stloc.s 21
+		IL_0c05: ldloc.s 16
+		IL_0c07: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0c0c: ldstr "call"
+		IL_0c11: ldstr "abc"
+		IL_0c16: ldstr "a"
+		IL_0c1b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0c20: stloc.s 20
+		IL_0c22: ldloc.s 21
+		IL_0c24: ldloc.s 20
+		IL_0c26: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0c2b: pop
+		IL_0c2c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0c31: stloc.s 21
+		IL_0c33: ldloc.s 16
+		IL_0c35: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0c3a: ldc.i4.1
+		IL_0c3b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0c40: dup
+		IL_0c41: ldstr "b"
+		IL_0c46: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0c4b: stloc.s 34
+		IL_0c4d: ldstr "apply"
+		IL_0c52: ldstr "abc"
+		IL_0c57: ldloc.s 34
+		IL_0c59: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0c5e: stloc.s 20
+		IL_0c60: ldloc.s 21
+		IL_0c62: ldloc.s 20
+		IL_0c64: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0c69: pop
+		IL_0c6a: ldstr "String"
+		IL_0c6f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0c74: volatile.
+		IL_0c76: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_0c7b: brfalse IL_0c8f
 
-		IL_0c48: ldstr "prototype"
-		IL_0c4d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0c52: br IL_0c6b
+		IL_0c80: ldstr "prototype"
+		IL_0c85: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0c8a: br IL_0ca3
 
-		IL_0c57: ldstr "prototype"
-		IL_0c5c: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:303"
-		IL_0c61: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_0c66: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0c8f: ldstr "prototype"
+		IL_0c94: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:311"
+		IL_0c99: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_0c9e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0c6b: stloc.s 20
-		IL_0c6d: ldloc.s 20
-		IL_0c6f: ldstr "startsWith"
-		IL_0c74: ldloc.s 15
-		IL_0c76: ldc.i4.1
-		IL_0c77: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0c7c: pop
-		IL_0c7d: ldstr "String"
-		IL_0c82: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0c87: volatile.
-		IL_0c89: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-		IL_0c8e: brfalse IL_0ca2
+		IL_0ca3: stloc.s 20
+		IL_0ca5: ldloc.s 20
+		IL_0ca7: ldstr "startsWith"
+		IL_0cac: ldloc.s 15
+		IL_0cae: ldc.i4.1
+		IL_0caf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0cb4: pop
+		IL_0cb5: ldstr "String"
+		IL_0cba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0cbf: volatile.
+		IL_0cc1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_0cc6: brfalse IL_0cda
 
-		IL_0c93: ldstr "prototype"
-		IL_0c98: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0c9d: br IL_0cb6
+		IL_0ccb: ldstr "prototype"
+		IL_0cd0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0cd5: br IL_0cee
 
-		IL_0ca2: ldstr "prototype"
-		IL_0ca7: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:310"
-		IL_0cac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-		IL_0cb1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0cda: ldstr "prototype"
+		IL_0cdf: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:318"
+		IL_0ce4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_0ce9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0cb6: stloc.s 20
-		IL_0cb8: volatile.
-		IL_0cba: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-		IL_0cbf: brfalse IL_0cd5
+		IL_0cee: stloc.s 20
+		IL_0cf0: volatile.
+		IL_0cf2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_0cf7: brfalse IL_0d0d
 
-		IL_0cc4: ldloc.s 20
-		IL_0cc6: ldstr "charCodeAt"
-		IL_0ccb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0cd0: br IL_0ceb
+		IL_0cfc: ldloc.s 20
+		IL_0cfe: ldstr "charCodeAt"
+		IL_0d03: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0d08: br IL_0d23
 
-		IL_0cd5: ldloc.s 20
-		IL_0cd7: ldstr "charCodeAt"
-		IL_0cdc: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:312"
-		IL_0ce1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-		IL_0ce6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0d0d: ldloc.s 20
+		IL_0d0f: ldstr "charCodeAt"
+		IL_0d14: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:320"
+		IL_0d19: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_0d1e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0ceb: stloc.s 17
-		IL_0ced: ldstr "String"
-		IL_0cf2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0cf7: volatile.
-		IL_0cf9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-		IL_0cfe: brfalse IL_0d12
+		IL_0d23: stloc.s 17
+		IL_0d25: ldstr "String"
+		IL_0d2a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0d2f: volatile.
+		IL_0d31: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_0d36: brfalse IL_0d4a
 
-		IL_0d03: ldstr "prototype"
-		IL_0d08: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0d0d: br IL_0d26
+		IL_0d3b: ldstr "prototype"
+		IL_0d40: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0d45: br IL_0d5e
 
-		IL_0d12: ldstr "prototype"
-		IL_0d17: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:318"
-		IL_0d1c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-		IL_0d21: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0d4a: ldstr "prototype"
+		IL_0d4f: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:326"
+		IL_0d54: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_0d59: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0d26: stloc.s 20
-		IL_0d28: ldc.i4.1
-		IL_0d29: newarr [System.Runtime]System.Object
-		IL_0d2e: dup
-		IL_0d2f: ldc.i4.0
-		IL_0d30: ldloc.0
-		IL_0d31: stelem.ref
-		IL_0d32: stloc.s 19
-		IL_0d34: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject::.ctor()
-		IL_0d39: ldc.i4.0
-		IL_0d3a: conv.r8
-		IL_0d3b: ldstr ""
-		IL_0d40: ldc.i4.0
-		IL_0d41: ldc.i4.0
-		IL_0d42: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0d47: stloc.s 34
-		IL_0d49: ldloc.s 20
-		IL_0d4b: ldstr "charCodeAt"
-		IL_0d50: ldloc.s 34
-		IL_0d52: ldc.i4.1
-		IL_0d53: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0d58: pop
-		IL_0d59: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0d5e: stloc.s 21
-		IL_0d60: ldc.i4.0
-		IL_0d61: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0d66: brfalse IL_0d8a
+		IL_0d5e: stloc.s 20
+		IL_0d60: ldc.i4.1
+		IL_0d61: newarr [System.Runtime]System.Object
+		IL_0d66: dup
+		IL_0d67: ldc.i4.0
+		IL_0d68: ldloc.0
+		IL_0d69: stelem.ref
+		IL_0d6a: stloc.s 19
+		IL_0d6c: newobj instance void Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject::.ctor()
+		IL_0d71: ldc.i4.0
+		IL_0d72: conv.r8
+		IL_0d73: ldstr ""
+		IL_0d78: ldc.i4.0
+		IL_0d79: ldc.i4.0
+		IL_0d7a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.String_PrototypeMethodOverrides/FunctionExpression_L94C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0d7f: stloc.s 35
+		IL_0d81: ldloc.s 20
+		IL_0d83: ldstr "charCodeAt"
+		IL_0d88: ldloc.s 35
+		IL_0d8a: ldc.i4.1
+		IL_0d8b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0d90: pop
+		IL_0d91: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0d96: stloc.s 21
+		IL_0d98: ldc.i4.0
+		IL_0d99: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0d9e: brfalse IL_0dc2
 
-		IL_0d6b: ldstr "A"
-		IL_0d70: ldc.r8 0.0
-		IL_0d79: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
-		IL_0d7e: box [System.Runtime]System.Double
-		IL_0d83: stloc.s 20
-		IL_0d85: br IL_0da9
+		IL_0da3: ldstr "A"
+		IL_0da8: ldc.r8 0.0
+		IL_0db1: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_0db6: box [System.Runtime]System.Double
+		IL_0dbb: stloc.s 20
+		IL_0dbd: br IL_0de1
 
-		IL_0d8a: ldstr "A"
-		IL_0d8f: ldstr "charCodeAt"
-		IL_0d94: ldc.r8 0.0
-		IL_0d9d: box [System.Runtime]System.Double
-		IL_0da2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0da7: stloc.s 20
+		IL_0dc2: ldstr "A"
+		IL_0dc7: ldstr "charCodeAt"
+		IL_0dcc: ldc.r8 0.0
+		IL_0dd5: box [System.Runtime]System.Double
+		IL_0dda: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0ddf: stloc.s 20
 
-		IL_0da9: ldloc.s 20
-		IL_0dab: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::floor(object)
-		IL_0db0: box [System.Runtime]System.Double
-		IL_0db5: stloc.s 35
-		IL_0db7: ldloc.s 21
-		IL_0db9: ldloc.s 35
-		IL_0dbb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0dc0: pop
-		IL_0dc1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0dc6: stloc.s 21
-		IL_0dc8: ldc.i4.0
-		IL_0dc9: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-		IL_0dce: brfalse IL_0df2
+		IL_0de1: ldloc.s 20
+		IL_0de3: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::floor(object)
+		IL_0de8: box [System.Runtime]System.Double
+		IL_0ded: stloc.s 36
+		IL_0def: ldloc.s 21
+		IL_0df1: ldloc.s 36
+		IL_0df3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0df8: pop
+		IL_0df9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0dfe: stloc.s 21
+		IL_0e00: ldc.i4.0
+		IL_0e01: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+		IL_0e06: brfalse IL_0e2a
 
-		IL_0dd3: ldstr "A"
-		IL_0dd8: ldc.r8 0.0
-		IL_0de1: box [System.Runtime]System.Double
-		IL_0de6: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
-		IL_0deb: stloc.s 36
-		IL_0ded: br IL_0e16
+		IL_0e0b: ldstr "A"
+		IL_0e10: ldc.r8 0.0
+		IL_0e19: box [System.Runtime]System.Double
+		IL_0e1e: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, object)
+		IL_0e23: stloc.s 37
+		IL_0e25: br IL_0e4e
 
-		IL_0df2: ldstr "A"
-		IL_0df7: ldstr "charCodeAt"
-		IL_0dfc: ldc.r8 0.0
-		IL_0e05: box [System.Runtime]System.Double
-		IL_0e0a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0e0f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0e14: stloc.s 36
+		IL_0e2a: ldstr "A"
+		IL_0e2f: ldstr "charCodeAt"
+		IL_0e34: ldc.r8 0.0
+		IL_0e3d: box [System.Runtime]System.Double
+		IL_0e42: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0e47: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0e4c: stloc.s 37
 
-		IL_0e16: ldloc.s 36
-		IL_0e18: box [System.Runtime]System.Double
-		IL_0e1d: stloc.s 35
-		IL_0e1f: ldloc.s 21
-		IL_0e21: ldloc.s 35
-		IL_0e23: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0e28: pop
-		IL_0e29: ldstr "String"
-		IL_0e2e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0e33: volatile.
-		IL_0e35: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-		IL_0e3a: brfalse IL_0e4e
+		IL_0e4e: ldloc.s 37
+		IL_0e50: box [System.Runtime]System.Double
+		IL_0e55: stloc.s 36
+		IL_0e57: ldloc.s 21
+		IL_0e59: ldloc.s 36
+		IL_0e5b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0e60: pop
+		IL_0e61: ldstr "String"
+		IL_0e66: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0e6b: volatile.
+		IL_0e6d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_0e72: brfalse IL_0e86
 
-		IL_0e3f: ldstr "prototype"
-		IL_0e44: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0e49: br IL_0e62
+		IL_0e77: ldstr "prototype"
+		IL_0e7c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0e81: br IL_0e9a
 
-		IL_0e4e: ldstr "prototype"
-		IL_0e53: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:343"
-		IL_0e58: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
-		IL_0e5d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0e86: ldstr "prototype"
+		IL_0e8b: ldstr "String_PrototypeMethodOverrides:Modules.String_PrototypeMethodOverrides:__js_module_init__:351"
+		IL_0e90: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_31
+		IL_0e95: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0e62: stloc.s 20
-		IL_0e64: ldloc.s 20
-		IL_0e66: ldstr "charCodeAt"
-		IL_0e6b: ldloc.s 17
-		IL_0e6d: ldc.i4.1
-		IL_0e6e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0e73: pop
-		IL_0e74: ldnull
-		IL_0e75: stloc.s 18
-		IL_0e77: ret
+		IL_0e9a: stloc.s 20
+		IL_0e9c: ldloc.s 20
+		IL_0e9e: ldstr "charCodeAt"
+		IL_0ea3: ldloc.s 17
+		IL_0ea5: ldc.i4.1
+		IL_0ea6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0eab: pop
+		IL_0eac: ldnull
+		IL_0ead: stloc.s 18
+		IL_0eaf: ret
 	} // end of method String_PrototypeMethodOverrides::__js_module_init__
 
 } // end of class Modules.String_PrototypeMethodOverrides

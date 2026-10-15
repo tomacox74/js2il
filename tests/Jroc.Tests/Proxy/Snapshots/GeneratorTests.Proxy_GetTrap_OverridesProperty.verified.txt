@@ -275,7 +275,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 250 (0xfa)
+		// Code size: 264 (0x108)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_GetTrap_OverridesProperty/Scope,
@@ -284,8 +284,8 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
 			[4] object[],
 			[5] class Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler/FunctionObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[7] object
+			[6] object,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Proxy_GetTrap_OverridesProperty/Scope::.ctor()
@@ -316,61 +316,65 @@
 		IL_004e: ldc.i4.0
 		IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0054: stloc.s 5
-		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_005b: dup
-		IL_005c: ldstr "get"
-		IL_0061: ldloc.s 5
-		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0068: stloc.2
-		IL_0069: ldloc.1
-		IL_006a: ldloc.2
-		IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0070: stloc.3
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0076: stloc.s 6
-		IL_0078: volatile.
-		IL_007a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_007f: brfalse IL_0094
+		IL_0056: ldloc.s 5
+		IL_0058: ldstr "get"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0062: stloc.s 6
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0069: dup
+		IL_006a: ldstr "get"
+		IL_006f: ldloc.s 6
+		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0076: stloc.2
+		IL_0077: ldloc.1
+		IL_0078: ldloc.2
+		IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_007e: stloc.3
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0084: stloc.s 7
+		IL_0086: volatile.
+		IL_0088: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_008d: brfalse IL_00a2
 
-		IL_0084: ldloc.3
-		IL_0085: ldstr "a"
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_008f: br IL_00a9
+		IL_0092: ldloc.3
+		IL_0093: ldstr "a"
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009d: br IL_00b7
 
-		IL_0094: ldloc.3
-		IL_0095: ldstr "a"
-		IL_009a: ldstr "Proxy_GetTrap_OverridesProperty:Modules.Proxy_GetTrap_OverridesProperty:__js_module_init__:19"
-		IL_009f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00a2: ldloc.3
+		IL_00a3: ldstr "a"
+		IL_00a8: ldstr "Proxy_GetTrap_OverridesProperty:Modules.Proxy_GetTrap_OverridesProperty:__js_module_init__:21"
+		IL_00ad: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00a9: stloc.s 7
-		IL_00ab: ldloc.s 6
-		IL_00ad: ldloc.s 7
-		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b4: pop
-		IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ba: stloc.s 6
-		IL_00bc: volatile.
-		IL_00be: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00c3: brfalse IL_00d8
+		IL_00b7: stloc.s 6
+		IL_00b9: ldloc.s 7
+		IL_00bb: ldloc.s 6
+		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c2: pop
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: stloc.s 7
+		IL_00ca: volatile.
+		IL_00cc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00d1: brfalse IL_00e6
 
-		IL_00c8: ldloc.3
-		IL_00c9: ldstr "b"
-		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d3: br IL_00ed
+		IL_00d6: ldloc.3
+		IL_00d7: ldstr "b"
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e1: br IL_00fb
 
-		IL_00d8: ldloc.3
-		IL_00d9: ldstr "b"
-		IL_00de: ldstr "Proxy_GetTrap_OverridesProperty:Modules.Proxy_GetTrap_OverridesProperty:__js_module_init__:24"
-		IL_00e3: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00e6: ldloc.3
+		IL_00e7: ldstr "b"
+		IL_00ec: ldstr "Proxy_GetTrap_OverridesProperty:Modules.Proxy_GetTrap_OverridesProperty:__js_module_init__:26"
+		IL_00f1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00ed: stloc.s 7
-		IL_00ef: ldloc.s 6
-		IL_00f1: ldloc.s 7
-		IL_00f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f8: pop
-		IL_00f9: ret
+		IL_00fb: stloc.s 6
+		IL_00fd: ldloc.s 7
+		IL_00ff: ldloc.s 6
+		IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0106: pop
+		IL_0107: ret
 	} // end of method Proxy_GetTrap_OverridesProperty::__js_module_init__
 
 } // end of class Modules.Proxy_GetTrap_OverridesProperty

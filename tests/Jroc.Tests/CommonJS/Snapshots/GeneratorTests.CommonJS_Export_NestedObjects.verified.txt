@@ -1234,16 +1234,18 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 253 (0xfd)
+		// Code size: 295 (0x127)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.CommonJS_Export_NestedObjects_Lib/Scope,
 			[1] object[],
 			[2] class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L9C13/FunctionObject,
-			[3] class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[5] class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[3] object,
+			[4] class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/Scope::.ctor()
@@ -1264,81 +1266,93 @@
 		IL_001f: ldc.i4.0
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L9C13/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0025: stloc.2
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldloc.0
-		IL_002f: stelem.ref
-		IL_0030: stloc.1
-		IL_0031: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject::.ctor()
-		IL_0036: ldc.i4.2
-		IL_0037: conv.r8
-		IL_0038: ldstr ""
-		IL_003d: ldc.i4.0
-		IL_003e: ldc.i4.0
-		IL_003f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0044: stloc.3
-		IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_004a: dup
-		IL_004b: ldstr "add"
-		IL_0050: ldloc.2
-		IL_0051: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0056: dup
-		IL_0057: ldstr "multiply"
-		IL_005c: ldloc.3
-		IL_005d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0062: stloc.s 4
-		IL_0064: ldc.i4.1
-		IL_0065: newarr [System.Runtime]System.Object
-		IL_006a: dup
-		IL_006b: ldc.i4.0
-		IL_006c: ldloc.0
-		IL_006d: stelem.ref
-		IL_006e: stloc.1
-		IL_006f: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject::.ctor()
-		IL_0074: ldc.i4.1
-		IL_0075: conv.r8
-		IL_0076: ldstr ""
-		IL_007b: ldc.i4.0
-		IL_007c: ldc.i4.0
-		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0082: stloc.s 5
-		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0089: dup
-		IL_008a: ldstr "prefix"
-		IL_008f: ldstr "Result: "
-		IL_0094: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0099: dup
-		IL_009a: ldstr "formatNum"
-		IL_009f: ldloc.s 5
-		IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00a6: stloc.s 6
-		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00ad: dup
-		IL_00ae: ldstr "name"
-		IL_00b3: ldstr "Calculator"
-		IL_00b8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00bd: dup
-		IL_00be: ldstr "version"
-		IL_00c3: ldc.r8 1
-		IL_00cc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00d1: dup
-		IL_00d2: ldstr "math"
-		IL_00d7: ldloc.s 4
-		IL_00d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00de: dup
-		IL_00df: ldstr "utils"
-		IL_00e4: ldloc.s 6
-		IL_00e6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00eb: stloc.s 6
-		IL_00ed: ldarg.2
-		IL_00ee: ldstr "exports"
-		IL_00f3: ldloc.s 6
-		IL_00f5: ldc.i4.1
-		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00fb: pop
-		IL_00fc: ret
+		IL_0026: ldloc.2
+		IL_0027: ldstr "add"
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0031: stloc.3
+		IL_0032: ldc.i4.1
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: stelem.ref
+		IL_003c: stloc.1
+		IL_003d: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject::.ctor()
+		IL_0042: ldc.i4.2
+		IL_0043: conv.r8
+		IL_0044: ldstr ""
+		IL_0049: ldc.i4.0
+		IL_004a: ldc.i4.0
+		IL_004b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0050: stloc.s 4
+		IL_0052: ldloc.s 4
+		IL_0054: ldstr "multiply"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_005e: stloc.s 5
+		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0065: dup
+		IL_0066: ldstr "add"
+		IL_006b: ldloc.3
+		IL_006c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0071: dup
+		IL_0072: ldstr "multiply"
+		IL_0077: ldloc.s 5
+		IL_0079: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_007e: stloc.s 6
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldloc.0
+		IL_0089: stelem.ref
+		IL_008a: stloc.1
+		IL_008b: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject::.ctor()
+		IL_0090: ldc.i4.1
+		IL_0091: conv.r8
+		IL_0092: ldstr ""
+		IL_0097: ldc.i4.0
+		IL_0098: ldc.i4.0
+		IL_0099: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_009e: stloc.s 7
+		IL_00a0: ldloc.s 7
+		IL_00a2: ldstr "formatNum"
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_00ac: stloc.s 5
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00b3: dup
+		IL_00b4: ldstr "prefix"
+		IL_00b9: ldstr "Result: "
+		IL_00be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c3: dup
+		IL_00c4: ldstr "formatNum"
+		IL_00c9: ldloc.s 5
+		IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d0: stloc.s 8
+		IL_00d2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00d7: dup
+		IL_00d8: ldstr "name"
+		IL_00dd: ldstr "Calculator"
+		IL_00e2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00e7: dup
+		IL_00e8: ldstr "version"
+		IL_00ed: ldc.r8 1
+		IL_00f6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00fb: dup
+		IL_00fc: ldstr "math"
+		IL_0101: ldloc.s 6
+		IL_0103: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0108: dup
+		IL_0109: ldstr "utils"
+		IL_010e: ldloc.s 8
+		IL_0110: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0115: stloc.s 8
+		IL_0117: ldarg.2
+		IL_0118: ldstr "exports"
+		IL_011d: ldloc.s 8
+		IL_011f: ldc.i4.1
+		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0125: pop
+		IL_0126: ret
 	} // end of method CommonJS_Export_NestedObjects_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_NestedObjects_Lib

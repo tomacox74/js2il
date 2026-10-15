@@ -602,7 +602,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 157 (0x9d)
+		// Code size: 169 (0xa9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Captures_Shadowed_Global_URL/Scope,
@@ -642,36 +642,40 @@
 		IL_003a: ldc.i4.0
 		IL_003b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.CommonJS_Require_Captures_Shadowed_Global_URL/FunctionExpression_descriptor/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0040: stloc.s 4
-		IL_0042: newobj instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL/ObjectLiterals/L5C18_descriptor::.ctor()
-		IL_0047: stloc.1
-		IL_0048: ldloc.1
-		IL_0049: ldloc.s 4
-		IL_004b: callvirt instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL/ObjectLiterals/L5C18_descriptor::set_value(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: stloc.s 5
-		IL_0057: volatile.
-		IL_0059: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_005e: brfalse IL_0078
+		IL_0042: ldloc.s 4
+		IL_0044: ldstr "value"
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_004e: stloc.2
+		IL_004f: newobj instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL/ObjectLiterals/L5C18_descriptor::.ctor()
+		IL_0054: stloc.1
+		IL_0055: ldloc.1
+		IL_0056: ldloc.2
+		IL_0057: callvirt instance void Modules.CommonJS_Require_Captures_Shadowed_Global_URL/ObjectLiterals/L5C18_descriptor::set_value(class [JavaScriptRuntime]JavaScriptRuntime.JsFunctionObject)
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: stloc.s 5
+		IL_0063: volatile.
+		IL_0065: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_006a: brfalse IL_0084
 
-		IL_0063: ldloc.1
-		IL_0064: ldstr "value"
-		IL_0069: ldstr "child"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0073: br IL_0092
+		IL_006f: ldloc.1
+		IL_0070: ldstr "value"
+		IL_0075: ldstr "child"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_007f: br IL_009e
 
-		IL_0078: ldloc.1
-		IL_0079: ldstr "value"
-		IL_007e: ldstr "child"
-		IL_0083: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:Modules.CommonJS_Require_Captures_Shadowed_Global_URL:__js_module_init__:16"
-		IL_0088: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_0084: ldloc.1
+		IL_0085: ldstr "value"
+		IL_008a: ldstr "child"
+		IL_008f: ldstr "CommonJS_Require_Captures_Shadowed_Global_URL:Modules.CommonJS_Require_Captures_Shadowed_Global_URL:__js_module_init__:18"
+		IL_0094: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0092: stloc.2
-		IL_0093: ldloc.s 5
-		IL_0095: ldloc.2
-		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009b: pop
-		IL_009c: ret
+		IL_009e: stloc.2
+		IL_009f: ldloc.s 5
+		IL_00a1: ldloc.2
+		IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a7: pop
+		IL_00a8: ret
 	} // end of method CommonJS_Require_Captures_Shadowed_Global_URL::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Captures_Shadowed_Global_URL
