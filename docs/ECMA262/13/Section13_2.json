@@ -193,9 +193,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-this-keyword",
         "testScripts": [
           "tests/Jroc.Tests/ValidatorTests.cs",
-          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
+          "tests/Jroc.Test262.Tests/language/expressions/this/ConstructionCompletionExecutionTests.cs"
         ],
-        "notes": "The validator accepts ThisExpression, HIR/LIR lower it, and object-literal method/member-call coverage verifies receiver binding. The status remains limited while broader strict/sloppy/global this test262 coverage is still incomplete."
+        "notes": "The validator accepts ThisExpression, HIR/LIR lower it, and object-literal method/member-call coverage verifies receiver binding. All six applicable pinned this-expression cases are accounted for: two verified passing (including one parse-negative case) and four explicitly skipped for unsupported eval. The feature status remains limited by those eval-dependent scenarios."
       },
       {
         "clause": "13.2.1",

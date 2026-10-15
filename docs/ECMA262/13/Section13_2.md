@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-15T00:24:46Z
+> Last generated (UTC): 2026-10-15T08:15:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -54,7 +54,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Const reassignment throws TypeError | Supported | [`Variable_ConstReassignmentError.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js) |  | Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch. |
 | let/const | Supported with Limitations | [`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`Variable_LetShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetShadowing.js)<br>[`Variable_LetNestedShadowingChain.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js)<br>[`Variable_LetFunctionNestedShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js)<br>[`Variable_ConstSimple.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_ConstSimple.js) |  | Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending. |
-| The this keyword | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js) |  | The validator accepts ThisExpression, HIR/LIR lower it, and object-literal method/member-call coverage verifies receiver binding. The status remains limited while broader strict/sloppy/global this test262 coverage is still incomplete. |
+| The this keyword | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>`tests/Jroc.Test262.Tests/language/expressions/this/ConstructionCompletionExecutionTests.cs` |  | The validator accepts ThisExpression, HIR/LIR lower it, and object-literal method/member-call coverage verifies receiver binding. All six applicable pinned this-expression cases are accounted for: two verified passing (including one parse-negative case) and four explicitly skipped for unsupported eval. The feature status remains limited by those eval-dependent scenarios. |
 
 ### 13.2.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-this-keyword-runtime-semantics-evaluation))
 
