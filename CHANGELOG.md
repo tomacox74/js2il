@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(runtime): initialize the realm's intrinsic RegExp constructor on first
+  access so split and matchAll work in fresh hosted realms, including both
+  unchanged Dromaeo regexp workloads with unmodified host globals (#2299).
 
 ## v0.12.31 - 2026-10-15
 
