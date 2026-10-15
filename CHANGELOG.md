@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.32 - 2026-10-15
+
 - perf(runtime): replace reflective dynamic Math dispatch with fixed-arity,
   receiver-independent built-ins; preserve member selection before argument
   evaluation, JavaScript coercion and mutable globals. Skip compiled static-field
