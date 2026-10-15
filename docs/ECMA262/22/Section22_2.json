@@ -871,7 +871,8 @@
         "specUrl": "https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.matchAll/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/built-ins/RegExpStringIteratorPrototype/next/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExpStringIteratorPrototype/next/ExecutionTests.cs",
+          "tests/Jroc.Tests/RegExp/FreshRealmTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/RegExp/prototype/Symbol.matchAll/species-constructor.js",
@@ -885,7 +886,7 @@
           "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-get-throws.js",
           "test/built-ins/RegExpStringIteratorPrototype/next/custom-regexpexec-not-callable.js"
         ],
-        "notes": "Creates lazy RegExp String Iterators with cached lastIndex and species construction. Five additional pinned native Test262 cases verify borrowed receivers, abrupt completion, species errors, and the built-in method's name descriptor. Full RegExp exotic, cross-realm, and Unicode behavior remains limited."
+        "notes": "Creates lazy RegExp String Iterators with cached lastIndex and species construction. Default intrinsic constructor access bootstraps the current realm when needed, including fresh hosted execution without prior globalThis access. Five additional pinned native Test262 cases verify borrowed receivers, abrupt completion, species errors, and the built-in method's name descriptor. Full RegExp exotic, cross-realm, and Unicode behavior remains limited."
       },
       {
         "clause": "22.2.6.10",
@@ -939,9 +940,10 @@
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Split_Regex_Basic.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs",
+          "tests/Jroc.Tests/RegExp/FreshRealmTests.cs"
         ],
-        "notes": "RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited."
+        "notes": "RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Default intrinsic constructor access bootstraps the current realm when needed; fresh hosted regressions cover empty and nonempty separators and both unchanged Dromaeo regexp workloads. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited."
       },
       {
         "clause": "22.2.6.15",
