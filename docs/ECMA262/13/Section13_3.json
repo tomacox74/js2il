@@ -299,7 +299,7 @@
         "testScripts": [
           "tests/Jroc.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
         ],
-        "notes": "Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Spread arguments in `new` are not supported."
+        "notes": "Built-in Error identifiers use their existing message/options construction paths. Spread arguments are expanded through the shared iterator-aware argument-list builder and runtime construction dispatch."
       },
       {
         "clause": "13.3.5",
@@ -337,7 +337,7 @@
           "test/language/expressions/new/S11.2.2_A2.js",
           "test/language/expressions/new/ctorExpr-isCtor-after-args-eval.js"
         ],
-        "notes": "User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Derived classes with function-valued bases preserve replacement-object returns and propagate the derived constructor as new.target. The native Test262 harness additionally verifies 32 current-provenance NewExpression fixtures. Spread arguments in `new` are not supported."
+        "notes": "User-defined classes without spread retain direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Derived classes with function-valued bases preserve replacement-object returns and propagate the derived constructor as new.target. Spread construction uses runtime dispatch after evaluating the constructor and expanding arguments."
       },
       {
         "clause": "13.3.5",
@@ -345,9 +345,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_GeneratedConstruction_Semantics.js",
+          "tests/Jroc.Test262.Tests/language/expressions/new/ConstructionCompletionExecutionTests.cs"
         ],
-        "notes": "When the constructor is not statically known, JROC lowers to runtime construction dispatch by packing arguments into an object[]. Generated ordinary function objects honor mutable prototype values, alternate Reflect.construct newTarget values, and constructor return overrides. Spread arguments in `new` are not supported."
+        "notes": "Runtime-valued constructors use inline arguments for common arities or an object[] for spread/larger argument lists. The evaluated constructor is retained before argument evaluation so reassignment of its binding cannot replace the selected constructor. Generated ordinary function objects honor mutable prototype values, alternate Reflect.construct newTarget values, and constructor return overrides. All 59 applicable pinned NewExpression cases are accounted for: 57 verified passing and two unsupported eval cases."
       },
       {
         "clause": "13.3.2",
@@ -356,9 +357,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-property-accessors",
         "testScripts": [
           "tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
-          "tests/Jroc.Test262.Tests/language/expressions/property-accessors/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/property-accessors/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/property-accessors/ConstructionCompletionExecutionTests.cs"
         ],
-        "notes": "MemberExpression lowering supports identifier and computed read/write targets. Computed keys are converted through ToPropertyKey exactly once so observable coercion and abrupt completion are preserved. super.prop as a value (non-call) is not supported; only super.m(...) is supported for base-method calls.",
+        "notes": "MemberExpression lowering supports identifier and computed read/write targets. Computed keys are converted through ToPropertyKey exactly once so observable coercion and abrupt completion are preserved. All 21 applicable pinned property-accessor cases are accounted for: 19 verified passing and two unsupported eval cases. Some super-property reads and writes remain limited.",
         "test262Paths": [
           "test/language/expressions/property-accessors/S11.2.1_A4_T3.js"
         ]
@@ -383,7 +385,7 @@
           "test/language/expressions/call/spread-mult-obj-ident.js",
           "test/language/expressions/call/trailing-comma.js"
         ],
-        "notes": "Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is supported by evaluating arguments left-to-right, expanding spread values using iterator semantics, and invoking via an args-array dispatch path. The native Test262 harness additionally verifies 53 current-provenance CallExpression fixtures. Spread in `new` argument lists is not supported."
+        "notes": "Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is supported by evaluating arguments left-to-right, expanding spread values using iterator semantics, and invoking via an args-array dispatch path. The native Test262 harness additionally verifies 53 current-provenance CallExpression fixtures."
       },
       {
         "clause": "13.3.6",
@@ -399,7 +401,7 @@
       },
       {
         "clause": "13.3.8",
-        "feature": "Argument lists (including spread) for CallExpression",
+        "feature": "Argument lists (including spread) for calls and construction",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-argument-lists",
         "testScripts": [
@@ -408,9 +410,10 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js",
+          "tests/Jroc.Test262.Tests/language/expressions/new/ConstructionCompletionExecutionTests.cs"
         ],
-        "notes": "Argument list evaluation supports spread elements in CallExpression argument lists by expanding iterables via the iterator protocol. Spread in `new` argument lists is not supported."
+        "notes": "CallExpression and NewExpression argument lists preserve spread elements in HIR and expand iterables left-to-right through the existing iterator protocol. Constructor expressions are resolved before arguments, and iterator lookup/call/step/value errors propagate without invoking the constructor."
       },
       {
         "clause": "13.3.6",

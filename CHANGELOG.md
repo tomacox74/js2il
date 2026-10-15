@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete pinned new-expression, property-accessor, and this-keyword
+  registration with 51 exact upstream fixtures: 43 verified passing (including
+  two parse-negative cases) and eight explicit eval skips. Preserve spread
+  arguments in HIR for every new-expression callee form, expand constructor
+  arguments through the existing iterator-aware runtime dispatch, and retain
+  constructor values across argument-side reassignment.
+
 - test262: port 197 pinned core-expression cases: 181 verified passing,
   including 54 parse-negative cases, and 16 explicit eval skips. Reconcile
   existing operator coverage against the pinned corpus. Support short-circuit

@@ -39,6 +39,15 @@ selection used current central registration reporting through the registered
 MCP connector. Native validation remains branch-local, not central trusted
 acceptance.
 
+New-expression, property-accessor, and this-keyword groups now have results for
+all applicable pinned cases: 78 verified passing and eight unsupported eval
+cases. This batch adds 51 exact fixtures: 43 verified passing, including two
+parse-negative cases, and eight eval skips. All required native variants of
+both the new and previously registered cases were checked under one frozen
+Release build. Catalogue MCP tools were unavailable for this batch, so
+selection and acceptance are explicitly local diagnosis/PR validation, not
+fresh central reporting or trusted central acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -75,8 +84,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
-| Language syntax and semantics | 19,100 | 239 | 4,308 | 23,647 | **80.77%** |
-| **Total** | 36,330 | 263 | 11,652 | 48,245 | **75.30%** |
+| Language syntax and semantics | 19,143 | 247 | 4,257 | 23,647 | **80.95%** |
+| **Total** | 36,373 | 271 | 11,601 | 48,245 | **75.39%** |
 
 ## Language Areas
 
@@ -91,7 +100,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,110 | 180 | 748 | 11,038 | **91.59%** |
+| `expressions` | 10,153 | 188 | 697 | 11,038 | **91.98%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -160,14 +169,14 @@ bounded worker cleanup.
 | `modulus` | 39 | 0 | 1 | 40 | **97.50%** |
 | `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
 | `new.target` | 11 | 0 | 3 | 14 | **78.57%** |
-| `new` | 32 | 0 | 27 | 59 | **54.24%** |
+| `new` | 57 | 2 | 0 | 59 | **96.61%** |
 | `object` | 1,148 | 22 | 0 | 1,170 | **98.12%** |
 | `optional-chaining` | 37 | 1 | 0 | 38 | **97.37%** |
 | `postfix-decrement` | 37 | 0 | 0 | 37 | **100.00%** |
 | `postfix-increment` | 38 | 0 | 0 | 38 | **100.00%** |
 | `prefix-decrement` | 34 | 0 | 0 | 34 | **100.00%** |
 | `prefix-increment` | 33 | 0 | 0 | 33 | **100.00%** |
-| `property-accessors` | 3 | 0 | 18 | 21 | **14.29%** |
+| `property-accessors` | 19 | 2 | 0 | 21 | **90.48%** |
 | `relational` | 0 | 0 | 1 | 1 | **0.00%** |
 | `right-shift` | 36 | 0 | 1 | 37 | **97.30%** |
 | `strict-does-not-equals` | 28 | 0 | 2 | 30 | **93.33%** |
@@ -177,7 +186,7 @@ bounded worker cleanup.
 | `tagged-template` | 0 | 0 | 27 | 27 | **0.00%** |
 | `tco-pos.js` | 1 | 0 | 0 | 1 | **100.00%** |
 | `template-literal` | 3 | 0 | 54 | 57 | **5.26%** |
-| `this` | 0 | 0 | 6 | 6 | **0.00%** |
+| `this` | 2 | 4 | 0 | 6 | **33.33%** |
 | `typeof` | 15 | 1 | 0 | 16 | **93.75%** |
 | `unary-minus` | 13 | 1 | 0 | 14 | **92.86%** |
 | `unary-plus` | 15 | 2 | 0 | 17 | **88.24%** |

@@ -4257,14 +4257,9 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
-                    var dynamicArgs = new List<HIRExpression>();
-                    foreach (var arg in newExpr.Arguments)
+                    if (!TryParseArguments(newExpr.Arguments, out var dynamicArgs))
                     {
-                        if (!TryParseExpression(arg, out var argHirExpr) || argHirExpr == null)
-                        {
-                            return false;
-                        }
-                        dynamicArgs.Add(argHirExpr);
+                        return false;
                     }
 
                     hirExpr = new HIRNewExpression(dynamicCallee, dynamicArgs);
@@ -4274,14 +4269,9 @@ partial class HIRMethodBuilder
                 var newCalleeSymbol = _currentScope.FindSymbol(newCalleeId.Name);
                 if (newCalleeSymbol.Kind != BindingKind.Global)
                 {
-                    var userArgs = new List<HIRExpression>();
-                    foreach (var arg in newExpr.Arguments)
+                    if (!TryParseArguments(newExpr.Arguments, out var userArgs))
                     {
-                        if (!TryParseExpression(arg, out var argHirExpr))
-                        {
-                            return false;
-                        }
-                        userArgs.Add(argHirExpr!);
+                        return false;
                     }
 
                     // If this is a user-defined class declaration, lowering will take the direct class ctor fast-path.
@@ -4314,14 +4304,15 @@ partial class HIRMethodBuilder
                             globalThisProperty.PropertyType)
                         || typeof(Type).IsAssignableFrom(globalThisProperty.PropertyType));
 
-                var newArgExprs = new List<HIRExpression>();
-                foreach (var arg in newExpr.Arguments)
+                if (!TryParseArguments(newExpr.Arguments, out var newArgExprs))
                 {
-                    if (!TryParseExpression(arg, out var argHirExpr))
-                    {
-                        return false;
-                    }
-                    newArgExprs.Add(argHirExpr!);
+                    return false;
+                }
+
+                if (newArgExprs.Any(argument => argument is HIRSpreadElement))
+                {
+                    hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), newArgExprs);
+                    return true;
                 }
 
                 if (!isBuiltInError
@@ -5162,8 +5153,8 @@ partial class HIRMethodBuilder
                         callExpression.Callee,
                         segments,
                         out baseExpression)
-                    || !TryParseChainCallArguments(
-                        callExpression,
+                    || !TryParseArguments(
+                        callExpression.Arguments,
                         out var arguments))
                 {
                     return false;
@@ -5200,12 +5191,12 @@ partial class HIRMethodBuilder
             _ => false
         };
 
-    private bool TryParseChainCallArguments(
-        CallExpression callExpression,
+    private bool TryParseArguments(
+        in NodeList<Expression> argumentNodes,
         out IReadOnlyList<HIRExpression> arguments)
     {
-        var parsedArguments = new List<HIRExpression>(callExpression.Arguments.Count);
-        foreach (var argument in callExpression.Arguments)
+        var parsedArguments = new List<HIRExpression>(argumentNodes.Count);
+        foreach (var argument in argumentNodes)
         {
             if (argument is SpreadElement spread)
             {
