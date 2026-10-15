@@ -222,11 +222,12 @@
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation",
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/expressions/logical-assignment/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/logical-assignment/OperatorCompletionExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/assignment/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/logical-assignment/ExpressionSyntaxConformanceBatchExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/expressions/logical-assignment/ExpressionSyntaxConformanceBatchParseTests.cs"
         ],
-        "notes": "&&=, ||=, and ??= short-circuit without invoking private setters or writing private fields when the existing value determines the result. The left-hand reference and receiver are evaluated once, anonymous function/class RHS values receive inferred names, and assignment through with-environment references updates the resolved binding. The native Test262 harness additionally verifies 34 logical-assignment fixtures."
+        "notes": "&&=, ||=, and ??= short-circuit without evaluating the RHS or performing a write when the existing value determines the result. Identifier, property, computed-index, inferred object-literal, and private references retain their existing setter paths and strictness. The left-hand reference and receiver are evaluated once, anonymous function/class RHS values receive inferred names, and assignment through with-environment references updates the resolved binding. All 78 applicable pinned logical-assignment cases have verified native results."
       },
       {
         "clause": "13.15",

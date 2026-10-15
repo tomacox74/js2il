@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 197 pinned core-expression cases: 181 verified passing,
+  including 54 parse-negative cases, and 16 explicit eval skips. Reconcile
+  existing operator coverage against the pinned corpus. Support short-circuit
+  logical assignment to property/index targets, preserve computed update
+  reference evaluation and key-coercion order, and dispatch instanceof through
+  Symbol.hasInstance with the original receiver and boolean-coerced result.
+  Proper-tail-call cases in coalesce and comma remain unverified.
+
 - test262: complete async-arrow-function, async-function, await, and delete
   expression coverage with 73 exact pinned fixtures: 67 runnable cases and
   six explicit eval skips. Reconcile 53 already-registered delete cases omitted

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-23T20:02:19Z
+> Last generated (UTC): 2026-10-15T07:30:47Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,11 +28,17 @@
 
 Feature-level support tracking with repo test references and optional test262 evidence.
 
+### 13.4 ([tc39.es](https://tc39.es/ecma262/#sec-update-expressions))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Computed update reference evaluation and coercion order | Supported | `tests/Jroc.Test262.Tests/language/expressions/postfix-increment/OperatorCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/postfix-decrement/OperatorCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/OperatorCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-decrement/OperatorCompletionExecutionTests.cs` |  | Computed updates evaluate the base and key expression once, propagate key-expression errors before rejecting null/undefined bases, and reject those bases before observable property-key coercion. The prepared reference is retained through ToNumeric and the write; numeric index fast paths are preserved. |
+
 ### 13.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-update-expressions-static-semantics-early-errors))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Update-expression early errors for invalid assignment targets | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/postfix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/postfix-decrement/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-decrement/PortExpressionsBatchExecutionTests.cs` |  | The checked-in update-expression ports cover valid identifier targets and the runtime ToNumber/GetValue/PutValue flows behind them. Broader early-error coverage (for example every invalid complex target form) is still not exhaustively tracked in-repo. |
+| Update-expression early errors for invalid assignment targets | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/postfix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/postfix-decrement/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/prefix-decrement/PortExpressionsBatchExecutionTests.cs` |  | All 142 applicable pinned prefix/postfix increment/decrement cases have verified native results, including strict-mode early errors and invalid assignment targets. Tests named eval.js reject the restricted identifier in strict code; they do not execute eval and remain runnable. |
 
 ### 13.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator))
 
