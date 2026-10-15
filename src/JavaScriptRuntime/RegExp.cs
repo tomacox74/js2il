@@ -792,6 +792,7 @@ namespace JavaScriptRuntime
         internal bool CanUseBuiltinExecFastPath()
         {
             return !HasOwnPropertyValue("exec")
+                && ReferenceEquals(PrototypeChain.GetPrototypeOrNull(this), Prototype)
                 && PropertyDescriptorStore.TryGetOwn(Prototype, "exec", out var descriptor)
                 && descriptor.Kind == JsPropertyDescriptorKind.Data
                 && CallableOperations.HasSameBuiltinDelegateMethod(
@@ -815,7 +816,7 @@ namespace JavaScriptRuntime
             return value is RegExp;
         }
 
-        private static bool IsSameRegExpConstructor(object? value)
+        internal static bool IsSameRegExpConstructor(object? value)
         {
             if (value is null or JsNull)
             {

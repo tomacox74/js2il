@@ -2483,6 +2483,14 @@ namespace JavaScriptRuntime
             _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
+
+        internal static Array CreateWithDenseCapacity(int capacity)
+        {
+            var result = new Array(capacity);
+            result.EnsureObjectStorage(capacity);
+            return result;
+        }
+
         public Array(System.Collections.IEnumerable collection)
         {
             ArgumentNullException.ThrowIfNull(collection);

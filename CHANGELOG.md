@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(runtime): recognize intrinsic RegExp species in guarded split fast paths,
+  enumerate bounds for non-Unicode separators without captures, and build empty
+  splits directly in pre-sized storage with cached character strings. Return the
+  original input for no-match regexp replacements after observable work (#746).
 
 ## v0.12.32 - 2026-10-15
 
