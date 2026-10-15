@@ -16,6 +16,12 @@ This report provides detailed Test262 conformance evidence for the current devel
 
 Counts are unique, standalone Test262 files. Strict and non-strict execution variants are not counted separately.
 
+Array and Date now have verified passing results for all applicable tests at the
+pinned revision. String's remaining twelve known-unsupported cases require eval.
+All newly verified cases passed every required native execution variant on the
+development branch. This is branch-local evidence; central reporting was
+unavailable, and these results are not presented as central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -51,9 +57,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,097 | 13 | 6,402 | 23,512 | **72.72%** |
+| Built-in objects and APIs | 17,159 | 24 | 6,329 | 23,512 | **72.98%** |
 | Language syntax and semantics | 18,674 | 217 | 4,756 | 23,647 | **78.97%** |
-| **Total** | 35,831 | 230 | 12,184 | 48,245 | **74.27%** |
+| **Total** | 35,893 | 241 | 12,111 | 48,245 | **74.40%** |
 
 ## Language Areas
 
@@ -202,7 +208,7 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
-| `Array` | 3,054 | 0 | 27 | 3,081 | **99.12%** |
+| `Array` | 3,081 | 0 | 0 | 3,081 | **100.00%** |
 | `ArrayBuffer` | 192 | 0 | 4 | 196 | **97.96%** |
 | `ArrayIteratorPrototype` | 21 | 0 | 6 | 27 | **77.78%** |
 | `AsyncDisposableStack` | 104 | 0 | 0 | 104 | **100.00%** |
@@ -215,7 +221,7 @@ bounded worker cleanup.
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 50 | 0 | 1 | 51 | **98.04%** |
 | `DataView` | 552 | 0 | 9 | 561 | **98.40%** |
-| `Date` | 575 | 0 | 19 | 594 | **96.80%** |
+| `Date` | 594 | 0 | 0 | 594 | **100.00%** |
 | `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
 | `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
 | `DisposableStack` | 93 | 0 | 0 | 93 | **100.00%** |
@@ -251,7 +257,7 @@ bounded worker cleanup.
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
 | `SharedArrayBuffer` | 95 | 0 | 9 | 104 | **91.35%** |
-| `String` | 1,195 | 1 | 27 | 1,223 | **97.71%** |
+| `String` | 1,211 | 12 | 0 | 1,223 | **99.02%** |
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |

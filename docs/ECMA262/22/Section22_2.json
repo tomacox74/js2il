@@ -614,7 +614,7 @@
           "test/built-ins/RegExp/prototype/unicode/name.js",
           "test/built-ins/RegExp/prototype/unicodeSets/name.js"
         ],
-        "notes": "Each intrinsic RegExp prototype getter is initialized as a zero-argument built-in function named get followed by its property name, with the required configurable, non-writable, non-enumerable name descriptor. This includes unicodeSets getter metadata, but does not add v-flag pattern support."
+        "notes": "Each intrinsic RegExp prototype getter is initialized as a zero-argument built-in function named get followed by its property name, with the required configurable, non-writable, non-enumerable name descriptor. The unicodeSets getter reflects the distinct stored v flag; supported v-flag patterns are described separately."
       },
       {
         "clause": "22.2.6.4.1",
@@ -684,7 +684,7 @@
           "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/syntax/valid/ExecutionTests.cs"
         ],
-        "notes": "Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag and UnicodeSets semantics remain unsupported.",
+        "notes": "Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag supports the separately documented code-point subset; advanced Unicode set operations remain unsupported.",
         "test262Suites": [
           "built_ins.RegExp.regexp_modifiers",
           "built_ins.RegExp.regexp_modifiers.syntax.valid"
@@ -778,7 +778,7 @@
           "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.RegExpSyntaxBatch.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Named and nested captures preserve participation semantics. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited. Expanded Test262 evidence covers named captures and match-index result behavior for the supported regexp subset.",
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Explicit capture numbering preserves JavaScript order and keeps duplicate named capture occurrences distinct. Named group properties retain first-source order and select participating alternatives, including indices. Quantified backreferences reset prior captures and unset references match the empty string. Full RegExp exotic object semantics and complete Unicode mode parity remain limited.",
         "test262Suites": [
           "built_ins.RegExp.named-groups",
           "built_ins.RegExp.match-indices"
@@ -985,7 +985,7 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.unicode from the stored u flag. The runtime supports a limited subset of unicode behavior by rewriting common code-point escapes and dot handling before compiling with .NET Regex. Property escapes, unicode sets, and full ECMAScript Unicode-mode parity are still not implemented."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.unicode from the stored u flag; it remains false for v-only patterns. Common code-point escapes, code-point-aware dots and ordinary character classes, and ASCII/Any/Script=Han property escapes are translated before compiling with .NET Regex. Lone surrogates remain distinct from valid pairs. Unicode property and case-folding coverage is not complete."
       },
       {
         "clause": "22.2.6.19",
@@ -996,7 +996,14 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.unicodeSets. The getter remains false for supported regexes, and the v flag is explicitly rejected during RegExp construction with a SyntaxError because UnicodeSets mode is not implemented."
+        "test262Paths": [
+          "test/built-ins/String/prototype/match/regexp-prototype-match-v-u-flag.js",
+          "test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-v-u-flag.js",
+          "test/built-ins/String/prototype/replace/regexp-prototype-replace-v-u-flag.js",
+          "test/built-ins/String/prototype/search/regexp-prototype-search-v-flag.js",
+          "test/built-ins/String/prototype/search/regexp-prototype-search-v-u-flag.js"
+        ],
+        "notes": "The distinct v flag sets unicodeSets, does not set unicode, and cannot coexist with u. Both Unicode modes use code-point-aware matching and empty-match advancement, including matchAll iterators. Supported v syntax includes literals, dots, ordinary character classes/ranges, and ASCII, Any, and Unicode 17 Script=Han property escapes and complements. Nested sets, intersection, subtraction, q string sets, and properties of strings are explicitly rejected with SyntaxError; other Unicode properties and complete Unicode case-folding parity remain limited. This is not complete UnicodeSets support."
       },
       {
         "clause": "22.2.8.1",

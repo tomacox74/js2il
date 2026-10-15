@@ -139,6 +139,10 @@ slot initializers remain with their owning types as well.
 The primitive constructors (`Number`, `Boolean`, `BigInt`, `Symbol`),
 namespace objects (`Math`, `JSON`, `Reflect`, `Atomics`, `Intl`), `RegExp`,
 weak-reference constructors, and `SharedArrayBuffer` own their configuration.
+The limited `Temporal` namespace, `Instant` constructor, and `Instant.prototype`
+are realm-owned intrinsic slots. `Temporal` owns their descriptors and the
+branded nanosecond getter; immutable instant values retain no process-static
+JavaScript state. This interop foundation does not implement the full Temporal API.
 `Date`, disposable stacks, and abort globals use the same configuration entry
 point naming. `Intl` configures the namespace's existing constructor bindings;
 it does not add new `Intl.NumberFormat` or `Intl.Segmenter` behavior.

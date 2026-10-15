@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-07T22:59:24Z
+> Last generated (UTC): 2026-10-15T02:02:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -75,11 +75,17 @@
 
 Feature-level support tracking with repo test references and optional test262 evidence.
 
+### 22.1 ([tc39.es](https://tc39.es/ecma262/#sec-string-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Complete pinned String Test262 registration | Supported with Limitations |  | `test/built-ins/String/symbol-wrapping.js`<br>`test/built-ins/String/prototype/toString/non-generic.js`<br>`test/built-ins/String/prototype/toString/non-generic-realm.js`<br>`test/built-ins/String/prototype/valueOf/non-generic.js`<br>`test/built-ins/String/prototype/valueOf/non-generic-realm.js`<br>`test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js` | Twenty-seven final fixtures complete all 1,223 unique applicable pinned String registrations: sixteen new runnable cases pass and eleven actual eval dependencies are explicitly skipped. Overall String evidence is 1,211 passing and twelve known-unsupported cases. toString and valueOf require a string primitive or boxed String data rather than coercing incompatible receivers. new String(Symbol) rejects Symbol conversion, while String(Symbol) retains descriptive-string behavior. Computed RegExp subclass methods retain their home object and support computed super calls with spread. Preserved match, matchAll, replace, search, and replaceAll cases additionally verify duplicate named capture properties and the documented Unicode RegExp subset. |
+
 ### 22.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-string-constructor))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String constructor (call/new) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js) |  | new String(x) and String(x) are treated as sugar for DotNet2JSConversions.ToString without creating wrapper String objects; primitive string is returned and no [[StringData]]/boxed behaviors are exposed. |
+| String constructor (call/new) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js) |  | String(x) returns a primitive string and permits direct Symbol descriptive-string conversion. new String(x) creates a boxed String value with String data, length, indexed characters, and the selected new-target prototype, and rejects Symbol-to-string conversion. |
 
 ### 22.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value))
 
@@ -314,7 +320,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.toString | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | String.prototype.toString is now exposed on the public String.prototype object and validates that the receiver is string-compatible. Because jroc does not create boxed String objects, wrapper-object edge cases stay limited. |
+| String.prototype.toString | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | String.prototype.toString returns a primitive string only for primitive-string or boxed-String receivers. Incompatible receivers, including other primitive wrappers and arbitrary objects, are rejected even by borrowed functions from another realm. Preserved non-generic fixtures cover this behavior; broader boxed-object fidelity remains limited. |
 
 ### 22.1.3.30 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase))
 
@@ -356,13 +362,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.valueOf | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | String.prototype.valueOf is now exposed on the public String.prototype object and returns the primitive string value for compatible receivers. Wrapper-object and [[StringData]] fidelity remain limited because jroc does not allocate boxed String objects. |
+| String.prototype.valueOf | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | String.prototype.valueOf requires primitive-string or boxed-String data and rejects incompatible receivers without invoking their conversion hooks. Native non-generic and cross-realm fixtures cover this brand-sensitive behavior; broader boxed-object fidelity remains limited. |
 
 ### 22.1.3.35.1 ([tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ThisStringValue | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | JavaScriptRuntime.String.ThisStringValue now validates and unwraps string-compatible receivers for the public String.prototype surface. It supports primitive strings plus jroc's direct string helpers, but there is still no distinct boxed String object model. |
+| ThisStringValue | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | Brand-sensitive toString and valueOf use ThisStringPrimitiveValue to return primitive-string or boxed-String data without generic receiver conversion. Other generic String methods retain their existing object-coercion paths. Broader internal-slot fidelity remains limited. |
 
 ### 22.1.3.36 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%))
 

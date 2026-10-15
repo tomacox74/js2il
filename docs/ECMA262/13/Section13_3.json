@@ -441,6 +441,17 @@
         "notes": "Supported for derived class constructors. The native Test262 harness additionally verifies 42 current-provenance SuperCall and SuperProperty fixtures, including receiver binding and object-literal method property reads."
       },
       {
+        "clause": "13.3.7",
+        "feature": "Computed super method calls and computed class-method home objects",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
+        "test262Paths": [
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js",
+          "test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call-fn.js"
+        ],
+        "notes": "Computed class methods and accessors capture the defining constructor or prototype as their home object rather than inheriting the surrounding invocation's home. Calls of the form super[key](...args) coerce the property key, resolve the inherited callable before argument evaluation, expand spread arguments, and retain the original this receiver. Preserved RegExp subclass fixtures verify the complete String.replaceAll replacement scenarios."
+      },
+      {
         "clause": "13.3.12",
         "feature": "new.target in function/constructor call paths",
         "status": "Supported with Limitations",

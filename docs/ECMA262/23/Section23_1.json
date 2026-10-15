@@ -397,6 +397,24 @@
   "support": {
     "entries": [
       {
+        "clause": "23.1",
+        "feature": "Complete pinned Array Test262 registration",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-array-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/BuiltinCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/reduceRight/BuiltinCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/toString/BuiltinCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/length.js",
+          "test/built-ins/Array/prototype/concat/is-concat-spreadable-is-array-proxy-revoked.js",
+          "test/built-ins/Array/prototype/reduceRight/length-near-integer-limit.js",
+          "test/built-ins/Array/prototype/toString/non-callable-join-string-tag.js"
+        ],
+        "notes": "Thirty final fixtures complete registration of all 3,081 unique applicable pinned Array cases. Array.length is one with the standard descriptor. Concat passes the actual isConcatSpreadable Symbol to Proxy traps and checks revocation during IsArray. Generic reduceRight preserves safe-integer lengths without Int32 truncation. Generic toString retains the intrinsic Object.prototype.toString fallback even when the public property is deleted. Additional preserved cases verify cross-realm prototypes, species, and resizable-buffer observations. The conformance report also corrects an existing three-case Array overcount; no new registration duplicates are introduced."
+      },
+      {
         "clause": "23.1.1",
         "feature": "Realm-specific Array constructor prototype access and fallback",
         "status": "Supported",
@@ -467,7 +485,7 @@
           "test/built-ins/Array/name.js",
           "test/built-ins/Array/length/S15.4.2.2_A2.1_T1.js"
         ],
-        "notes": "Implements Array() and new Array(...) including numeric lengths from 0 through 2^32 - 1, rejecting invalid lengths with RangeError. Large sparse lengths use virtual storage without allocating every element and are preserved by derived-array initialization. The constructor has the standard name property and descriptor. Broader exotic and cross-realm construction behavior remains limited."
+        "notes": "Implements Array() and new Array(...) including numeric lengths from 0 through 2^32 - 1, rejecting invalid lengths with RangeError. Large sparse lengths use virtual storage without allocating every element and are preserved by derived-array initialization. The constructor has the standard name and length-one properties and descriptors. Broader exotic and cross-realm construction behavior remains limited."
       },
       {
         "clause": "23.1.2.1",
@@ -628,7 +646,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/concat/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Array/prototype/concat/ExecutionTests.Batch.cs"
         ],
-        "notes": "Supports generic receivers, primitive and array-like inputs, Symbol.isConcatSpreadable opt-in/opt-out, sparse holes, arguments objects, typed arrays, abrupt getters, Array species construction, invalid species rejection, non-extensible species-result failures, proxy access ordering, metadata, and safe-integer limits. Two cross-realm cases and one revoked-proxy edge case remain limited.",
+        "notes": "Supports generic receivers, primitive and array-like inputs, Symbol.isConcatSpreadable opt-in/opt-out, sparse holes, arguments objects, typed arrays, abrupt getters, Array species construction, invalid species rejection, non-extensible species-result failures, proxy access ordering, metadata, and safe-integer limits. Preserved coverage now includes revocation during the spreadability getter followed by IsArray. Broader exotic receiver behavior remains limited.",
         "test262Paths": [
           "test/built-ins/Array/prototype/concat/S15.4.4.4_A2_T1.js",
           "test/built-ins/Array/prototype/concat/S15.4.4.4_A2_T2.js",

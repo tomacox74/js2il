@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T23:04:10Z
+> Last generated (UTC): 2026-10-15T02:02:50Z
 
 JROC supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
@@ -84,6 +84,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Computed super method calls and computed class-method home objects | Supported with Limitations |  | `test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js`<br>`test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call-fn.js` | Computed class methods and accessors capture the defining constructor or prototype as their home object rather than inheriting the surrounding invocation's home. Calls of the form super[key](...args) coerce the property key, resolve the inherited callable before argument evaluation, expand spread arguments, and retain the original this receiver. Preserved RegExp subclass fixtures verify the complete String.replaceAll replacement scenarios. |
 | super.m(...) base method calls | Supported | [`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>[`Async_Inheritance_SuperAsyncMethod.js`](../../../tests/Jroc.Tests/Async/JavaScript/Async_Inheritance_SuperAsyncMethod.js)<br>[`Generator_Inheritance_SuperIteratorMethod.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Inheritance_SuperIteratorMethod.js) |  | Supports base-method calls. Current Test262 evidence also covers object-literal `super.prop` reads and receiver preservation; property writes and less-common computed forms remain limited. |
 | super(...) calls base constructor in derived constructors | Supported | [`Classes_Inheritance_SuperConstructor_Args.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js)<br>`tests/Jroc.Test262.Tests/language/expressions/super/RelatedLanguageConformance12BatchTests.cs` | `test/language/expressions/super/call-construct-invocation.js`<br>`test/language/expressions/super/call-bind-this-value.js`<br>`test/language/expressions/super/prop-dot-obj-val.js` | Supported for derived class constructors. The native Test262 harness additionally verifies 42 current-provenance SuperCall and SuperProperty fixtures, including receiver binding and object-literal method property reads. |
 | Using this before super throws ReferenceError in derived constructors | Supported | [`Classes_Inheritance_ThisBeforeSuper_Throws.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js) |  |  |
