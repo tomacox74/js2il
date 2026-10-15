@@ -11,6 +11,11 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
+        if (HasSpreadArguments(newExpr.Arguments))
+        {
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
+
         if (newExpr.Callee is HIRVariableExpression scriptConstructor
             && scriptConstructor.Name.BindingInfo.IsScriptGlobalBinding)
         {
@@ -476,6 +481,14 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
         ctorTemp = EnsureObject(ctorTemp);
+
+        if (newExpr.Arguments.Count > 0)
+        {
+            var constructorSnapshot = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(ctorTemp, constructorSnapshot));
+            DefineTempStorage(constructorSnapshot, GetTempStorage(ctorTemp));
+            ctorTemp = constructorSnapshot;
+        }
 
         if (newExpr.Arguments.Any(argument => argument is HIRSpreadElement)
             || newExpr.Arguments.Count
