@@ -6,13 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.31 - 2026-10-15
+
 - test262: complete pinned new-expression, property-accessor, and this-keyword
   registration with 51 exact upstream fixtures: 43 verified passing (including
   two parse-negative cases) and eight explicit eval skips. Preserve spread
   arguments in HIR for every new-expression callee form, expand constructor
   arguments through the existing iterator-aware runtime dispatch, and retain
   constructor values across argument-side reassignment.
-
 - test262: port 197 pinned core-expression cases: 181 verified passing,
   including 54 parse-negative cases, and 16 explicit eval skips. Reconcile
   existing operator coverage against the pinned corpus. Support short-circuit
@@ -20,7 +23,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   reference evaluation and key-coercion order, and dispatch instanceof through
   Symbol.hasInstance with the original receiver and boolean-coerced result.
   Proper-tail-call cases in coalesce and comma remain unverified.
-
 - test262: complete async-arrow-function, async-function, await, and delete
   expression coverage with 73 exact pinned fixtures: 67 runnable cases and
   six explicit eval skips. Reconcile 53 already-registered delete cases omitted
@@ -29,7 +31,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   deletion after this/key evaluation without property-key coercion or base
   access. Protected async throws now reach catch/finally before rejection,
   allowing finally throws to override the original completion.
-
 - test262: complete Array, Date, and String registration with 76 exact pinned
   fixtures: 65 verified passing and eleven explicitly skipped for unsupported
   eval. Reconcile an existing three-case Array report overcount. Fix Array
@@ -42,7 +43,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   operations remain unsupported. Date.toTemporalInstant returns exact branded,
   realm-owned Temporal.Instant values; other Temporal types and Instant
   arithmetic/parsing/formatting remain unimplemented.
-
 - test262: verify 11 additional pinned fixtures from native batch `1dd3f7c7-0cc1-5787-a3c6-a181ccae9c87`.
 - test262: complete pinned object-expression coverage with 341 new fixtures:
   325 verified passing and 16 explicitly skipped for unsupported eval.
@@ -54,13 +54,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   caller/arguments properties from methods. Execute explicit Module-goal
   sources as ES modules even without imports/exports, including top-level
   await and undefined top-level this.
-
 - test262: complete the remaining 391 async-generator expression cases:
   386 verified passing and five explicitly skipped for unsupported eval.
   Preserve named generator-expression self-bindings across deferred body
   execution and resumption by initializing them once at call time, before
   parameter defaults, instead of overwriting them on subsequent steps.
-
 - test262: complete the remaining 212 async-generator statement/declaration
   cases: 211 verified passing and one explicitly skipped for unsupported eval.
   Await explicit return expressions and return-resumption values with the
@@ -68,13 +66,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   iterators, and route synchronous delegated-protocol exceptions into the
   generator's catch/finally handlers. Align await-field planning across callable
   forms with these implicit suspension points.
-
 - test262: complete the remaining three addition, eight arrow-function, and six
   assignment-target cases: 14 verified passing and three explicitly skipped for
   unsupported eval. Fix addition's abrupt Symbol.toPrimitive conversions,
   recursively bind arrow destructuring targets without binding property keys,
   and honor Symbol.unscopables in active and captured with environments.
-
 - test262: complete 21 function-code, 17 global-code, and one destructuring
   fixture: 25 verified passing and 14 explicitly skipped for direct or indirect
   eval. Add an explicit Script compilation goal and realm-owned global
@@ -82,18 +78,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and parse-negative SyntaxError screening. Fix duplicate parameter resolution
   and hoisted functions shadowing parameters or surviving var redeclarations.
   Verify resizable-buffer TypedArray destructuring without additional product changes.
-
 - test262: reconcile 38 previously registered array-expression cases missing
   from the published conformance report. All 52 cases now have verified passing
   results; the reconciled fixtures pass all 76 default/strict variants and
   require no eval exclusions or compiler/runtime fixes.
-
 - test262: complete the remaining 75 pinned compound-assignment cases: 55
   verified passing and 20 explicitly skipped because eval is unsupported.
   Preserve the resolved with-environment binding through getter/RHS side effects,
   enforce strict deleted-binding ReferenceError behavior, and evaluate computed
   compound-assignment bases and property keys only once.
-
 - fix(runtime): enforce monotonic Atomics.waitAsync timeout deadlines instead
   of relying on fixed timer padding, preserving notification and cancellation.
 - test262: complete the remaining 148 pinned class-expression fixtures: 87
