@@ -906,9 +906,10 @@
         "testScripts": [
           "tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.replace/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.replace/ExecutionTests.cs",
+          "tests/Jroc.Tests/String/RegExpFastPathRuntimeTests.cs"
         ],
-        "notes": "RegExp.prototype Symbol.replace and String.prototype.replace delegation now honor overridden exec, observable flags and lastIndex, replacement callbacks, match-result coercion, and replacement-string substitutions. Forty-five additional pinned native Test262 cases verify these behaviors. Broader Unicode and uncommon replacement-token behavior remain limited."
+        "notes": "RegExp.prototype Symbol.replace and String.prototype.replace delegation now honor overridden exec, observable flags and lastIndex, replacement callbacks, match-result coercion, and replacement-string substitutions. No-match replacement returns the original input without copying after replacement coercion and required exec/lastIndex observations. Forty-five additional pinned native Test262 cases verify these behaviors. Broader Unicode and uncommon replacement-token behavior remain limited."
       },
       {
         "clause": "22.2.6.12",
@@ -941,9 +942,10 @@
           "tests/Jroc.Tests/String/JavaScript/String_Split_Regex_Basic.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs",
-          "tests/Jroc.Tests/RegExp/FreshRealmTests.cs"
+          "tests/Jroc.Tests/RegExp/FreshRealmTests.cs",
+          "tests/Jroc.Tests/String/RegExpFastPathRuntimeTests.cs"
         ],
-        "notes": "RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Default intrinsic constructor access bootstraps the current realm when needed; fresh hosted regressions cover empty and nonempty separators and both unchanged Dromaeo regexp workloads. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited."
+        "notes": "RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Guarded fast paths recognize the intrinsic constructor returned by the default species getter only after species construction and limit coercion, retaining custom species/exec fallbacks. Empty separators reuse cached single-code-unit strings and exact dense storage while preserving Unicode surrogate pairs. Non-Unicode separators without captures enumerate match bounds without allocating JavaScript exec results. Default intrinsic constructor access bootstraps the current realm when needed; fresh hosted regressions cover empty and nonempty separators and both unchanged Dromaeo regexp workloads. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited."
       },
       {
         "clause": "22.2.6.15",

@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-15T19:07:42Z
+> Last generated (UTC): 2026-10-15T22:31:42Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -225,7 +225,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp.prototype [ %Symbol.replace% ] | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js)<br>[`String_RegExp_SymbolDispatch_Custom.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.replace/ExecutionTests.cs` |  | RegExp.prototype Symbol.replace and String.prototype.replace delegation now honor overridden exec, observable flags and lastIndex, replacement callbacks, match-result coercion, and replacement-string substitutions. Forty-five additional pinned native Test262 cases verify these behaviors. Broader Unicode and uncommon replacement-token behavior remain limited. |
+| RegExp.prototype [ %Symbol.replace% ] | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js)<br>[`String_RegExp_SymbolDispatch_Custom.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.replace/ExecutionTests.cs`<br>`tests/Jroc.Tests/String/RegExpFastPathRuntimeTests.cs` |  | RegExp.prototype Symbol.replace and String.prototype.replace delegation now honor overridden exec, observable flags and lastIndex, replacement callbacks, match-result coercion, and replacement-string substitutions. No-match replacement returns the original input without copying after replacement coercion and required exec/lastIndex observations. Forty-five additional pinned native Test262 cases verify these behaviors. Broader Unicode and uncommon replacement-token behavior remain limited. |
 
 ### 22.2.6.12 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.search%))
 
@@ -243,7 +243,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp.prototype [ %Symbol.split% ] | Supported with Limitations | [`String_Split_Regex_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Split_Regex_Basic.js)<br>[`String_RegExp_SymbolDispatch_Custom.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs`<br>`tests/Jroc.Tests/RegExp/FreshRealmTests.cs` |  | RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Default intrinsic constructor access bootstraps the current realm when needed; fresh hosted regressions cover empty and nonempty separators and both unchanged Dromaeo regexp workloads. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited. |
+| RegExp.prototype [ %Symbol.split% ] | Supported with Limitations | [`String_Split_Regex_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Split_Regex_Basic.js)<br>[`String_RegExp_SymbolDispatch_Custom.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/Symbol.split/ExecutionTests.cs`<br>`tests/Jroc.Tests/RegExp/FreshRealmTests.cs`<br>`tests/Jroc.Tests/String/RegExpFastPathRuntimeTests.cs` |  | RegExp.prototype Symbol.split and String.prototype.split delegation support borrowed object receivers, species construction, observable flags and lastIndex, abrupt completion, and capture insertion for the covered patterns. Guarded fast paths recognize the intrinsic constructor returned by the default species getter only after species construction and limit coercion, retaining custom species/exec fallbacks. Empty separators reuse cached single-code-unit strings and exact dense storage while preserving Unicode surrogate pairs. Non-Unicode separators without captures enumerate match bounds without allocating JavaScript exec results. Default intrinsic constructor access bootstraps the current realm when needed; fresh hosted regressions cover empty and nonempty separators and both unchanged Dromaeo regexp workloads. Seventeen additional pinned native Test262 cases verify these behaviors. Full Unicode and RegExp exotic behavior remains limited. |
 
 ### 22.2.6.15 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky))
 

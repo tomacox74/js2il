@@ -2516,6 +2516,11 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (results.Count == 0)
+            {
+                return input;
+            }
+
             var nextSourcePosition = 0;
             var output = new StringBuilder();
             foreach (var result in results)
@@ -2742,7 +2747,7 @@ namespace JavaScriptRuntime
                 return result;
             }
 
-            if ((species is null or JsNull)
+            if ((species is null or JsNull || JavaScriptRuntime.RegExp.IsSameRegExpConstructor(species))
                 && receiver is JavaScriptRuntime.RegExp original
                 && original.CanUseBuiltinExecFastPath()
                 && splitter is JavaScriptRuntime.RegExp builtinSplitter
@@ -2762,6 +2767,13 @@ namespace JavaScriptRuntime
                     && flags.IndexOf('v') < 0)
                 {
                     return SplitWithLiteralSeparator(input, literal, maxCount);
+                }
+
+                if (!fullUnicode
+                    && newFlags == builtinSplitter.flags
+                    && builtinSplitter.Regex.GetGroupNumbers().Length == 1)
+                {
+                    return SplitWithUncapturedRegExp(input, builtinSplitter, maxCount);
                 }
             }
 
@@ -2824,23 +2836,63 @@ namespace JavaScriptRuntime
                 return new JavaScriptRuntime.Array();
             }
 
-            var items = new object?[global::System.Math.Min(input.Length, maxCount)];
-            var count = 0;
-            for (var index = 0; index < input.Length && count < items.Length;)
+            var count = global::System.Math.Min(input.Length, maxCount);
+            if (unicode)
+            {
+                count = 0;
+                for (var index = 0; index < input.Length && count < maxCount; count++)
+                {
+                    index = AdvanceSplitIndex(input, index, unicode: true);
+                }
+            }
+
+            var result = JavaScriptRuntime.Array.CreateWithDenseCapacity(count);
+            for (var index = 0; index < input.Length && result.Count < count;)
             {
                 var nextIndex = AdvanceSplitIndex(input, index, unicode);
-                items[count++] = input.Substring(index, nextIndex - index);
+                result.Add(nextIndex == index + 1
+                    ? CharToStringFast(input[index])
+                    : input.Substring(index, nextIndex - index));
                 index = nextIndex;
             }
 
-            if (count == items.Length)
+            return result;
+        }
+
+        private static JavaScriptRuntime.Array SplitWithUncapturedRegExp(
+            string input, JavaScriptRuntime.RegExp splitter, int maxCount)
+        {
+            var result = new JavaScriptRuntime.Array();
+            var start = 0;
+            // The fresh intrinsic splitter cannot escape. Enumerate bounds without
+            // allocating JS exec results; skip the same zero-length boundaries as @@split.
+            foreach (var match in splitter.Regex.EnumerateMatches(input.AsSpan()))
             {
-                return new JavaScriptRuntime.Array(items);
+                if (input.Length == 0)
+                {
+                    return result;
+                }
+                if (match.Index == input.Length)
+                {
+                    break;
+                }
+
+                var end = match.Index + match.Length;
+                if (end == start)
+                {
+                    continue;
+                }
+
+                result.Add(input.Substring(start, match.Index - start));
+                if (result.Count >= maxCount)
+                {
+                    return result;
+                }
+                start = end;
             }
 
-            var trimmed = new object?[count];
-            global::System.Array.Copy(items, trimmed, count);
-            return new JavaScriptRuntime.Array(trimmed);
+            result.Add(input.Substring(start));
+            return result;
         }
 
         private static int AdvanceSplitIndex(string input, int index, bool unicode)
