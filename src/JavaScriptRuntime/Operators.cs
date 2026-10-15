@@ -1289,13 +1289,23 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Implements JavaScript <c>instanceof</c> operator.
-        /// Minimal semantics: checks whether <paramref name="value"/>'s prototype chain contains <c>ctor.prototype</c>.
+        /// Invokes @@hasInstance when present, otherwise applies OrdinaryHasInstance.
         /// </summary>
         public static bool InstanceOf(object? value, object? ctor)
         {
-            if (ctor is null || ctor is JsNull)
+            if (ctor is null || TypeUtilities.IsPrimitive(ctor))
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
+            }
+
+            var handler = ObjectRuntime.GetItem(ctor, Symbol.hasInstance);
+            if (handler is not null && handler is not JsNull)
+            {
+                if (!CallableOperations.IsCallable(handler))
+                {
+                    throw new TypeError("Symbol.hasInstance is not callable");
+                }
+                return TypeUtilities.ToBoolean(CallableOperations.Call1(handler, ctor, value));
             }
 
             if (!CallableOperations.IsCallable(ctor))
@@ -1303,13 +1313,22 @@ namespace JavaScriptRuntime
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }
 
-            // Primitives (including undefined/null) are never instances once the RHS is validated.
-            if (value is null || TypeUtilities.IsPrimitive(value)) return false;
+            return OrdinaryHasInstance(value, ctor);
+        }
 
-            while (ctor is BoundFunctionObject boundFunction)
+        internal static bool OrdinaryHasInstance(object? value, object? ctor)
+        {
+            if (ctor is null || !CallableOperations.IsCallable(ctor))
             {
-                ctor = boundFunction.Target;
+                return false;
             }
+
+            if (ctor is BoundFunctionObject boundFunction)
+            {
+                return InstanceOf(value, boundFunction.Target);
+            }
+
+            if (value is null || TypeUtilities.IsPrimitive(value)) return false;
 
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");

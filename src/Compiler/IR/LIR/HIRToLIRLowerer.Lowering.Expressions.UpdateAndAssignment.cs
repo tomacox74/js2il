@@ -584,13 +584,7 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        var propertyKey = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.ToPropertyKeyString),
-            new[] { EnsureObject(indexTemp) },
-            propertyKey));
-        DefineTempStorage(propertyKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var propertyKey = PrepareAssignmentPropertyKey(ref objTemp, indexTemp);
 
         var current = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, propertyKey, current));

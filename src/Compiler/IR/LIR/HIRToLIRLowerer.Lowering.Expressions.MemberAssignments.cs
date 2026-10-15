@@ -12,6 +12,27 @@ public sealed partial class HIRToLIRLowerer
     private bool UsesStrictAssignmentSemantics()
         => _scope == null || Jroc.Utilities.ArgumentsObjectSemantics.IsStrictScope(_scope);
 
+    private void EmitLogicalAssignmentEvaluationBranch(
+        Acornima.Operator op, TempVariable current, int evaluateRightLabel)
+    {
+        if (op == Acornima.Operator.NullishCoalescingAssignment)
+        {
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(current, evaluateRightLabel));
+            var isJsNull = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), current, isJsNull));
+            DefineTempStorage(isJsNull, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNull, evaluateRightLabel));
+            return;
+        }
+
+        var isTruthy = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(current, isTruthy));
+        DefineTempStorage(isTruthy, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        _methodBodyIR.Instructions.Add(op == Acornima.Operator.LogicalAndAssignment
+            ? new LIRBranchIfTrue(isTruthy, evaluateRightLabel)
+            : new LIRBranchIfFalse(isTruthy, evaluateRightLabel));
+    }
+
     private bool TryLowerPropertyAssignmentTarget(HIRExpression objectExpr, string propertyName, TempVariable valueToStore, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -218,7 +239,9 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerInferredMemberAssignment(assignExpr, inferredShape, inferredMember, out resultTempVar);
         }
 
-        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        if (assignExpr.Operator is Acornima.Operator.NullishCoalescingAssignment
+            or Acornima.Operator.LogicalAndAssignment
+            or Acornima.Operator.LogicalOrAssignment)
         {
             if (!TryLowerExpression(assignExpr.Object, out var objTemp))
             {
@@ -238,12 +261,7 @@ public sealed partial class HIRToLIRLowerer
             var endLabel = CreateLabel();
 
             var currentBoxed = EnsureObject(current);
-            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
-
-            var isJsNullTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
-            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+            EmitLogicalAssignmentEvaluationBranch(assignExpr.Operator, currentBoxed, evalRightLabel);
 
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
             _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
@@ -362,7 +380,9 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        if (assignExpr.Operator is Acornima.Operator.NullishCoalescingAssignment
+            or Acornima.Operator.LogicalAndAssignment
+            or Acornima.Operator.LogicalOrAssignment)
         {
             var current = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRGetInferredMember(shape, member.Name, receiver, current));
@@ -373,12 +393,7 @@ public sealed partial class HIRToLIRLowerer
             var endLabel = CreateLabel();
 
             var currentBoxed = EnsureObject(current);
-            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
-
-            var isJsNullTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
-            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+            EmitLogicalAssignmentEvaluationBranch(assignExpr.Operator, currentBoxed, evalRightLabel);
 
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
             _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
@@ -425,7 +440,9 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        if (assignExpr.Operator is Acornima.Operator.NullishCoalescingAssignment
+            or Acornima.Operator.LogicalAndAssignment
+            or Acornima.Operator.LogicalOrAssignment)
         {
             if (!TryLowerExpression(assignExpr.Object, out var objTemp))
             {
@@ -449,12 +466,7 @@ public sealed partial class HIRToLIRLowerer
             var endLabel = CreateLabel();
 
             var currentBoxed = EnsureObject(current);
-            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
-
-            var isJsNullTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
-            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+            EmitLogicalAssignmentEvaluationBranch(assignExpr.Operator, currentBoxed, evalRightLabel);
 
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
             _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
