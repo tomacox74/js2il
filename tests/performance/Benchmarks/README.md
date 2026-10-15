@@ -44,6 +44,42 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
+### Adaptive RegExp compilation
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --regexp-construction --filter '*'
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --regexp-tiering --filter '*'
+```
+
+`RegExpConstructionBenchmarks` measures actual cold unique-pattern construction
+and hot dynamic/literal materialization, normalized per construction. Unique
+patterns exceed the bounded cache, exercising FIFO eviction as well as parsing.
+
+The source-only `RegExpTieringBenchmarks` compares interpreted matching,
+experimental third-construction promotion, and the production 64-construction
+policy at 1, 2, 3, 10, and 1,000 constructions. Each invocation starts a fresh
+entry and performs one match per construction, including promotion and first-match
+JIT costs but excluding initial JavaScript translation and interpreted parsing.
+The ASCII and ANSI cases scan approximately 4,096 code units. Emoji is a synthetic
+128-alternative Unicode case, not the npm `emoji-regex` implementation.
+
+Compilation can cost substantially more than a short-lived pattern's entire
+workload. The conservative threshold avoids promotion for the 3/10-construction
+cases while retaining scan-heavy benefits at 1,000 constructions. It is a reuse
+heuristic, not a universal break-even guarantee: the already-fast synthetic emoji
+case can remain slower even at 1,000 constructions. Use the unchanged end-to-end
+regexp scenario and pinned npm `string-width` workload as separate evidence;
+do not attribute Math/adapter or split-storage improvements to this tier.
+
+The runtime caps cached/in-flight compiled entries at 256, independently of the
+1,024-entry/4-MiB source cache. Existing JS instances may retain their selected
+Regex; cache eviction drops its compiled reference even when a weak literal
+template survives. A constructed-once regexp never promotes solely by matching.
+Expected promotion failures emit a `System.Diagnostics.Trace` warning and are
+not retried; unsupported dynamic-code runtimes remain interpreted.
+
 ### Int32Array backing-storage microbenchmark
 
 ```bash

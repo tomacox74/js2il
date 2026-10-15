@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): adaptively promote cached RegExp patterns after 64 dynamic or
+  literal constructions, with at most 256 cached/in-flight compiled tiers.
+  Preserve independent instance state, permanently retain the interpreted tier
+  after promotion failure, and release compiled cache references on eviction.
+  Cold patterns and runtimes without dynamic code stay interpreted (#2151).
 - perf(runtime): recognize intrinsic RegExp species in guarded split fast paths,
   enumerate bounds for non-Unicode separators without captures, and build empty
   splits directly in pre-sized storage with cached character strings. Return the

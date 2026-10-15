@@ -702,9 +702,11 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/ExecutionTests.RegExpSyntaxBatch.cs",
-          "tests/Jroc.Test262.Tests/built-ins/RegExp/lookBehind/ExecutionTests.RegExpSyntaxBatch.cs"
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/lookBehind/ExecutionTests.RegExpSyntaxBatch.cs",
+          "tests/Jroc.Tests/RegExp/CompiledPatternCacheTests.cs",
+          "tests/Jroc.Tests/RegExp/AdaptiveCompilationTests.cs"
         ],
-        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity. The expanded Test262 evidence also covers constructor identity and flags, literal parsing, legacy pattern semantics, and supported lookbehind forms.",
+        "notes": "Constructor-like calls and CreateLiteral evaluations share source/compilation-option artifacts while preserving fresh RegExp identity and independent lastIndex. Patterns start interpreted; the 64th dynamic or literal construction attempts one compiled-tier promotion, with at most 256 cached/in-flight compiled entries. Concurrent constructors may keep using the interpreted tier; eviction retires compiled cache references, and failed promotion reports a Trace warning and permanently retains the interpreted tier. Runtimes without dynamic code remain interpreted. Matching does not increment construction counts. The g, i, m, s, u, d, and y flags are parsed and reflected; v supports the separately documented limited code-point subset. Unicode behavior remains a limited subset backed by .NET Regex and common-case rewrites, not full ECMAScript parity. Test262 evidence covers constructor identity and flags, literal parsing, legacy pattern semantics, and supported lookbehind forms.",
         "test262Suites": [
           "built_ins.RegExp",
           "built_ins.RegExp.lookBehind"

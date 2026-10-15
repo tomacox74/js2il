@@ -111,8 +111,9 @@ namespace JavaScriptRuntime
             _hasIndices = parsedFlags.HasIndices;
             _simpleLiteralPattern = null;
 
-            var compiled = GetOrCreateCompiledPattern(_source, FullUnicode, _dotAll, parsedFlags.ToRegexOptions(), _unicodeSets);
-            _regex = compiled.Regex!;
+            var entry = GetOrCreateCompiledPattern(_source, FullUnicode, _dotAll, parsedFlags.ToRegexOptions(), _unicodeSets);
+            var compiled = entry.Value;
+            _regex = entry.GetRegexForConstruction();
             _namedGroups = compiled.NamedGroups!;
             _captureResetAncestors = compiled.CaptureResetAncestors!;
             _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
@@ -126,7 +127,8 @@ namespace JavaScriptRuntime
         private RegExp(LiteralTemplate template)
         {
             var flags = template.Flags!;
-            var compiled = template.Compiled!;
+            var entry = template.Compiled!;
+            var compiled = entry.Value;
             _source = template.Source;
             _global = flags.Global;
             _sticky = flags.Sticky;
@@ -134,7 +136,7 @@ namespace JavaScriptRuntime
             _unicode = flags.Unicode;
             _unicodeSets = flags.UnicodeSets;
             _hasIndices = flags.HasIndices;
-            _regex = compiled.Regex!;
+            _regex = entry.GetRegexForConstruction();
             _namedGroups = compiled.NamedGroups!;
             _captureResetAncestors = compiled.CaptureResetAncestors!;
             _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
@@ -1830,11 +1832,54 @@ namespace JavaScriptRuntime
             public string? SyntaxErrorMessage;
         }
 
+        private sealed class CompiledPatternCacheEntry : Lazy<CompiledPattern>
+        {
+            private RegExpAdaptiveCompilation? _compilation;
+            private int _constructed;
+            private int _retired;
+
+            internal CompiledPatternCacheEntry(Func<CompiledPattern> factory)
+                : base(factory, LazyThreadSafetyMode.ExecutionAndPublication)
+            {
+            }
+
+            internal Regex GetRegexForConstruction()
+            {
+                var interpreted = Value.Regex!;
+                if (Volatile.Read(ref _retired) != 0)
+                {
+                    return interpreted;
+                }
+                var compilation = Volatile.Read(ref _compilation);
+                if (compilation is null)
+                {
+                    if (Interlocked.Exchange(ref _constructed, 1) == 0)
+                    {
+                        return interpreted;
+                    }
+                    // Cold entries do not allocate promotion state or synchronization.
+                    var candidate = new RegExpAdaptiveCompilation(CompiledRegexBudget, initialConstructionCount: 1);
+                    compilation = Interlocked.CompareExchange(ref _compilation, candidate, null) ?? candidate;
+                    if (Volatile.Read(ref _retired) != 0)
+                    {
+                        compilation.Retire();
+                    }
+                }
+                return compilation.GetRegexForConstruction(interpreted);
+            }
+
+            internal void Retire()
+            {
+                Volatile.Write(ref _retired, 1);
+                Volatile.Read(ref _compilation)?.Retire();
+            }
+        }
+
         private sealed class LiteralTemplate
         {
             public required string Source { get; init; }
             public ParsedFlags? Flags { get; init; }
-            public CompiledPattern? Compiled { get; init; }
+            public CompiledPatternCacheEntry? Compiled { get; init; }
             public string? SyntaxErrorMessage { get; init; }
         }
 
@@ -1852,11 +1897,19 @@ namespace JavaScriptRuntime
         private const int CompiledPatternCacheCapacity = 1024;
         private const int CompiledPatternCacheSourceCharacterBudget = 4 * 1024 * 1024;
 
-        private static readonly ConcurrentDictionary<CompiledPatternKey, Lazy<CompiledPattern>>
+        internal const int CompiledRegexPromotionThreshold = 64;
+        private static readonly RegExpCompilationBudget CompiledRegexBudget =
+            new(capacity: 256, threshold: CompiledRegexPromotionThreshold);
+        private static readonly ConcurrentDictionary<CompiledPatternKey, CompiledPatternCacheEntry>
             CompiledPatternCache = new();
         private static readonly ConcurrentQueue<CompiledPatternKey> CompiledPatternCacheInsertionOrder = new();
         private static long _compiledPatternCacheSourceCharacters;
         private static int _compiledPatternCacheEntryCount;
+
+        internal static (int Entries, long SourceCharacters, int CompiledEntries) GetPatternCacheStatistics()
+            => (Volatile.Read(ref _compiledPatternCacheEntryCount),
+                Volatile.Read(ref _compiledPatternCacheSourceCharacters),
+                CompiledRegexBudget.Count);
 
         /// <summary>
         /// Compiling a JavaScript pattern into a .NET <see cref="Regex"/> is expensive (milliseconds
@@ -1867,27 +1920,28 @@ namespace JavaScriptRuntime
         /// instance, and .NET <see cref="Regex"/> instances are immutable and thread-safe, so sharing
         /// them is observationally transparent.
         /// </summary>
-        private static CompiledPattern GetOrCreateCompiledPattern(
+        private static CompiledPatternCacheEntry GetOrCreateCompiledPattern(
             string source,
             bool unicode,
             bool dotAll,
             RegexOptions options,
             bool unicodeSets)
         {
-            var compiled = GetOrCreateCompiledPatternCore(source, unicode, dotAll, options, unicodeSets);
+            var entry = GetOrCreateCompiledPatternCore(source, unicode, dotAll, options, unicodeSets);
+            var compiled = entry.Value;
             if (compiled.SyntaxErrorMessage is not null)
             {
                 throw new SyntaxError(compiled.SyntaxErrorMessage);
             }
 
-            return compiled;
+            return entry;
         }
 
         /// <summary>
         /// Returns the cached artifacts without throwing; a failed compilation is reported through
         /// <see cref="CompiledPattern.SyntaxErrorMessage"/> so callers decide when to raise it.
         /// </summary>
-        private static CompiledPattern GetOrCreateCompiledPatternCore(
+        private static CompiledPatternCacheEntry GetOrCreateCompiledPatternCore(
             string source,
             bool unicode,
             bool dotAll,
@@ -1895,9 +1949,12 @@ namespace JavaScriptRuntime
             bool unicodeSets)
         {
             var key = new CompiledPatternKey(source, unicode, dotAll, options, unicodeSets);
-            var candidate = new Lazy<CompiledPattern>(
-                () => CreateCompiledPattern(source, unicode, dotAll, options, unicodeSets),
-                LazyThreadSafetyMode.ExecutionAndPublication);
+            if (CompiledPatternCache.TryGetValue(key, out var existing))
+            {
+                return existing;
+            }
+            var candidate = new CompiledPatternCacheEntry(
+                () => CreateCompiledPattern(source, unicode, dotAll, options, unicodeSets));
             var cached = CompiledPatternCache.GetOrAdd(key, candidate);
             if (ReferenceEquals(candidate, cached))
             {
@@ -1907,7 +1964,7 @@ namespace JavaScriptRuntime
                 TrimCompiledPatternCache();
             }
 
-            return cached.Value;
+            return cached;
         }
 
         private static void TrimCompiledPatternCache()
@@ -1919,8 +1976,9 @@ namespace JavaScriptRuntime
                         > CompiledPatternCacheSourceCharacterBudget)
                 && CompiledPatternCacheInsertionOrder.TryDequeue(out var oldestKey))
             {
-                if (CompiledPatternCache.TryRemove(oldestKey, out _))
+                if (CompiledPatternCache.TryRemove(oldestKey, out var removed))
                 {
+                    removed.Retire();
                     Interlocked.Decrement(ref _compiledPatternCacheEntryCount);
                     Interlocked.Add(
                         ref _compiledPatternCacheSourceCharacters,
@@ -1981,12 +2039,12 @@ namespace JavaScriptRuntime
                     parsedFlags.DotAll,
                     parsedFlags.ToRegexOptions(),
                     parsedFlags.UnicodeSets);
-                if (compiled.SyntaxErrorMessage is not null)
+                if (compiled.Value.SyntaxErrorMessage is { } syntaxError)
                 {
                     return new LiteralTemplate
                     {
                         Source = source,
-                        SyntaxErrorMessage = compiled.SyntaxErrorMessage
+                        SyntaxErrorMessage = syntaxError
                     };
                 }
 

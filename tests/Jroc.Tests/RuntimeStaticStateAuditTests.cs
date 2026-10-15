@@ -97,6 +97,7 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.PropertyDescriptorStore+OverrideSnapshot.Empty", "immutable snapshot"),
         new("JavaScriptRuntime.RegExp.CompiledPatternCache", "process-wide pattern compilation cache"),
         new("JavaScriptRuntime.RegExp.CompiledPatternCacheInsertionOrder", "process-wide pattern cache eviction queue"),
+        new("JavaScriptRuntime.RegExp.CompiledRegexBudget", "process-wide bounded compiled-tier reservations"),
         new("JavaScriptRuntime.RegExp.LiteralTemplates", "weak-keyed immutable regex literal templates"),
         new("JavaScriptRuntime.RuntimeExecutionContext.Ambient", "async-flow execution pointer"),
         new("JavaScriptRuntime.RuntimeIntrinsics._blockedThreads", "transient bootstrap wait graph"),

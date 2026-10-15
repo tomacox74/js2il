@@ -20,6 +20,11 @@ else
     {
         Environment.ExitCode = CallableArityAnalysis.Run();
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--regexp-construction")
+    {
+        var summary = BenchmarkRunner.Run<RegExpConstructionBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
     {
         // Run the focused late-bound dispatch microbenchmarks without interactive benchmark selection.
@@ -124,6 +129,11 @@ else
         SetExitCodeFromSummaries([summary]);
     }
 #if SOURCE_JROC_PROJECTS
+    else if (programArgs.Length > 0 && programArgs[0] == "--regexp-tiering")
+    {
+        var summary = BenchmarkRunner.Run<RegExpTieringBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--array-length-validation")
     {
         var summaries = BenchmarkSwitcher.FromTypes(
@@ -209,7 +219,9 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --regexp-construction # Compare cold and reused RegExp construction");
 #if SOURCE_JROC_PROJECTS
+Console.WriteLine("  dotnet run -c Release -- --regexp-tiering # Compare interpreted and adaptive RegExp break-even");
 Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release -- --array-length-validation --filter '*' # Compare Array length validators");
 #endif
