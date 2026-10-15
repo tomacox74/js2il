@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete pinned object-expression coverage with 341 new fixtures:
+  325 verified passing and 16 explicitly skipped for unsupported eval.
+  Reconcile 15 already-registered cases from the published remaining count;
+  all 1,170 unique cases now have passing or known-unsupported results.
+  Coerce computed keys before values, preserve discarded literal reads,
+  infer anonymous definition names without renaming reused or spread values,
+  honor Proxy spread trap order/enumerability, and omit legacy own
+  caller/arguments properties from methods. Execute explicit Module-goal
+  sources as ES modules even without imports/exports, including top-level
+  await and undefined top-level this.
+
 - test262: complete the remaining 391 async-generator expression cases:
   386 verified passing and five explicitly skipped for unsupported eval.
   Preserve named generator-expression self-bindings across deferred body
