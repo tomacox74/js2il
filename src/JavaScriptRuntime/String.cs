@@ -2846,14 +2846,24 @@ namespace JavaScriptRuntime
                 }
             }
 
-            var result = JavaScriptRuntime.Array.CreateWithDenseCapacity(count);
-            for (var index = 0; index < input.Length && result.Count < count;)
+            var result = JavaScriptRuntime.Array.CreateWithDenseLength(count, out var elements);
+            if (!unicode)
             {
-                var nextIndex = AdvanceSplitIndex(input, index, unicode);
-                result.Add(nextIndex == index + 1
-                    ? CharToStringFast(input[index])
-                    : input.Substring(index, nextIndex - index));
-                index = nextIndex;
+                for (var index = 0; index < elements.Length; index++)
+                {
+                    elements[index] = CharToStringFast(input[index]);
+                }
+                return result;
+            }
+
+            var inputIndex = 0;
+            for (var index = 0; index < elements.Length; index++)
+            {
+                var nextIndex = AdvanceSplitIndex(input, inputIndex, unicode: true);
+                elements[index] = nextIndex == inputIndex + 1
+                    ? CharToStringFast(input[inputIndex])
+                    : input.Substring(inputIndex, nextIndex - inputIndex);
+                inputIndex = nextIndex;
             }
 
             return result;
