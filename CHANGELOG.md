@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete pinned yield-expression coverage with 36 exact upstream
+  fixtures; all 63 cases pass all 123 required native variants, with no
+  eval-dependent cases in this area. Preserve delegated iterator receivers,
+  argument counts and next values, forward return/throw with null-method and
+  missing-method semantics, validate iterator results, and route operand and
+  protocol errors plus delegated return completions through catch/finally.
 - perf(compiler): reuse immutable boxed boolean and null primitives for
   object-valued constants, captured writes, calls, and resumable spills.
   Preserve typed boolean operations, null/undefined distinctions, and fresh

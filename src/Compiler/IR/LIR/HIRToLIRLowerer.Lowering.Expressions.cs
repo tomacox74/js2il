@@ -114,6 +114,29 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (_isGenerator && !_isAsync
+            && _generatorTryCatchFinallyStack.Count > 0
+            && _generatorExpressionProtectionDepth == 0
+            && !HasActiveSynchronousExceptionHandler
+            && CountYieldExpressionsInExpression(expression) == 0)
+        {
+            var start = _methodBodyIR.Instructions.Count;
+            _generatorExpressionProtectionDepth++;
+            try
+            {
+                if (!TryLowerExpression(expression, out resultTempVar))
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _generatorExpressionProtectionDepth--;
+            }
+            ProtectGeneratorExpression(start);
+            return true;
+        }
+
         switch (expression)
         {
             case HIRPreparedDynamicFunctionExpression preparedFunction:

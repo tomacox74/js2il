@@ -78,19 +78,21 @@
         "testScripts": [
           "tests/Jroc.Tests/Generator/JavaScript/Generator_BasicNext.js",
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js",
-          "tests/Jroc.Test262.Tests/language/expressions/yield/RelatedLanguageConformance12BatchTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/yield/RelatedLanguageConformance12BatchTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/yield/YieldCompletionExecutionTests.cs"
         ],
         "test262Paths": [
           "test/language/expressions/yield/arguments-object-attributes.js",
           "test/language/expressions/yield/from-with.js",
-          "test/language/expressions/yield/within-for.js"
+          "test/language/expressions/yield/within-for.js",
+          "test/language/expressions/yield/rhs-unresolvable.js"
         ],
-        "notes": "Supports yielding values, parent-scope captures in yielded operands, and resumption via next(). The native Test262 harness additionally verifies 11 current-provenance yield fixtures, including three parse-negative grammar cases."
+        "notes": "Supports yielding values, parent-scope captures, resumption via next(), and operand exceptions caught by surrounding generator handlers. All 63 pinned yield-expression cases pass all 123 metadata-required native variants, including three parse-negative grammar cases. This is development-branch validation, not central trusted acceptance; none of these cases requires eval."
       },
       {
         "clause": "15.5.1",
         "feature": "yield* delegation",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
@@ -98,9 +100,19 @@
           "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
           "tests/Jroc.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js",
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-array.js",
-          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js"
+          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js",
+          "tests/Jroc.Test262.Tests/language/expressions/yield/YieldCompletionExecutionTests.cs"
         ],
-        "notes": "Supports delegation through the iterator protocol for arrays, strings, typed arrays, nested jroc GeneratorObject instances, and user-defined [Symbol.iterator] iterables. Limitations: full custom throw/return forwarding and IteratorClose behavior for abrupt delegating-generator completion remain incomplete; throw/return propagation through try/finally remains incomplete."
+        "test262Paths": [
+          "test/language/expressions/yield/star-rhs-iter-nrml-next-invoke.js",
+          "test/language/expressions/yield/star-rhs-iter-nrml-res-value-final.js",
+          "test/language/expressions/yield/star-rhs-iter-rtrn-res-value-final.js",
+          "test/language/expressions/yield/star-rhs-iter-thrw-thrw-invoke.js",
+          "test/language/expressions/yield/star-rhs-iter-thrw-violation-rtrn-invoke.js",
+          "test/language/expressions/yield/star-return-is-null.js",
+          "test/language/expressions/yield/star-throw-is-null.js"
+        ],
+        "notes": "Synchronous delegation retains the original iterator and cached next method, forwards next/return/throw values with the original receiver and correct argument count, validates returned objects, and preserves raw non-final iterator results. Missing or null return methods complete the outer return; missing or null throw methods close the iterator before reporting a TypeError. Operand/protocol/getter exceptions reach surrounding catch/finally handlers, and delegated return completion runs finally without resuming ordinary execution. The 36 additional pinned cases pass every required native variant."
       },
       {
         "clause": "15.5",
