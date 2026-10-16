@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
 - fix(ci): skip Test262 central validation and publication when native screening
   produces no patch, avoiding a missing validation artifact failure for empty batches.
 - perf(compiler): reuse immutable boxed boolean and null primitives for
