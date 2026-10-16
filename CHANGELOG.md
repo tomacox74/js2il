@@ -12,6 +12,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   argument counts and next values, forward return/throw with null-method and
   missing-method semantics, validate iterator results, and route operand and
   protocol errors plus delegated return completions through catch/finally.
+- fix(ci): skip Test262 central validation and publication when native screening
+  produces no patch, avoiding a missing validation artifact failure for empty batches.
 - perf(compiler): reuse immutable boxed boolean and null primitives for
   object-valued constants, captured writes, calls, and resumable spills.
   Preserve typed boolean operations, null/undefined distinctions, and fresh
