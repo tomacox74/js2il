@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): bulk-fill empty-RegExp split results directly in their final
+  dense storage, setting array length once instead of growing per character.
+  Preserve cached character strings, Unicode surrogate pairs, limits, and
+  observable species/exec fallbacks (#746).
 - perf(runtime): adaptively promote cached RegExp patterns after 64 dynamic or
   literal constructions, with at most 256 cached/in-flight compiled tiers.
   Preserve independent instance state, permanently retain the interpreted tier
