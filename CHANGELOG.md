@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): add realm/prototype-guarded RegExp test/exec dispatch for one-
+  and two-argument member calls, and remove closure allocation from failed lazy
+  class-method lookup probes. Preserve overrides and accessor receivers; reject
+  deleted or non-callable RegExp methods instead of falling back to CLR methods
+  (#748).
 - perf(runtime): adaptively promote cached RegExp patterns after 64 dynamic or
   literal constructions, with at most 256 cached/in-flight compiled tiers.
   Preserve independent instance state, permanently retain the interpreted tier

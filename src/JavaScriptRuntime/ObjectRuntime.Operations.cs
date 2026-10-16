@@ -3234,6 +3234,13 @@ namespace JavaScriptRuntime
         public static object? CallMember1(object receiver, string methodName, object? a0)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (receiver is RegExp regExp && methodName is "test" or "exec")
+            {
+                return regExp.TryInvokeIntrinsicMethod(methodName, a0, out var result)
+                    ? result
+                    : CallableOperations.Call1(GetProperty(regExp, methodName), regExp, a0);
+            }
+
             if (TryGetCallableFunctionMember(
                     receiver,
                     methodName,
@@ -3274,6 +3281,13 @@ namespace JavaScriptRuntime
         public static object? CallMember2(object receiver, string methodName, object? a0, object? a1)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (receiver is RegExp regExp && methodName is "test" or "exec")
+            {
+                return regExp.TryInvokeIntrinsicMethod(methodName, a0, out var result)
+                    ? result
+                    : CallableOperations.Call2(GetProperty(regExp, methodName), regExp, a0, a1);
+            }
+
             if (TryGetCallableFunctionMember(
                     receiver,
                     methodName,

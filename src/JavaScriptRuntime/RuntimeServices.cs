@@ -1081,12 +1081,18 @@ public partial class RuntimeServices
             return false;
         }
 
-        LazyClassMethodDataProperty? metadata;
+        LazyClassMethodDataProperty? metadata = null;
         lock (slot)
         {
-            metadata = slot.Methods.FirstOrDefault(method =>
-                method.IsStatic == isStatic
-                && string.Equals(method.PropertyKey, propName, StringComparison.Ordinal));
+            foreach (var method in slot.Methods)
+            {
+                if (method.IsStatic == isStatic
+                    && string.Equals(method.PropertyKey, propName, StringComparison.Ordinal))
+                {
+                    metadata = method;
+                    break;
+                }
+            }
         }
 
         if (metadata == null)

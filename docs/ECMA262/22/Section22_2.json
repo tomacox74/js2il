@@ -774,13 +774,14 @@
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js",
           "tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js",
+          "tests/Jroc.Tests/RegExp/MemberDispatchTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/exec/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.RegExpSyntaxBatch.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.RegExpSyntaxBatch.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Explicit capture numbering preserves JavaScript order and keeps duplicate named capture occurrences distinct. Named group properties retain first-source order and select participating alternatives, including indices. Quantified backreferences reset prior captures and unset references match the empty string. Full RegExp exotic object semantics and complete Unicode mode parity remain limited.",
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors observable lastIndex coercion, update, and failure-reset rules for /g and /y regexes. Fixed-arity named calls can bypass generic dispatch only for the pristine current-realm prototype with no own method override. Modified, accessor, and foreign-realm receivers retain normal lookup/call behavior; deleted or non-callable methods throw rather than exposing CLR helpers. Explicit capture numbering preserves JavaScript order and keeps duplicate named capture occurrences distinct. Named group properties retain first-source order and select participating alternatives, including indices. Quantified backreferences reset prior captures and unset references match the empty string. Full RegExp exotic object semantics and complete Unicode mode parity remain limited.",
         "test262Suites": [
           "built_ins.RegExp.named-groups",
           "built_ins.RegExp.match-indices"
@@ -968,9 +969,10 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js",
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Jroc.Tests/RegExp/MemberDispatchTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/test/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Uses the same observable lastIndex coercion, success update, failure reset, sticky matching, and Unicode code-point boundary rules as exec(). Complete Unicode mode parity is still not implemented."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Uses the same observable lastIndex coercion, success update, failure reset, sticky matching, and Unicode code-point boundary rules as exec(). Fixed-arity named calls use the same guarded dispatch and override-aware fallback as exec(), preserving input coercion and ignored extra arguments. Complete Unicode mode parity is still not implemented."
       },
       {
         "clause": "22.2.6.17",

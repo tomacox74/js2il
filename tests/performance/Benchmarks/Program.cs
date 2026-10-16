@@ -20,6 +20,11 @@ else
     {
         Environment.ExitCode = CallableArityAnalysis.Run();
     }
+    else if (programArgs.Length > 0 && programArgs[0] == "--regexp-dispatch")
+    {
+        var summary = BenchmarkRunner.Run<RegExpDispatchBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--regexp-construction")
     {
         var summary = BenchmarkRunner.Run<RegExpConstructionBenchmarks>(args: programArgs.Skip(1).ToArray());
@@ -219,6 +224,7 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --regexp-dispatch # Compare fixed-arity RegExp member dispatch");
 Console.WriteLine("  dotnet run -c Release -- --regexp-construction # Compare cold and reused RegExp construction");
 #if SOURCE_JROC_PROJECTS
 Console.WriteLine("  dotnet run -c Release -- --regexp-tiering # Compare interpreted and adaptive RegExp break-even");

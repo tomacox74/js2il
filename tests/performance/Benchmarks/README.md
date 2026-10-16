@@ -44,6 +44,29 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
+### Fixed-arity RegExp member dispatch
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --regexp-dispatch --filter '*'
+```
+
+`RegExpDispatchBenchmarks` measures actual `ObjectRuntime.CallMember1/2` calls
+for `test`, failed `exec`, and successful `exec`. Setup initializes a fresh realm
+and constructs one interpreted, non-global pattern; matching does not trigger
+construction-count promotion. The second argument is ignored by the intrinsic
+methods. Ten measured iterations and three warmups separate lookup/call overhead
+from match-result materialization.
+
+The direct path requires a pristine current-realm RegExp prototype and no own
+method override. Mutation, accessors, and foreign-realm prototypes use ordinary
+lookup and callable invocation with the complete argument list. Existing
+fixed-arity built-in adapters already avoid argument arrays; remaining boxed
+boolean/null and match-result allocations are not dispatch argument storage.
+Compare the unchanged end-to-end `dromaeo-object-regexp` separately: most of its
+remaining time/allocation belongs to string preparation and split storage, so a
+large isolated dispatch improvement need not yield a measurable aggregate gain.
+
 ### Adaptive RegExp compilation
 
 ```bash

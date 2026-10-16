@@ -351,6 +351,21 @@ namespace JavaScriptRuntime
             }
         }
 
+        internal bool TryInvokeIntrinsicMethod(string methodName, object? input, out object? result)
+        {
+            result = null;
+            if (methodName is not ("test" or "exec")
+                || !IntrinsicPrototypeEpochs.IsPristine(IntrinsicPrototypeFamily.RegExp)
+                || ObjectRuntime.HasOwnPropertyOverride(this, methodName)
+                || !IntrinsicPrototypeEpochs.HasDefaultPrototype(this, IntrinsicPrototypeFamily.RegExp))
+            {
+                return false;
+            }
+
+            result = methodName == "test" ? test(input) : exec(input);
+            return true;
+        }
+
         public object test(object? input)
         {
             var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
