@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.30](https://github.com/tomacox74/js2il/releases/tag/v0.12.30).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.32](https://github.com/tomacox74/js2il/releases/tag/v0.12.32).
 
 ## How to Read This Report
 
@@ -48,6 +48,14 @@ Release build. Catalogue MCP tools were unavailable for this batch, so
 selection and acceptance are explicitly local diagnosis/PR validation, not
 fresh central reporting or trusted central acceptance.
 
+Yield expressions now have verified passing results for all 63 applicable
+pinned cases, including all 123 required native execution variants. The 36
+newly verified cases cover operand errors and delegated iterator next, return,
+throw, result-access, and cleanup semantics. No case in this area depends on
+unsupported eval. Selection and validation are branch-local: catalogue MCP
+tools were unavailable, and the Data API denied the reporting schema. These
+results are not presented as central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -84,8 +92,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
-| Language syntax and semantics | 19,143 | 247 | 4,257 | 23,647 | **80.95%** |
-| **Total** | 36,373 | 271 | 11,601 | 48,245 | **75.39%** |
+| Language syntax and semantics | 19,179 | 247 | 4,221 | 23,647 | **81.11%** |
+| **Total** | 36,409 | 271 | 11,565 | 48,245 | **75.47%** |
 
 ## Language Areas
 
@@ -100,7 +108,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,153 | 188 | 697 | 11,038 | **91.98%** |
+| `expressions` | 10,189 | 188 | 661 | 11,038 | **92.31%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -192,7 +200,7 @@ bounded worker cleanup.
 | `unary-plus` | 15 | 2 | 0 | 17 | **88.24%** |
 | `unsigned-right-shift` | 45 | 0 | 0 | 45 | **100.00%** |
 | `void` | 8 | 1 | 0 | 9 | **88.89%** |
-| `yield` | 27 | 0 | 36 | 63 | **42.86%** |
+| `yield` | 63 | 0 | 0 | 63 | **100.00%** |
 
 ## Statement and Declaration Features
 

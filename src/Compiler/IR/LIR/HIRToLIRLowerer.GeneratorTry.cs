@@ -1,15 +1,62 @@
 using Jroc.HIR;
+using Jroc.IL;
 
 namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
     private readonly Stack<GeneratorTryCatchFinallyContext> _generatorTryCatchFinallyStack = new();
+    private int _generatorExpressionProtectionDepth;
 
     private const string GeneratorPendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._genPendingException);
     private const string GeneratorHasPendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException);
     private const string GeneratorPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue);
     private const string GeneratorHasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn);
+
+    private void ProtectGeneratorExpression(int start)
+    {
+        if (HasActiveSynchronousExceptionHandler
+            || _methodBodyIR.Instructions.Skip(start).Any(instruction => instruction is LIRYield or LIRAwait)
+            || !_methodBodyIR.Instructions.Skip(start).Any(instruction =>
+                (LIRInstructionInfo.GetEffectsForScheduling(instruction)
+                    & (LIRInstructionEffects.MayThrow | LIRInstructionEffects.UnsupportedBarrier)) != 0))
+        {
+            return;
+        }
+
+        // Protect synchronous evaluation only; suspension must remain outside CLR EH regions.
+        var tryStart = CreateLabel();
+        var tryEnd = CreateLabel();
+        var catchStart = CreateLabel();
+        var catchEnd = CreateLabel();
+        var afterExpression = CreateLabel();
+        _methodBodyIR.Instructions.Insert(start, new LIRLabel(tryStart));
+        _methodBodyIR.Instructions.Add(new LIRLeave(afterExpression));
+        _methodBodyIR.Instructions.Add(new LIRLabel(tryEnd));
+        _methodBodyIR.Instructions.Add(new LIRLabel(catchStart));
+
+        var exception = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRStoreException(exception));
+        DefineTempStorage(exception, new ValueStorage(ValueStorageKind.Reference, typeof(Exception)));
+        var value = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRUnwrapCatchException(exception, value));
+        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        // Route outside the CLR handler so completion routing can use ordinary branches.
+        var dispatch = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRLeave(dispatch));
+        _methodBodyIR.Instructions.Add(new LIRLabel(catchEnd));
+        _methodBodyIR.Instructions.Add(new LIRLabel(dispatch));
+        EmitThrowCompletion(value);
+        _methodBodyIR.Instructions.Add(new LIRLabel(afterExpression));
+        _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+            ExceptionRegionKind.Catch,
+            TryStartLabelId: tryStart,
+            TryEndLabelId: tryEnd,
+            HandlerStartLabelId: catchStart,
+            HandlerEndLabelId: catchEnd,
+            CatchType: typeof(Exception)));
+    }
 
     private bool TryGetOuterGeneratorTryCatchFinallyContext(out GeneratorTryCatchFinallyContext outerCtx)
     {

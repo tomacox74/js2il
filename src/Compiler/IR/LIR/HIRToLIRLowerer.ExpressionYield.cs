@@ -60,8 +60,8 @@ public sealed partial class HIRToLIRLowerer
             var iteratorTemp = CreateTempVariable();
             EmitYieldStarProtocolCall(_isAsync
                 ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Create), new[] { yieldedStarArg }, iteratorTemp)
-                : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
-            DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, _isAsync ? typeof(object) : typeof(JavaScriptRuntime.IJavaScriptIterator)));
+                : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.GeneratorDelegation), nameof(JavaScriptRuntime.GeneratorDelegation.Create), new[] { yieldedStarArg }, iteratorTemp));
+            DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             int iteratorSetupLabel = CreateLabel();
             int indexSetupLabel = CreateLabel();
@@ -248,13 +248,9 @@ public sealed partial class HIRToLIRLowerer
                 // Clear outer return flag before forwarding.
                 _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), falseTemp));
 
-                var argsArr = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(returnArg) }, argsArr));
-                DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
                 EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Return), new[] { EnsureObject(iterObj), EnsureObject(returnArg) }, iterResult)
-                    : new LIRCallMember(iterObj, "return", argsArr, iterResult));
+                    : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.GeneratorDelegation), nameof(JavaScriptRuntime.GeneratorDelegation.Return), new[] { EnsureObject(iterObj), EnsureObject(returnArg) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
@@ -269,13 +265,9 @@ public sealed partial class HIRToLIRLowerer
                 // Clear outer throw flag before forwarding.
                 _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), falseTemp));
 
-                var argsArr = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(throwArg) }, argsArr));
-                DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
                 EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Throw), new[] { EnsureObject(iterObj), EnsureObject(throwArg) }, iterResult)
-                    : new LIRCallMember(iterObj, "throw", argsArr, iterResult));
+                    : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.GeneratorDelegation), nameof(JavaScriptRuntime.GeneratorDelegation.Throw), new[] { EnsureObject(iterObj), EnsureObject(throwArg) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
@@ -287,13 +279,9 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._resumeValue), nextArg));
                 DefineTempStorage(nextArg, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                var argsArr = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(nextArg) }, argsArr));
-                DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
                 EmitYieldStarProtocolCall(_isAsync
                     ? new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.AsyncGeneratorDelegation), nameof(JavaScriptRuntime.AsyncGeneratorDelegation.Next), new[] { EnsureObject(iterObj), EnsureObject(nextArg) }, iterResult)
-                    : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
+                    : new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.GeneratorDelegation), nameof(JavaScriptRuntime.GeneratorDelegation.Next), new[] { EnsureObject(iterObj), EnsureObject(nextArg) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
@@ -362,7 +350,10 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRBranch(iterNormalComplete));
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterReturnComplete));
-            _methodBodyIR.Instructions.Add(new LIRReturn(EnsureObject(finalVal)));
+            if (!EmitReturnCompletion(EnsureObject(finalVal)))
+            {
+                return false;
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterNormalComplete));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(EnsureObject(finalVal), resultTempVar));
@@ -539,6 +530,14 @@ public sealed partial class HIRToLIRLowerer
 
     private void EmitYieldStarProtocolCall(LIRInstruction call)
     {
+        if (!_isAsync && _generatorTryCatchFinallyStack.Count > 0)
+        {
+            var start = _methodBodyIR.Instructions.Count;
+            _methodBodyIR.Instructions.Add(call);
+            ProtectGeneratorExpression(start);
+            return;
+        }
+
         if (!_isAsync || _asyncTryCatchStack.Count == 0)
         {
             _methodBodyIR.Instructions.Add(call);

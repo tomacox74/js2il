@@ -127,6 +127,13 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        return EmitReturnCompletion(returnTempVar);
+    }
+
+    private bool EmitReturnCompletion(TempVariable returnTempVar)
+    {
+        var lirInstructions = _methodBodyIR.Instructions;
+
         // Async try/finally lowering: a return inside a protected region must flow through finally.
         if (_isAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true
