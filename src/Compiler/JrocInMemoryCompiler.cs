@@ -121,6 +121,7 @@ public static class JrocInMemoryCompiler
         {
             AssemblyName = request.AssemblyName,
             FileSystem = request.FileSystem,
+            AdditionalModulePaths = request.AdditionalModulePaths,
             EmitPdb = request.EmitPdb,
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,
@@ -165,6 +166,7 @@ public static class JrocInMemoryCompiler
         var options = new CompilerOptions
         {
             AssemblyName = request.AssemblyName,
+            AdditionalModulePaths = request.AdditionalModulePaths,
             EmitPdb = request.EmitPdb,
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,

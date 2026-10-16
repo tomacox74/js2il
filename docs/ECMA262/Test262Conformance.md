@@ -56,6 +56,15 @@ unsupported eval. Selection and validation are branch-local: catalogue MCP
 tools were unavailable, and the Data API denied the reporting schema. These
 results are not presented as central trusted acceptance.
 
+Dynamic import now has results for every applicable pinned case: 940 verified
+passing and one unsupported eval case. All 1,776 required native variants of the
+940 runnable cases pass under one frozen Release build. Coverage includes
+specifier and options evaluation, import attributes, namespace exotic-object
+operations, cached evaluation failures, source-phase rejection for JavaScript,
+and deferred evaluation with asynchronous dependencies. These results are
+branch-local; catalogue MCP tools were unavailable and the Data API denied the
+reporting schema. They are not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -69,6 +78,10 @@ Fixtures marked `flags: [module]` explicitly select the Module parse goal
 without changing their paths, even when their source has no import or export declarations.
 Other fixtures select the standard Script goal, rejecting top-level return and
 import/export declarations and instantiating realm-wide global declarations.
+Script-goal entries use private logical paths while retaining their original
+source paths for diagnostics. Importing the original path therefore creates a
+distinct Module Record rather than reusing the Script Record. Computed imports
+bundle sibling module/JSON support files without executing them as entries.
 The native `$262.evalScript` helper compiles additional global scripts into
 collectible assemblies in the current realm; it does not implement JavaScript
 direct or indirect `eval`. Script completion values are not currently exposed
@@ -92,8 +105,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
-| Language syntax and semantics | 19,179 | 247 | 4,221 | 23,647 | **81.11%** |
-| **Total** | 36,409 | 271 | 11,565 | 48,245 | **75.47%** |
+| Language syntax and semantics | 19,818 | 248 | 3,581 | 23,647 | **83.81%** |
+| **Total** | 37,048 | 272 | 10,925 | 48,245 | **76.79%** |
 
 ## Language Areas
 
@@ -108,7 +121,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,189 | 188 | 661 | 11,038 | **92.31%** |
+| `expressions` | 10,828 | 189 | 21 | 11,038 | **98.10%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -155,7 +168,7 @@ bounded worker cleanup.
 | `delete` | 68 | 1 | 0 | 69 | **98.55%** |
 | `division` | 43 | 0 | 2 | 45 | **95.56%** |
 | `does-not-equals` | 36 | 0 | 2 | 38 | **94.74%** |
-| `dynamic-import` | 301 | 0 | 640 | 941 | **31.99%** |
+| `dynamic-import` | 940 | 1 | 0 | 941 | **99.89%** |
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 246 | 3 | 15 | 264 | **93.18%** |

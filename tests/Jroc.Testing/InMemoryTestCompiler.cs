@@ -23,7 +23,8 @@ public static class InMemoryTestCompiler
         int timeoutMs = 30000,
         Action<CompilationCoverageReport>? onCompilationCoverage = null,
         bool parseAsModule = false,
-        bool parseAsScript = false)
+        bool parseAsScript = false,
+        IReadOnlyList<string>? additionalModulePaths = null)
     {
         if (parseAsModule && executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 })
         {
@@ -89,6 +90,8 @@ public static class InMemoryTestCompiler
                 testCategory,
                 Guid.NewGuid().ToString("N"),
                 $"{testName}.js");
+            if (parseAsScript)
+                entryPath = Path.Combine(Path.GetDirectoryName(entryPath)!, "__test262_script_" + Path.GetFileName(entryPath));
             entrySourceText = script;
             fileSystem.AddFile(entryPath, script, sourcePath);
 
@@ -111,7 +114,7 @@ public static class InMemoryTestCompiler
             IRPipelineMetrics.Reset();
         }
 
-        var rootModuleIdOverride = executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 }
+        var rootModuleIdOverride = parseAsScript || executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 }
             ? NormalizeModuleId(Path.GetFileNameWithoutExtension(entryPath) ?? "__bootstrap__")
             : NormalizeModuleId(testName);
 
@@ -122,6 +125,7 @@ public static class InMemoryTestCompiler
             {
                 SourceText = entrySourceText,
                 FileSystem = fileSystem,
+                AdditionalModulePaths = additionalModulePaths ?? [],
                 RootModuleIdOverride = rootModuleIdOverride,
                 EmitPdb = true,
                 AssumeUnmodifiedHostGlobals = true,

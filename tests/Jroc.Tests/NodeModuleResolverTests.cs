@@ -7,7 +7,7 @@ namespace Jroc.Tests;
 public class NodeModuleResolverTests
 {
     [Fact]
-    public void Resolve_Require_AcceptsJsonFilesAndPackageMain()
+    public void Resolve_JsonFiles_UsesExplicitEsmPathsAndCommonJsProbing()
     {
         var fs = new MockFileSystem();
         var resolver = new NodeModuleResolver(fs);
@@ -30,8 +30,9 @@ public class NodeModuleResolverTests
         Assert.True(resolver.TryResolve("json-pkg", projectDir, out var packageResolved, out var packageError), packageError);
         Assert.Equal(Path.GetFullPath(packageEntry), packageResolved);
 
-        Assert.False(resolver.TryResolve("./config.json", projectDir, ModuleResolutionMode.Import, out _, out var importError));
-        Assert.Contains("ES module", importError);
+        Assert.True(resolver.TryResolve("./config.json", projectDir, ModuleResolutionMode.Import, out var importResolved, out var importError), importError);
+        Assert.Equal(Path.GetFullPath(localJson), importResolved);
+        Assert.False(resolver.TryResolve("./config", projectDir, ModuleResolutionMode.Import, out _, out _));
     }
 
     [Fact]

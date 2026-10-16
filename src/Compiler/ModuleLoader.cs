@@ -72,7 +72,8 @@ public class ModuleLoader
     public Modules? LoadModules(
         IReadOnlyList<JrocCompileEntry> entries,
         string? defaultEntryFilePath = null,
-        Action<SourceSpan, string>? unsupportedSiteRecorder = null)
+        Action<SourceSpan, string>? unsupportedSiteRecorder = null,
+        IReadOnlyList<string>? additionalModulePaths = null)
     {
         if (entries is null || entries.Count == 0)
         {
@@ -171,7 +172,9 @@ public class ModuleLoader
         var moduleCache = new Dictionary<string, ModuleDefinition>(PathComparer);
         var hadAnyErrors = false;
 
-        void LoadRecursive(string currentPath, string? requestedAliasModuleId = null)
+        var explicitParseGoals = entries.All(entry => entry.ParseAsModule || entry.ParseAsScript);
+        void LoadRecursive(string currentPath, string? requestedAliasModuleId = null, bool deferSyntaxErrors = false,
+            bool importedAsModule = false)
         {
             if (moduleCache.TryGetValue(currentPath, out var cached))
             {
@@ -189,10 +192,11 @@ public class ModuleLoader
                 diagnostics,
                 entryOverride,
                 requestedAliasModuleId,
-                moduleGoalEntries.Contains(currentPath),
+                moduleGoalEntries.Contains(currentPath) || importedAsModule,
                 scriptGoalEntries.Contains(currentPath),
                 unsupportedSiteRecorder,
-                out var module);
+                out var module,
+                deferSyntaxErrors);
             if (module is null)
             {
                 hadAnyErrors = true;
@@ -211,13 +215,24 @@ public class ModuleLoader
             // of the graph and report adjacent errors in one compiler run.
             foreach (var dep in module.Dependencies)
             {
-                LoadRecursive(dep.ResolvedPath, dep.RequestedAliasModuleId);
+                LoadRecursive(dep.ResolvedPath, dep.RequestedAliasModuleId,
+                    deferSyntaxErrors || dep.IsDynamicImport,
+                    explicitParseGoals && dep.IsEsModule
+                        && !string.Equals(Path.GetExtension(dep.ResolvedPath), ".cjs", StringComparison.OrdinalIgnoreCase));
             }
         }
 
         foreach (var entryPath in entryPaths)
         {
             LoadRecursive(entryPath, requestedAliasModuleId: TryNormalizeBareAlias(entryOverrides[entryPath]));
+        }
+
+        foreach (var additionalPath in additionalModulePaths ?? [])
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(additionalPath);
+            LoadRecursive(Path.GetFullPath(additionalPath), deferSyntaxErrors: true,
+                importedAsModule: explicitParseGoals
+                    && !string.Equals(Path.GetExtension(additionalPath), ".cjs", StringComparison.OrdinalIgnoreCase));
         }
 
         diagnostics.Flush(_ux);
@@ -257,7 +272,8 @@ public class ModuleLoader
             return null;
         }
 
-        if (entryPaths.Count > 1 && !ValidateUniqueModuleIdentities(moduleCache.Values))
+        if ((entryPaths.Count > 1 || additionalModulePaths is { Count: > 0 })
+            && !ValidateUniqueModuleIdentities(moduleCache.Values))
         {
             return null;
         }
@@ -321,11 +337,34 @@ public class ModuleLoader
             record.EvaluationComponent = -1;
         }
 
+        var eagerModules = new HashSet<ModuleDefinition>();
+        void VisitEager(ModuleDefinition module)
+        {
+            if (!eagerModules.Add(module))
+                return;
+            foreach (var dependency in module.Dependencies.Where(dependency => !dependency.IsDynamicImport))
+            {
+                if (modules._modules.TryGetValue(dependency.ResolvedPath, out var target))
+                    VisitEager(target);
+            }
+        }
+        foreach (var entry in modules.EntryModules)
+            VisitEager(entry);
+
+        foreach (var module in eagerModules)
+        {
+            if ((module.DeferredSyntaxError ?? module.DeferredResolutionError) is { } error)
+            {
+                (logger ?? _ux).WriteLineError($"Error: [{module.ModuleId}] {module.Path}: {error}");
+                return false;
+            }
+        }
+
         var linkedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var hadErrors = false;
         foreach (var module in modules._modules.Values)
         {
-            if (!LinkModule(module, modules, linkedModules))
+            if (!LinkModule(module, modules, linkedModules) && eagerModules.Contains(module))
             {
                 hadErrors = true;
             }
@@ -335,6 +374,21 @@ public class ModuleLoader
         {
             FlushModuleLinkErrors(modules, logger ?? _ux);
             return false;
+        }
+
+        foreach (var module in modules._modules.Values
+            .Where(module => module.ModuleRecord?.LinkPhase == ModuleLinkPhase.LinkError))
+        {
+            var message = string.Join(" ", module.ModuleRecord!.LinkErrors);
+            if (string.IsNullOrWhiteSpace(message))
+                message = $"Failed to link dependencies of module '{module.ModuleId}'.";
+            module.DeferredSyntaxError = message;
+            module.Ast = _parser.ParseJavaScriptModule(
+                $"throw new SyntaxError({CreateJsStringLiteral(message)});", module.Path);
+            module.ModuleRecord = new ModuleRecord { LinkPhase = ModuleLinkPhase.Linked };
+            module.Dependencies.Clear();
+            module.DebugSequencePointOverrides.Clear();
+            module.UsesNativeStaticEsm = true;
         }
 
         return true;
@@ -392,7 +446,8 @@ public class ModuleLoader
         bool parseAsModule,
         bool parseAsScript,
         Action<SourceSpan, string>? unsupportedSiteRecorder,
-        out ModuleDefinition? module)
+        out ModuleDefinition? module,
+        bool deferSyntaxErrors = false)
     {
         parseAsModule |= !parseAsScript && string.Equals(Path.GetExtension(modulePath), ".mjs", StringComparison.OrdinalIgnoreCase);
         string jsSource;
@@ -407,13 +462,21 @@ public class ModuleLoader
             return false;
         }
 
+        string? jsonSource = null;
+        string? deferredSyntaxError = null;
         if (string.Equals(Path.GetExtension(modulePath), ".json", StringComparison.OrdinalIgnoreCase))
         {
+            jsonSource = jsSource;
             if (!TryCreateJsonModuleSource(jsSource, modulePath, out jsSource, out var jsonError))
             {
-                module = null;
-                diagnostics.AddParseError(modulePath, jsonError);
-                return false;
+                if (!deferSyntaxErrors)
+                {
+                    module = null;
+                    diagnostics.AddParseError(modulePath, jsonError);
+                    return false;
+                }
+                deferredSyntaxError = jsonError;
+                jsSource = $"throw new SyntaxError({CreateJsStringLiteral(jsonError)});";
             }
         }
 
@@ -429,6 +492,12 @@ public class ModuleLoader
         try
         {
             ast = ParseModuleSource(jsSource, sourceFileForDebugging, parseAsModule, parseAsScript);
+        }
+        catch (Exception ex) when (deferSyntaxErrors && ex.InnerException is Acornima.ParseErrorException)
+        {
+            deferredSyntaxError = ex.InnerException.Message;
+            jsSource = $"throw new SyntaxError({CreateJsStringLiteral(ex.InnerException.Message)});";
+            ast = _parser.ParseJavaScriptModule(jsSource, sourceFileForDebugging);
         }
         catch (Exception ex)
         {
@@ -447,7 +516,15 @@ public class ModuleLoader
             out var requestRewrittenSource,
             out var requestRewriteErrors,
             out var requestRewriteWarnings);
-        if (!requestResolutionOk)
+        string? deferredResolutionError = null;
+        if (!requestResolutionOk && deferSyntaxErrors)
+        {
+            deferredResolutionError = string.Join(" ", requestRewriteErrors);
+            requestRewrittenSource = $"throw new ReferenceError({CreateJsStringLiteral(deferredResolutionError)});";
+            moduleDependencies = [];
+            requestResolutionOk = true;
+        }
+        else if (!requestResolutionOk)
         {
             foreach (var requestRewriteError in requestRewriteErrors)
             {
@@ -586,7 +663,10 @@ public class ModuleLoader
             Ast = ast,
             ModuleRecord = moduleRecord,
             UsesNativeStaticEsm = usesNativeStaticEsm,
-            UsesScriptSemantics = parseAsScript
+            UsesScriptSemantics = parseAsScript,
+            DeferredSyntaxError = deferredSyntaxError,
+            DeferredResolutionError = deferredResolutionError,
+            JsonSource = jsonSource
         };
 
         if (isPackageModule
@@ -820,7 +900,8 @@ function __jroc_esm_export(name, getter) {
         var baseDirectory = Path.GetDirectoryName(modulePath) ?? ".";
         var edits = new List<TextEdit>();
 
-        void HandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription)
+        void HandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription,
+            bool dynamicImport = false)
         {
             var specifier = literal.Value;
             if (string.IsNullOrWhiteSpace(specifier) || IsBuiltInModuleSpecifier(specifier))
@@ -831,7 +912,7 @@ function __jroc_esm_export(name, getter) {
             if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out var resolvedPath, out var resolveError))
             {
                 var message = $"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}";
-                if (resolutionMode == ModuleResolutionMode.Require)
+                if (resolutionMode == ModuleResolutionMode.Require || dynamicImport)
                 {
                     localWarnings.Add(
                         $"{message}. The require call remains unresolved and will throw at runtime if executed.");
@@ -863,7 +944,9 @@ function __jroc_esm_export(name, getter) {
             {
                 Request = runtimeSpecifier,
                 ResolvedPath = resolvedPath,
-                RequestedAliasModuleId = requestedAliasModuleId
+                RequestedAliasModuleId = requestedAliasModuleId,
+                IsDynamicImport = dynamicImport,
+                IsEsModule = resolutionMode == ModuleResolutionMode.Import
             });
         }
 
@@ -884,7 +967,8 @@ function __jroc_esm_export(name, getter) {
                     break;
 
                 case ImportExpression importExpression when importExpression.Source is StringLiteral sourceLiteral:
-                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import('{sourceLiteral.Value}')");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import('{sourceLiteral.Value}')",
+                        dynamicImport: true);
                     break;
 
                 case CallExpression callExpression
@@ -1418,6 +1502,8 @@ function __jroc_esm_export(name, getter) {
 
                 case ImportExpression importExpression:
                     VisitExpression(importExpression.Source);
+                    if (importExpression.Options != null)
+                        VisitExpression(importExpression.Options);
                     return;
 
                 case SequenceExpression se:
@@ -2527,8 +2613,7 @@ function __jroc_esm_export(name, getter) {
     {
         if (value.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
             || value.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
-            || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase)
-            || value.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
         {
             return Path.ChangeExtension(value, null) ?? value;
         }
@@ -2595,9 +2680,7 @@ function __jroc_esm_export(name, getter) {
 
         // Remove extension from the last segment.
         var last = withinSegments[withinSegments.Length - 1];
-        last = last.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
-            ? last.Substring(0, last.Length - 3)
-            : Path.ChangeExtension(last, null) ?? last;
+        last = TrimKnownModuleExtension(last);
         withinSegments[withinSegments.Length - 1] = last;
 
         withinPackageNoExt = string.Join("/", withinSegments);

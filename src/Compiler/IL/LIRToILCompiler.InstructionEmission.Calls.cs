@@ -712,14 +712,22 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallImport callImport:
                 {
-                    // Emit: JavaScriptRuntime.Modules.ESM.DynamicImport(specifier, currentModuleId)
                     EmitLoadTemp(callImport.ModuleSpecifier, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callImport.CurrentModuleId, ilEncoder, allocation, methodDescriptor);
+                    if (callImport.Options is { } options)
+                    {
+                        EmitLoadTemp(options, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+                    ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(callImport.Phase));
                     
                     var importRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Modules.ESM.DynamicImport),
                         nameof(JavaScriptRuntime.Modules.ESM.DynamicImport.Import),
-                        new[] { typeof(object), typeof(object) });
+                        new[] { typeof(object), typeof(object), typeof(object), typeof(string) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(importRef);
 

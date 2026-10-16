@@ -50,6 +50,8 @@ public class CompilerOptions
     /// </summary>
     public bool AssumeUnmodifiedHostGlobals { get; set; }
 
+    public IReadOnlyList<string> AdditionalModulePaths { get; set; } = [];
+
     /// <summary>
     /// Host-provided runtime intrinsics that should be visible during compilation.
     /// </summary>

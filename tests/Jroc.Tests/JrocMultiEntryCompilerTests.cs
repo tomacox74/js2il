@@ -329,6 +329,141 @@ public sealed class JrocMultiEntryCompilerTests
         Assert.Contains("collid", error.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void AdditionalModulePaths_BundlesComputedTargetsWithoutRunningUnrequestedModules(bool multiEntry)
+    {
+        var directory = NewVirtualDirectory();
+        var entryPath = Path.Combine(directory, "entry.js");
+        var targetPath = Path.Combine(directory, "target.js");
+        var unusedPath = Path.Combine(directory, "unused.js");
+        var fileSystem = new MockFileSystem();
+        fileSystem.AddFile(targetPath, "globalThis.additionalMarker = 42; export const value = 42;");
+        fileSystem.AddFile(unusedPath, "throw new Error('unrequested module executed');");
+        const string source = """
+            export const before = typeof globalThis.additionalMarker;
+            const specifier = './target.js';
+            export const value = (await import(specifier)).value;
+            export const after = globalThis.additionalMarker;
+            """;
+        var artifact = multiEntry
+            ? JrocInMemoryCompiler.Compile(new JrocInMemoryMultiEntryCompileRequest(
+                [new(entryPath, source) { ParseAsModule = true }])
+            {
+                FileSystem = fileSystem,
+                AdditionalModulePaths = [targetPath, unusedPath]
+            })
+            : JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = source,
+                ParseAsModule = true,
+                FileSystem = fileSystem,
+                AdditionalModulePaths = [targetPath, unusedPath]
+            });
+
+        Assert.Single(artifact.EntryModules);
+        Assert.Contains("target", artifact.ModuleIds);
+        Assert.Contains("unused", artifact.ModuleIds);
+        using var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
+        using var exports = JsEngine.LoadDynamicModule(loaded.Assembly, artifact.EntryModuleId);
+        Assert.Equal("undefined", exports.Get("before"));
+        Assert.Equal(42d, exports.Get("value"));
+        Assert.Equal(42d, exports.Get("after"));
+    }
+
+    [Theory]
+    [InlineData("export const = ;", "SyntaxError", "target.js")]
+    [InlineData("import { missing } from './dependency.js';", "SyntaxError", "target.js")]
+    [InlineData("import './missing.js';", "ReferenceError", "target.js")]
+    [InlineData("{ \"invalid\":", "SyntaxError", "target.json")]
+    public void AdditionalModulePaths_DefersModuleErrorsUntilImport(
+        string targetSource, string expectedName, string targetFileName)
+    {
+        var directory = NewVirtualDirectory();
+        var targetPath = Path.Combine(directory, targetFileName);
+        var fileSystem = new MockFileSystem();
+        fileSystem.AddFile(targetPath, targetSource);
+        fileSystem.AddFile(Path.Combine(directory, "dependency.js"), "export const value = 1;");
+        var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(Path.Combine(directory, "entry.js"))
+        {
+            SourceText = $"""
+                const specifier = './{targetFileName}';
+                export const errorName = await import(specifier).then(
+                    () => 'unexpected success', error => error.name);
+                """,
+            ParseAsModule = true,
+            FileSystem = fileSystem,
+            AdditionalModulePaths = [targetPath]
+        });
+
+        using var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
+        using var exports = JsEngine.LoadDynamicModule(loaded.Assembly, artifact.EntryModuleId);
+        Assert.Equal(expectedName, exports.Get("errorName"));
+
+        Assert.Throws<InvalidOperationException>(() => JrocInMemoryCompiler.Compile(
+            new JrocInMemoryCompileRequest(Path.Combine(directory, "eager.js"))
+            {
+                SourceText = $"import './{targetFileName}';",
+                ParseAsModule = true,
+                FileSystem = fileSystem
+            }));
+    }
+
+    [Theory]
+    [InlineData(" \n{\n \"value\": 262\n}\n", true)]
+    [InlineData("not JSON\n", false)]
+    public void AdditionalModulePaths_PreservesRawTextAndDistinctJsonIdentity(string jsonSource, bool validJson)
+    {
+        var directory = NewVirtualDirectory();
+        var jsonPath = Path.Combine(directory, "data.json");
+        var fileSystem = new MockFileSystem();
+        fileSystem.AddFile(jsonPath, jsonSource);
+        fileSystem.AddFile(Path.Combine(directory, "data.js"), "export default 'JavaScript';");
+        using var module = JrocInMemoryCompiler.CompileAndLoadModule(
+            new JrocInMemoryCompileRequest(Path.Combine(directory, "entry.js"))
+            {
+                SourceText = """
+                    const specifier = './data.json';
+                    const text = await import(specifier, { with: { type: 'text' } });
+                    export const content = text.default;
+                    export const cached = text === await import(specifier, { with: { type: 'text' } });
+                    export const javascript = (await import('./data.js')).default;
+                    export const json = await import(specifier, { with: { type: 'json' } }).then(
+                        ns => ns.default.value, error => error.name);
+                    """,
+                ParseAsModule = true,
+                FileSystem = fileSystem,
+                AdditionalModulePaths = [jsonPath]
+            });
+
+        var exports = Assert.IsType<JsDynamicExports>(module.Exports);
+        Assert.Equal(jsonSource, exports.Get("content"));
+        Assert.Equal(true, exports.Get("cached"));
+        Assert.Equal("JavaScript", exports.Get("javascript"));
+        if (validJson)
+            Assert.Equal(262d, exports.Get("json"));
+        else
+            Assert.Equal("SyntaxError", exports.Get("json"));
+    }
+
+    [Fact]
+    public void AdditionalModulePaths_PreservesCommonJsWrapperParsing()
+    {
+        var directory = NewVirtualDirectory();
+        var targetPath = Path.Combine(directory, "target.cjs");
+        var fileSystem = new MockFileSystem();
+        fileSystem.AddFile(targetPath, "module.exports = { value: 42 }; return;");
+        using var module = JrocInMemoryCompiler.CompileAndLoadModule(
+            new JrocInMemoryCompileRequest(Path.Combine(directory, "entry.mjs"))
+            {
+                SourceText = "const path = './target.cjs'; export const value = (await import(path)).default.value;",
+                FileSystem = fileSystem,
+                AdditionalModulePaths = [targetPath]
+            });
+        Assert.Equal(42d, Assert.IsType<JsDynamicExports>(module.Exports).Get("value"));
+    }
+
     private static string NewVirtualDirectory() =>
         Path.Combine(Path.GetTempPath(), "Jroc.Tests", "MultiEntry", Guid.NewGuid().ToString("N"));
 

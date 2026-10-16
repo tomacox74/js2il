@@ -19,6 +19,9 @@ public sealed record JrocInMemoryMultiEntryCompileRequest(IReadOnlyList<JrocInMe
 
     public IFileSystem? FileSystem { get; init; }
 
+    /// <summary>Additional module files to bundle as possible computed import() targets, without executing them.</summary>
+    public IReadOnlyList<string> AdditionalModulePaths { get; init; } = [];
+
     public bool EmitPdb { get; init; }
 
     public bool Verbose { get; init; }

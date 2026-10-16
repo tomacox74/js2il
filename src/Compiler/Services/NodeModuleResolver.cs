@@ -14,7 +14,8 @@ public enum ModuleResolutionMode
 /// Resolves CommonJS and ESM module specifiers to concrete JavaScript module files at compile time.
 ///
 /// This mirrors Node.js module resolution rules as closely as practical for JROC,
-/// and supports <c>.js</c>, <c>.mjs</c>, <c>.cjs</c>, and CommonJS <c>.json</c> targets.
+/// and supports <c>.js</c>, <c>.mjs</c>, <c>.cjs</c>, and explicit <c>.json</c> targets.
+/// Extensionless JSON probing is restricted to CommonJS requests.
 /// </summary>
 public sealed class NodeModuleResolver
 {
@@ -249,7 +250,7 @@ public sealed class NodeModuleResolver
         }
 
         var full = Path.GetFullPath(path);
-        if (!GetSupportedModuleExtensions(resolutionMode)
+        if (!CommonJsModuleExtensions
             .Any(ext => full.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
         {
             error = $"Resolved module target '{full}' is not a supported {DescribeModuleKind(resolutionMode)} module file ({DescribeSupportedModuleExtensions(resolutionMode)}).";
@@ -266,7 +267,7 @@ public sealed class NodeModuleResolver
             : ScriptExtensions;
 
     private static string DescribeSupportedModuleExtensions(ModuleResolutionMode resolutionMode)
-        => string.Join(", ", GetSupportedModuleExtensions(resolutionMode));
+        => string.Join(", ", CommonJsModuleExtensions);
 
     private static string DescribeModuleKind(ModuleResolutionMode resolutionMode)
         => resolutionMode == ModuleResolutionMode.Require ? "CommonJS" : "ES module";

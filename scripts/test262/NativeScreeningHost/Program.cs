@@ -35,7 +35,7 @@ if (args.Length == 1 && args[0] == "--capabilities")
             "assertRelativeDateMs.js", "asyncHelpers.js", "atomicsHelper.js",
             "byteConversionValues.js", "compareArray.js", "compareIterator.js",
             "dateConstants.js", "decimalToHexString.js", "deepEqual.js",
-            "detachArrayBuffer.js", "isConstructor.js", "iteratorZipUtils.js",
+            "detachArrayBuffer.js", "fnGlobalObject.js", "isConstructor.js", "iteratorZipUtils.js",
             "nans.js", "nativeFunctionMatcher.js", "promiseHelper.js",
             "propertyHelper.js", "proxyTrapsHelper.js", "regExpUtils.js",
             "resizableArrayBufferUtils.js", "temporalHelpers.js", "testAtomics.js",
@@ -311,7 +311,7 @@ static bool IsSupportedInclude(string include)
     return include is "assertRelativeDateMs.js" or "asyncHelpers.js"
         or "atomicsHelper.js" or "byteConversionValues.js" or "compareArray.js"
         or "compareIterator.js" or "dateConstants.js" or "decimalToHexString.js"
-        or "deepEqual.js" or "detachArrayBuffer.js" or "isConstructor.js"
+        or "deepEqual.js" or "detachArrayBuffer.js" or "fnGlobalObject.js" or "isConstructor.js"
         or "iteratorZipUtils.js" or "nans.js" or "nativeFunctionMatcher.js"
         or "promiseHelper.js" or "propertyHelper.js" or "proxyTrapsHelper.js"
         or "regExpUtils.js" or "resizableArrayBufferUtils.js"
@@ -327,7 +327,7 @@ static IReadOnlyList<string> FindMissingRelativeDependencies(
     var missing = new List<string>();
     var matches = Regex.Matches(
         source,
-        @"(?m)(?:^\s*(?:import|export)\s+(?:[^'""\r\n]*?\s+from\s+)?|import\s*\()\s*['""](?<specifier>\.[^'""]+)['""]");
+        @"(?m)^\s*(?:import|export)\s+(?:[^'""\r\n]*?\s+from\s+)?\s*['""](?<specifier>\.[^'""]+)['""]");
     foreach (Match match in matches)
     {
         var specifier = match.Groups["specifier"].Value;

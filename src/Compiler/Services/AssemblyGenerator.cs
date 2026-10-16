@@ -635,6 +635,17 @@ namespace Jroc.Services
             var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
             var typeMapCtorRef = _bclReferences.JsCompiledModuleTypeAttribute_Ctor_Ref;
             var entryModuleCtorRef = _bclReferences.JsCompiledEntryModuleAttribute_Ctor_Ref;
+            var needsImportMetadata = false;
+            var walker = new Jroc.Utilities.AstWalker();
+            foreach (var module in modules._modules.Values)
+            {
+                walker.Visit(module.Ast, node =>
+                {
+                    if (node is Acornima.Ast.ImportExpression import
+                        && (import.Phase != Acornima.Ast.ImportPhase.None || import.Options != null))
+                        needsImportMetadata = true;
+                });
+            }
 
             if (!modules._modules.Values.Contains(modules.rootModule))
             {
@@ -662,6 +673,40 @@ namespace Jroc.Services
                     ? module.ClrTypeName!
                     : module.Name;
                 var typeName = $"{effectiveNamespace}.{effectiveTypeName}";
+
+                if (needsImportMetadata)
+                {
+                    var infoConstructor = _memberReferenceRegistry.GetOrAddConstructor(
+                        typeof(Jroc.Runtime.JsCompiledEsModuleAttribute),
+                        [typeof(string), typeof(bool), typeof(string[]), typeof(string[]), typeof(string), typeof(string), typeof(string)]);
+                    var info = new BlobBuilder();
+                    info.WriteUInt16(1);
+                    WriteSerString(info, canonicalModuleId);
+                    info.WriteBoolean(module.SymbolTable?.Root.IsAsync == true);
+                    var dependencies = module.ModuleRecord!.RequestedModules
+                        .Select(request => modules._modules[request.ResolvedPath].ModuleId).ToArray();
+                    info.WriteInt32(dependencies.Length);
+                    foreach (var dependency in dependencies)
+                        WriteSerString(info, dependency);
+                    var exportNames = module.ModuleRecord.ResolvedExports.Keys.Order(StringComparer.Ordinal).ToArray();
+                    info.WriteInt32(exportNames.Length);
+                    foreach (var name in exportNames)
+                        WriteSerString(info, name);
+                    if (module.JsonSource is { } jsonSource)
+                        WriteSerString(info, jsonSource);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.DeferredSyntaxError is { } linkError)
+                        WriteSerString(info, linkError);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.DeferredResolutionError is { } resolutionError)
+                        WriteSerString(info, resolutionError);
+                    else
+                        info.WriteByte(0xff);
+                    info.WriteUInt16(0);
+                    _metadataBuilder.AddCustomAttribute(_assemblyDefinition, infoConstructor, _metadataBuilder.GetOrAddBlob(info));
+                }
 
                 foreach (var publishedId in idsToPublish)
                 {

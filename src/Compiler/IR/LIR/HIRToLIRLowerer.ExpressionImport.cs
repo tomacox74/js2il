@@ -83,10 +83,20 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        // Lower the module specifier (validated to be a string literal)
         if (!TryLowerExpression(importExpr.Specifier, out var specifierTemp))
         {
             return false;
+        }
+
+        specifierTemp = EnsureObject(specifierTemp);
+        TempVariable? optionsTemp = null;
+        if (importExpr.Options != null)
+        {
+            if (!TryLowerExpression(importExpr.Options, out var loweredOptions))
+            {
+                return false;
+            }
+            optionsTemp = EnsureObject(loweredOptions);
         }
 
         if (!TryLowerCurrentModuleId(out var currentModuleIdTemp))
@@ -95,7 +105,8 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Emit the import call
-        _methodBodyIR.Instructions.Add(new LIRCallImport(specifierTemp, currentModuleIdTemp, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRCallImport(specifierTemp, currentModuleIdTemp, resultTempVar,
+            optionsTemp, importExpr.Phase));
         
         DefineTempStorage(
             resultTempVar,

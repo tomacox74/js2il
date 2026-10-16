@@ -75,6 +75,10 @@ public sealed class ModuleDefinition
     public bool UsesNativeStaticEsm { get; set; }
     public bool UsesScriptSemantics { get; set; }
 
+    internal string? DeferredSyntaxError { get; set; }
+    internal string? DeferredResolutionError { get; set; }
+    internal string? JsonSource { get; set; }
+
     public SymbolTable? SymbolTable { get; set; }
 
     public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);
@@ -87,6 +91,10 @@ public sealed class ModuleDependency
     public required string ResolvedPath { get; set; }
 
     public string? RequestedAliasModuleId { get; set; }
+
+    public bool IsDynamicImport { get; init; }
+
+    public bool IsEsModule { get; init; }
 }
 
 public enum ModuleLinkPhase

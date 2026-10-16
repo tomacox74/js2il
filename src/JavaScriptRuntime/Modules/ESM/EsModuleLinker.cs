@@ -6,6 +6,7 @@ namespace JavaScriptRuntime.Modules.ESM
 {
     internal sealed class ModuleNamespaceMarker
     {
+        internal ModuleNamespace? Namespace { get; set; }
     }
 
     /// <summary>
@@ -112,8 +113,16 @@ namespace JavaScriptRuntime.Modules.ESM
         /// </summary>
         internal static bool IsModuleNamespace(object value)
         {
-            return RuntimeExecutionContext.Current?.Realm.ModuleState
-                .EsModuleNamespaces.TryGetValue(value, out _) == true;
+            return value is ModuleNamespace;
+        }
+
+        internal static bool HasModuleRecord(object? exports)
+            => exports is not null && State.EsModuleNamespaces.TryGetValue(exports, out _);
+
+        internal static object GetEsModuleNamespace(object exports)
+        {
+            var marker = State.EsModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
+            return marker.Namespace ??= new ModuleNamespace(exports);
         }
 
         /// <summary>

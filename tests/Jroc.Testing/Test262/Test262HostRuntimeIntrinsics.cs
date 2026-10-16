@@ -52,6 +52,15 @@ public static class Test262HostRuntimeIntrinsics
         // Older hand-ported fixtures call these helpers without preserved includes metadata.
         Test262PropertyHelpers.Register(builder);
 
+        if (included.Contains("fnGlobalObject.js"))
+        {
+            builder.AddGlobalFactory("fnGlobalObject", () =>
+            {
+                var globalObject = GlobalThis.globalThis;
+                return CreateFunction((Func<object>)(() => globalObject), "fnGlobalObject", 0);
+            });
+        }
+
         if (included.Contains("testTypedArray.js"))
         {
             Test262TypedArrayHelpers.Register(builder);

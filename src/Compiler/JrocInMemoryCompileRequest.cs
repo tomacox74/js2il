@@ -8,6 +8,9 @@ public sealed record JrocInMemoryCompileRequest(string EntryFilePath)
 
     public IFileSystem? FileSystem { get; init; }
 
+    /// <summary>Additional module files to bundle as possible computed import() targets, without executing them.</summary>
+    public IReadOnlyList<string> AdditionalModulePaths { get; init; } = [];
+
     public string? RootModuleIdOverride { get; init; }
 
     public bool ParseAsModule { get; init; }
