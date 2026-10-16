@@ -430,7 +430,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 551 (0x227)
+		// Code size: 553 (0x229)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_Basic/Scope,
@@ -576,56 +576,58 @@
 		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0183: volatile.
 		IL_0185: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_018a: brfalse IL_01a4
+		IL_018a: brfalse IL_01a5
 
 		IL_018f: ldstr "push"
 		IL_0194: ldc.i4.0
-		IL_0195: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_019f: br IL_01be
+		IL_0195: pop
+		IL_0196: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01a0: br IL_01c0
 
-		IL_01a4: ldstr "push"
-		IL_01a9: ldc.i4.0
-		IL_01aa: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_01af: ldstr "Stream_Readable_Basic:Modules.Stream_Readable_Basic:__js_module_init__:47"
-		IL_01b4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_01a5: ldstr "push"
+		IL_01aa: ldc.i4.0
+		IL_01ab: pop
+		IL_01ac: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_01b1: ldstr "Stream_Readable_Basic:Modules.Stream_Readable_Basic:__js_module_init__:47"
+		IL_01b6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_01be: pop
-		IL_01bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01c4: stloc.s 4
-		IL_01c6: ldloc.0
-		IL_01c7: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-		IL_01cc: stloc.s 5
-		IL_01ce: ldloc.s 4
-		IL_01d0: ldstr "Data events:"
-		IL_01d5: ldloc.s 5
-		IL_01d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01dc: pop
-		IL_01dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01e2: stloc.s 4
-		IL_01e4: volatile.
-		IL_01e6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_01eb: brfalse IL_0200
+		IL_01c0: pop
+		IL_01c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c6: stloc.s 4
+		IL_01c8: ldloc.0
+		IL_01c9: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+		IL_01ce: stloc.s 5
+		IL_01d0: ldloc.s 4
+		IL_01d2: ldstr "Data events:"
+		IL_01d7: ldloc.s 5
+		IL_01d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01de: pop
+		IL_01df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e4: stloc.s 4
+		IL_01e6: volatile.
+		IL_01e8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_01ed: brfalse IL_0202
 
-		IL_01f0: ldloc.3
-		IL_01f1: ldstr "readable"
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01fb: br IL_0215
+		IL_01f2: ldloc.3
+		IL_01f3: ldstr "readable"
+		IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01fd: br IL_0217
 
-		IL_0200: ldloc.3
-		IL_0201: ldstr "readable"
-		IL_0206: ldstr "Stream_Readable_Basic:Modules.Stream_Readable_Basic:__js_module_init__:57"
-		IL_020b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_0210: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0202: ldloc.3
+		IL_0203: ldstr "readable"
+		IL_0208: ldstr "Stream_Readable_Basic:Modules.Stream_Readable_Basic:__js_module_init__:57"
+		IL_020d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0215: stloc.s 5
-		IL_0217: ldloc.s 4
-		IL_0219: ldstr "Readable after end:"
-		IL_021e: ldloc.s 5
-		IL_0220: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0225: pop
-		IL_0226: ret
+		IL_0217: stloc.s 5
+		IL_0219: ldloc.s 4
+		IL_021b: ldstr "Readable after end:"
+		IL_0220: ldloc.s 5
+		IL_0222: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0227: pop
+		IL_0228: ret
 	} // end of method Stream_Readable_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Readable_Basic

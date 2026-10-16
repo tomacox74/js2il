@@ -104,6 +104,9 @@ generated type/assembly, and an explicitly captured realm/agent/cluster graph.
 
 The remaining readonly statics fall into these audited groups:
 
+- `BoxedPrimitive.True`, `False`, and `Null` retain only immutable boxed CLR
+  boolean/JsNull values for the process lifetime. They are not mutable JavaScript
+  wrappers and must never retain realm descriptors, prototypes, or services.
 - Built-in delegates in `GlobalThis`, `ObjectRuntime`, intrinsic types, and
   Node adapters are immutable CLR call targets. Realm-visible
   `JsFunctionObject` wrappers are materialized by `RuntimeIntrinsics`.

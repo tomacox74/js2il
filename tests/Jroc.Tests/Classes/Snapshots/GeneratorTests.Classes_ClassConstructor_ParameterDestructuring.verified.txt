@@ -957,7 +957,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 284 (0x11c)
+			// Code size: 285 (0x11d)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1052,26 +1052,27 @@
 
 			IL_00f1: stloc.3
 			IL_00f2: ldloc.3
-			IL_00f3: brtrue IL_0104
+			IL_00f3: brtrue IL_0105
 
 			IL_00f8: ldc.i4.0
-			IL_00f9: box [System.Runtime]System.Boolean
-			IL_00fe: stloc.2
-			IL_00ff: br IL_0106
+			IL_00f9: pop
+			IL_00fa: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_00ff: stloc.2
+			IL_0100: br IL_0107
 
-			IL_0104: ldloc.3
-			IL_0105: stloc.2
+			IL_0105: ldloc.3
+			IL_0106: stloc.2
 
-			IL_0106: ldarg.0
-			IL_0107: ldloc.0
-			IL_0108: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
-			IL_010d: ldarg.0
-			IL_010e: ldloc.1
-			IL_010f: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
-			IL_0114: ldarg.0
-			IL_0115: ldloc.2
-			IL_0116: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
-			IL_011b: ret
+			IL_0107: ldarg.0
+			IL_0108: ldloc.0
+			IL_0109: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::host
+			IL_010e: ldarg.0
+			IL_010f: ldloc.1
+			IL_0110: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::port
+			IL_0115: ldarg.0
+			IL_0116: ldloc.2
+			IL_0117: stfld object Modules.Classes_ClassConstructor_ParameterDestructuring/Config::secure
+			IL_011c: ret
 		} // end of method Config::.ctor
 
 		.method public hidebysig 

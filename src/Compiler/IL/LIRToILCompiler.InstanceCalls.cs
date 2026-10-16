@@ -143,8 +143,7 @@ internal sealed partial class LIRToILCompiler
             }
             else if (returnType.IsValueType)
             {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(returnType));
+                EmitBoxValue(returnType, ilEncoder);
             }
 
             EmitStoreTemp(result, ilEncoder, allocation);
@@ -202,8 +201,7 @@ internal sealed partial class LIRToILCompiler
                 && resultStorage.Kind == ValueStorageKind.Reference
                 && resultStorage.ClrType == typeof(object))
             {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(chosen.ReturnType));
+                EmitBoxValue(chosen.ReturnType, ilEncoder);
             }
 
             EmitStoreTemp(instruction.Result, ilEncoder, allocation);

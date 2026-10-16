@@ -2675,7 +2675,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2524 (0x9dc)
+		// Code size: 2525 (0x9dd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_DynamicInlineCache_Invalidation/Scope,
@@ -3519,7 +3519,7 @@
 		IL_08a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_08a8: stloc.s 29
 		IL_08aa: ldloc.s 29
-		IL_08ac: box [System.Runtime]System.Boolean
+		IL_08ac: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_08b1: stloc.s 40
 		IL_08b3: ldloc.s 26
 		IL_08b5: ldloc.s 40
@@ -3530,122 +3530,123 @@
 			IL_08bd: nop
 			IL_08be: ldnull
 			IL_08bf: ldc.i4.0
-			IL_08c0: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_08c5: call object Modules.Object_DynamicInlineCache_Invalidation/read::__js_call__(object, object)
-			IL_08ca: pop
-			IL_08cb: leave IL_094d
+			IL_08c0: pop
+			IL_08c1: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_08c6: call object Modules.Object_DynamicInlineCache_Invalidation/read::__js_call__(object, object)
+			IL_08cb: pop
+			IL_08cc: leave IL_094e
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_08d0: stloc.s 15
-			IL_08d2: ldloc.s 15
-			IL_08d4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_08d9: dup
-			IL_08da: brtrue IL_08f0
+			IL_08d1: stloc.s 15
+			IL_08d3: ldloc.s 15
+			IL_08d5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_08da: dup
+			IL_08db: brtrue IL_08f1
 
-			IL_08df: pop
-			IL_08e0: ldloc.s 15
-			IL_08e2: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_08e7: dup
-			IL_08e8: brtrue IL_08fc
+			IL_08e0: pop
+			IL_08e1: ldloc.s 15
+			IL_08e3: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_08e8: dup
+			IL_08e9: brtrue IL_08fd
 
-			IL_08ed: pop
-			IL_08ee: rethrow
+			IL_08ee: pop
+			IL_08ef: rethrow
 
-			IL_08f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_08f5: stloc.s 16
-			IL_08f7: br IL_08fe
+			IL_08f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_08f6: stloc.s 16
+			IL_08f8: br IL_08ff
 
-			IL_08fc: stloc.s 16
+			IL_08fd: stloc.s 16
 
-			IL_08fe: ldloc.s 16
-			IL_0900: stloc.s 17
-			IL_0902: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0907: stloc.s 26
-			IL_0909: volatile.
-			IL_090b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_0910: brfalse IL_0926
+			IL_08ff: ldloc.s 16
+			IL_0901: stloc.s 17
+			IL_0903: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0908: stloc.s 26
+			IL_090a: volatile.
+			IL_090c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0911: brfalse IL_0927
 
-			IL_0915: ldloc.s 17
-			IL_0917: ldstr "name"
-			IL_091c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0921: br IL_093c
+			IL_0916: ldloc.s 17
+			IL_0918: ldstr "name"
+			IL_091d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0922: br IL_093d
 
-			IL_0926: ldloc.s 17
-			IL_0928: ldstr "name"
-			IL_092d: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:357"
-			IL_0932: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_0937: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0927: ldloc.s 17
+			IL_0929: ldstr "name"
+			IL_092e: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:357"
+			IL_0933: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_0938: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_093c: stloc.s 27
-			IL_093e: ldloc.s 26
-			IL_0940: ldloc.s 27
-			IL_0942: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0947: pop
-			IL_0948: leave IL_094d
+			IL_093d: stloc.s 27
+			IL_093f: ldloc.s 26
+			IL_0941: ldloc.s 27
+			IL_0943: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0948: pop
+			IL_0949: leave IL_094e
 		} // end handler
 		.try
 		{
-			IL_094d: nop
-			IL_094e: ldnull
+			IL_094e: nop
 			IL_094f: ldnull
-			IL_0950: call object Modules.Object_DynamicInlineCache_Invalidation/read::__js_call__(object, object)
-			IL_0955: pop
-			IL_0956: leave IL_09d8
+			IL_0950: ldnull
+			IL_0951: call object Modules.Object_DynamicInlineCache_Invalidation/read::__js_call__(object, object)
+			IL_0956: pop
+			IL_0957: leave IL_09d9
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_095b: stloc.s 18
-			IL_095d: ldloc.s 18
-			IL_095f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0964: dup
-			IL_0965: brtrue IL_097b
+			IL_095c: stloc.s 18
+			IL_095e: ldloc.s 18
+			IL_0960: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0965: dup
+			IL_0966: brtrue IL_097c
 
-			IL_096a: pop
-			IL_096b: ldloc.s 18
-			IL_096d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0972: dup
-			IL_0973: brtrue IL_0987
+			IL_096b: pop
+			IL_096c: ldloc.s 18
+			IL_096e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0973: dup
+			IL_0974: brtrue IL_0988
 
-			IL_0978: pop
-			IL_0979: rethrow
+			IL_0979: pop
+			IL_097a: rethrow
 
-			IL_097b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0980: stloc.s 19
-			IL_0982: br IL_0989
+			IL_097c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0981: stloc.s 19
+			IL_0983: br IL_098a
 
-			IL_0987: stloc.s 19
+			IL_0988: stloc.s 19
 
-			IL_0989: ldloc.s 19
-			IL_098b: stloc.s 20
-			IL_098d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0992: stloc.s 26
-			IL_0994: volatile.
-			IL_0996: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_099b: brfalse IL_09b1
+			IL_098a: ldloc.s 19
+			IL_098c: stloc.s 20
+			IL_098e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0993: stloc.s 26
+			IL_0995: volatile.
+			IL_0997: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_099c: brfalse IL_09b2
 
-			IL_09a0: ldloc.s 20
-			IL_09a2: ldstr "name"
-			IL_09a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_09ac: br IL_09c7
+			IL_09a1: ldloc.s 20
+			IL_09a3: ldstr "name"
+			IL_09a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_09ad: br IL_09c8
 
-			IL_09b1: ldloc.s 20
-			IL_09b3: ldstr "name"
-			IL_09b8: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:380"
-			IL_09bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_09c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_09b2: ldloc.s 20
+			IL_09b4: ldstr "name"
+			IL_09b9: ldstr "Object_DynamicInlineCache_Invalidation:Modules.Object_DynamicInlineCache_Invalidation:__js_module_init__:380"
+			IL_09be: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_09c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_09c7: stloc.s 27
-			IL_09c9: ldloc.s 26
-			IL_09cb: ldloc.s 27
-			IL_09cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_09d2: pop
-			IL_09d3: leave IL_09d8
+			IL_09c8: stloc.s 27
+			IL_09ca: ldloc.s 26
+			IL_09cc: ldloc.s 27
+			IL_09ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_09d3: pop
+			IL_09d4: leave IL_09d9
 		} // end handler
 
-		IL_09d8: ldnull
-		IL_09d9: stloc.s 21
-		IL_09db: ret
+		IL_09d9: ldnull
+		IL_09da: stloc.s 21
+		IL_09dc: ret
 	} // end of method Object_DynamicInlineCache_Invalidation::__js_module_init__
 
 } // end of class Modules.Object_DynamicInlineCache_Invalidation

@@ -550,7 +550,7 @@
 			IL_00d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_00d5: stloc.3
 			IL_00d6: ldloc.3
-			IL_00d7: box [System.Runtime]System.Boolean
+			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_00dc: stloc.s 5
 			IL_00de: ldloc.s 4
 			IL_00e0: ldloc.s 5
@@ -1590,7 +1590,7 @@
 				IL_0077: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
 				IL_007c: stloc.s 8
 				IL_007e: ldloc.s 8
-				IL_0080: box [System.Runtime]System.Boolean
+				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 				IL_0085: stloc.s 9
 				IL_0087: ldnull
 				IL_0088: stloc.s 4
@@ -1733,7 +1733,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 81 (0x51)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1757,27 +1757,28 @@
 			IL_001c: ldloc.2
 			IL_001d: stloc.0
 			IL_001e: ldc.i4.0
-			IL_001f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0024: stloc.1
-			IL_0025: ldloc.1
-			IL_0026: ldstr "w"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0030: stloc.3
-			IL_0031: ldloc.3
-			IL_0032: stloc.1
-			IL_0033: ldloc.0
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.String::MaterializeConcatValue(object)
-			IL_0039: stloc.2
-			IL_003a: ldloc.2
-			IL_003b: ldstr " "
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0045: stloc.3
-			IL_0046: ldloc.3
-			IL_0047: ldloc.1
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: ret
+			IL_001f: pop
+			IL_0020: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0025: stloc.1
+			IL_0026: ldloc.1
+			IL_0027: ldstr "w"
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0031: stloc.3
+			IL_0032: ldloc.3
+			IL_0033: stloc.1
+			IL_0034: ldloc.0
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.String::MaterializeConcatValue(object)
+			IL_003a: stloc.2
+			IL_003b: ldloc.2
+			IL_003c: ldstr " "
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0046: stloc.3
+			IL_0047: ldloc.3
+			IL_0048: ldloc.1
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_004e: stloc.3
+			IL_004f: ldloc.3
+			IL_0050: ret
 		} // end of method nullishStarts::__js_call__
 
 	} // end of class nullishStarts

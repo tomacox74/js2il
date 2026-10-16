@@ -183,7 +183,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 285 (0x11d)
+		// Code size: 286 (0x11e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_Truthiness/Scope,
@@ -215,79 +215,80 @@
 		IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0042: dup
 		IL_0043: ldc.i4.0
-		IL_0044: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0049: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_004e: dup
-		IL_004f: ldnull
-		IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0061: dup
-		IL_0062: ldc.i4.1
-		IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0068: dup
-		IL_0069: ldc.r8 1
-		IL_0072: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-		IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_007c: dup
-		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0087: dup
-		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_008d: dup
-		IL_008e: ldstr "a"
-		IL_0093: ldc.r8 1
-		IL_009c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00a6: stloc.1
-		IL_00a7: ldc.r8 0.0
-		IL_00b0: stloc.2
-		// loop start (head: IL_00b1)
-			IL_00b1: ldloc.2
-			IL_00b2: stloc.3
-			IL_00b3: ldloc.1
-			IL_00b4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_00b9: stloc.s 4
-			IL_00bb: ldloc.3
-			IL_00bc: ldloc.s 4
-			IL_00be: clt
-			IL_00c0: brfalse IL_011c
+		IL_0044: pop
+		IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_004f: dup
+		IL_0050: ldnull
+		IL_0051: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0056: dup
+		IL_0057: ldc.i4.0
+		IL_0058: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_005d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0062: dup
+		IL_0063: ldc.i4.1
+		IL_0064: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0069: dup
+		IL_006a: ldc.r8 1
+		IL_0073: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+		IL_0078: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007d: dup
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0088: dup
+		IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_008e: dup
+		IL_008f: ldstr "a"
+		IL_0094: ldc.r8 1
+		IL_009d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00a7: stloc.1
+		IL_00a8: ldc.r8 0.0
+		IL_00b1: stloc.2
+		// loop start (head: IL_00b2)
+			IL_00b2: ldloc.2
+			IL_00b3: stloc.3
+			IL_00b4: ldloc.1
+			IL_00b5: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_00ba: stloc.s 4
+			IL_00bc: ldloc.3
+			IL_00bd: ldloc.s 4
+			IL_00bf: clt
+			IL_00c1: brfalse IL_011d
 
-			IL_00c5: ldloc.1
-			IL_00c6: ldloc.2
-			IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00cc: stloc.s 5
-			IL_00ce: ldloc.s 5
-			IL_00d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00d5: stloc.s 6
-			IL_00d7: ldloc.s 6
-			IL_00d9: brfalse IL_00f7
+			IL_00c6: ldloc.1
+			IL_00c7: ldloc.2
+			IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00cd: stloc.s 5
+			IL_00cf: ldloc.s 5
+			IL_00d1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00d6: stloc.s 6
+			IL_00d8: ldloc.s 6
+			IL_00da: brfalse IL_00f8
 
-			IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00e3: stloc.s 7
-			IL_00e5: ldloc.s 7
-			IL_00e7: ldstr "T"
-			IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00f1: pop
-			IL_00f2: br IL_010b
+			IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e4: stloc.s 7
+			IL_00e6: ldloc.s 7
+			IL_00e8: ldstr "T"
+			IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00f2: pop
+			IL_00f3: br IL_010c
 
-			IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00fc: stloc.s 7
-			IL_00fe: ldloc.s 7
-			IL_0100: ldstr "F"
-			IL_0105: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_010a: pop
+			IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00fd: stloc.s 7
+			IL_00ff: ldloc.s 7
+			IL_0101: ldstr "F"
+			IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010b: pop
 
-			IL_010b: ldloc.2
-			IL_010c: ldc.r8 1
-			IL_0115: add
-			IL_0116: stloc.2
-			IL_0117: br IL_00b1
+			IL_010c: ldloc.2
+			IL_010d: ldc.r8 1
+			IL_0116: add
+			IL_0117: stloc.2
+			IL_0118: br IL_00b2
 		// end loop
 
-		IL_011c: ret
+		IL_011d: ret
 	} // end of method ControlFlow_If_Truthiness::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_Truthiness

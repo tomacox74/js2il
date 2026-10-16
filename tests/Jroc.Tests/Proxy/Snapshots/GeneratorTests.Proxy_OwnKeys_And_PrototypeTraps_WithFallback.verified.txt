@@ -499,7 +499,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 71 (0x47)
+			// Code size: 72 (0x48)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -528,8 +528,9 @@
 			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 			IL_003f: pop
 			IL_0040: ldc.i4.1
-			IL_0041: box [System.Runtime]System.Boolean
-			IL_0046: ret
+			IL_0041: pop
+			IL_0042: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0047: ret
 		} // end of method FunctionExpression_prototypeProxy_L17C18::__js_call__
 
 	} // end of class FunctionExpression_prototypeProxy_L17C18
@@ -573,7 +574,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 874 (0x36a)
+		// Code size: 876 (0x36c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback/Scope,
@@ -849,7 +850,7 @@
 		IL_030f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_0314: stloc.s 16
 		IL_0316: ldloc.s 16
-		IL_0318: box [System.Runtime]System.Boolean
+		IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_031d: stloc.s 17
 		IL_031f: ldloc.s 12
 		IL_0321: ldloc.s 17
@@ -857,27 +858,29 @@
 		IL_0328: pop
 		IL_0329: ldloc.s 6
 		IL_032b: ldc.i4.0
-		IL_032c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0331: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
-		IL_0336: pop
-		IL_0337: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_033c: stloc.s 12
-		IL_033e: ldloc.s 4
-		IL_0340: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_0345: stloc.s 15
-		IL_0347: ldloc.s 15
-		IL_0349: ldc.i4.0
-		IL_034a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_034f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0354: stloc.s 16
-		IL_0356: ldloc.s 16
-		IL_0358: box [System.Runtime]System.Boolean
-		IL_035d: stloc.s 17
-		IL_035f: ldloc.s 12
-		IL_0361: ldloc.s 17
-		IL_0363: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0368: pop
-		IL_0369: ret
+		IL_032c: pop
+		IL_032d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+		IL_0337: pop
+		IL_0338: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_033d: stloc.s 12
+		IL_033f: ldloc.s 4
+		IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_0346: stloc.s 15
+		IL_0348: ldloc.s 15
+		IL_034a: ldc.i4.0
+		IL_034b: pop
+		IL_034c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0351: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0356: stloc.s 16
+		IL_0358: ldloc.s 16
+		IL_035a: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_035f: stloc.s 17
+		IL_0361: ldloc.s 12
+		IL_0363: ldloc.s 17
+		IL_0365: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_036a: pop
+		IL_036b: ret
 	} // end of method Proxy_OwnKeys_And_PrototypeTraps_WithFallback::__js_module_init__
 
 } // end of class Modules.Proxy_OwnKeys_And_PrototypeTraps_WithFallback

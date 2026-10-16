@@ -1216,7 +1216,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 348 (0x15c)
+			// Code size: 349 (0x15d)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -1310,50 +1310,51 @@
 
 			IL_00eb: stloc.s 4
 			IL_00ed: ldloc.s 4
-			IL_00ef: brtrue IL_0100
+			IL_00ef: brtrue IL_0101
 
 			IL_00f4: ldc.i4.0
-			IL_00f5: box [System.Runtime]System.Boolean
-			IL_00fa: stloc.2
-			IL_00fb: br IL_0103
+			IL_00f5: pop
+			IL_00f6: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_00fb: stloc.2
+			IL_00fc: br IL_0104
 
-			IL_0100: ldloc.s 4
-			IL_0102: stloc.2
+			IL_0101: ldloc.s 4
+			IL_0103: stloc.2
 
-			IL_0103: ldloc.2
-			IL_0104: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0109: stloc.s 5
-			IL_010b: ldloc.s 5
-			IL_010d: brfalse IL_011d
+			IL_0104: ldloc.2
+			IL_0105: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_010a: stloc.s 5
+			IL_010c: ldloc.s 5
+			IL_010e: brfalse IL_011e
 
-			IL_0112: ldstr "https://"
-			IL_0117: stloc.3
-			IL_0118: br IL_0123
+			IL_0113: ldstr "https://"
+			IL_0118: stloc.3
+			IL_0119: br IL_0124
 
-			IL_011d: ldstr "http://"
-			IL_0122: stloc.3
+			IL_011e: ldstr "http://"
+			IL_0123: stloc.3
 
-			IL_0123: ldloc.3
-			IL_0124: stloc.s 6
-			IL_0126: ldloc.s 6
-			IL_0128: ldloc.0
-			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_012e: stloc.s 6
-			IL_0130: ldloc.s 6
-			IL_0132: ldstr ":"
-			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_013c: stloc.s 6
-			IL_013e: ldloc.s 6
-			IL_0140: ldloc.1
-			IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0146: stloc.s 6
-			IL_0148: ldarg.0
-			IL_0149: ldloc.s 6
-			IL_014b: castclass [System.Runtime]System.String
-			IL_0150: stfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
-			IL_0155: ldarg.0
-			IL_0156: ldfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
-			IL_015b: ret
+			IL_0124: ldloc.3
+			IL_0125: stloc.s 6
+			IL_0127: ldloc.s 6
+			IL_0129: ldloc.0
+			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_012f: stloc.s 6
+			IL_0131: ldloc.s 6
+			IL_0133: ldstr ":"
+			IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_013d: stloc.s 6
+			IL_013f: ldloc.s 6
+			IL_0141: ldloc.1
+			IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0147: stloc.s 6
+			IL_0149: ldarg.0
+			IL_014a: ldloc.s 6
+			IL_014c: castclass [System.Runtime]System.String
+			IL_0151: stfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
+			IL_0156: ldarg.0
+			IL_0157: ldfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
+			IL_015c: ret
 		} // end of method Config::setConnection
 
 	} // end of class Config

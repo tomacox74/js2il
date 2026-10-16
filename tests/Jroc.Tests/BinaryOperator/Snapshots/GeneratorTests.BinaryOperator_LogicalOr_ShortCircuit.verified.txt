@@ -210,7 +210,7 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Header size: 12
-			// Code size: 37 (0x25)
+			// Code size: 38 (0x26)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -228,8 +228,9 @@
 			IL_0018: ldloc.1
 			IL_0019: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
 			IL_001e: ldc.i4.1
-			IL_001f: box [System.Runtime]System.Boolean
-			IL_0024: ret
+			IL_001f: pop
+			IL_0020: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0025: ret
 		} // end of method inc::__js_call__
 
 	} // end of class inc
@@ -273,7 +274,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 147 (0x93)
+		// Code size: 149 (0x95)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope,
@@ -315,37 +316,39 @@
 		IL_003d: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
 		IL_0042: nop
 		IL_0043: ldc.i4.1
-		IL_0044: box [System.Runtime]System.Boolean
-		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.s 4
-		IL_0052: brtrue IL_006e
+		IL_0044: pop
+		IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_004a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_004f: stloc.s 4
+		IL_0051: ldloc.s 4
+		IL_0053: brtrue IL_006f
 
-		IL_0057: ldloc.0
-		IL_0058: castclass Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope
-		IL_005d: ldnull
-		IL_005e: call object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope, object)
-		IL_0063: stloc.s 5
-		IL_0065: ldloc.s 5
-		IL_0067: stloc.s 7
-		IL_0069: br IL_0076
+		IL_0058: ldloc.0
+		IL_0059: castclass Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope
+		IL_005e: ldnull
+		IL_005f: call object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope, object)
+		IL_0064: stloc.s 5
+		IL_0066: ldloc.s 5
+		IL_0068: stloc.s 7
+		IL_006a: br IL_0078
 
-		IL_006e: ldc.i4.1
-		IL_006f: box [System.Runtime]System.Boolean
-		IL_0074: stloc.s 7
+		IL_006f: ldc.i4.1
+		IL_0070: pop
+		IL_0071: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_0076: stloc.s 7
 
-		IL_0076: ldloc.s 7
-		IL_0078: stloc.2
-		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007e: stloc.s 8
-		IL_0080: ldloc.0
-		IL_0081: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_0086: stloc.s 5
-		IL_0088: ldloc.s 8
-		IL_008a: ldloc.s 5
-		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0091: pop
-		IL_0092: ret
+		IL_0078: ldloc.s 7
+		IL_007a: stloc.2
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: stloc.s 8
+		IL_0082: ldloc.0
+		IL_0083: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_0088: stloc.s 5
+		IL_008a: ldloc.s 8
+		IL_008c: ldloc.s 5
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0093: pop
+		IL_0094: ret
 	} // end of method BinaryOperator_LogicalOr_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalOr_ShortCircuit

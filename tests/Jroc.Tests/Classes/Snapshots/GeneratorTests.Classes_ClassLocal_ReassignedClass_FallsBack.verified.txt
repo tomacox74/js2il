@@ -264,7 +264,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 198 (0xc6)
+			// Code size: 199 (0xc7)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -297,69 +297,70 @@
 			IL_003e: ldloc.s 5
 			IL_0040: stloc.0
 			IL_0041: ldc.i4.0
-			IL_0042: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0047: stloc.s 6
-			IL_0049: ldloc.s 6
-			IL_004b: stloc.0
+			IL_0042: pop
+			IL_0043: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0048: stloc.s 6
+			IL_004a: ldloc.s 6
+			IL_004c: stloc.0
 			.try
 			{
-				IL_004c: nop
-				IL_004d: ldloc.0
-				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0053: stloc.s 4
-				IL_0055: ldloc.s 4
-				IL_0057: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-				IL_005c: dup
-				IL_005d: brfalse IL_006d
+				IL_004d: nop
+				IL_004e: ldloc.0
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0054: stloc.s 4
+				IL_0056: ldloc.s 4
+				IL_0058: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
+				IL_005d: dup
+				IL_005e: brfalse IL_006e
 
-				IL_0062: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
-				IL_0067: pop
-				IL_0068: br IL_007b
+				IL_0063: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
+				IL_0068: pop
+				IL_0069: br IL_007c
 
-				IL_006d: pop
-				IL_006e: ldloc.s 4
-				IL_0070: ldstr "read"
-				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_007a: pop
+				IL_006e: pop
+				IL_006f: ldloc.s 4
+				IL_0071: ldstr "read"
+				IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_007b: pop
 
-				IL_007b: leave IL_00c2
+				IL_007c: leave IL_00c3
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0080: stloc.1
-				IL_0081: ldloc.1
-				IL_0082: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0087: dup
-				IL_0088: brtrue IL_009d
+				IL_0081: stloc.1
+				IL_0082: ldloc.1
+				IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0088: dup
+				IL_0089: brtrue IL_009e
 
-				IL_008d: pop
-				IL_008e: ldloc.1
-				IL_008f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0094: dup
-				IL_0095: brtrue IL_00a8
+				IL_008e: pop
+				IL_008f: ldloc.1
+				IL_0090: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0095: dup
+				IL_0096: brtrue IL_00a9
 
-				IL_009a: pop
-				IL_009b: rethrow
+				IL_009b: pop
+				IL_009c: rethrow
 
-				IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_00a2: stloc.2
-				IL_00a3: br IL_00a9
+				IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_00a3: stloc.2
+				IL_00a4: br IL_00aa
 
-				IL_00a8: stloc.2
+				IL_00a9: stloc.2
 
-				IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00ae: stloc.s 7
-				IL_00b0: ldloc.s 7
-				IL_00b2: ldstr "caught"
-				IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00bc: pop
-				IL_00bd: leave IL_00c2
+				IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00af: stloc.s 7
+				IL_00b1: ldloc.s 7
+				IL_00b3: ldstr "caught"
+				IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00bd: pop
+				IL_00be: leave IL_00c3
 			} // end handler
 
-			IL_00c2: ldnull
-			IL_00c3: stloc.3
-			IL_00c4: ldloc.3
-			IL_00c5: ret
+			IL_00c3: ldnull
+			IL_00c4: stloc.3
+			IL_00c5: ldloc.3
+			IL_00c6: ret
 		} // end of method test::__js_call__
 
 	} // end of class test

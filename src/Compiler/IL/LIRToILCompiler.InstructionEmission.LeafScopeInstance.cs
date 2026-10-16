@@ -69,8 +69,7 @@ internal sealed partial class LIRToILCompiler
 
         if (parameterDescriptor.ParameterType?.IsValueType == true)
         {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(GetBoxingTypeToken(parameterDescriptor.ParameterType));
+            EmitBoxValue(parameterDescriptor.ParameterType, ilEncoder);
         }
 
         ilEncoder.OpCode(ILOpCode.Stelem_ref);

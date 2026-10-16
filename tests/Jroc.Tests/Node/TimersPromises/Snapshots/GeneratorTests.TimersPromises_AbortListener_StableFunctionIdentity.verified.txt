@@ -318,7 +318,7 @@
 			IL_00a5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_00aa: stloc.0
 			IL_00ab: ldloc.0
-			IL_00ac: box [System.Runtime]System.Boolean
+			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_00b1: stloc.s 4
 			IL_00b3: ldloc.1
 			IL_00b4: ldloc.s 4
@@ -529,7 +529,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 232 (0xe8)
+			// Code size: 233 (0xe9)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -543,7 +543,7 @@
 			IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
-			IL_000d: brfalse IL_00e6
+			IL_000d: brfalse IL_00e7
 
 			IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0017: stloc.1
@@ -572,7 +572,7 @@
 			IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0065: stloc.0
 			IL_0066: ldloc.0
-			IL_0067: box [System.Runtime]System.Boolean
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_006c: stloc.3
 			IL_006d: ldloc.1
 			IL_006e: ldloc.3
@@ -603,20 +603,21 @@
 			IL_00bd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_00c2: stloc.0
 			IL_00c3: ldloc.0
-			IL_00c4: brfalse IL_00e6
+			IL_00c4: brfalse IL_00e7
 
 			IL_00c9: ldarg.1
 			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
 			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
 			IL_00d4: ldstr "listener"
 			IL_00d9: ldc.i4.0
-			IL_00da: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00df: ldc.i4.1
-			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_00e5: pop
+			IL_00da: pop
+			IL_00db: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_00e0: ldc.i4.1
+			IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_00e6: pop
 
-			IL_00e6: ldnull
-			IL_00e7: ret
+			IL_00e7: ldnull
+			IL_00e8: ret
 		} // end of method FunctionExpression_signal_L18C25::__js_call__
 
 	} // end of class FunctionExpression_signal_L18C25
@@ -766,7 +767,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 154 (0x9a)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -817,18 +818,19 @@
 			IL_007b: stloc.1
 			IL_007c: ldloc.1
 			IL_007d: ldc.i4.0
-			IL_007e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0083: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0088: stloc.2
-			IL_0089: ldloc.2
-			IL_008a: box [System.Runtime]System.Boolean
-			IL_008f: stloc.3
-			IL_0090: ldloc.0
-			IL_0091: ldloc.3
-			IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0097: pop
-			IL_0098: ldnull
-			IL_0099: ret
+			IL_007e: pop
+			IL_007f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0084: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0089: stloc.2
+			IL_008a: ldloc.2
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0090: stloc.3
+			IL_0091: ldloc.0
+			IL_0092: ldloc.3
+			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0098: pop
+			IL_0099: ldnull
+			IL_009a: ret
 		} // end of method FunctionExpression_L36C14::__js_call__
 
 	} // end of class FunctionExpression_L36C14
@@ -871,7 +873,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 526 (0x20e)
+		// Code size: 530 (0x212)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope,
@@ -942,135 +944,139 @@
 		IL_0082: dup
 		IL_0083: ldstr "reason"
 		IL_0088: ldc.i4.0
-		IL_0089: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_008e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0093: dup
-		IL_0094: ldstr "listener"
-		IL_0099: ldc.i4.0
-		IL_009a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00a4: dup
-		IL_00a5: ldstr "addedListener"
-		IL_00aa: ldc.i4.0
-		IL_00ab: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00b5: dup
-		IL_00b6: ldstr "addEventListener"
-		IL_00bb: ldloc.s 6
-		IL_00bd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00c2: dup
-		IL_00c3: ldstr "removeEventListener"
-		IL_00c8: ldloc.s 8
-		IL_00ca: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00cf: stloc.s 9
-		IL_00d1: ldloc.0
-		IL_00d2: ldloc.s 9
-		IL_00d4: stfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
-		IL_00d9: ldloc.0
-		IL_00da: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
-		IL_00df: stloc.s 8
-		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00e6: dup
-		IL_00e7: ldstr "signal"
-		IL_00ec: ldloc.s 8
-		IL_00ee: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00f3: stloc.s 9
-		IL_00f5: ldloc.1
-		IL_00f6: ldc.r8 1000
-		IL_00ff: box [System.Runtime]System.Double
-		IL_0104: ldstr "value"
-		IL_0109: ldloc.s 9
-		IL_010b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptPromise [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule::setTimeout(object, object, object)
-		IL_0110: stloc.2
-		IL_0111: ldloc.0
-		IL_0112: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
-		IL_0117: volatile.
-		IL_0119: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_011e: brfalse IL_0132
+		IL_0089: pop
+		IL_008a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_008f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0094: dup
+		IL_0095: ldstr "listener"
+		IL_009a: ldc.i4.0
+		IL_009b: pop
+		IL_009c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_00a1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00a6: dup
+		IL_00a7: ldstr "addedListener"
+		IL_00ac: ldc.i4.0
+		IL_00ad: pop
+		IL_00ae: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_00b3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00b8: dup
+		IL_00b9: ldstr "addEventListener"
+		IL_00be: ldloc.s 6
+		IL_00c0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c5: dup
+		IL_00c6: ldstr "removeEventListener"
+		IL_00cb: ldloc.s 8
+		IL_00cd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d2: stloc.s 9
+		IL_00d4: ldloc.0
+		IL_00d5: ldloc.s 9
+		IL_00d7: stfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
+		IL_00dc: ldloc.0
+		IL_00dd: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
+		IL_00e2: stloc.s 8
+		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00e9: dup
+		IL_00ea: ldstr "signal"
+		IL_00ef: ldloc.s 8
+		IL_00f1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00f6: stloc.s 9
+		IL_00f8: ldloc.1
+		IL_00f9: ldc.r8 1000
+		IL_0102: box [System.Runtime]System.Double
+		IL_0107: ldstr "value"
+		IL_010c: ldloc.s 9
+		IL_010e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptPromise [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.ITimersPromisesModule::setTimeout(object, object, object)
+		IL_0113: stloc.2
+		IL_0114: ldloc.0
+		IL_0115: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
+		IL_011a: volatile.
+		IL_011c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0121: brfalse IL_0135
 
-		IL_0123: ldstr "listener"
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_012d: br IL_0146
+		IL_0126: ldstr "listener"
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0130: br IL_0149
 
-		IL_0132: ldstr "listener"
-		IL_0137: ldstr "TimersPromises_AbortListener_StableFunctionIdentity:Modules.TimersPromises_AbortListener_StableFunctionIdentity:__js_module_init__:34"
-		IL_013c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0135: ldstr "listener"
+		IL_013a: ldstr "TimersPromises_AbortListener_StableFunctionIdentity:Modules.TimersPromises_AbortListener_StableFunctionIdentity:__js_module_init__:34"
+		IL_013f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0146: stloc.3
-		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014c: stloc.s 10
-		IL_014e: ldloc.3
-		IL_014f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0154: stloc.s 11
-		IL_0156: ldloc.s 10
-		IL_0158: ldloc.s 11
-		IL_015a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_015f: pop
-		IL_0160: ldloc.0
-		IL_0161: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
-		IL_0166: stloc.s 8
-		IL_0168: ldloc.s 8
-		IL_016a: ldstr "aborted"
-		IL_016f: ldc.i4.1
-		IL_0170: box [System.Runtime]System.Boolean
-		IL_0175: ldc.i4.1
-		IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_017b: pop
-		IL_017c: ldloc.0
-		IL_017d: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
-		IL_0182: stloc.s 8
-		IL_0184: ldloc.s 8
-		IL_0186: ldstr "reason"
-		IL_018b: ldstr "stopped"
-		IL_0190: ldc.i4.1
-		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0196: pop
-		IL_0197: ldloc.3
-		IL_0198: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_01a2: pop
-		IL_01a3: ldloc.2
-		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a9: stloc.s 8
-		IL_01ab: ldc.i4.1
-		IL_01ac: newarr [System.Runtime]System.Object
-		IL_01b1: dup
-		IL_01b2: ldc.i4.0
-		IL_01b3: ldloc.0
-		IL_01b4: stelem.ref
-		IL_01b5: stloc.s 4
-		IL_01b7: ldloc.s 4
-		IL_01b9: ldc.i4.0
-		IL_01ba: ldelem.ref
-		IL_01bb: castclass Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope
-		IL_01c0: newobj instance void Modules.TimersPromises_AbortListener_StableFunctionIdentity/FunctionExpression_L36C14/FunctionObject::.ctor(class Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope)
-		IL_01c5: ldc.i4.1
-		IL_01c6: conv.r8
-		IL_01c7: ldstr ""
-		IL_01cc: ldc.i4.0
-		IL_01cd: ldc.i4.0
-		IL_01ce: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_AbortListener_StableFunctionIdentity/FunctionExpression_L36C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_01d3: stloc.s 12
-		IL_01d5: volatile.
-		IL_01d7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_01dc: brfalse IL_01f4
+		IL_0149: stloc.3
+		IL_014a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014f: stloc.s 10
+		IL_0151: ldloc.3
+		IL_0152: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0157: stloc.s 11
+		IL_0159: ldloc.s 10
+		IL_015b: ldloc.s 11
+		IL_015d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0162: pop
+		IL_0163: ldloc.0
+		IL_0164: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
+		IL_0169: stloc.s 8
+		IL_016b: ldloc.s 8
+		IL_016d: ldstr "aborted"
+		IL_0172: ldc.i4.1
+		IL_0173: pop
+		IL_0174: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_0179: ldc.i4.1
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_017f: pop
+		IL_0180: ldloc.0
+		IL_0181: ldfld object Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope::signal
+		IL_0186: stloc.s 8
+		IL_0188: ldloc.s 8
+		IL_018a: ldstr "reason"
+		IL_018f: ldstr "stopped"
+		IL_0194: ldc.i4.1
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_019a: pop
+		IL_019b: ldloc.3
+		IL_019c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_01a6: pop
+		IL_01a7: ldloc.2
+		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01ad: stloc.s 8
+		IL_01af: ldc.i4.1
+		IL_01b0: newarr [System.Runtime]System.Object
+		IL_01b5: dup
+		IL_01b6: ldc.i4.0
+		IL_01b7: ldloc.0
+		IL_01b8: stelem.ref
+		IL_01b9: stloc.s 4
+		IL_01bb: ldloc.s 4
+		IL_01bd: ldc.i4.0
+		IL_01be: ldelem.ref
+		IL_01bf: castclass Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope
+		IL_01c4: newobj instance void Modules.TimersPromises_AbortListener_StableFunctionIdentity/FunctionExpression_L36C14/FunctionObject::.ctor(class Modules.TimersPromises_AbortListener_StableFunctionIdentity/Scope)
+		IL_01c9: ldc.i4.1
+		IL_01ca: conv.r8
+		IL_01cb: ldstr ""
+		IL_01d0: ldc.i4.0
+		IL_01d1: ldc.i4.0
+		IL_01d2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.TimersPromises_AbortListener_StableFunctionIdentity/FunctionExpression_L36C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_01d7: stloc.s 12
+		IL_01d9: volatile.
+		IL_01db: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01e0: brfalse IL_01f8
 
-		IL_01e1: ldloc.s 8
-		IL_01e3: ldstr "catch"
-		IL_01e8: ldloc.s 12
-		IL_01ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_01ef: br IL_020c
+		IL_01e5: ldloc.s 8
+		IL_01e7: ldstr "catch"
+		IL_01ec: ldloc.s 12
+		IL_01ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_01f3: br IL_0210
 
-		IL_01f4: ldloc.s 8
-		IL_01f6: ldstr "catch"
-		IL_01fb: ldloc.s 12
-		IL_01fd: ldstr "TimersPromises_AbortListener_StableFunctionIdentity:Modules.TimersPromises_AbortListener_StableFunctionIdentity:__js_module_init__:58"
-		IL_0202: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0207: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_01f8: ldloc.s 8
+		IL_01fa: ldstr "catch"
+		IL_01ff: ldloc.s 12
+		IL_0201: ldstr "TimersPromises_AbortListener_StableFunctionIdentity:Modules.TimersPromises_AbortListener_StableFunctionIdentity:__js_module_init__:58"
+		IL_0206: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_020c: pop
-		IL_020d: ret
+		IL_0210: pop
+		IL_0211: ret
 	} // end of method TimersPromises_AbortListener_StableFunctionIdentity::__js_module_init__
 
 } // end of class Modules.TimersPromises_AbortListener_StableFunctionIdentity

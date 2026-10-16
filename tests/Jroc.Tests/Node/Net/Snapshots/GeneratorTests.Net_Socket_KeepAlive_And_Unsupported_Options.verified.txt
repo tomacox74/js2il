@@ -217,7 +217,7 @@
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 12
-			// Code size: 166 (0xa6)
+			// Code size: 168 (0xa8)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -230,56 +230,58 @@
 			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0006: volatile.
 			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_000d: brfalse IL_0027
+			IL_000d: brfalse IL_0028
 
 			IL_0012: ldstr "setKeepAlive"
 			IL_0017: ldc.i4.1
-			IL_0018: box [System.Runtime]System.Boolean
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0022: br IL_0041
+			IL_0018: pop
+			IL_0019: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0023: br IL_0043
 
-			IL_0027: ldstr "setKeepAlive"
-			IL_002c: ldc.i4.1
-			IL_002d: box [System.Runtime]System.Boolean
-			IL_0032: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M4>:__js_call__:6"
-			IL_0037: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_0028: ldstr "setKeepAlive"
+			IL_002d: ldc.i4.1
+			IL_002e: pop
+			IL_002f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0034: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M4>:__js_call__:6"
+			IL_0039: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_0041: stloc.0
-			IL_0042: ldloc.0
-			IL_0043: ldarg.2
-			IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0049: stloc.1
-			IL_004a: ldloc.1
-			IL_004b: box [System.Runtime]System.Boolean
-			IL_0050: stloc.2
-			IL_0051: ldstr "server keepalive same:"
-			IL_0056: ldloc.2
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_005c: stloc.3
-			IL_005d: ldarg.0
-			IL_005e: ldloc.3
-			IL_005f: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::serverKeepAliveLine
-			IL_0064: ldarg.2
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006a: volatile.
-			IL_006c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-			IL_0071: brfalse IL_008a
+			IL_0043: stloc.0
+			IL_0044: ldloc.0
+			IL_0045: ldarg.2
+			IL_0046: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_004b: stloc.1
+			IL_004c: ldloc.1
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0052: stloc.2
+			IL_0053: ldstr "server keepalive same:"
+			IL_0058: ldloc.2
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005e: stloc.3
+			IL_005f: ldarg.0
+			IL_0060: ldloc.3
+			IL_0061: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::serverKeepAliveLine
+			IL_0066: ldarg.2
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_006c: volatile.
+			IL_006e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_0073: brfalse IL_008c
 
-			IL_0076: ldstr "end"
-			IL_007b: ldstr "ok"
-			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_0085: br IL_00a3
+			IL_0078: ldstr "end"
+			IL_007d: ldstr "ok"
+			IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0087: br IL_00a5
 
-			IL_008a: ldstr "end"
-			IL_008f: ldstr "ok"
-			IL_0094: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M4>:__js_call__:16"
-			IL_0099: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+			IL_008c: ldstr "end"
+			IL_0091: ldstr "ok"
+			IL_0096: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M4>:__js_call__:16"
+			IL_009b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-			IL_00a3: pop
-			IL_00a4: ldnull
-			IL_00a5: ret
+			IL_00a5: pop
+			IL_00a6: ldnull
+			IL_00a7: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -474,7 +476,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 511 (0x1ff)
+				// Code size: 514 (0x202)
 				.maxstack 8
 				.locals init (
 					[0] class [System.Runtime]System.Exception,
@@ -498,172 +500,175 @@
 				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_001c: volatile.
 				IL_001e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-				IL_0023: brfalse IL_003d
+				IL_0023: brfalse IL_003e
 
 				IL_0028: ldstr "setKeepAlive"
 				IL_002d: ldc.i4.1
-				IL_002e: box [System.Runtime]System.Boolean
-				IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0038: br IL_0057
+				IL_002e: pop
+				IL_002f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0039: br IL_0059
 
-				IL_003d: ldstr "setKeepAlive"
-				IL_0042: ldc.i4.1
-				IL_0043: box [System.Runtime]System.Boolean
-				IL_0048: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:6"
-				IL_004d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+				IL_003e: ldstr "setKeepAlive"
+				IL_0043: ldc.i4.1
+				IL_0044: pop
+				IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+				IL_004a: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:6"
+				IL_004f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-				IL_0057: stloc.s 4
-				IL_0059: ldarg.0
-				IL_005a: ldc.i4.1
-				IL_005b: ldelem.ref
-				IL_005c: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
-				IL_0061: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
-				IL_0066: ldstr "Cannot access 'client' before initialization"
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_0070: stloc.s 5
-				IL_0072: ldloc.s 4
-				IL_0074: ldloc.s 5
-				IL_0076: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_007b: stloc.s 6
-				IL_007d: ldloc.s 6
-				IL_007f: box [System.Runtime]System.Boolean
-				IL_0084: stloc.s 7
-				IL_0086: ldstr "client keepalive same:"
-				IL_008b: ldloc.s 7
-				IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0092: stloc.s 8
-				IL_0094: ldarg.0
-				IL_0095: ldc.i4.0
-				IL_0096: ldelem.ref
-				IL_0097: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
-				IL_009c: ldloc.s 8
-				IL_009e: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveLine
-				IL_00a3: ldarg.0
-				IL_00a4: ldc.i4.1
-				IL_00a5: ldelem.ref
-				IL_00a6: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
-				IL_00ab: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
-				IL_00b0: ldstr "Cannot access 'client' before initialization"
-				IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00bf: volatile.
-				IL_00c1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-				IL_00c6: brfalse IL_00da
+				IL_0059: stloc.s 4
+				IL_005b: ldarg.0
+				IL_005c: ldc.i4.1
+				IL_005d: ldelem.ref
+				IL_005e: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
+				IL_0063: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
+				IL_0068: ldstr "Cannot access 'client' before initialization"
+				IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0072: stloc.s 5
+				IL_0074: ldloc.s 4
+				IL_0076: ldloc.s 5
+				IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_007d: stloc.s 6
+				IL_007f: ldloc.s 6
+				IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+				IL_0086: stloc.s 7
+				IL_0088: ldstr "client keepalive same:"
+				IL_008d: ldloc.s 7
+				IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0094: stloc.s 8
+				IL_0096: ldarg.0
+				IL_0097: ldc.i4.0
+				IL_0098: ldelem.ref
+				IL_0099: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
+				IL_009e: ldloc.s 8
+				IL_00a0: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveLine
+				IL_00a5: ldarg.0
+				IL_00a6: ldc.i4.1
+				IL_00a7: ldelem.ref
+				IL_00a8: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
+				IL_00ad: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
+				IL_00b2: ldstr "Cannot access 'client' before initialization"
+				IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00c1: volatile.
+				IL_00c3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+				IL_00c8: brfalse IL_00dc
 
-				IL_00cb: ldstr "setNoDelay"
-				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_00d5: br IL_00ee
+				IL_00cd: ldstr "setNoDelay"
+				IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_00d7: br IL_00f0
 
-				IL_00da: ldstr "setNoDelay"
-				IL_00df: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:16"
-				IL_00e4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-				IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+				IL_00dc: ldstr "setNoDelay"
+				IL_00e1: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:16"
+				IL_00e6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+				IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-				IL_00ee: stloc.s 5
-				IL_00f0: ldarg.0
-				IL_00f1: ldc.i4.1
-				IL_00f2: ldelem.ref
-				IL_00f3: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
-				IL_00f8: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
-				IL_00fd: ldstr "Cannot access 'client' before initialization"
-				IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_0107: stloc.s 4
-				IL_0109: ldloc.s 5
-				IL_010b: ldloc.s 4
-				IL_010d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0112: stloc.s 6
-				IL_0114: ldloc.s 6
-				IL_0116: box [System.Runtime]System.Boolean
-				IL_011b: stloc.s 7
-				IL_011d: ldstr "client nodelay same:"
-				IL_0122: ldloc.s 7
-				IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0129: stloc.s 8
-				IL_012b: ldarg.0
-				IL_012c: ldc.i4.0
-				IL_012d: ldelem.ref
-				IL_012e: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
-				IL_0133: ldloc.s 8
-				IL_0135: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientNoDelayLine
+				IL_00f0: stloc.s 5
+				IL_00f2: ldarg.0
+				IL_00f3: ldc.i4.1
+				IL_00f4: ldelem.ref
+				IL_00f5: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
+				IL_00fa: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
+				IL_00ff: ldstr "Cannot access 'client' before initialization"
+				IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0109: stloc.s 4
+				IL_010b: ldloc.s 5
+				IL_010d: ldloc.s 4
+				IL_010f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0114: stloc.s 6
+				IL_0116: ldloc.s 6
+				IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+				IL_011d: stloc.s 7
+				IL_011f: ldstr "client nodelay same:"
+				IL_0124: ldloc.s 7
+				IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_012b: stloc.s 8
+				IL_012d: ldarg.0
+				IL_012e: ldc.i4.0
+				IL_012f: ldelem.ref
+				IL_0130: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
+				IL_0135: ldloc.s 8
+				IL_0137: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientNoDelayLine
 				.try
 				{
-					IL_013a: nop
-					IL_013b: ldarg.0
-					IL_013c: ldc.i4.1
-					IL_013d: ldelem.ref
-					IL_013e: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
-					IL_0143: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
-					IL_0148: ldstr "Cannot access 'client' before initialization"
-					IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-					IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_0157: ldstr "setKeepAlive"
-					IL_015c: ldc.i4.1
-					IL_015d: box [System.Runtime]System.Boolean
-					IL_0162: ldc.r8 25
-					IL_016b: box [System.Runtime]System.Double
-					IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-					IL_0175: pop
-					IL_0176: leave IL_01fb
+					IL_013c: nop
+					IL_013d: ldarg.0
+					IL_013e: ldc.i4.1
+					IL_013f: ldelem.ref
+					IL_0140: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope
+					IL_0145: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/Scope::client
+					IL_014a: ldstr "Cannot access 'client' before initialization"
+					IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_0159: ldstr "setKeepAlive"
+					IL_015e: ldc.i4.1
+					IL_015f: pop
+					IL_0160: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+					IL_0165: ldc.r8 25
+					IL_016e: box [System.Runtime]System.Double
+					IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+					IL_0178: pop
+					IL_0179: leave IL_01fe
 				} // end .try
 				catch [System.Runtime]System.Exception
 				{
-					IL_017b: stloc.0
-					IL_017c: ldloc.0
-					IL_017d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-					IL_0182: dup
-					IL_0183: brtrue IL_0198
+					IL_017e: stloc.0
+					IL_017f: ldloc.0
+					IL_0180: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+					IL_0185: dup
+					IL_0186: brtrue IL_019b
 
-					IL_0188: pop
-					IL_0189: ldloc.0
-					IL_018a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-					IL_018f: dup
-					IL_0190: brtrue IL_01a3
+					IL_018b: pop
+					IL_018c: ldloc.0
+					IL_018d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+					IL_0192: dup
+					IL_0193: brtrue IL_01a6
 
-					IL_0195: pop
-					IL_0196: rethrow
+					IL_0198: pop
+					IL_0199: rethrow
 
-					IL_0198: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-					IL_019d: stloc.1
-					IL_019e: br IL_01a4
+					IL_019b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+					IL_01a0: stloc.1
+					IL_01a1: br IL_01a7
 
-					IL_01a3: stloc.1
+					IL_01a6: stloc.1
 
-					IL_01a4: ldloc.1
-					IL_01a5: stloc.2
-					IL_01a6: volatile.
-					IL_01a8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-					IL_01ad: brfalse IL_01c2
+					IL_01a7: ldloc.1
+					IL_01a8: stloc.2
+					IL_01a9: volatile.
+					IL_01ab: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+					IL_01b0: brfalse IL_01c5
 
-					IL_01b2: ldloc.2
-					IL_01b3: ldstr "message"
-					IL_01b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_01bd: br IL_01d7
+					IL_01b5: ldloc.2
+					IL_01b6: ldstr "message"
+					IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_01c0: br IL_01da
 
-					IL_01c2: ldloc.2
-					IL_01c3: ldstr "message"
-					IL_01c8: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:43"
-					IL_01cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-					IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+					IL_01c5: ldloc.2
+					IL_01c6: ldstr "message"
+					IL_01cb: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:<TwoPhaseDummy_M6>:__js_call__:43"
+					IL_01d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+					IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-					IL_01d7: stloc.s 4
-					IL_01d9: ldstr "client keepalive delay:"
-					IL_01de: ldloc.s 4
-					IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_01e5: stloc.s 8
-					IL_01e7: ldarg.0
-					IL_01e8: ldc.i4.0
-					IL_01e9: ldelem.ref
-					IL_01ea: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
-					IL_01ef: ldloc.s 8
-					IL_01f1: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveDelayLine
-					IL_01f6: leave IL_01fb
+					IL_01da: stloc.s 4
+					IL_01dc: ldstr "client keepalive delay:"
+					IL_01e1: ldloc.s 4
+					IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_01e8: stloc.s 8
+					IL_01ea: ldarg.0
+					IL_01eb: ldc.i4.0
+					IL_01ec: ldelem.ref
+					IL_01ed: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
+					IL_01f2: ldloc.s 8
+					IL_01f4: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveDelayLine
+					IL_01f9: leave IL_01fe
 				} // end handler
 
-				IL_01fb: ldnull
-				IL_01fc: stloc.3
-				IL_01fd: ldloc.3
-				IL_01fe: ret
+				IL_01fe: ldnull
+				IL_01ff: stloc.3
+				IL_0200: ldloc.3
+				IL_0201: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -1662,7 +1667,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 278 (0x116)
+		// Code size: 283 (0x11b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope,
@@ -1685,96 +1690,101 @@
 		IL_0015: stfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::net
 		IL_001a: ldloc.0
 		IL_001b: ldc.i4.0
-		IL_001c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0021: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::serverKeepAliveLine
-		IL_0026: ldloc.0
-		IL_0027: ldc.i4.0
-		IL_0028: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_002d: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveLine
-		IL_0032: ldloc.0
-		IL_0033: ldc.i4.0
-		IL_0034: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0039: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientNoDelayLine
-		IL_003e: ldloc.0
-		IL_003f: ldc.i4.0
-		IL_0040: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0045: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveDelayLine
-		IL_004a: ldloc.0
-		IL_004b: ldc.i4.0
-		IL_004c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0051: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientDataLine
-		IL_0056: ldloc.0
-		IL_0057: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::net
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.0
-		IL_0065: stelem.ref
-		IL_0066: stloc.2
-		IL_0067: ldloc.2
+		IL_001c: pop
+		IL_001d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0022: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::serverKeepAliveLine
+		IL_0027: ldloc.0
+		IL_0028: ldc.i4.0
+		IL_0029: pop
+		IL_002a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_002f: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveLine
+		IL_0034: ldloc.0
+		IL_0035: ldc.i4.0
+		IL_0036: pop
+		IL_0037: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_003c: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientNoDelayLine
+		IL_0041: ldloc.0
+		IL_0042: ldc.i4.0
+		IL_0043: pop
+		IL_0044: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0049: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientKeepAliveDelayLine
+		IL_004e: ldloc.0
+		IL_004f: ldc.i4.0
+		IL_0050: pop
+		IL_0051: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0056: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::clientDataLine
+		IL_005b: ldloc.0
+		IL_005c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::net
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
 		IL_0068: ldc.i4.0
-		IL_0069: ldelem.ref
-		IL_006a: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
-		IL_006f: newobj instance void Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_server/FunctionObject::.ctor(class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope)
-		IL_0074: ldc.i4.1
-		IL_0075: conv.r8
-		IL_0076: ldstr ""
-		IL_007b: ldc.i4.0
-		IL_007c: ldc.i4.0
-		IL_007d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_server/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0082: stloc.3
-		IL_0083: volatile.
-		IL_0085: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_008a: brfalse IL_009f
+		IL_0069: ldloc.0
+		IL_006a: stelem.ref
+		IL_006b: stloc.2
+		IL_006c: ldloc.2
+		IL_006d: ldc.i4.0
+		IL_006e: ldelem.ref
+		IL_006f: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
+		IL_0074: newobj instance void Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_server/FunctionObject::.ctor(class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope)
+		IL_0079: ldc.i4.1
+		IL_007a: conv.r8
+		IL_007b: ldstr ""
+		IL_0080: ldc.i4.0
+		IL_0081: ldc.i4.0
+		IL_0082: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_server/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0087: stloc.3
+		IL_0088: volatile.
+		IL_008a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_008f: brfalse IL_00a4
 
-		IL_008f: ldstr "createServer"
-		IL_0094: ldloc.3
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_009a: br IL_00b4
+		IL_0094: ldstr "createServer"
+		IL_0099: ldloc.3
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_009f: br IL_00b9
 
-		IL_009f: ldstr "createServer"
-		IL_00a4: ldloc.3
-		IL_00a5: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:Modules.Net_Socket_KeepAlive_And_Unsupported_Options:__js_module_init__:32"
-		IL_00aa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_00a4: ldstr "createServer"
+		IL_00a9: ldloc.3
+		IL_00aa: ldstr "Net_Socket_KeepAlive_And_Unsupported_Options:Modules.Net_Socket_KeepAlive_And_Unsupported_Options:__js_module_init__:32"
+		IL_00af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_00b4: stloc.s 4
-		IL_00b6: ldloc.0
-		IL_00b7: ldloc.s 4
-		IL_00b9: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::server
-		IL_00be: ldloc.0
-		IL_00bf: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::server
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c9: stloc.s 4
-		IL_00cb: ldc.i4.1
-		IL_00cc: newarr [System.Runtime]System.Object
-		IL_00d1: dup
-		IL_00d2: ldc.i4.0
-		IL_00d3: ldloc.0
-		IL_00d4: stelem.ref
-		IL_00d5: stloc.2
-		IL_00d6: ldloc.2
+		IL_00b9: stloc.s 4
+		IL_00bb: ldloc.0
+		IL_00bc: ldloc.s 4
+		IL_00be: stfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::server
+		IL_00c3: ldloc.0
+		IL_00c4: ldfld object Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope::server
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ce: stloc.s 4
+		IL_00d0: ldc.i4.1
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
 		IL_00d7: ldc.i4.0
-		IL_00d8: ldelem.ref
-		IL_00d9: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
-		IL_00de: newobj instance void Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/FunctionObject::.ctor(class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope)
-		IL_00e3: ldc.i4.0
-		IL_00e4: conv.r8
-		IL_00e5: ldstr ""
-		IL_00ea: ldc.i4.0
-		IL_00eb: ldc.i4.0
-		IL_00ec: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00f1: stloc.s 5
-		IL_00f3: ldloc.s 4
-		IL_00f5: ldstr "listen"
-		IL_00fa: ldc.r8 0.0
-		IL_0103: box [System.Runtime]System.Double
-		IL_0108: ldstr "127.0.0.1"
-		IL_010d: ldloc.s 5
-		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0114: pop
-		IL_0115: ret
+		IL_00d8: ldloc.0
+		IL_00d9: stelem.ref
+		IL_00da: stloc.2
+		IL_00db: ldloc.2
+		IL_00dc: ldc.i4.0
+		IL_00dd: ldelem.ref
+		IL_00de: castclass Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope
+		IL_00e3: newobj instance void Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/FunctionObject::.ctor(class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/Scope)
+		IL_00e8: ldc.i4.0
+		IL_00e9: conv.r8
+		IL_00ea: ldstr ""
+		IL_00ef: ldc.i4.0
+		IL_00f0: ldc.i4.0
+		IL_00f1: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_Socket_KeepAlive_And_Unsupported_Options/FunctionExpression_L16C30/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00f6: stloc.s 5
+		IL_00f8: ldloc.s 4
+		IL_00fa: ldstr "listen"
+		IL_00ff: ldc.r8 0.0
+		IL_0108: box [System.Runtime]System.Double
+		IL_010d: ldstr "127.0.0.1"
+		IL_0112: ldloc.s 5
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0119: pop
+		IL_011a: ret
 	} // end of method Net_Socket_KeepAlive_And_Unsupported_Options::__js_module_init__
 
 } // end of class Modules.Net_Socket_KeepAlive_And_Unsupported_Options

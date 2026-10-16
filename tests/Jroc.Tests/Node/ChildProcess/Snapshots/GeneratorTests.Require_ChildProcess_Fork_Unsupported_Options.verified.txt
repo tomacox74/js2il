@@ -257,7 +257,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1490 (0x5d2)
+		// Code size: 1491 (0x5d3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_Fork_Unsupported_Options/Scope,
@@ -397,7 +397,7 @@
 			IL_0115: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
 			IL_011a: stloc.s 25
 			IL_011c: ldloc.s 25
-			IL_011e: box [System.Runtime]System.Boolean
+			IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0123: stloc.s 26
 			IL_0125: ldloc.s 23
 			IL_0127: ldstr "detached error:"
@@ -507,7 +507,7 @@
 			IL_0245: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
 			IL_024a: stloc.s 25
 			IL_024c: ldloc.s 25
-			IL_024e: box [System.Runtime]System.Boolean
+			IL_024e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0253: stloc.s 26
 			IL_0255: ldloc.s 23
 			IL_0257: ldstr "serialization error:"
@@ -609,7 +609,7 @@
 			IL_0381: ldloc.s 22
 			IL_0383: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
 			IL_0388: pop
-			IL_0389: leave IL_03df
+			IL_0389: leave IL_03e0
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -641,187 +641,188 @@
 			IL_03c7: ldloc.s 23
 			IL_03c9: ldstr "spawn ipc error:"
 			IL_03ce: ldc.i4.1
-			IL_03cf: box [System.Runtime]System.Boolean
-			IL_03d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_03d9: pop
-			IL_03da: leave IL_03df
+			IL_03cf: pop
+			IL_03d0: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_03d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_03da: pop
+			IL_03db: leave IL_03e0
 		} // end handler
 		.try
 		{
-			IL_03df: nop
-			IL_03e0: ldstr "process"
-			IL_03e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_03ea: volatile.
-			IL_03ec: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_03f1: brfalse IL_0405
+			IL_03e0: nop
+			IL_03e1: ldstr "process"
+			IL_03e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_03eb: volatile.
+			IL_03ed: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_03f2: brfalse IL_0406
 
-			IL_03f6: ldstr "platform"
-			IL_03fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0400: br IL_0419
+			IL_03f7: ldstr "platform"
+			IL_03fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0401: br IL_041a
 
-			IL_0405: ldstr "platform"
-			IL_040a: ldstr "Require_ChildProcess_Fork_Unsupported_Options:Modules.Require_ChildProcess_Fork_Unsupported_Options:__js_module_init__:137"
-			IL_040f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-			IL_0414: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0406: ldstr "platform"
+			IL_040b: ldstr "Require_ChildProcess_Fork_Unsupported_Options:Modules.Require_ChildProcess_Fork_Unsupported_Options:__js_module_init__:137"
+			IL_0410: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+			IL_0415: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0419: stloc.s 24
-			IL_041b: ldloc.s 24
-			IL_041d: ldstr "win32"
-			IL_0422: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0427: stloc.s 14
-			IL_0429: ldloc.s 14
-			IL_042b: brfalse IL_043c
+			IL_041a: stloc.s 24
+			IL_041c: ldloc.s 24
+			IL_041e: ldstr "win32"
+			IL_0423: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0428: stloc.s 14
+			IL_042a: ldloc.s 14
+			IL_042c: brfalse IL_043d
 
-			IL_0430: ldstr "cmd.exe"
-			IL_0435: stloc.s 15
-			IL_0437: br IL_0443
+			IL_0431: ldstr "cmd.exe"
+			IL_0436: stloc.s 15
+			IL_0438: br IL_0444
 
-			IL_043c: ldstr "/bin/sh"
-			IL_0441: stloc.s 15
+			IL_043d: ldstr "/bin/sh"
+			IL_0442: stloc.s 15
 
-			IL_0443: ldloc.s 14
-			IL_0445: brfalse IL_0487
+			IL_0444: ldloc.s 14
+			IL_0446: brfalse IL_0488
 
-			IL_044a: ldc.i4.4
-			IL_044b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0450: dup
-			IL_0451: ldstr "/d"
-			IL_0456: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_045b: dup
-			IL_045c: ldstr "/s"
-			IL_0461: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0466: dup
-			IL_0467: ldstr "/c"
-			IL_046c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0471: dup
-			IL_0472: ldstr "exit /b 0"
-			IL_0477: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_047c: stloc.s 21
-			IL_047e: ldloc.s 21
-			IL_0480: stloc.s 16
-			IL_0482: br IL_04a9
+			IL_044b: ldc.i4.4
+			IL_044c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0451: dup
+			IL_0452: ldstr "/d"
+			IL_0457: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_045c: dup
+			IL_045d: ldstr "/s"
+			IL_0462: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0467: dup
+			IL_0468: ldstr "/c"
+			IL_046d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0472: dup
+			IL_0473: ldstr "exit /b 0"
+			IL_0478: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_047d: stloc.s 21
+			IL_047f: ldloc.s 21
+			IL_0481: stloc.s 16
+			IL_0483: br IL_04aa
 
-			IL_0487: ldc.i4.2
-			IL_0488: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_048d: dup
-			IL_048e: ldstr "-c"
-			IL_0493: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0498: dup
-			IL_0499: ldstr "exit 0"
-			IL_049e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_04a3: stloc.s 21
-			IL_04a5: ldloc.s 21
-			IL_04a7: stloc.s 16
+			IL_0488: ldc.i4.2
+			IL_0489: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_048e: dup
+			IL_048f: ldstr "-c"
+			IL_0494: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0499: dup
+			IL_049a: ldstr "exit 0"
+			IL_049f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_04a4: stloc.s 21
+			IL_04a6: ldloc.s 21
+			IL_04a8: stloc.s 16
 
-			IL_04a9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_04ae: dup
-			IL_04af: ldstr "detached"
-			IL_04b4: ldc.i4.1
-			IL_04b5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_04ba: stloc.s 22
-			IL_04bc: ldloc.1
-			IL_04bd: ldstr "spawn"
-			IL_04c2: ldloc.s 15
-			IL_04c4: ldloc.s 16
-			IL_04c6: ldloc.s 22
-			IL_04c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_04cd: pop
-			IL_04ce: leave IL_05ce
+			IL_04aa: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_04af: dup
+			IL_04b0: ldstr "detached"
+			IL_04b5: ldc.i4.1
+			IL_04b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_04bb: stloc.s 22
+			IL_04bd: ldloc.1
+			IL_04be: ldstr "spawn"
+			IL_04c3: ldloc.s 15
+			IL_04c5: ldloc.s 16
+			IL_04c7: ldloc.s 22
+			IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_04ce: pop
+			IL_04cf: leave IL_05cf
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_04d3: stloc.s 17
-			IL_04d5: ldloc.s 17
-			IL_04d7: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_04dc: dup
-			IL_04dd: brtrue IL_04f3
+			IL_04d4: stloc.s 17
+			IL_04d6: ldloc.s 17
+			IL_04d8: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_04dd: dup
+			IL_04de: brtrue IL_04f4
 
-			IL_04e2: pop
-			IL_04e3: ldloc.s 17
-			IL_04e5: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_04ea: dup
-			IL_04eb: brtrue IL_04ff
+			IL_04e3: pop
+			IL_04e4: ldloc.s 17
+			IL_04e6: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_04eb: dup
+			IL_04ec: brtrue IL_0500
 
-			IL_04f0: pop
-			IL_04f1: rethrow
+			IL_04f1: pop
+			IL_04f2: rethrow
 
-			IL_04f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_04f8: stloc.s 18
-			IL_04fa: br IL_0501
+			IL_04f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_04f9: stloc.s 18
+			IL_04fb: br IL_0502
 
-			IL_04ff: stloc.s 18
+			IL_0500: stloc.s 18
 
-			IL_0501: ldloc.s 18
-			IL_0503: stloc.s 19
-			IL_0505: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_050a: stloc.s 23
-			IL_050c: volatile.
-			IL_050e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-			IL_0513: brfalse IL_0529
+			IL_0502: ldloc.s 18
+			IL_0504: stloc.s 19
+			IL_0506: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_050b: stloc.s 23
+			IL_050d: volatile.
+			IL_050f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0514: brfalse IL_052a
 
-			IL_0518: ldloc.s 19
-			IL_051a: ldstr "message"
-			IL_051f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0524: br IL_053f
+			IL_0519: ldloc.s 19
+			IL_051b: ldstr "message"
+			IL_0520: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0525: br IL_0540
 
-			IL_0529: ldloc.s 19
-			IL_052b: ldstr "message"
-			IL_0530: ldstr "Require_ChildProcess_Fork_Unsupported_Options:Modules.Require_ChildProcess_Fork_Unsupported_Options:__js_module_init__:178"
-			IL_0535: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-			IL_053a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_052a: ldloc.s 19
+			IL_052c: ldstr "message"
+			IL_0531: ldstr "Require_ChildProcess_Fork_Unsupported_Options:Modules.Require_ChildProcess_Fork_Unsupported_Options:__js_module_init__:178"
+			IL_0536: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_053b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_053f: stloc.s 24
-			IL_0541: ldloc.s 24
-			IL_0543: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0548: stloc.s 24
-			IL_054a: ldc.i4.0
-			IL_054b: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_0550: brfalse IL_058c
+			IL_0540: stloc.s 24
+			IL_0542: ldloc.s 24
+			IL_0544: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0549: stloc.s 24
+			IL_054b: ldc.i4.0
+			IL_054c: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_0551: brfalse IL_058d
 
-			IL_0555: ldloc.s 24
-			IL_0557: isinst [System.Runtime]System.String
-			IL_055c: dup
-			IL_055d: brtrue IL_0575
+			IL_0556: ldloc.s 24
+			IL_0558: isinst [System.Runtime]System.String
+			IL_055d: dup
+			IL_055e: brtrue IL_0576
 
-			IL_0562: pop
-			IL_0563: ldloc.s 24
-			IL_0565: ldstr "indexOf"
-			IL_056a: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_056f: dup
-			IL_0570: brfalse IL_058b
+			IL_0563: pop
+			IL_0564: ldloc.s 24
+			IL_0566: ldstr "indexOf"
+			IL_056b: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0570: dup
+			IL_0571: brfalse IL_058c
 
-			IL_0575: ldstr "detached child processes"
-			IL_057a: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
-			IL_057f: box [System.Runtime]System.Double
-			IL_0584: stloc.s 24
-			IL_0586: br IL_059f
+			IL_0576: ldstr "detached child processes"
+			IL_057b: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::IndexOf(string, string)
+			IL_0580: box [System.Runtime]System.Double
+			IL_0585: stloc.s 24
+			IL_0587: br IL_05a0
 
-			IL_058b: pop
+			IL_058c: pop
 
-			IL_058c: ldloc.s 24
-			IL_058e: ldstr "indexOf"
-			IL_0593: ldstr "detached child processes"
-			IL_0598: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_059d: stloc.s 24
+			IL_058d: ldloc.s 24
+			IL_058f: ldstr "indexOf"
+			IL_0594: ldstr "detached child processes"
+			IL_0599: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_059e: stloc.s 24
 
-			IL_059f: ldloc.s 24
-			IL_05a1: ldc.r8 0.0
-			IL_05aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
-			IL_05af: stloc.s 25
-			IL_05b1: ldloc.s 25
-			IL_05b3: box [System.Runtime]System.Boolean
-			IL_05b8: stloc.s 26
-			IL_05ba: ldloc.s 23
-			IL_05bc: ldstr "spawn detached error:"
-			IL_05c1: ldloc.s 26
-			IL_05c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_05c8: pop
-			IL_05c9: leave IL_05ce
+			IL_05a0: ldloc.s 24
+			IL_05a2: ldc.r8 0.0
+			IL_05ab: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThanOrEqual(object, float64)
+			IL_05b0: stloc.s 25
+			IL_05b2: ldloc.s 25
+			IL_05b4: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_05b9: stloc.s 26
+			IL_05bb: ldloc.s 23
+			IL_05bd: ldstr "spawn detached error:"
+			IL_05c2: ldloc.s 26
+			IL_05c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_05c9: pop
+			IL_05ca: leave IL_05cf
 		} // end handler
 
-		IL_05ce: ldnull
-		IL_05cf: stloc.s 20
-		IL_05d1: ret
+		IL_05cf: ldnull
+		IL_05d0: stloc.s 20
+		IL_05d2: ret
 	} // end of method Require_ChildProcess_Fork_Unsupported_Options::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_Fork_Unsupported_Options

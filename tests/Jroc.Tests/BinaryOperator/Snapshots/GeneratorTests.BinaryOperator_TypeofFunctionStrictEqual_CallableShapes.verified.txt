@@ -341,7 +341,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 438 (0x1b6)
+		// Code size: 439 (0x1b7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope,
@@ -376,129 +376,130 @@
 		IL_0027: ldloc.1
 		IL_0028: ldstr "bind"
 		IL_002d: ldc.i4.0
-		IL_002e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0033: ldc.r8 1
-		IL_003c: box [System.Runtime]System.Double
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_0046: stloc.2
-		IL_0047: ldloc.2
-		IL_0048: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_004d: stloc.s 4
-		IL_004f: ldloc.s 4
-		IL_0051: ldstr "function"
-		IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_005b: stloc.s 5
-		IL_005d: ldloc.s 5
-		IL_005f: brfalse IL_0078
+		IL_002e: pop
+		IL_002f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0034: ldc.r8 1
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_0047: stloc.2
+		IL_0048: ldloc.2
+		IL_0049: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
+		IL_0052: ldstr "function"
+		IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005c: stloc.s 5
+		IL_005e: ldloc.s 5
+		IL_0060: brfalse IL_0079
 
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: stloc.s 6
-		IL_006b: ldloc.s 6
-		IL_006d: ldstr "bound function"
-		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0077: pop
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006a: stloc.s 6
+		IL_006c: ldloc.s 6
+		IL_006e: ldstr "bound function"
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0078: pop
 
-		IL_0078: ldarg.1
-		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.BuiltinDelegateFunctionAdapter [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::GetFunctionValue(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate)
-		IL_007e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0083: stloc.s 4
-		IL_0085: ldloc.s 4
-		IL_0087: ldstr "function"
-		IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0091: stloc.s 5
-		IL_0093: ldloc.s 5
-		IL_0095: brfalse IL_00ae
+		IL_0079: ldarg.1
+		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.BuiltinDelegateFunctionAdapter [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::GetFunctionValue(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate)
+		IL_007f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0084: stloc.s 4
+		IL_0086: ldloc.s 4
+		IL_0088: ldstr "function"
+		IL_008d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0092: stloc.s 5
+		IL_0094: ldloc.s 5
+		IL_0096: brfalse IL_00af
 
-		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009f: stloc.s 6
-		IL_00a1: ldloc.s 6
-		IL_00a3: ldstr "require function"
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ad: pop
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: stloc.s 6
+		IL_00a2: ldloc.s 6
+		IL_00a4: ldstr "require function"
+		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ae: pop
 
-		IL_00ae: volatile.
-		IL_00b0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00b5: brfalse IL_00ca
+		IL_00af: volatile.
+		IL_00b1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00b6: brfalse IL_00cb
 
-		IL_00ba: ldarg.2
-		IL_00bb: ldstr "require"
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00c5: br IL_00df
+		IL_00bb: ldarg.2
+		IL_00bc: ldstr "require"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c6: br IL_00e0
 
-		IL_00ca: ldarg.2
-		IL_00cb: ldstr "require"
-		IL_00d0: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:38"
-		IL_00d5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00cb: ldarg.2
+		IL_00cc: ldstr "require"
+		IL_00d1: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:38"
+		IL_00d6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00df: stloc.s 7
-		IL_00e1: ldloc.s 7
-		IL_00e3: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00e8: stloc.s 4
-		IL_00ea: ldloc.s 4
-		IL_00ec: ldstr "function"
-		IL_00f1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00f6: stloc.s 5
-		IL_00f8: ldloc.s 5
-		IL_00fa: brfalse IL_0113
+		IL_00e0: stloc.s 7
+		IL_00e2: ldloc.s 7
+		IL_00e4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00e9: stloc.s 4
+		IL_00eb: ldloc.s 4
+		IL_00ed: ldstr "function"
+		IL_00f2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00f7: stloc.s 5
+		IL_00f9: ldloc.s 5
+		IL_00fb: brfalse IL_0114
 
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0104: stloc.s 6
-		IL_0106: ldloc.s 6
-		IL_0108: ldstr "module.require function"
-		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0112: pop
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0105: stloc.s 6
+		IL_0107: ldloc.s 6
+		IL_0109: ldstr "module.require function"
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0113: pop
 
-		IL_0113: ldstr "Function"
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_011d: volatile.
-		IL_011f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0124: brfalse IL_0138
+		IL_0114: ldstr "Function"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_011e: volatile.
+		IL_0120: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0125: brfalse IL_0139
 
-		IL_0129: ldstr "prototype"
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0133: br IL_014c
+		IL_012a: ldstr "prototype"
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0134: br IL_014d
 
-		IL_0138: ldstr "prototype"
-		IL_013d: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:52"
-		IL_0142: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0139: ldstr "prototype"
+		IL_013e: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:52"
+		IL_0143: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_014c: stloc.s 7
-		IL_014e: volatile.
-		IL_0150: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_0155: brfalse IL_016b
+		IL_014d: stloc.s 7
+		IL_014f: volatile.
+		IL_0151: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0156: brfalse IL_016c
 
-		IL_015a: ldloc.s 7
-		IL_015c: ldstr "bind"
-		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0166: br IL_0181
+		IL_015b: ldloc.s 7
+		IL_015d: ldstr "bind"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0167: br IL_0182
 
-		IL_016b: ldloc.s 7
-		IL_016d: ldstr "bind"
-		IL_0172: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:54"
-		IL_0177: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_016c: ldloc.s 7
+		IL_016e: ldstr "bind"
+		IL_0173: ldstr "BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes:__js_module_init__:54"
+		IL_0178: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0181: stloc.s 7
-		IL_0183: ldloc.s 7
-		IL_0185: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_018a: stloc.s 4
-		IL_018c: ldloc.s 4
-		IL_018e: ldstr "function"
-		IL_0193: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0198: stloc.s 5
-		IL_019a: ldloc.s 5
-		IL_019c: brfalse IL_01b5
+		IL_0182: stloc.s 7
+		IL_0184: ldloc.s 7
+		IL_0186: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_018b: stloc.s 4
+		IL_018d: ldloc.s 4
+		IL_018f: ldstr "function"
+		IL_0194: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0199: stloc.s 5
+		IL_019b: ldloc.s 5
+		IL_019d: brfalse IL_01b6
 
-		IL_01a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01a6: stloc.s 6
-		IL_01a8: ldloc.s 6
-		IL_01aa: ldstr "prototype bind function"
-		IL_01af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01b4: pop
+		IL_01a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a7: stloc.s 6
+		IL_01a9: ldloc.s 6
+		IL_01ab: ldstr "prototype bind function"
+		IL_01b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b5: pop
 
-		IL_01b5: ret
+		IL_01b6: ret
 	} // end of method BinaryOperator_TypeofFunctionStrictEqual_CallableShapes::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes

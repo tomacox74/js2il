@@ -955,8 +955,8 @@ internal sealed class GeneratedFunctionObjectEmitter
         }
         else if (returnType == typeof(bool))
         {
-            encoder.OpCode(ILOpCode.Box);
-            encoder.Token(_bclReferences.BooleanType);
+            encoder.OpCode(ILOpCode.Call);
+            encoder.Token(_bclReferences.BoxedPrimitive_Box_Boolean_Ref);
         }
     }
 

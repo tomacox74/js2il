@@ -828,7 +828,7 @@
 			IL_000b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0010: stloc.2
 			IL_0011: ldloc.2
-			IL_0012: box [System.Runtime]System.Boolean
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0017: stloc.3
 			IL_0018: ldarg.2
 			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
@@ -1414,7 +1414,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1497 (0x5d9)
+		// Code size: 1500 (0x5dc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ConstructorShape_GraphNode/Scope,
@@ -1547,412 +1547,415 @@
 		IL_0118: ldc.r8 4
 		IL_0121: box [System.Runtime]System.Double
 		IL_0126: ldc.i4.0
-		IL_0127: box [System.Runtime]System.Boolean
-		IL_012c: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver3<class Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode>(object, object, object, object, object, object)
-		IL_0131: stloc.3
-		IL_0132: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0137: stloc.s 10
-		IL_0139: ldloc.3
-		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_013f: volatile.
-		IL_0141: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_0146: brfalse IL_015a
+		IL_0127: pop
+		IL_0128: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+		IL_012d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver3<class Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode>(object, object, object, object, object, object)
+		IL_0132: stloc.3
+		IL_0133: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0138: stloc.s 10
+		IL_013a: ldloc.3
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0140: volatile.
+		IL_0142: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0147: brfalse IL_015b
 
-		IL_014b: ldstr "describe"
-		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0155: br IL_016e
+		IL_014c: ldstr "describe"
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0156: br IL_016f
 
-		IL_015a: ldstr "describe"
-		IL_015f: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:31"
-		IL_0164: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_015b: ldstr "describe"
+		IL_0160: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:31"
+		IL_0165: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_016e: stloc.s 7
-		IL_0170: ldloc.s 10
-		IL_0172: ldloc.s 7
-		IL_0174: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0179: pop
-		IL_017a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_017f: stloc.s 10
-		IL_0181: ldloc.3
-		IL_0182: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_0187: dup
-		IL_0188: brfalse IL_0199
+		IL_016f: stloc.s 7
+		IL_0171: ldloc.s 10
+		IL_0173: ldloc.s 7
+		IL_0175: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_017a: pop
+		IL_017b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0180: stloc.s 10
+		IL_0182: ldloc.3
+		IL_0183: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_0188: dup
+		IL_0189: brfalse IL_019a
 
-		IL_018d: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
-		IL_0192: stloc.s 7
-		IL_0194: br IL_01a7
+		IL_018e: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
+		IL_0193: stloc.s 7
+		IL_0195: br IL_01a8
 
-		IL_0199: pop
-		IL_019a: ldloc.3
-		IL_019b: ldstr "pos"
-		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01a5: stloc.s 7
+		IL_019a: pop
+		IL_019b: ldloc.3
+		IL_019c: ldstr "pos"
+		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01a6: stloc.s 7
 
-		IL_01a7: volatile.
-		IL_01a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_01ae: brfalse IL_01c4
+		IL_01a8: volatile.
+		IL_01aa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_01af: brfalse IL_01c5
 
-		IL_01b3: ldloc.s 7
-		IL_01b5: ldstr "x"
-		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01bf: br IL_01da
+		IL_01b4: ldloc.s 7
+		IL_01b6: ldstr "x"
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01c0: br IL_01db
 
-		IL_01c4: ldloc.s 7
-		IL_01c6: ldstr "x"
-		IL_01cb: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:37"
-		IL_01d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01c5: ldloc.s 7
+		IL_01c7: ldstr "x"
+		IL_01cc: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:37"
+		IL_01d1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_01da: stloc.s 7
-		IL_01dc: ldloc.3
-		IL_01dd: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_01e2: dup
-		IL_01e3: brfalse IL_01f4
+		IL_01db: stloc.s 7
+		IL_01dd: ldloc.3
+		IL_01de: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_01e3: dup
+		IL_01e4: brfalse IL_01f5
 
-		IL_01e8: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
-		IL_01ed: stloc.s 11
-		IL_01ef: br IL_0202
+		IL_01e9: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_pos()
+		IL_01ee: stloc.s 11
+		IL_01f0: br IL_0203
 
-		IL_01f4: pop
-		IL_01f5: ldloc.3
-		IL_01f6: ldstr "pos"
-		IL_01fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0200: stloc.s 11
+		IL_01f5: pop
+		IL_01f6: ldloc.3
+		IL_01f7: ldstr "pos"
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0201: stloc.s 11
 
-		IL_0202: volatile.
-		IL_0204: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0209: brfalse IL_021f
+		IL_0203: volatile.
+		IL_0205: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_020a: brfalse IL_0220
 
-		IL_020e: ldloc.s 11
-		IL_0210: ldstr "y"
-		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_021a: br IL_0235
+		IL_020f: ldloc.s 11
+		IL_0211: ldstr "y"
+		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_021b: br IL_0236
 
-		IL_021f: ldloc.s 11
-		IL_0221: ldstr "y"
-		IL_0226: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:40"
-		IL_022b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0220: ldloc.s 11
+		IL_0222: ldstr "y"
+		IL_0227: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:40"
+		IL_022c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_0231: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0235: stloc.s 11
-		IL_0237: ldloc.3
-		IL_0238: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_023d: dup
-		IL_023e: brfalse IL_024f
+		IL_0236: stloc.s 11
+		IL_0238: ldloc.3
+		IL_0239: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_023e: dup
+		IL_023f: brfalse IL_0250
 
-		IL_0243: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get__isWall()
-		IL_0248: stloc.s 12
-		IL_024a: br IL_025d
+		IL_0244: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get__isWall()
+		IL_0249: stloc.s 12
+		IL_024b: br IL_025e
 
-		IL_024f: pop
-		IL_0250: ldloc.3
-		IL_0251: ldstr "_isWall"
-		IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_025b: stloc.s 12
+		IL_0250: pop
+		IL_0251: ldloc.3
+		IL_0252: ldstr "_isWall"
+		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_025c: stloc.s 12
 
-		IL_025d: ldloc.3
-		IL_025e: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_0263: dup
-		IL_0264: brfalse IL_0275
+		IL_025e: ldloc.3
+		IL_025f: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_0264: dup
+		IL_0265: brfalse IL_0276
 
-		IL_0269: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_debug()
-		IL_026e: stloc.s 13
-		IL_0270: br IL_0283
+		IL_026a: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_debug()
+		IL_026f: stloc.s 13
+		IL_0271: br IL_0284
 
-		IL_0275: pop
-		IL_0276: ldloc.3
-		IL_0277: ldstr "debug"
-		IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0281: stloc.s 13
+		IL_0276: pop
+		IL_0277: ldloc.3
+		IL_0278: ldstr "debug"
+		IL_027d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0282: stloc.s 13
 
-		IL_0283: ldloc.s 10
-		IL_0285: ldc.i4.4
-		IL_0286: newarr [System.Runtime]System.Object
-		IL_028b: dup
-		IL_028c: ldc.i4.0
-		IL_028d: ldloc.s 7
-		IL_028f: stelem.ref
-		IL_0290: dup
-		IL_0291: ldc.i4.1
-		IL_0292: ldloc.s 11
-		IL_0294: stelem.ref
-		IL_0295: dup
-		IL_0296: ldc.i4.2
-		IL_0297: ldloc.s 12
-		IL_0299: stelem.ref
-		IL_029a: dup
-		IL_029b: ldc.i4.3
-		IL_029c: ldloc.s 13
-		IL_029e: stelem.ref
-		IL_029f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_02a4: pop
-		IL_02a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02aa: stloc.s 10
-		IL_02ac: ldloc.3
-		IL_02ad: stloc.s 9
-		IL_02af: ldloc.s 9
-		IL_02b1: ldloc.1
-		IL_02b2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_02b7: stloc.s 14
-		IL_02b9: ldloc.s 14
-		IL_02bb: box [System.Runtime]System.Boolean
-		IL_02c0: stloc.s 15
-		IL_02c2: ldloc.s 10
-		IL_02c4: ldloc.s 15
-		IL_02c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02cb: pop
-		IL_02cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02d1: stloc.s 10
-		IL_02d3: ldloc.3
-		IL_02d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
-		IL_02d9: stloc.s 13
-		IL_02db: volatile.
-		IL_02dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_02e2: brfalse IL_02f7
+		IL_0284: ldloc.s 10
+		IL_0286: ldc.i4.4
+		IL_0287: newarr [System.Runtime]System.Object
+		IL_028c: dup
+		IL_028d: ldc.i4.0
+		IL_028e: ldloc.s 7
+		IL_0290: stelem.ref
+		IL_0291: dup
+		IL_0292: ldc.i4.1
+		IL_0293: ldloc.s 11
+		IL_0295: stelem.ref
+		IL_0296: dup
+		IL_0297: ldc.i4.2
+		IL_0298: ldloc.s 12
+		IL_029a: stelem.ref
+		IL_029b: dup
+		IL_029c: ldc.i4.3
+		IL_029d: ldloc.s 13
+		IL_029f: stelem.ref
+		IL_02a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_02a5: pop
+		IL_02a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02ab: stloc.s 10
+		IL_02ad: ldloc.3
+		IL_02ae: stloc.s 9
+		IL_02b0: ldloc.s 9
+		IL_02b2: ldloc.1
+		IL_02b3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_02b8: stloc.s 14
+		IL_02ba: ldloc.s 14
+		IL_02bc: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_02c1: stloc.s 15
+		IL_02c3: ldloc.s 10
+		IL_02c5: ldloc.s 15
+		IL_02c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02cc: pop
+		IL_02cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d2: stloc.s 10
+		IL_02d4: ldloc.3
+		IL_02d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_02da: stloc.s 13
+		IL_02dc: volatile.
+		IL_02de: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_02e3: brfalse IL_02f8
 
-		IL_02e7: ldloc.1
-		IL_02e8: ldstr "prototype"
-		IL_02ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02f2: br IL_030c
+		IL_02e8: ldloc.1
+		IL_02e9: ldstr "prototype"
+		IL_02ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_02f3: br IL_030d
 
-		IL_02f7: ldloc.1
-		IL_02f8: ldstr "prototype"
-		IL_02fd: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:54"
-		IL_0302: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_0307: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_02f8: ldloc.1
+		IL_02f9: ldstr "prototype"
+		IL_02fe: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:54"
+		IL_0303: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_030c: stloc.s 12
-		IL_030e: ldloc.s 13
-		IL_0310: ldloc.s 12
-		IL_0312: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0317: stloc.s 14
-		IL_0319: ldloc.s 14
-		IL_031b: box [System.Runtime]System.Boolean
-		IL_0320: stloc.s 15
-		IL_0322: ldloc.s 10
-		IL_0324: ldloc.s 15
-		IL_0326: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_032b: pop
-		IL_032c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0331: stloc.s 10
-		IL_0333: ldloc.3
-		IL_0334: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_0339: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_033e: volatile.
-		IL_0340: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_0345: brfalse IL_035e
+		IL_030d: stloc.s 12
+		IL_030f: ldloc.s 13
+		IL_0311: ldloc.s 12
+		IL_0313: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0318: stloc.s 14
+		IL_031a: ldloc.s 14
+		IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_0321: stloc.s 15
+		IL_0323: ldloc.s 10
+		IL_0325: ldloc.s 15
+		IL_0327: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_032c: pop
+		IL_032d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0332: stloc.s 10
+		IL_0334: ldloc.3
+		IL_0335: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_033f: volatile.
+		IL_0341: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_0346: brfalse IL_035f
 
-		IL_034a: ldstr "join"
-		IL_034f: ldstr ","
-		IL_0354: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0359: br IL_0377
+		IL_034b: ldstr "join"
+		IL_0350: ldstr ","
+		IL_0355: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_035a: br IL_0378
 
-		IL_035e: ldstr "join"
-		IL_0363: ldstr ","
-		IL_0368: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:63"
-		IL_036d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-		IL_0372: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_035f: ldstr "join"
+		IL_0364: ldstr ","
+		IL_0369: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:63"
+		IL_036e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+		IL_0373: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0377: stloc.s 12
-		IL_0379: ldloc.s 10
-		IL_037b: ldloc.s 12
-		IL_037d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0382: pop
-		IL_0383: ldloc.3
-		IL_0384: call object [JavaScriptRuntime]JavaScriptRuntime.Object::freeze(object)
-		IL_0389: pop
-		IL_038a: ldloc.1
-		IL_038b: ldstr "call"
-		IL_0390: ldloc.3
-		IL_0391: ldc.r8 9
-		IL_039a: box [System.Runtime]System.Double
-		IL_039f: ldc.r8 10
-		IL_03a8: box [System.Runtime]System.Double
-		IL_03ad: ldc.i4.1
-		IL_03ae: box [System.Runtime]System.Boolean
-		IL_03b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
-		IL_03b8: pop
-		IL_03b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03be: stloc.s 10
-		IL_03c0: ldloc.3
-		IL_03c1: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_03c6: dup
-		IL_03c7: brfalse IL_03d8
+		IL_0378: stloc.s 12
+		IL_037a: ldloc.s 10
+		IL_037c: ldloc.s 12
+		IL_037e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0383: pop
+		IL_0384: ldloc.3
+		IL_0385: call object [JavaScriptRuntime]JavaScriptRuntime.Object::freeze(object)
+		IL_038a: pop
+		IL_038b: ldloc.1
+		IL_038c: ldstr "call"
+		IL_0391: ldloc.3
+		IL_0392: ldc.r8 9
+		IL_039b: box [System.Runtime]System.Double
+		IL_03a0: ldc.r8 10
+		IL_03a9: box [System.Runtime]System.Double
+		IL_03ae: ldc.i4.1
+		IL_03af: pop
+		IL_03b0: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_03b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
+		IL_03ba: pop
+		IL_03bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03c0: stloc.s 10
+		IL_03c2: ldloc.3
+		IL_03c3: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_03c8: dup
+		IL_03c9: brfalse IL_03da
 
-		IL_03cc: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_x()
-		IL_03d1: stloc.s 12
-		IL_03d3: br IL_03e6
+		IL_03ce: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_x()
+		IL_03d3: stloc.s 12
+		IL_03d5: br IL_03e8
 
-		IL_03d8: pop
-		IL_03d9: ldloc.3
-		IL_03da: ldstr "x"
-		IL_03df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_03e4: stloc.s 12
+		IL_03da: pop
+		IL_03db: ldloc.3
+		IL_03dc: ldstr "x"
+		IL_03e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03e6: stloc.s 12
 
-		IL_03e6: ldloc.3
-		IL_03e7: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_03ec: dup
-		IL_03ed: brfalse IL_03fe
+		IL_03e8: ldloc.3
+		IL_03e9: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_03ee: dup
+		IL_03ef: brfalse IL_0400
 
-		IL_03f2: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_y()
-		IL_03f7: stloc.s 13
-		IL_03f9: br IL_040c
+		IL_03f4: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get_y()
+		IL_03f9: stloc.s 13
+		IL_03fb: br IL_040e
 
-		IL_03fe: pop
-		IL_03ff: ldloc.3
-		IL_0400: ldstr "y"
-		IL_0405: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_040a: stloc.s 13
+		IL_0400: pop
+		IL_0401: ldloc.3
+		IL_0402: ldstr "y"
+		IL_0407: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_040c: stloc.s 13
 
-		IL_040c: ldloc.3
-		IL_040d: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
-		IL_0412: dup
-		IL_0413: brfalse IL_0424
+		IL_040e: ldloc.3
+		IL_040f: isinst Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode
+		IL_0414: dup
+		IL_0415: brfalse IL_0426
 
-		IL_0418: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get__isWall()
-		IL_041d: stloc.s 11
-		IL_041f: br IL_0432
+		IL_041a: callvirt instance object Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L1C1_GraphNode::get__isWall()
+		IL_041f: stloc.s 11
+		IL_0421: br IL_0434
 
-		IL_0424: pop
-		IL_0425: ldloc.3
-		IL_0426: ldstr "_isWall"
-		IL_042b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0430: stloc.s 11
+		IL_0426: pop
+		IL_0427: ldloc.3
+		IL_0428: ldstr "_isWall"
+		IL_042d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0432: stloc.s 11
 
-		IL_0432: ldloc.s 10
-		IL_0434: ldloc.s 12
-		IL_0436: ldloc.s 13
-		IL_0438: ldloc.s 11
-		IL_043a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_043f: pop
-		IL_0440: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0445: stloc.s 4
-		IL_0447: ldloc.1
-		IL_0448: ldstr "call"
-		IL_044d: ldloc.s 4
-		IL_044f: ldc.r8 7
-		IL_0458: box [System.Runtime]System.Double
-		IL_045d: ldc.r8 8
-		IL_0466: box [System.Runtime]System.Double
-		IL_046b: ldc.i4.1
-		IL_046c: box [System.Runtime]System.Boolean
-		IL_0471: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
-		IL_0476: pop
-		IL_0477: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_047c: stloc.s 10
-		IL_047e: volatile.
-		IL_0480: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_0485: brfalse IL_049b
+		IL_0434: ldloc.s 10
+		IL_0436: ldloc.s 12
+		IL_0438: ldloc.s 13
+		IL_043a: ldloc.s 11
+		IL_043c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0441: pop
+		IL_0442: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0447: stloc.s 4
+		IL_0449: ldloc.1
+		IL_044a: ldstr "call"
+		IL_044f: ldloc.s 4
+		IL_0451: ldc.r8 7
+		IL_045a: box [System.Runtime]System.Double
+		IL_045f: ldc.r8 8
+		IL_0468: box [System.Runtime]System.Double
+		IL_046d: ldc.i4.1
+		IL_046e: pop
+		IL_046f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_0474: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember4(object, string, object, object, object, object)
+		IL_0479: pop
+		IL_047a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_047f: stloc.s 10
+		IL_0481: volatile.
+		IL_0483: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_0488: brfalse IL_049e
 
-		IL_048a: ldloc.s 4
-		IL_048c: ldstr "x"
-		IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0496: br IL_04b1
+		IL_048d: ldloc.s 4
+		IL_048f: ldstr "x"
+		IL_0494: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0499: br IL_04b4
 
-		IL_049b: ldloc.s 4
-		IL_049d: ldstr "x"
-		IL_04a2: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:95"
-		IL_04a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_04ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_049e: ldloc.s 4
+		IL_04a0: ldstr "x"
+		IL_04a5: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:95"
+		IL_04aa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_04af: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04b1: stloc.s 11
-		IL_04b3: volatile.
-		IL_04b5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_04ba: brfalse IL_04d0
+		IL_04b4: stloc.s 11
+		IL_04b6: volatile.
+		IL_04b8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_04bd: brfalse IL_04d3
 
-		IL_04bf: ldloc.s 4
-		IL_04c1: ldstr "y"
-		IL_04c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04cb: br IL_04e6
+		IL_04c2: ldloc.s 4
+		IL_04c4: ldstr "y"
+		IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04ce: br IL_04e9
 
-		IL_04d0: ldloc.s 4
-		IL_04d2: ldstr "y"
-		IL_04d7: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:97"
-		IL_04dc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_04e1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_04d3: ldloc.s 4
+		IL_04d5: ldstr "y"
+		IL_04da: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:97"
+		IL_04df: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_04e4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04e6: stloc.s 13
-		IL_04e8: volatile.
-		IL_04ea: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_04ef: brfalse IL_0505
+		IL_04e9: stloc.s 13
+		IL_04eb: volatile.
+		IL_04ed: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_04f2: brfalse IL_0508
 
-		IL_04f4: ldloc.s 4
-		IL_04f6: ldstr "_isWall"
-		IL_04fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0500: br IL_051b
+		IL_04f7: ldloc.s 4
+		IL_04f9: ldstr "_isWall"
+		IL_04fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0503: br IL_051e
 
-		IL_0505: ldloc.s 4
-		IL_0507: ldstr "_isWall"
-		IL_050c: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:99"
-		IL_0511: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_0516: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0508: ldloc.s 4
+		IL_050a: ldstr "_isWall"
+		IL_050f: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:99"
+		IL_0514: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_0519: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_051b: stloc.s 12
-		IL_051d: ldloc.s 10
-		IL_051f: ldloc.s 11
-		IL_0521: ldloc.s 13
-		IL_0523: ldloc.s 12
-		IL_0525: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_052a: pop
-		IL_052b: nop
-		IL_052c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0531: stloc.s 10
-		IL_0533: ldloc.0
-		IL_0534: ldfld object Modules.Function_ConstructorShape_GraphNode/Scope::NewTargetCheck
-		IL_0539: stloc.s 12
-		IL_053b: newobj instance void Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L28C1_NewTargetCheck::.ctor()
-		IL_0540: stloc.s 16
-		IL_0542: ldloc.s 12
-		IL_0544: ldloc.s 16
-		IL_0546: ldloc.s 12
-		IL_0548: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver0<class Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L28C1_NewTargetCheck>(object, object, object)
-		IL_054d: volatile.
-		IL_054f: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_0554: brfalse IL_0568
+		IL_051e: stloc.s 12
+		IL_0520: ldloc.s 10
+		IL_0522: ldloc.s 11
+		IL_0524: ldloc.s 13
+		IL_0526: ldloc.s 12
+		IL_0528: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_052d: pop
+		IL_052e: nop
+		IL_052f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0534: stloc.s 10
+		IL_0536: ldloc.0
+		IL_0537: ldfld object Modules.Function_ConstructorShape_GraphNode/Scope::NewTargetCheck
+		IL_053c: stloc.s 12
+		IL_053e: newobj instance void Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L28C1_NewTargetCheck::.ctor()
+		IL_0543: stloc.s 16
+		IL_0545: ldloc.s 12
+		IL_0547: ldloc.s 16
+		IL_0549: ldloc.s 12
+		IL_054b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::ConstructGeneratedFunctionWithReceiver0<class Modules.Function_ConstructorShape_GraphNode/ObjectLiterals/Ctor_L28C1_NewTargetCheck>(object, object, object)
+		IL_0550: volatile.
+		IL_0552: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_0557: brfalse IL_056b
 
-		IL_0559: ldstr "matches"
-		IL_055e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0563: br IL_057c
+		IL_055c: ldstr "matches"
+		IL_0561: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0566: br IL_057f
 
-		IL_0568: ldstr "matches"
-		IL_056d: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:108"
-		IL_0572: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_0577: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_056b: ldstr "matches"
+		IL_0570: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:108"
+		IL_0575: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_057a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_057c: stloc.s 12
-		IL_057e: ldloc.s 10
-		IL_0580: ldloc.s 12
-		IL_0582: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0587: pop
-		IL_0588: nop
-		IL_0589: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_058e: stloc.s 10
-		IL_0590: ldloc.2
-		IL_0591: dup
-		IL_0592: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
-		IL_0597: stloc.s 12
-		IL_0599: volatile.
-		IL_059b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_05a0: brfalse IL_05b6
+		IL_057f: stloc.s 12
+		IL_0581: ldloc.s 10
+		IL_0583: ldloc.s 12
+		IL_0585: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_058a: pop
+		IL_058b: nop
+		IL_058c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0591: stloc.s 10
+		IL_0593: ldloc.2
+		IL_0594: dup
+		IL_0595: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_059a: stloc.s 12
+		IL_059c: volatile.
+		IL_059e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_05a3: brfalse IL_05b9
 
-		IL_05a5: ldloc.s 12
-		IL_05a7: ldstr "value"
-		IL_05ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_05b1: br IL_05cc
+		IL_05a8: ldloc.s 12
+		IL_05aa: ldstr "value"
+		IL_05af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_05b4: br IL_05cf
 
-		IL_05b6: ldloc.s 12
-		IL_05b8: ldstr "value"
-		IL_05bd: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:115"
-		IL_05c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_05c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_05b9: ldloc.s 12
+		IL_05bb: ldstr "value"
+		IL_05c0: ldstr "Function_ConstructorShape_GraphNode:Modules.Function_ConstructorShape_GraphNode:__js_module_init__:115"
+		IL_05c5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_05ca: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_05cc: stloc.s 12
-		IL_05ce: ldloc.s 10
-		IL_05d0: ldloc.s 12
-		IL_05d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05d7: pop
-		IL_05d8: ret
+		IL_05cf: stloc.s 12
+		IL_05d1: ldloc.s 10
+		IL_05d3: ldloc.s 12
+		IL_05d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05da: pop
+		IL_05db: ret
 	} // end of method Function_ConstructorShape_GraphNode::__js_module_init__
 
 } // end of class Modules.Function_ConstructorShape_GraphNode

@@ -172,7 +172,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 86 (0x56)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -201,19 +201,20 @@
 			IL_0031: stloc.0
 			IL_0032: ldarg.1
 			IL_0033: ldc.i4.0
-			IL_0034: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::NotEqual(object, object)
-			IL_003e: stloc.2
-			IL_003f: ldloc.2
-			IL_0040: box [System.Runtime]System.Boolean
-			IL_0045: stloc.3
-			IL_0046: ldloc.0
-			IL_0047: ldstr "module loaded:"
-			IL_004c: ldloc.3
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0034: pop
+			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_003a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::NotEqual(object, object)
+			IL_003f: stloc.2
+			IL_0040: ldloc.2
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0046: stloc.3
+			IL_0047: ldloc.0
+			IL_0048: ldstr "module loaded:"
+			IL_004d: ldloc.3
+			IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0053: pop
+			IL_0054: ldnull
+			IL_0055: ret
 		} // end of method ArrowFunction_L7C26::__js_call__
 
 	} // end of class ArrowFunction_L7C26

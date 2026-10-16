@@ -191,7 +191,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 276 (0x114)
+			// Code size: 277 (0x115)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -212,7 +212,7 @@
 			IL_0014: ceq
 			IL_0016: stloc.2
 			IL_0017: ldloc.2
-			IL_0018: box [System.Runtime]System.Boolean
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_001d: stloc.3
 			IL_001e: ldloc.0
 			IL_001f: ldstr "async:"
@@ -223,81 +223,82 @@
 			IL_0030: stloc.0
 			IL_0031: ldarg.2
 			IL_0032: ldc.i4.0
-			IL_0033: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_003d: stloc.2
-			IL_003e: ldloc.2
-			IL_003f: box [System.Runtime]System.Boolean
-			IL_0044: stloc.3
-			IL_0045: ldloc.0
-			IL_0046: ldstr "error:"
-			IL_004b: ldloc.3
-			IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0051: pop
-			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0057: stloc.0
-			IL_0058: ldarg.3
-			IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-			IL_005e: box [System.Runtime]System.Boolean
-			IL_0063: stloc.3
-			IL_0064: volatile.
-			IL_0066: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-			IL_006b: brfalse IL_0080
+			IL_0033: pop
+			IL_0034: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_003e: stloc.2
+			IL_003f: ldloc.2
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0045: stloc.3
+			IL_0046: ldloc.0
+			IL_0047: ldstr "error:"
+			IL_004c: ldloc.3
+			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0052: pop
+			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0058: stloc.0
+			IL_0059: ldarg.3
+			IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0064: stloc.3
+			IL_0065: volatile.
+			IL_0067: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_006c: brfalse IL_0081
 
-			IL_0070: ldarg.3
-			IL_0071: ldstr "length"
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_007b: br IL_0095
+			IL_0071: ldarg.3
+			IL_0072: ldstr "length"
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_007c: br IL_0096
 
-			IL_0080: ldarg.3
-			IL_0081: ldstr "length"
-			IL_0086: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:24"
-			IL_008b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0081: ldarg.3
+			IL_0082: ldstr "length"
+			IL_0087: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:24"
+			IL_008c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0095: stloc.1
-			IL_0096: ldloc.1
-			IL_0097: ldc.r8 0.0
-			IL_00a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_00a5: stloc.2
-			IL_00a6: ldloc.2
-			IL_00a7: box [System.Runtime]System.Boolean
-			IL_00ac: stloc.s 4
-			IL_00ae: ldloc.0
-			IL_00af: ldstr "addresses:"
-			IL_00b4: ldloc.3
-			IL_00b5: ldloc.s 4
-			IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_00bc: pop
-			IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c2: stloc.0
-			IL_00c3: ldarg.3
-			IL_00c4: ldc.r8 0.0
-			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00d2: stloc.1
-			IL_00d3: volatile.
-			IL_00d5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_00da: brfalse IL_00ef
+			IL_0096: stloc.1
+			IL_0097: ldloc.1
+			IL_0098: ldc.r8 0.0
+			IL_00a1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
+			IL_00a6: stloc.2
+			IL_00a7: ldloc.2
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_00ad: stloc.s 4
+			IL_00af: ldloc.0
+			IL_00b0: ldstr "addresses:"
+			IL_00b5: ldloc.3
+			IL_00b6: ldloc.s 4
+			IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_00bd: pop
+			IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c3: stloc.0
+			IL_00c4: ldarg.3
+			IL_00c5: ldc.r8 0.0
+			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00d3: stloc.1
+			IL_00d4: volatile.
+			IL_00d6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_00db: brfalse IL_00f0
 
-			IL_00df: ldloc.1
-			IL_00e0: ldstr "family"
-			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ea: br IL_0104
+			IL_00e0: ldloc.1
+			IL_00e1: ldstr "family"
+			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00eb: br IL_0105
 
-			IL_00ef: ldloc.1
-			IL_00f0: ldstr "family"
-			IL_00f5: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:36"
-			IL_00fa: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00f0: ldloc.1
+			IL_00f1: ldstr "family"
+			IL_00f6: ldstr "Require_Dns_Lookup:<TwoPhaseDummy_M4>:__js_call__:36"
+			IL_00fb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0104: stloc.1
-			IL_0105: ldloc.0
-			IL_0106: ldstr "family:"
-			IL_010b: ldloc.1
-			IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0111: pop
-			IL_0112: ldnull
-			IL_0113: ret
+			IL_0105: stloc.1
+			IL_0106: ldloc.0
+			IL_0107: ldstr "family:"
+			IL_010c: ldloc.1
+			IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0112: pop
+			IL_0113: ldnull
+			IL_0114: ret
 		} // end of method ArrowFunction_L11C71::__js_call__
 
 	} // end of class ArrowFunction_L11C71
@@ -479,7 +480,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 617 (0x269)
+		// Code size: 619 (0x26b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Dns_Lookup/Scope,
@@ -518,7 +519,7 @@
 		IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_002f: stloc.s 8
 		IL_0031: ldloc.s 8
-		IL_0033: box [System.Runtime]System.Boolean
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_0038: stloc.s 9
 		IL_003a: ldloc.s 6
 		IL_003c: ldstr "same module:"
@@ -596,137 +597,139 @@
 		IL_010e: pop
 		IL_010f: ldloc.0
 		IL_0110: ldc.i4.1
-		IL_0111: box [System.Runtime]System.Boolean
-		IL_0116: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
-		IL_011b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0120: dup
-		IL_0121: ldstr "all"
-		IL_0126: ldc.i4.1
-		IL_0127: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_012c: dup
-		IL_012d: ldstr "family"
-		IL_0132: ldc.r8 4
-		IL_013b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0140: dup
-		IL_0141: ldstr "order"
-		IL_0146: ldstr "ipv4first"
-		IL_014b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0150: stloc.s 11
-		IL_0152: ldc.i4.1
-		IL_0153: newarr [System.Runtime]System.Object
-		IL_0158: dup
-		IL_0159: ldc.i4.0
-		IL_015a: ldloc.0
-		IL_015b: stelem.ref
-		IL_015c: stloc.s 12
-		IL_015e: ldloc.s 12
-		IL_0160: ldc.i4.0
-		IL_0161: ldelem.ref
-		IL_0162: castclass Modules.Require_Dns_Lookup/Scope
-		IL_0167: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject::.ctor(class Modules.Require_Dns_Lookup/Scope)
-		IL_016c: ldc.i4.2
-		IL_016d: conv.r8
-		IL_016e: ldstr ""
-		IL_0173: ldc.i4.0
+		IL_0111: pop
+		IL_0112: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+		IL_0117: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
+		IL_011c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0121: dup
+		IL_0122: ldstr "all"
+		IL_0127: ldc.i4.1
+		IL_0128: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_012d: dup
+		IL_012e: ldstr "family"
+		IL_0133: ldc.r8 4
+		IL_013c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0141: dup
+		IL_0142: ldstr "order"
+		IL_0147: ldstr "ipv4first"
+		IL_014c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0151: stloc.s 11
+		IL_0153: ldc.i4.1
+		IL_0154: newarr [System.Runtime]System.Object
+		IL_0159: dup
+		IL_015a: ldc.i4.0
+		IL_015b: ldloc.0
+		IL_015c: stelem.ref
+		IL_015d: stloc.s 12
+		IL_015f: ldloc.s 12
+		IL_0161: ldc.i4.0
+		IL_0162: ldelem.ref
+		IL_0163: castclass Modules.Require_Dns_Lookup/Scope
+		IL_0168: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject::.ctor(class Modules.Require_Dns_Lookup/Scope)
+		IL_016d: ldc.i4.2
+		IL_016e: conv.r8
+		IL_016f: ldstr ""
 		IL_0174: ldc.i4.0
-		IL_0175: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_017a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0)
-		IL_017f: stloc.s 13
-		IL_0181: ldloc.1
-		IL_0182: ldstr "lookup"
-		IL_0187: ldstr "localhost"
-		IL_018c: ldloc.s 11
-		IL_018e: ldloc.s 13
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-		IL_0195: pop
-		IL_0196: ldloc.0
-		IL_0197: ldc.i4.0
-		IL_0198: box [System.Runtime]System.Boolean
-		IL_019d: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
+		IL_0175: ldc.i4.0
+		IL_0176: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_017b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L11C71/FunctionObject>(!!0)
+		IL_0180: stloc.s 13
+		IL_0182: ldloc.1
+		IL_0183: ldstr "lookup"
+		IL_0188: ldstr "localhost"
+		IL_018d: ldloc.s 11
+		IL_018f: ldloc.s 13
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+		IL_0196: pop
+		IL_0197: ldloc.0
+		IL_0198: ldc.i4.0
+		IL_0199: pop
+		IL_019a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+		IL_019f: stfld object Modules.Require_Dns_Lookup/Scope::synchronous
 		.try
 		{
-			IL_01a2: nop
-			IL_01a3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_01a8: dup
-			IL_01a9: ldstr "all"
-			IL_01ae: ldstr "true"
-			IL_01b3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_01b8: stloc.s 11
-			IL_01ba: ldc.i4.1
-			IL_01bb: newarr [System.Runtime]System.Object
-			IL_01c0: dup
-			IL_01c1: ldc.i4.0
-			IL_01c2: ldloc.0
-			IL_01c3: stelem.ref
-			IL_01c4: stloc.s 12
-			IL_01c6: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject::.ctor()
-			IL_01cb: ldc.i4.0
-			IL_01cc: conv.r8
-			IL_01cd: ldstr ""
-			IL_01d2: ldc.i4.0
-			IL_01d3: ldc.i4.0
-			IL_01d4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_01d9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0)
-			IL_01de: stloc.s 14
-			IL_01e0: ldloc.1
-			IL_01e1: ldstr "lookup"
-			IL_01e6: ldstr "localhost"
-			IL_01eb: ldloc.s 11
-			IL_01ed: ldloc.s 14
-			IL_01ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_01f4: pop
-			IL_01f5: leave IL_0265
+			IL_01a4: nop
+			IL_01a5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01aa: dup
+			IL_01ab: ldstr "all"
+			IL_01b0: ldstr "true"
+			IL_01b5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01ba: stloc.s 11
+			IL_01bc: ldc.i4.1
+			IL_01bd: newarr [System.Runtime]System.Object
+			IL_01c2: dup
+			IL_01c3: ldc.i4.0
+			IL_01c4: ldloc.0
+			IL_01c5: stelem.ref
+			IL_01c6: stloc.s 12
+			IL_01c8: newobj instance void Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject::.ctor()
+			IL_01cd: ldc.i4.0
+			IL_01ce: conv.r8
+			IL_01cf: ldstr ""
+			IL_01d4: ldc.i4.0
+			IL_01d5: ldc.i4.0
+			IL_01d6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_01db: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Require_Dns_Lookup/ArrowFunction_L20C46/FunctionObject>(!!0)
+			IL_01e0: stloc.s 14
+			IL_01e2: ldloc.1
+			IL_01e3: ldstr "lookup"
+			IL_01e8: ldstr "localhost"
+			IL_01ed: ldloc.s 11
+			IL_01ef: ldloc.s 14
+			IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_01f6: pop
+			IL_01f7: leave IL_0267
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_01fa: stloc.2
-			IL_01fb: ldloc.2
-			IL_01fc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0201: dup
-			IL_0202: brtrue IL_0217
+			IL_01fc: stloc.2
+			IL_01fd: ldloc.2
+			IL_01fe: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0203: dup
+			IL_0204: brtrue IL_0219
 
-			IL_0207: pop
-			IL_0208: ldloc.2
-			IL_0209: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_020e: dup
-			IL_020f: brtrue IL_0222
+			IL_0209: pop
+			IL_020a: ldloc.2
+			IL_020b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0210: dup
+			IL_0211: brtrue IL_0224
 
-			IL_0214: pop
-			IL_0215: rethrow
+			IL_0216: pop
+			IL_0217: rethrow
 
-			IL_0217: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_021c: stloc.3
-			IL_021d: br IL_0223
+			IL_0219: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_021e: stloc.3
+			IL_021f: br IL_0225
 
-			IL_0222: stloc.3
+			IL_0224: stloc.3
 
-			IL_0223: ldloc.3
-			IL_0224: stloc.s 4
-			IL_0226: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_022b: stloc.s 6
-			IL_022d: ldloc.s 4
-			IL_022f: stloc.s 10
-			IL_0231: ldstr "TypeError"
-			IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_023b: stloc.s 15
-			IL_023d: ldloc.s 10
-			IL_023f: ldloc.s 15
-			IL_0241: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-			IL_0246: stloc.s 8
-			IL_0248: ldloc.s 8
-			IL_024a: box [System.Runtime]System.Boolean
-			IL_024f: stloc.s 9
-			IL_0251: ldloc.s 6
-			IL_0253: ldstr "invalid all:"
-			IL_0258: ldloc.s 9
-			IL_025a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_025f: pop
-			IL_0260: leave IL_0265
+			IL_0225: ldloc.3
+			IL_0226: stloc.s 4
+			IL_0228: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_022d: stloc.s 6
+			IL_022f: ldloc.s 4
+			IL_0231: stloc.s 10
+			IL_0233: ldstr "TypeError"
+			IL_0238: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_023d: stloc.s 15
+			IL_023f: ldloc.s 10
+			IL_0241: ldloc.s 15
+			IL_0243: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+			IL_0248: stloc.s 8
+			IL_024a: ldloc.s 8
+			IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0251: stloc.s 9
+			IL_0253: ldloc.s 6
+			IL_0255: ldstr "invalid all:"
+			IL_025a: ldloc.s 9
+			IL_025c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0261: pop
+			IL_0262: leave IL_0267
 		} // end handler
 
-		IL_0265: ldnull
-		IL_0266: stloc.s 5
-		IL_0268: ret
+		IL_0267: ldnull
+		IL_0268: stloc.s 5
+		IL_026a: ret
 	} // end of method Require_Dns_Lookup::__js_module_init__
 
 } // end of class Modules.Require_Dns_Lookup
