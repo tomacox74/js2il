@@ -266,7 +266,7 @@
 			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0028: stloc.2
 			IL_0029: ldloc.2
-			IL_002a: box [System.Runtime]System.Boolean
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_002f: stloc.3
 			IL_0030: ldloc.0
 			IL_0031: ldstr "derived receiver:"
@@ -677,7 +677,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 703 (0x2bf)
+		// Code size: 701 (0x2bd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope,
@@ -873,7 +873,7 @@
 		IL_01dd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
 		IL_01e2: stloc.s 11
 		IL_01e4: ldloc.s 11
-		IL_01e6: box [System.Runtime]System.Boolean
+		IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_01eb: stloc.s 12
 		IL_01ed: ldloc.s 10
 		IL_01ef: ldstr "derived:"
@@ -895,7 +895,7 @@
 		IL_021f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
 		IL_0224: stloc.s 11
 		IL_0226: ldloc.s 11
-		IL_0228: box [System.Runtime]System.Boolean
+		IL_0228: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_022d: stloc.s 12
 		IL_022f: ldloc.s 10
 		IL_0231: ldstr "base:"
@@ -919,30 +919,28 @@
 		IL_0277: ldloc.s 7
 		IL_0279: isinst Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
 		IL_027e: dup
-		IL_027f: brfalse IL_0298
+		IL_027f: brfalse IL_0297
 
-		IL_0284: ldc.i4.0
-		IL_0285: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_028a: ldloc.s 13
-		IL_028c: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
-		IL_0291: stloc.s 7
-		IL_0293: br IL_02af
+		IL_0284: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0289: ldloc.s 13
+		IL_028b: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
+		IL_0290: stloc.s 7
+		IL_0292: br IL_02ad
 
-		IL_0298: pop
-		IL_0299: ldloc.s 7
-		IL_029b: ldstr "deliver"
-		IL_02a0: ldc.i4.0
-		IL_02a1: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_02a6: ldloc.s 13
-		IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02ad: stloc.s 7
+		IL_0297: pop
+		IL_0298: ldloc.s 7
+		IL_029a: ldstr "deliver"
+		IL_029f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_02a4: ldloc.s 13
+		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02ab: stloc.s 7
 
-		IL_02af: ldloc.s 10
-		IL_02b1: ldstr "status:"
-		IL_02b6: ldloc.s 7
-		IL_02b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02bd: pop
-		IL_02be: ret
+		IL_02ad: ldloc.s 10
+		IL_02af: ldstr "status:"
+		IL_02b4: ldloc.s 7
+		IL_02b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02bb: pop
+		IL_02bc: ret
 	} // end of method Require_AsyncHooks_AsyncResource_Subclass::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_AsyncResource_Subclass

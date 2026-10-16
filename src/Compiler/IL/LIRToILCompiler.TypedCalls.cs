@@ -46,8 +46,7 @@ internal sealed partial class LIRToILCompiler
             && returnClrType != typeof(object)
             && returnClrType.IsValueType)
         {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(returnClrType));
+            EmitBoxValue(returnClrType, ilEncoder);
         }
     }
 
@@ -169,8 +168,7 @@ internal sealed partial class LIRToILCompiler
                 && instruction.ReturnClrType != typeof(object)
                 && instruction.ReturnClrType.IsValueType)
             {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(instruction.ReturnClrType));
+                EmitBoxValue(instruction.ReturnClrType, ilEncoder);
             }
 
             EmitStoreTemp(instruction.Result, ilEncoder, allocation);

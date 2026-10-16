@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): reuse immutable boxed boolean and null primitives for
+  object-valued constants, captured writes, calls, and resumable spills.
+  Preserve typed boolean operations, null/undefined distinctions, and fresh
+  JavaScript wrapper objects. Read mutable variable slots dynamically and load
+  shared constant boxes directly where stack scheduling permits; reduce Stopwatch
+  execution allocation by about 6 MB per invocation without changing either
+  workload (#2308).
 - perf(runtime): bulk-fill empty-RegExp split results directly in their final
   dense storage, setting array length once instead of growing per character.
   Preserve cached character strings, Unicode surrogate pairs, limits, and

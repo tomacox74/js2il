@@ -2473,27 +2473,17 @@ internal sealed partial class LIRToILCompiler
                     return true;
                 }
 
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObjectSourceType == typeof(bool))
-                {
-                    ilEncoder.Token(_bclReferences.BooleanType);
-                }
-                else if (convertToObjectSourceType == typeof(JavaScriptRuntime.JsNull))
-                {
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-                }
-                else if (convertToObjectSourceType == typeof(int))
-                {
-                    ilEncoder.Token(_bclReferences.Int32Type);
-                }
-                else if (convertToObjectSourceType == typeof(double))
-                {
-                    ilEncoder.Token(_bclReferences.DoubleType);
-                }
-                else
+                if (convertToObjectSourceType != typeof(bool)
+                    && convertToObjectSourceType != typeof(JavaScriptRuntime.JsNull)
+                    && convertToObjectSourceType != typeof(int)
+                    && convertToObjectSourceType != typeof(double))
                 {
                     throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObjectSourceType}");
+                }
+                if (!TryEmitLoadBoxedPrimitiveConstant(convertToObject.Source, ilEncoder))
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    EmitBoxValue(convertToObjectSourceType, ilEncoder);
                 }
                 return true;
 
@@ -2924,19 +2914,16 @@ internal sealed partial class LIRToILCompiler
 
     /// <summary>
     /// Emits IL to load a temp value as an object reference.
-    /// If the temp's storage is an unboxed value type, emits a box instruction.
+    /// Reuses shared boxes for boolean/null primitives; other value types are boxed normally.
     /// </summary>
     private void EmitLoadTempAsObject(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
-        // Load the temp value
-        EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
-
-        if (TryFindDefInstruction(temp) is LIRConstNull)
+        if (TryEmitLoadBoxedPrimitiveConstant(temp, ilEncoder))
         {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(GetBoxingTypeToken(typeof(JavaScriptRuntime.JsNull)));
             return;
         }
+
+        EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
 
         // Check if boxing is needed based on the value actually on the stack.
         var storage = GetMaterializedTempStorage(temp, allocation);
@@ -2946,24 +2933,10 @@ internal sealed partial class LIRToILCompiler
             {
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
             }
-            ilEncoder.OpCode(ILOpCode.Box);
-            if (storage.ClrType == typeof(double))
-            {
-                ilEncoder.Token(_bclReferences.DoubleType);
-            }
-            else if (storage.ClrType == typeof(bool))
-            {
-                ilEncoder.Token(_bclReferences.BooleanType);
-            }
-            else if (storage.ClrType == typeof(JavaScriptRuntime.JsNull))
-            {
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-            }
-            else
-            {
-                // Default to double for unknown numeric types
-                ilEncoder.Token(_bclReferences.DoubleType);
-            }
+            var boxingType = storage.ClrType == typeof(bool) || storage.ClrType == typeof(JavaScriptRuntime.JsNull)
+                ? storage.ClrType
+                : typeof(double);
+            EmitBoxValue(boxingType, ilEncoder);
         }
     }
 
@@ -3288,6 +3261,43 @@ internal sealed partial class LIRToILCompiler
     }
 
     private Dictionary<int, LIRInstruction>? _tempDefInstructionCache;
+    private HashSet<int>? _multiplyDefinedTemps;
+
+    private bool TryEmitLoadBoxedPrimitiveConstant(TempVariable temp, InstructionEncoder ilEncoder)
+    {
+        // Other temps can overwrite a variable's shared local slot.
+        if (GetTempVariableSlot(temp) >= 0)
+        {
+            return false;
+        }
+
+        var definition = TryFindDefInstruction(temp);
+        if (_multiplyDefinedTemps?.Contains(temp.Index) == true)
+        {
+            return false;
+        }
+
+        var fieldName = definition switch
+        {
+            LIRConstBoolean constant => constant.Value
+                ? nameof(JavaScriptRuntime.BoxedPrimitive.True)
+                : nameof(JavaScriptRuntime.BoxedPrimitive.False),
+            LIRConstNull => nameof(JavaScriptRuntime.BoxedPrimitive.Null),
+            _ => null
+        };
+        if (fieldName is null)
+        {
+            return false;
+        }
+
+        // A scheduler-owned producer has already pushed the primitive.
+        if (IsSchedulerStackResident(temp))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+        EmitLoadBoxedPrimitive(fieldName, ilEncoder);
+        return true;
+    }
 
     private LIRInstruction? TryFindDefInstruction(TempVariable temp)
     {
@@ -3302,7 +3312,10 @@ internal sealed partial class LIRToILCompiler
                 if (LIRInstructionInfo.TryGetDefinedTemp(instr, out var defined))
                 {
                     // Keep the first definition to preserve the previous first-match semantics.
-                    cache.TryAdd(defined.Index, instr);
+                    if (!cache.TryAdd(defined.Index, instr))
+                    {
+                        (_multiplyDefinedTemps ??= new HashSet<int>()).Add(defined.Index);
+                    }
                 }
             }
             _tempDefInstructionCache = cache;

@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 241 (0xf1)
+		// Code size: 240 (0xf0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.JSON_Parse_SimpleObject/Scope,
@@ -177,35 +177,34 @@
 
 		IL_00b6: stloc.s 6
 		IL_00b8: ldloc.s 6
-		IL_00ba: ldc.i4.0
-		IL_00bb: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00c0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00c5: stloc.s 7
-		IL_00c7: ldloc.s 7
-		IL_00c9: box [System.Runtime]System.Boolean
-		IL_00ce: stloc.s 8
-		IL_00d0: ldloc.2
-		IL_00d1: ldc.i4.4
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
-		IL_00d8: ldc.i4.0
-		IL_00d9: ldloc.3
-		IL_00da: stelem.ref
-		IL_00db: dup
-		IL_00dc: ldc.i4.1
-		IL_00dd: ldloc.s 4
-		IL_00df: stelem.ref
-		IL_00e0: dup
-		IL_00e1: ldc.i4.2
-		IL_00e2: ldloc.s 5
-		IL_00e4: stelem.ref
-		IL_00e5: dup
-		IL_00e6: ldc.i4.3
-		IL_00e7: ldloc.s 8
-		IL_00e9: stelem.ref
-		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ef: pop
-		IL_00f0: ret
+		IL_00ba: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_00bf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00c4: stloc.s 7
+		IL_00c6: ldloc.s 7
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_00cd: stloc.s 8
+		IL_00cf: ldloc.2
+		IL_00d0: ldc.i4.4
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldloc.3
+		IL_00d9: stelem.ref
+		IL_00da: dup
+		IL_00db: ldc.i4.1
+		IL_00dc: ldloc.s 4
+		IL_00de: stelem.ref
+		IL_00df: dup
+		IL_00e0: ldc.i4.2
+		IL_00e1: ldloc.s 5
+		IL_00e3: stelem.ref
+		IL_00e4: dup
+		IL_00e5: ldc.i4.3
+		IL_00e6: ldloc.s 8
+		IL_00e8: stelem.ref
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ee: pop
+		IL_00ef: ret
 	} // end of method JSON_Parse_SimpleObject::__js_module_init__
 
 } // end of class Modules.JSON_Parse_SimpleObject

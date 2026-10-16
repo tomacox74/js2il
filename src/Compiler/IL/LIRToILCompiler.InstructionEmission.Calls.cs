@@ -914,8 +914,7 @@ internal sealed partial class LIRToILCompiler
                             && clrType == typeof(object)
                             && GetTempStorage(callUserClass.Result) is { Kind: ValueStorageKind.UnboxedValue, ClrType: Type resultClrType })
                         {
-                            ilEncoder.OpCode(ILOpCode.Box);
-                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(resultClrType));
+                            EmitBoxValue(resultClrType, ilEncoder);
                         }
 
                         EmitStoreTemp(callUserClass.Result, ilEncoder, allocation);
@@ -1726,8 +1725,7 @@ internal sealed partial class LIRToILCompiler
         }
         else if (returnClrType == typeof(bool))
         {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.BooleanType);
+            EmitBoxValue(returnClrType, ilEncoder);
         }
     }
 

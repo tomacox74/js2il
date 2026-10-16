@@ -84,6 +84,11 @@ namespace Jroc.Services
         public EntityHandle ObjectArrayType => _memberRefRegistry.GetOrAddTypeHandle(typeof(object[]));
 
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
+        public MemberReferenceHandle BoxedPrimitive_Box_Boolean_Ref =>
+            _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.BoxedPrimitive),
+                nameof(JavaScriptRuntime.BoxedPrimitive.Box),
+                new[] { typeof(bool) });
         public MemberReferenceHandle JsObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsObject), Type.EmptyTypes);
         public MemberReferenceHandle JsFunctionObject_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.JsFunctionObject), Type.EmptyTypes);
         public MemberReferenceHandle JsFunctionObject_InitializeInvocationContext_Ref =>
