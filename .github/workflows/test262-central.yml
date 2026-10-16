@@ -39,6 +39,8 @@ jobs:
     environment: test262-catalogue
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    outputs:
+      has_patch: ${{ steps.native_batch.outputs.has_patch }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -90,6 +92,7 @@ jobs:
             --context artifacts/test262/central-context.json --root "$TEST262_ROOT" \
             --outbox artifacts/test262/central-outbox.sqlite
       - name: Seal and generate fresh native acceptance
+        id: native_batch
         if: ${{ inputs.kind == 'native' }}
         env:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
@@ -107,6 +110,12 @@ jobs:
             TARGET="$(python -c 'import json;print(json.load(open("artifacts/test262/central-context.json"))["revision"])')"
             git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
             git diff --binary "$TARGET" -- > artifacts/test262/central-patch.diff
+          fi
+          if [ -s artifacts/test262/central-patch.diff ]; then
+            echo 'has_patch=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_patch=false' >> "$GITHUB_OUTPUT"
+            echo 'No generated native patch; skipping validation and publication.'
           fi
       - name: Preserve local evidence before recovery
         if: always()
@@ -183,7 +192,7 @@ jobs:
   validate:
     # Executes generated fixtures with no catalogue/GitHub write credentials or environment secrets.
     needs: supervise
-    if: ${{ inputs.kind == 'native' }}
+    if: ${{ inputs.kind == 'native' && needs.supervise.outputs.has_patch == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -259,7 +268,7 @@ jobs:
 
   publish:
     needs: [supervise, validate]
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.kind == 'native' && inputs.publish == true }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.kind == 'native' && inputs.publish == true && needs.supervise.outputs.has_patch == 'true' }}
     environment: test262-catalogue-publish
     runs-on: ubuntu-24.04
     timeout-minutes: 15
