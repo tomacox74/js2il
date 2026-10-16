@@ -2473,7 +2473,6 @@ internal sealed partial class LIRToILCompiler
                     return true;
                 }
 
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                 if (convertToObjectSourceType != typeof(bool)
                     && convertToObjectSourceType != typeof(JavaScriptRuntime.JsNull)
                     && convertToObjectSourceType != typeof(int)
@@ -2481,7 +2480,11 @@ internal sealed partial class LIRToILCompiler
                 {
                     throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObjectSourceType}");
                 }
-                EmitBoxValue(convertToObjectSourceType, ilEncoder, TryGetConstantBoolean(convertToObject.Source));
+                if (!TryEmitLoadBoxedPrimitiveConstant(convertToObject.Source, ilEncoder))
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    EmitBoxValue(convertToObjectSourceType, ilEncoder);
+                }
                 return true;
 
             case LIRConvertToNumber convertToNumber:
@@ -2915,15 +2918,12 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitLoadTempAsObject(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
-        // Load the temp value
-        EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
-
-        if (TryFindDefInstruction(temp) is LIRConstNull
-            && _multiplyDefinedTemps?.Contains(temp.Index) != true)
+        if (TryEmitLoadBoxedPrimitiveConstant(temp, ilEncoder))
         {
-            EmitBoxValue(typeof(JavaScriptRuntime.JsNull), ilEncoder);
             return;
         }
+
+        EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
 
         // Check if boxing is needed based on the value actually on the stack.
         var storage = GetMaterializedTempStorage(temp, allocation);
@@ -2936,7 +2936,7 @@ internal sealed partial class LIRToILCompiler
             var boxingType = storage.ClrType == typeof(bool) || storage.ClrType == typeof(JavaScriptRuntime.JsNull)
                 ? storage.ClrType
                 : typeof(double);
-            EmitBoxValue(boxingType, ilEncoder, TryGetConstantBoolean(temp));
+            EmitBoxValue(boxingType, ilEncoder);
         }
     }
 
@@ -3263,13 +3263,40 @@ internal sealed partial class LIRToILCompiler
     private Dictionary<int, LIRInstruction>? _tempDefInstructionCache;
     private HashSet<int>? _multiplyDefinedTemps;
 
-    private bool? TryGetConstantBoolean(TempVariable temp)
+    private bool TryEmitLoadBoxedPrimitiveConstant(TempVariable temp, InstructionEncoder ilEncoder)
     {
+        // Other temps can overwrite a variable's shared local slot.
+        if (GetTempVariableSlot(temp) >= 0)
+        {
+            return false;
+        }
+
         var definition = TryFindDefInstruction(temp);
-        return definition is LIRConstBoolean constant
-            && _multiplyDefinedTemps?.Contains(temp.Index) != true
-                ? constant.Value
-                : null;
+        if (_multiplyDefinedTemps?.Contains(temp.Index) == true)
+        {
+            return false;
+        }
+
+        var fieldName = definition switch
+        {
+            LIRConstBoolean constant => constant.Value
+                ? nameof(JavaScriptRuntime.BoxedPrimitive.True)
+                : nameof(JavaScriptRuntime.BoxedPrimitive.False),
+            LIRConstNull => nameof(JavaScriptRuntime.BoxedPrimitive.Null),
+            _ => null
+        };
+        if (fieldName is null)
+        {
+            return false;
+        }
+
+        // A scheduler-owned producer has already pushed the primitive.
+        if (IsSchedulerStackResident(temp))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+        EmitLoadBoxedPrimitive(fieldName, ilEncoder);
+        return true;
     }
 
     private LIRInstruction? TryFindDefInstruction(TempVariable temp)

@@ -3118,7 +3118,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1363 (0x553)
+		// Code size: 1361 (0x551)
 		.maxstack 12
 		.locals init (
 			[0] class Modules.Int32Array_LocalVectorOr/Scope,
@@ -3417,7 +3417,7 @@
 					IL_02bf: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultDone(object)
 					IL_02c4: stloc.s 22
 					IL_02c6: ldloc.s 22
-					IL_02c8: brtrue IL_0405
+					IL_02c8: brtrue IL_0403
 
 					IL_02cd: ldloc.s 21
 					IL_02cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorResultValue(object)
@@ -3487,7 +3487,7 @@
 						IL_038e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
 						IL_0393: stloc.s 22
 						IL_0395: ldloc.s 22
-						IL_0397: brfalse IL_03e0
+						IL_0397: brfalse IL_03de
 
 						IL_039c: ldloc.s 16
 						IL_039e: ldloc.s 19
@@ -3502,174 +3502,172 @@
 						IL_03b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
 						IL_03bb: stloc.s 22
 						IL_03bd: ldloc.s 22
-						IL_03bf: brfalse IL_03cd
+						IL_03bf: brfalse IL_03cb
 
-						IL_03c4: ldc.i4.0
-						IL_03c5: pop
-						IL_03c6: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
-						IL_03cb: stloc.s 18
+						IL_03c4: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+						IL_03c9: stloc.s 18
 
-						IL_03cd: ldloc.s 19
-						IL_03cf: ldc.r8 1
-						IL_03d8: add
-						IL_03d9: stloc.s 19
-						IL_03db: br IL_0386
+						IL_03cb: ldloc.s 19
+						IL_03cd: ldc.r8 1
+						IL_03d6: add
+						IL_03d7: stloc.s 19
+						IL_03d9: br IL_0386
 					// end loop
 
-					IL_03e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_03e5: stloc.s 25
-					IL_03e7: ldloc.s 25
-					IL_03e9: ldloc.s 18
-					IL_03eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-					IL_03f0: pop
-					IL_03f1: br IL_02b1
+					IL_03de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_03e3: stloc.s 25
+					IL_03e5: ldloc.s 25
+					IL_03e7: ldloc.s 18
+					IL_03e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_03ee: pop
+					IL_03ef: br IL_02b1
 				// end loop
-				IL_03f6: ldloc.s 11
-				IL_03f8: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-				IL_03fd: ldc.i4.1
-				IL_03fe: stloc.s 13
-				IL_0400: leave IL_0452
+				IL_03f4: ldloc.s 11
+				IL_03f6: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+				IL_03fb: ldc.i4.1
+				IL_03fc: stloc.s 13
+				IL_03fe: leave IL_0450
 
-				IL_0405: ldc.i4.1
-				IL_0406: stloc.s 12
-				IL_0408: leave IL_0452
+				IL_0403: ldc.i4.1
+				IL_0404: stloc.s 12
+				IL_0406: leave IL_0450
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_040d: stloc.s 26
-				IL_040f: ldc.i4.1
-				IL_0410: stloc.s 14
-				IL_0412: ldloc.s 26
-				IL_0414: isinst [System.Runtime]System.Exception
-				IL_0419: dup
-				IL_041a: brtrue IL_0428
+				IL_040b: stloc.s 26
+				IL_040d: ldc.i4.1
+				IL_040e: stloc.s 14
+				IL_0410: ldloc.s 26
+				IL_0412: isinst [System.Runtime]System.Exception
+				IL_0417: dup
+				IL_0418: brtrue IL_0426
 
-				IL_041f: pop
-				IL_0420: ldloc.s 26
-				IL_0422: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-				IL_0427: throw
+				IL_041d: pop
+				IL_041e: ldloc.s 26
+				IL_0420: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+				IL_0425: throw
 
-				IL_0428: throw
+				IL_0426: throw
 			} // end handler
 		} // end .try
 		finally
 		{
-			IL_0429: ldloc.s 12
-			IL_042b: brtrue IL_0451
+			IL_0427: ldloc.s 12
+			IL_0429: brtrue IL_044f
 
-			IL_0430: ldloc.s 13
-			IL_0432: brtrue IL_0451
+			IL_042e: ldloc.s 13
+			IL_0430: brtrue IL_044f
 
-			IL_0437: ldloc.s 14
-			IL_0439: brtrue IL_044a
+			IL_0435: ldloc.s 14
+			IL_0437: brtrue IL_0448
 
-			IL_043e: ldloc.s 11
-			IL_0440: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
-			IL_0445: br IL_0451
+			IL_043c: ldloc.s 11
+			IL_043e: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorClose(object)
+			IL_0443: br IL_044f
 
-			IL_044a: ldloc.s 11
-			IL_044c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
+			IL_0448: ldloc.s 11
+			IL_044a: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::IteratorCloseForThrowCompletion(object)
 
-			IL_0451: endfinally
+			IL_044f: endfinally
 		} // end handler
 
-		IL_0452: nop
-		IL_0453: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0458: stloc.s 25
-		IL_045a: ldloc.0
-		IL_045b: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_0460: ldnull
-		IL_0461: call object Modules.Int32Array_LocalVectorOr/literalBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_0466: stloc.s 21
-		IL_0468: ldloc.s 25
-		IL_046a: ldloc.s 21
-		IL_046c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0471: pop
-		IL_0472: nop
-		IL_0473: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0478: stloc.s 25
-		IL_047a: ldloc.0
-		IL_047b: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_0480: ldnull
-		IL_0481: call object Modules.Int32Array_LocalVectorOr/ordinaryArray::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_0486: stloc.s 21
-		IL_0488: ldloc.s 25
-		IL_048a: ldloc.s 21
-		IL_048c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0491: pop
-		IL_0492: nop
-		IL_0493: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0498: stloc.s 25
-		IL_049a: ldloc.0
-		IL_049b: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_04a0: ldnull
-		IL_04a1: call object Modules.Int32Array_LocalVectorOr/withCallback::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_04a6: stloc.s 21
-		IL_04a8: ldloc.s 25
-		IL_04aa: ldloc.s 21
-		IL_04ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04b1: pop
-		IL_04b2: nop
-		IL_04b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04b8: stloc.s 25
-		IL_04ba: ldloc.0
-		IL_04bb: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_04c0: ldnull
-		IL_04c1: call object Modules.Int32Array_LocalVectorOr/withDynamicBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_04c6: stloc.s 21
-		IL_04c8: ldloc.s 25
-		IL_04ca: ldloc.s 21
-		IL_04cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04d1: pop
-		IL_04d2: nop
-		IL_04d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04d8: stloc.s 25
-		IL_04da: ldloc.0
-		IL_04db: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_04e0: ldnull
-		IL_04e1: call object Modules.Int32Array_LocalVectorOr/withObservableBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_04e6: stloc.s 21
-		IL_04e8: ldloc.s 25
-		IL_04ea: ldloc.s 21
-		IL_04ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04f1: pop
-		IL_04f2: nop
-		IL_04f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04f8: stloc.s 25
-		IL_04fa: ldloc.0
-		IL_04fb: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_0500: ldnull
-		IL_0501: call object Modules.Int32Array_LocalVectorOr/withAliasedStore::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_0506: stloc.s 21
-		IL_0508: ldloc.s 25
-		IL_050a: ldloc.s 21
-		IL_050c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0511: pop
-		IL_0512: nop
-		IL_0513: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0518: stloc.s 25
-		IL_051a: ldloc.0
-		IL_051b: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_0520: ldnull
-		IL_0521: call object Modules.Int32Array_LocalVectorOr/skipUninitializedArray::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_0526: stloc.s 21
-		IL_0528: ldloc.s 25
-		IL_052a: ldloc.s 21
-		IL_052c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0531: pop
-		IL_0532: nop
-		IL_0533: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0538: stloc.s 25
-		IL_053a: ldloc.0
-		IL_053b: castclass Modules.Int32Array_LocalVectorOr/Scope
-		IL_0540: ldnull
-		IL_0541: call object Modules.Int32Array_LocalVectorOr/receiverLength::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
-		IL_0546: stloc.s 21
-		IL_0548: ldloc.s 25
-		IL_054a: ldloc.s 21
-		IL_054c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0551: pop
-		IL_0552: ret
+		IL_0450: nop
+		IL_0451: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0456: stloc.s 25
+		IL_0458: ldloc.0
+		IL_0459: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_045e: ldnull
+		IL_045f: call object Modules.Int32Array_LocalVectorOr/literalBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_0464: stloc.s 21
+		IL_0466: ldloc.s 25
+		IL_0468: ldloc.s 21
+		IL_046a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_046f: pop
+		IL_0470: nop
+		IL_0471: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0476: stloc.s 25
+		IL_0478: ldloc.0
+		IL_0479: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_047e: ldnull
+		IL_047f: call object Modules.Int32Array_LocalVectorOr/ordinaryArray::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_0484: stloc.s 21
+		IL_0486: ldloc.s 25
+		IL_0488: ldloc.s 21
+		IL_048a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_048f: pop
+		IL_0490: nop
+		IL_0491: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0496: stloc.s 25
+		IL_0498: ldloc.0
+		IL_0499: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_049e: ldnull
+		IL_049f: call object Modules.Int32Array_LocalVectorOr/withCallback::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_04a4: stloc.s 21
+		IL_04a6: ldloc.s 25
+		IL_04a8: ldloc.s 21
+		IL_04aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04af: pop
+		IL_04b0: nop
+		IL_04b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04b6: stloc.s 25
+		IL_04b8: ldloc.0
+		IL_04b9: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_04be: ldnull
+		IL_04bf: call object Modules.Int32Array_LocalVectorOr/withDynamicBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_04c4: stloc.s 21
+		IL_04c6: ldloc.s 25
+		IL_04c8: ldloc.s 21
+		IL_04ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04cf: pop
+		IL_04d0: nop
+		IL_04d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04d6: stloc.s 25
+		IL_04d8: ldloc.0
+		IL_04d9: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_04de: ldnull
+		IL_04df: call object Modules.Int32Array_LocalVectorOr/withObservableBound::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_04e4: stloc.s 21
+		IL_04e6: ldloc.s 25
+		IL_04e8: ldloc.s 21
+		IL_04ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04ef: pop
+		IL_04f0: nop
+		IL_04f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04f6: stloc.s 25
+		IL_04f8: ldloc.0
+		IL_04f9: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_04fe: ldnull
+		IL_04ff: call object Modules.Int32Array_LocalVectorOr/withAliasedStore::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_0504: stloc.s 21
+		IL_0506: ldloc.s 25
+		IL_0508: ldloc.s 21
+		IL_050a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_050f: pop
+		IL_0510: nop
+		IL_0511: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0516: stloc.s 25
+		IL_0518: ldloc.0
+		IL_0519: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_051e: ldnull
+		IL_051f: call object Modules.Int32Array_LocalVectorOr/skipUninitializedArray::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_0524: stloc.s 21
+		IL_0526: ldloc.s 25
+		IL_0528: ldloc.s 21
+		IL_052a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_052f: pop
+		IL_0530: nop
+		IL_0531: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0536: stloc.s 25
+		IL_0538: ldloc.0
+		IL_0539: castclass Modules.Int32Array_LocalVectorOr/Scope
+		IL_053e: ldnull
+		IL_053f: call object Modules.Int32Array_LocalVectorOr/receiverLength::__js_call__(class Modules.Int32Array_LocalVectorOr/Scope, object)
+		IL_0544: stloc.s 21
+		IL_0546: ldloc.s 25
+		IL_0548: ldloc.s 21
+		IL_054a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_054f: pop
+		IL_0550: ret
 	} // end of method Int32Array_LocalVectorOr::__js_module_init__
 
 } // end of class Modules.Int32Array_LocalVectorOr

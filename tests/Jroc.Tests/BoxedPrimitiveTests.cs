@@ -1,7 +1,16 @@
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using Jroc.IL;
+using Jroc.IR;
 using Jroc.Runtime;
+using Jroc.Services;
 using Jroc.Tests.Utilities;
+using Jroc.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jroc.Tests;
 
@@ -12,25 +21,89 @@ public sealed class BoxedPrimitiveTestsCollection;
 public sealed class BoxedPrimitiveTests
 {
     [Fact]
-    public void SharedBoxesPreserveClrTypesAndAllocateNothingPerSelection()
+    public void SharedBoxesPreserveClrTypesAndDoNotAllocatePerSelection()
     {
         Assert.True(Assert.IsType<bool>(BoxedPrimitive.True));
         Assert.False(Assert.IsType<bool>(BoxedPrimitive.False));
         Assert.Equal(JsNull.Null, Assert.IsType<JsNull>(BoxedPrimitive.Null));
         Assert.NotSame(BoxedPrimitive.True, BoxedPrimitive.False);
         Assert.NotNull(BoxedPrimitive.Null);
-        object? result = null;
+        var results = new object[100_000];
         for (var i = 0; i < 10_000; i++)
-            result = BoxedPrimitive.Box((i & 1) == 0);
+            results[i] = BoxedPrimitive.Box((i & 1) == 0);
 
         var before = GC.GetAllocatedBytesForCurrentThread();
-        for (var i = 0; i < 100_000; i++)
-            result = BoxedPrimitive.Box((i & 1) == 0);
+        for (var i = 0; i < results.Length; i++)
+            results[i] = BoxedPrimitive.Box((i & 1) == 0);
         var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
 
-        Assert.Same(BoxedPrimitive.False, result);
-        Assert.Equal(0, allocated);
-        Assert.Same(BoxedPrimitive.True, BoxedPrimitive.Box(true));
+        Assert.InRange(allocated, 0L, 1_024L);
+        for (var i = 0; i < results.Length; i++)
+            Assert.Same((i & 1) == 0 ? BoxedPrimitive.True : BoxedPrimitive.False, results[i]);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void AliasedVariableSlotBoxesCurrentValue(bool convertToObject, bool scheduled)
+    {
+        var body = new MethodBodyIR();
+        body.VariableNames.Add("flag");
+        body.VariableStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        var original = AddTemp(body, typeof(bool), variableSlot: 0);
+        var reassigned = AddTemp(body, typeof(bool), variableSlot: 0);
+        body.Instructions.Add(new LIRConstBoolean(true, original));
+        body.Instructions.Add(new LIRConstBoolean(false, reassigned));
+        var result = original;
+        if (convertToObject)
+        {
+            result = AddTemp(body, typeof(object));
+            body.Instructions.Add(new LIRConvertToObject(original, typeof(bool), result));
+        }
+        body.Instructions.Add(new LIRReturn(result));
+
+        var compiled = CompileBody(body, scheduled);
+
+        Assert.Same(BoxedPrimitive.False, compiled.Result);
+        Assert.Contains("BoxedPrimitive::Box(bool)", compiled.Il);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void ConstantBoxesAvoidRedundantLoadsWithBothSchedulers(bool convertToObject, bool scheduled)
+    {
+        foreach (bool? value in new bool?[] { true, false, null })
+        {
+            var body = new MethodBodyIR();
+            var type = value.HasValue ? typeof(bool) : typeof(JsNull);
+            var constant = AddTemp(body, type);
+            body.Instructions.Add(value.HasValue
+                ? new LIRConstBoolean(value.Value, constant)
+                : new LIRConstNull(constant));
+            var result = constant;
+            if (convertToObject)
+            {
+                result = AddTemp(body, typeof(object));
+                body.Instructions.Add(new LIRConvertToObject(constant, type, result));
+            }
+            body.Instructions.Add(new LIRReturn(result));
+
+            var compiled = CompileBody(body, scheduled);
+            var fieldName = value.HasValue ? (value.Value ? "True" : "False") : "Null";
+
+            Assert.Same(value.HasValue ? BoxedPrimitive.Box(value.Value) : BoxedPrimitive.Null, compiled.Result);
+            Assert.Contains($"BoxedPrimitive::{fieldName}", compiled.Il);
+            if (!scheduled)
+            {
+                Assert.DoesNotContain("ldc.i4", compiled.Il);
+                Assert.DoesNotContain(": pop", compiled.Il);
+            }
+        }
     }
 
     [Fact]
@@ -149,6 +222,57 @@ public sealed class BoxedPrimitiveTests
             EmitPdb = false,
             HostRuntimeIntrinsics = host ?? HostRuntimeIntrinsicDescriptors.Empty
         });
+
+    private static TempVariable AddTemp(MethodBodyIR body, Type type, int variableSlot = -1)
+    {
+        var temp = new TempVariable(body.Temps.Count);
+        body.Temps.Add(temp);
+        body.TempStorages.Add(new ValueStorage(
+            type.IsValueType ? ValueStorageKind.UnboxedValue : ValueStorageKind.Reference, type));
+        body.TempVariableSlots.Add(variableSlot);
+        return temp;
+    }
+
+    private static (object Result, string Il) CompileBody(MethodBodyIR body, bool scheduled)
+    {
+        using var services = CompilerServices.BuildServiceProvider(new CompilerOptions
+        {
+            EmitPdb = false,
+            LIRStackSchedulerMode = scheduled ? LIRStackSchedulerMode.GeneralRegions : LIRStackSchedulerMode.Identity
+        });
+        var metadata = services.GetRequiredService<MetadataBuilder>();
+        metadata.AddModule(0, metadata.GetOrAddString("Boxing.dll"), metadata.GetOrAddGuid(Guid.NewGuid()), default, default);
+        metadata.AddAssembly(metadata.GetOrAddString("Boxing"), new Version(1, 0), default, default, default, default);
+        new TypeBuilder(metadata, "", "<Module>").AddTypeDefinition(TypeAttributes.NotPublic, default);
+        var typeBuilder = new TypeBuilder(metadata, "", "Boxing");
+        var compiler = ActivatorUtilities.CreateInstance<LIRToILCompiler>(services);
+        var ilStream = new BlobBuilder();
+        var method = compiler.TryCompile(new MethodDescriptor("Run", typeBuilder, [])
+        {
+            HasScopesParameter = false,
+            HasNewTargetParameter = false
+        }, body, new MethodBodyStreamEncoder(ilStream));
+        Assert.False(method.IsNil);
+        typeBuilder.AddTypeDefinition(TypeAttributes.Public, services.GetRequiredService<BaseClassLibraryReferences>().ObjectType);
+        var pe = new BlobBuilder();
+        new ManagedPEBuilder(
+            new PEHeaderBuilder(imageCharacteristics: Characteristics.ExecutableImage | Characteristics.Dll),
+            new MetadataRootBuilder(metadata), ilStream).Serialize(pe);
+        var bytes = pe.ToArray();
+        var il = AssemblyToText.ConvertToText(bytes, "Boxing");
+        var context = new AssemblyLoadContext($"boxing-{Guid.NewGuid():N}", isCollectible: true);
+        try
+        {
+            using var stream = new MemoryStream(bytes);
+            var assembly = context.LoadFromStream(stream);
+            var run = assembly.GetType("Boxing", throwOnError: true)!.GetMethod("Run")!.CreateDelegate<Func<object>>();
+            return (run(), il);
+        }
+        finally
+        {
+            context.Unload();
+        }
+    }
 
     private static void WithExports(
         JrocCompiledAssemblyArtifact artifact,

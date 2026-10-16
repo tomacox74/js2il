@@ -486,18 +486,18 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
-    private void EmitBoxValue(Type clrType, InstructionEncoder ilEncoder, bool? constantBoolean = null)
+    private void EmitLoadBoxedPrimitive(string fieldName, InstructionEncoder ilEncoder)
     {
-        if (clrType == typeof(JavaScriptRuntime.JsNull) || (clrType == typeof(bool) && constantBoolean.HasValue))
+        ilEncoder.OpCode(ILOpCode.Ldsfld);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.BoxedPrimitive), fieldName));
+    }
+
+    private void EmitBoxValue(Type clrType, InstructionEncoder ilEncoder)
+    {
+        if (clrType == typeof(JavaScriptRuntime.JsNull))
         {
             ilEncoder.OpCode(ILOpCode.Pop);
-            var fieldName = clrType == typeof(JavaScriptRuntime.JsNull)
-                ? nameof(JavaScriptRuntime.BoxedPrimitive.Null)
-                : constantBoolean == true
-                    ? nameof(JavaScriptRuntime.BoxedPrimitive.True)
-                    : nameof(JavaScriptRuntime.BoxedPrimitive.False);
-            ilEncoder.OpCode(ILOpCode.Ldsfld);
-            ilEncoder.Token(_memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.BoxedPrimitive), fieldName));
+            EmitLoadBoxedPrimitive(nameof(JavaScriptRuntime.BoxedPrimitive.Null), ilEncoder);
         }
         else if (clrType == typeof(bool))
         {

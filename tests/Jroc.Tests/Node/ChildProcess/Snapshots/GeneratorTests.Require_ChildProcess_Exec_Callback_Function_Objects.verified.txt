@@ -504,7 +504,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 246 (0xf6)
+			// Code size: 244 (0xf4)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -522,91 +522,89 @@
 			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_000d: stloc.2
 			IL_000e: ldarg.2
-			IL_000f: ldc.i4.0
-			IL_0010: pop
-			IL_0011: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
-			IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_001b: stloc.3
-			IL_001c: ldloc.3
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_0022: stloc.s 4
-			IL_0024: ldstr "async-error:"
-			IL_0029: ldloc.s 4
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0030: stloc.s 5
-			IL_0032: ldloc.2
-			IL_0033: ldloc.s 5
-			IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003a: pop
-			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0040: stloc.2
-			IL_0041: ldarg.3
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0047: stloc.1
-			IL_0048: ldc.i4.0
-			IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_004e: brfalse IL_007d
+			IL_000f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0014: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0019: stloc.3
+			IL_001a: ldloc.3
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0020: stloc.s 4
+			IL_0022: ldstr "async-error:"
+			IL_0027: ldloc.s 4
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002e: stloc.s 5
+			IL_0030: ldloc.2
+			IL_0031: ldloc.s 5
+			IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0038: pop
+			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003e: stloc.2
+			IL_003f: ldarg.3
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0045: stloc.1
+			IL_0046: ldc.i4.0
+			IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_004c: brfalse IL_007b
 
-			IL_0053: ldloc.1
-			IL_0054: isinst [System.Runtime]System.String
-			IL_0059: dup
-			IL_005a: brtrue IL_0071
+			IL_0051: ldloc.1
+			IL_0052: isinst [System.Runtime]System.String
+			IL_0057: dup
+			IL_0058: brtrue IL_006f
 
-			IL_005f: pop
-			IL_0060: ldloc.1
-			IL_0061: ldstr "trim"
-			IL_0066: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_006b: dup
-			IL_006c: brfalse IL_007c
+			IL_005d: pop
+			IL_005e: ldloc.1
+			IL_005f: ldstr "trim"
+			IL_0064: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0069: dup
+			IL_006a: brfalse IL_007a
 
-			IL_0071: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
-			IL_0076: stloc.1
-			IL_0077: br IL_0089
+			IL_006f: call string [JavaScriptRuntime]JavaScriptRuntime.String::Trim(string)
+			IL_0074: stloc.1
+			IL_0075: br IL_0087
 
-			IL_007c: pop
+			IL_007a: pop
 
-			IL_007d: ldloc.1
-			IL_007e: ldstr "trim"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0088: stloc.1
+			IL_007b: ldloc.1
+			IL_007c: ldstr "trim"
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0086: stloc.1
 
-			IL_0089: ldstr "async-stdout:"
-			IL_008e: ldloc.1
-			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0094: stloc.s 5
-			IL_0096: ldloc.2
-			IL_0097: ldloc.s 5
-			IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_009e: pop
-			IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a4: stloc.2
-			IL_00a5: volatile.
-			IL_00a7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-			IL_00ac: brfalse IL_00c2
+			IL_0087: ldstr "async-stdout:"
+			IL_008c: ldloc.1
+			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0092: stloc.s 5
+			IL_0094: ldloc.2
+			IL_0095: ldloc.s 5
+			IL_0097: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_009c: pop
+			IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a2: stloc.2
+			IL_00a3: volatile.
+			IL_00a5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_00aa: brfalse IL_00c0
 
-			IL_00b1: ldarg.s stderr
-			IL_00b3: ldstr "length"
-			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00bd: br IL_00d8
+			IL_00af: ldarg.s stderr
+			IL_00b1: ldstr "length"
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00bb: br IL_00d6
 
-			IL_00c2: ldarg.s stderr
-			IL_00c4: ldstr "length"
-			IL_00c9: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:<TwoPhaseDummy_M5>:__js_call__:26"
-			IL_00ce: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-			IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00c0: ldarg.s stderr
+			IL_00c2: ldstr "length"
+			IL_00c7: ldstr "Require_ChildProcess_Exec_Callback_Function_Objects:<TwoPhaseDummy_M5>:__js_call__:26"
+			IL_00cc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00d8: stloc.1
-			IL_00d9: ldstr "async-stderr:"
-			IL_00de: ldloc.1
-			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00e4: stloc.s 5
-			IL_00e6: ldloc.2
-			IL_00e7: ldloc.s 5
-			IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00ee: pop
-			IL_00ef: ldnull
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_00f5: ret
+			IL_00d6: stloc.1
+			IL_00d7: ldstr "async-stderr:"
+			IL_00dc: ldloc.1
+			IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00e2: stloc.s 5
+			IL_00e4: ldloc.2
+			IL_00e5: ldloc.s 5
+			IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00ec: pop
+			IL_00ed: ldnull
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_00f3: ret
 		} // end of method asyncCallback::__js_call__
 
 	} // end of class asyncCallback

@@ -2015,7 +2015,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -2026,39 +2026,37 @@
 				[5] object
 			)
 
-			IL_0000: ldc.i4.0
-			IL_0001: pop
-			IL_0002: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
-			IL_0007: stloc.0
-			IL_0008: ldnull
-			IL_0009: stloc.1
-			IL_000a: ldloc.0
-			IL_000b: call bool [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::IsNullish(object)
-			IL_0010: stloc.2
-			IL_0011: ldloc.2
-			IL_0012: brtrue IL_0044
+			IL_0000: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0005: stloc.0
+			IL_0006: ldnull
+			IL_0007: stloc.1
+			IL_0008: ldloc.0
+			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::IsNullish(object)
+			IL_000e: stloc.2
+			IL_000f: ldloc.2
+			IL_0010: brtrue IL_0042
 
-			IL_0017: ldc.r8 1
-			IL_0020: box [System.Runtime]System.Double
-			IL_0025: stloc.3
-			IL_0026: ldloc.3
-			IL_0027: stloc.1
-			IL_0028: ldc.i4.1
-			IL_0029: newarr [System.Runtime]System.Object
-			IL_002e: dup
-			IL_002f: ldc.i4.0
-			IL_0030: ldloc.1
-			IL_0031: stelem.ref
-			IL_0032: stloc.s 4
-			IL_0034: ldloc.0
-			IL_0035: ldnull
-			IL_0036: ldloc.s 4
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
-			IL_003d: stloc.s 5
-			IL_003f: br IL_0044
+			IL_0015: ldc.r8 1
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: stloc.1
+			IL_0026: ldc.i4.1
+			IL_0027: newarr [System.Runtime]System.Object
+			IL_002c: dup
+			IL_002d: ldc.i4.0
+			IL_002e: ldloc.1
+			IL_002f: stelem.ref
+			IL_0030: stloc.s 4
+			IL_0032: ldloc.0
+			IL_0033: ldnull
+			IL_0034: ldloc.s 4
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+			IL_003b: stloc.s 5
+			IL_003d: br IL_0042
 
-			IL_0044: ldloc.1
-			IL_0045: ret
+			IL_0042: ldloc.1
+			IL_0043: ret
 		} // end of method optionalWrite::__js_call__
 
 	} // end of class optionalWrite

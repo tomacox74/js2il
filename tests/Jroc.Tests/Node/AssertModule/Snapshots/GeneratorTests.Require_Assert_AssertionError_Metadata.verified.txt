@@ -181,7 +181,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 971 (0x3cb)
+		// Code size: 969 (0x3c9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Assert_AssertionError_Metadata/Scope,
@@ -475,67 +475,65 @@
 			IL_032e: stloc.s 14
 			IL_0330: ldloc.1
 			IL_0331: ldloc.s 14
-			IL_0333: ldc.i4.0
-			IL_0334: pop
-			IL_0335: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
-			IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_033f: pop
-			IL_0340: leave IL_03c7
+			IL_0333: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_0338: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_033d: pop
+			IL_033e: leave IL_03c5
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0345: stloc.s 5
-			IL_0347: ldloc.s 5
-			IL_0349: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_034e: dup
-			IL_034f: brtrue IL_0365
+			IL_0343: stloc.s 5
+			IL_0345: ldloc.s 5
+			IL_0347: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_034c: dup
+			IL_034d: brtrue IL_0363
 
-			IL_0354: pop
-			IL_0355: ldloc.s 5
-			IL_0357: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_035c: dup
-			IL_035d: brtrue IL_0371
+			IL_0352: pop
+			IL_0353: ldloc.s 5
+			IL_0355: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_035a: dup
+			IL_035b: brtrue IL_036f
 
-			IL_0362: pop
-			IL_0363: rethrow
+			IL_0360: pop
+			IL_0361: rethrow
 
-			IL_0365: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_036a: stloc.s 6
-			IL_036c: br IL_0373
+			IL_0363: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0368: stloc.s 6
+			IL_036a: br IL_0371
 
-			IL_0371: stloc.s 6
+			IL_036f: stloc.s 6
 
-			IL_0373: ldloc.s 6
-			IL_0375: stloc.s 7
-			IL_0377: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_037c: stloc.s 9
-			IL_037e: volatile.
-			IL_0380: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0385: brfalse IL_039b
+			IL_0371: ldloc.s 6
+			IL_0373: stloc.s 7
+			IL_0375: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_037a: stloc.s 9
+			IL_037c: volatile.
+			IL_037e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0383: brfalse IL_0399
 
-			IL_038a: ldloc.s 7
-			IL_038c: ldstr "generatedMessage"
-			IL_0391: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0396: br IL_03b1
+			IL_0388: ldloc.s 7
+			IL_038a: ldstr "generatedMessage"
+			IL_038f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0394: br IL_03af
 
-			IL_039b: ldloc.s 7
-			IL_039d: ldstr "generatedMessage"
-			IL_03a2: ldstr "Require_Assert_AssertionError_Metadata:Modules.Require_Assert_AssertionError_Metadata:__js_module_init__:98"
-			IL_03a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_03ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0399: ldloc.s 7
+			IL_039b: ldstr "generatedMessage"
+			IL_03a0: ldstr "Require_Assert_AssertionError_Metadata:Modules.Require_Assert_AssertionError_Metadata:__js_module_init__:98"
+			IL_03a5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_03aa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_03b1: stloc.s 11
-			IL_03b3: ldloc.s 9
-			IL_03b5: ldstr "default generated:"
-			IL_03ba: ldloc.s 11
-			IL_03bc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_03c1: pop
-			IL_03c2: leave IL_03c7
+			IL_03af: stloc.s 11
+			IL_03b1: ldloc.s 9
+			IL_03b3: ldstr "default generated:"
+			IL_03b8: ldloc.s 11
+			IL_03ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_03bf: pop
+			IL_03c0: leave IL_03c5
 		} // end handler
 
-		IL_03c7: ldnull
-		IL_03c8: stloc.s 8
-		IL_03ca: ret
+		IL_03c5: ldnull
+		IL_03c6: stloc.s 8
+		IL_03c8: ret
 	} // end of method Require_Assert_AssertionError_Metadata::__js_module_init__
 
 } // end of class Modules.Require_Assert_AssertionError_Metadata

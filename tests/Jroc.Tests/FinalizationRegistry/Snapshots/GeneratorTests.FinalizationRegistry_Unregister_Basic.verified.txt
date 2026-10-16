@@ -587,7 +587,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 615 (0x267)
+		// Code size: 611 (0x263)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FinalizationRegistry_Unregister_Basic/Scope,
@@ -737,103 +737,99 @@
 			IL_0171: stloc.s 11
 			IL_0173: ldloc.s 11
 			IL_0175: ldstr "bad token threw:"
-			IL_017a: ldc.i4.0
-			IL_017b: pop
-			IL_017c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
-			IL_0181: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0186: pop
-			IL_0187: leave IL_0220
+			IL_017a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_017f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0184: pop
+			IL_0185: leave IL_021c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_018c: stloc.1
-			IL_018d: ldloc.1
-			IL_018e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0193: dup
-			IL_0194: brtrue IL_01a9
+			IL_018a: stloc.1
+			IL_018b: ldloc.1
+			IL_018c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0191: dup
+			IL_0192: brtrue IL_01a7
 
-			IL_0199: pop
-			IL_019a: ldloc.1
-			IL_019b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_01a0: dup
-			IL_01a1: brtrue IL_01b4
+			IL_0197: pop
+			IL_0198: ldloc.1
+			IL_0199: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_019e: dup
+			IL_019f: brtrue IL_01b2
 
-			IL_01a6: pop
-			IL_01a7: rethrow
+			IL_01a4: pop
+			IL_01a5: rethrow
 
-			IL_01a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_01ae: stloc.2
-			IL_01af: br IL_01b5
+			IL_01a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_01ac: stloc.2
+			IL_01ad: br IL_01b3
 
-			IL_01b4: stloc.2
+			IL_01b2: stloc.2
 
-			IL_01b5: ldloc.2
-			IL_01b6: stloc.3
-			IL_01b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01bc: stloc.s 11
-			IL_01be: ldloc.s 11
-			IL_01c0: ldstr "bad token threw:"
-			IL_01c5: ldc.i4.1
-			IL_01c6: pop
-			IL_01c7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
-			IL_01cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01d1: pop
-			IL_01d2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01d7: stloc.s 11
-			IL_01d9: volatile.
-			IL_01db: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_01e0: brfalse IL_01f5
+			IL_01b3: ldloc.2
+			IL_01b4: stloc.3
+			IL_01b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01ba: stloc.s 11
+			IL_01bc: ldloc.s 11
+			IL_01be: ldstr "bad token threw:"
+			IL_01c3: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_01c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01cd: pop
+			IL_01ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01d3: stloc.s 11
+			IL_01d5: volatile.
+			IL_01d7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_01dc: brfalse IL_01f1
 
-			IL_01e5: ldloc.3
-			IL_01e6: ldstr "name"
-			IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01f0: br IL_020a
+			IL_01e1: ldloc.3
+			IL_01e2: ldstr "name"
+			IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01ec: br IL_0206
 
-			IL_01f5: ldloc.3
-			IL_01f6: ldstr "name"
-			IL_01fb: ldstr "FinalizationRegistry_Unregister_Basic:Modules.FinalizationRegistry_Unregister_Basic:__js_module_init__:58"
-			IL_0200: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_01f1: ldloc.3
+			IL_01f2: ldstr "name"
+			IL_01f7: ldstr "FinalizationRegistry_Unregister_Basic:Modules.FinalizationRegistry_Unregister_Basic:__js_module_init__:58"
+			IL_01fc: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0201: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_020a: stloc.s 12
-			IL_020c: ldloc.s 11
-			IL_020e: ldstr "bad token name:"
-			IL_0213: ldloc.s 12
-			IL_0215: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_021a: pop
-			IL_021b: leave IL_0220
+			IL_0206: stloc.s 12
+			IL_0208: ldloc.s 11
+			IL_020a: ldstr "bad token name:"
+			IL_020f: ldloc.s 12
+			IL_0211: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0216: pop
+			IL_0217: leave IL_021c
 		} // end handler
 
-		IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::gc()
-		IL_0225: pop
-		IL_0226: ldc.i4.1
-		IL_0227: newarr [System.Runtime]System.Object
-		IL_022c: dup
-		IL_022d: ldc.i4.0
-		IL_022e: ldloc.0
-		IL_022f: stelem.ref
-		IL_0230: stloc.s 6
-		IL_0232: ldloc.s 6
-		IL_0234: ldc.i4.0
-		IL_0235: ldelem.ref
-		IL_0236: castclass Modules.FinalizationRegistry_Unregister_Basic/Scope
-		IL_023b: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject::.ctor(class Modules.FinalizationRegistry_Unregister_Basic/Scope)
-		IL_0240: ldc.i4.0
-		IL_0241: conv.r8
-		IL_0242: ldstr ""
-		IL_0247: ldc.i4.0
-		IL_0248: ldc.i4.0
-		IL_0249: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_024e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject>(!!0)
-		IL_0253: stloc.s 13
-		IL_0255: ldloc.s 13
-		IL_0257: ldc.i4.0
-		IL_0258: newarr [System.Runtime]System.Object
-		IL_025d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0262: pop
-		IL_0263: ldnull
-		IL_0264: stloc.s 4
-		IL_0266: ret
+		IL_021c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::gc()
+		IL_0221: pop
+		IL_0222: ldc.i4.1
+		IL_0223: newarr [System.Runtime]System.Object
+		IL_0228: dup
+		IL_0229: ldc.i4.0
+		IL_022a: ldloc.0
+		IL_022b: stelem.ref
+		IL_022c: stloc.s 6
+		IL_022e: ldloc.s 6
+		IL_0230: ldc.i4.0
+		IL_0231: ldelem.ref
+		IL_0232: castclass Modules.FinalizationRegistry_Unregister_Basic/Scope
+		IL_0237: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject::.ctor(class Modules.FinalizationRegistry_Unregister_Basic/Scope)
+		IL_023c: ldc.i4.0
+		IL_023d: conv.r8
+		IL_023e: ldstr ""
+		IL_0243: ldc.i4.0
+		IL_0244: ldc.i4.0
+		IL_0245: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_024a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14/FunctionObject>(!!0)
+		IL_024f: stloc.s 13
+		IL_0251: ldloc.s 13
+		IL_0253: ldc.i4.0
+		IL_0254: newarr [System.Runtime]System.Object
+		IL_0259: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_025e: pop
+		IL_025f: ldnull
+		IL_0260: stloc.s 4
+		IL_0262: ret
 	} // end of method FinalizationRegistry_Unregister_Basic::__js_module_init__
 
 } // end of class Modules.FinalizationRegistry_Unregister_Basic

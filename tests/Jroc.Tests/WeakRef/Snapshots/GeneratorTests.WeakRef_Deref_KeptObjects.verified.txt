@@ -414,7 +414,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 102 (0x66)
+			// Code size: 100 (0x64)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -445,20 +445,18 @@
 
 			IL_0046: stloc.1
 			IL_0047: ldloc.1
-			IL_0048: ldc.i4.0
-			IL_0049: pop
-			IL_004a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
-			IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-			IL_0054: stloc.2
-			IL_0055: ldloc.2
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_005b: stloc.3
-			IL_005c: ldloc.0
-			IL_005d: ldloc.3
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0063: pop
-			IL_0064: ldnull
-			IL_0065: ret
+			IL_0048: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0052: stloc.2
+			IL_0053: ldloc.2
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0059: stloc.3
+			IL_005a: ldloc.0
+			IL_005b: ldloc.3
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0061: pop
+			IL_0062: ldnull
+			IL_0063: ret
 		} // end of method ArrowFunction_L23C14::__js_call__
 
 	} // end of class ArrowFunction_L23C14
@@ -544,7 +542,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 543 (0x21f)
+		// Code size: 539 (0x21b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakRef_Deref_KeptObjects/Scope,
@@ -664,101 +662,97 @@
 			IL_012c: stloc.s 8
 			IL_012e: ldloc.s 8
 			IL_0130: ldstr "primitive target threw:"
-			IL_0135: ldc.i4.0
-			IL_0136: pop
-			IL_0137: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
-			IL_013c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0141: pop
-			IL_0142: leave IL_01de
+			IL_0135: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_013f: pop
+			IL_0140: leave IL_01da
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0147: stloc.2
-			IL_0148: ldloc.2
-			IL_0149: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_014e: dup
-			IL_014f: brtrue IL_0164
+			IL_0145: stloc.2
+			IL_0146: ldloc.2
+			IL_0147: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_014c: dup
+			IL_014d: brtrue IL_0162
 
-			IL_0154: pop
-			IL_0155: ldloc.2
-			IL_0156: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_015b: dup
-			IL_015c: brtrue IL_016f
+			IL_0152: pop
+			IL_0153: ldloc.2
+			IL_0154: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0159: dup
+			IL_015a: brtrue IL_016d
 
-			IL_0161: pop
-			IL_0162: rethrow
+			IL_015f: pop
+			IL_0160: rethrow
 
-			IL_0164: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0169: stloc.3
-			IL_016a: br IL_0170
+			IL_0162: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0167: stloc.3
+			IL_0168: br IL_016e
 
-			IL_016f: stloc.3
+			IL_016d: stloc.3
 
-			IL_0170: ldloc.3
-			IL_0171: stloc.s 4
-			IL_0173: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0178: stloc.s 8
-			IL_017a: ldloc.s 8
-			IL_017c: ldstr "primitive target threw:"
-			IL_0181: ldc.i4.1
-			IL_0182: pop
-			IL_0183: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
-			IL_0188: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_018d: pop
-			IL_018e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0193: stloc.s 8
-			IL_0195: volatile.
-			IL_0197: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_019c: brfalse IL_01b2
+			IL_016e: ldloc.3
+			IL_016f: stloc.s 4
+			IL_0171: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0176: stloc.s 8
+			IL_0178: ldloc.s 8
+			IL_017a: ldstr "primitive target threw:"
+			IL_017f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0184: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0189: pop
+			IL_018a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_018f: stloc.s 8
+			IL_0191: volatile.
+			IL_0193: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_0198: brfalse IL_01ae
 
-			IL_01a1: ldloc.s 4
-			IL_01a3: ldstr "name"
-			IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01ad: br IL_01c8
+			IL_019d: ldloc.s 4
+			IL_019f: ldstr "name"
+			IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01a9: br IL_01c4
 
-			IL_01b2: ldloc.s 4
-			IL_01b4: ldstr "name"
-			IL_01b9: ldstr "WeakRef_Deref_KeptObjects:Modules.WeakRef_Deref_KeptObjects:__js_module_init__:53"
-			IL_01be: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_01ae: ldloc.s 4
+			IL_01b0: ldstr "name"
+			IL_01b5: ldstr "WeakRef_Deref_KeptObjects:Modules.WeakRef_Deref_KeptObjects:__js_module_init__:53"
+			IL_01ba: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_01c8: stloc.s 9
-			IL_01ca: ldloc.s 8
-			IL_01cc: ldstr "primitive target name:"
-			IL_01d1: ldloc.s 9
-			IL_01d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01d8: pop
-			IL_01d9: leave IL_01de
+			IL_01c4: stloc.s 9
+			IL_01c6: ldloc.s 8
+			IL_01c8: ldstr "primitive target name:"
+			IL_01cd: ldloc.s 9
+			IL_01cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01d4: pop
+			IL_01d5: leave IL_01da
 		} // end handler
 
-		IL_01de: ldc.i4.1
-		IL_01df: newarr [System.Runtime]System.Object
-		IL_01e4: dup
-		IL_01e5: ldc.i4.0
-		IL_01e6: ldloc.0
-		IL_01e7: stelem.ref
-		IL_01e8: stloc.s 6
-		IL_01ea: ldloc.s 6
-		IL_01ec: ldc.i4.0
-		IL_01ed: ldelem.ref
-		IL_01ee: castclass Modules.WeakRef_Deref_KeptObjects/Scope
-		IL_01f3: newobj instance void Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject::.ctor(class Modules.WeakRef_Deref_KeptObjects/Scope)
-		IL_01f8: ldc.i4.0
-		IL_01f9: conv.r8
-		IL_01fa: ldstr ""
-		IL_01ff: ldc.i4.0
-		IL_0200: ldc.i4.0
-		IL_0201: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0206: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0)
-		IL_020b: stloc.s 10
-		IL_020d: ldloc.s 10
-		IL_020f: ldc.i4.0
-		IL_0210: newarr [System.Runtime]System.Object
-		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_021a: pop
-		IL_021b: ldnull
-		IL_021c: stloc.s 5
-		IL_021e: ret
+		IL_01da: ldc.i4.1
+		IL_01db: newarr [System.Runtime]System.Object
+		IL_01e0: dup
+		IL_01e1: ldc.i4.0
+		IL_01e2: ldloc.0
+		IL_01e3: stelem.ref
+		IL_01e4: stloc.s 6
+		IL_01e6: ldloc.s 6
+		IL_01e8: ldc.i4.0
+		IL_01e9: ldelem.ref
+		IL_01ea: castclass Modules.WeakRef_Deref_KeptObjects/Scope
+		IL_01ef: newobj instance void Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject::.ctor(class Modules.WeakRef_Deref_KeptObjects/Scope)
+		IL_01f4: ldc.i4.0
+		IL_01f5: conv.r8
+		IL_01f6: ldstr ""
+		IL_01fb: ldc.i4.0
+		IL_01fc: ldc.i4.0
+		IL_01fd: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0202: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14/FunctionObject>(!!0)
+		IL_0207: stloc.s 10
+		IL_0209: ldloc.s 10
+		IL_020b: ldc.i4.0
+		IL_020c: newarr [System.Runtime]System.Object
+		IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0216: pop
+		IL_0217: ldnull
+		IL_0218: stloc.s 5
+		IL_021a: ret
 	} // end of method WeakRef_Deref_KeptObjects::__js_module_init__
 
 } // end of class Modules.WeakRef_Deref_KeptObjects
