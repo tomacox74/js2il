@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(ci): skip Test262 central validation and publication when native screening
+  produces no patch, avoiding a missing validation artifact failure for empty batches.
 - perf(compiler): reuse immutable boxed boolean and null primitives for
   object-valued constants, captured writes, calls, and resumable spills.
   Preserve typed boolean operations, null/undefined distinctions, and fresh
