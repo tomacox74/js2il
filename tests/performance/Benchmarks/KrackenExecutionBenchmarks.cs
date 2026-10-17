@@ -3,6 +3,7 @@ using Jroc;
 using Jroc.Runtime;
 using Jint;
 using YantraJS.Core;
+using Benchmarks.Runtimes;
 
 namespace Benchmarks;
 
@@ -58,6 +59,8 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
     /// </summary>
     private JSContext? _yantraJsContext;
     private JSValue? _yantraJsRunTest;
+    private SharpTsCompiledScript? _sharpTsScript;
+    private Func<object>? _sharpTsRunTest;
 
     [GlobalSetup(Target = nameof(RunJrocTest))]
     public void SetupJroc()
@@ -127,6 +130,35 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         context.Eval(testScriptContent, sourceScriptName);
         _yantraJsRunTest = context.Eval(BenchmarkRunnerScript + "\nrunBenchmark;", "kracken-benchmark-runner.js");
         _yantraJsContext = context;
+    }
+
+    [GlobalSetup(Target = nameof(RunSharpTsTest))]
+    public void SetupSharpTs()
+    {
+        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
+        var source = string.Join(Environment.NewLine,
+            dataScriptContent, WorkloadRegistrationScript, testScriptContent, BenchmarkRunnerScript);
+        var script = new SharpTsCompiledScript(source, GetSourceScriptName(ScriptName));
+        try
+        {
+            // Initialize data and register the workload once, exactly as for the other runtimes.
+            script.Execute();
+            _sharpTsRunTest = script.GetFunction("runBenchmark");
+            _sharpTsScript = script;
+        }
+        catch
+        {
+            script.Dispose();
+            throw;
+        }
+    }
+
+    [GlobalCleanup(Target = nameof(RunSharpTsTest))]
+    public void CleanupSharpTs()
+    {
+        _sharpTsRunTest = null;
+        _sharpTsScript?.Dispose();
+        _sharpTsScript = null;
     }
 
     public override IEnumerable<string> ScriptNames()
@@ -204,6 +236,16 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         if (result.ToString() != "done")
         {
             throw new InvalidOperationException($"Unexpected result from YantraJS test: {result}");
+        }
+    }
+
+    [Benchmark(Description = "sharpts-execute")]
+    public void RunSharpTsTest()
+    {
+        var result = _sharpTsRunTest!();
+        if (result.ToString() != "done")
+        {
+            throw new InvalidOperationException($"Unexpected result from SharpTS test: {result}");
         }
     }
 
