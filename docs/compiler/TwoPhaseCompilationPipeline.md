@@ -38,6 +38,11 @@ JROC now has a real two-phase coordinator:
     This keeps IL verifiable without initializing the JavaScript `this` binding
     early or running base field initializers twice. These helpers are included
     in assembly-wide MethodDef counts but are not JavaScript callables.
+  - Arrows containing `super()` retain a private lexical context with the CLR
+    receiver, defining JavaScript constructor, and original `new.target`.
+    Nested or escaped arrows therefore keep constructor identity without
+    treating the receiver as a super-property home object. The separately
+    captured derived-`this` binding still enforces repeated-`super()` errors.
 - **Strict mode** is enabled before any body compilation so expression emission is **lookup-only** for callable tokens.
 - **Phase 2: Body compilation (Milestone 2c)** compiles callable bodies in the planner order and then finalizes MethodDef rows deterministically.
   - Class callables are finalized grouped by class type (TypeDef order) to preserve per-type `MethodList` contiguity.

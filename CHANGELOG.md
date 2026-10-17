@@ -14,7 +14,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   identity and null prototypes, method new.target, parenthesized assignment
   name inference, and dynamic function-constructor grammar rejection. Separate
   CLR storage initialization from JavaScript super() while preserving
-  inherited fields and verifiable constructor IL.
+  inherited fields and verifiable constructor IL. Retain escaped super-call
+  arrow contexts and built-in constructor invocation state; preserve native
+  intrinsic prototype fallback and SuppressedError subclass storage.
 - test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
 - test262: complete pinned dynamic-import coverage with 629 newly added exact
   fixtures and 301 existing parse-negative cases moved to canonical paths.
