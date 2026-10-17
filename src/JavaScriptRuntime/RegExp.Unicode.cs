@@ -235,22 +235,27 @@ public sealed partial class RegExp
     private static string CodePointRangesPattern(
         ReadOnlySpan<int> ranges, bool complement, ReadOnlySpan<int> additions)
     {
-        var builder = new StringBuilder("(?:");
-        void Append(int start, int end)
+        var intervals = new List<(int Start, int End)>();
+        void AddInterval(int start, int end)
         {
-            if (start > end) return;
-            if (builder.Length > 3) builder.Append('|');
-            builder.Append(CodePointRangePattern(start, end));
+            if (start <= end) intervals.Add((start, end));
         }
 
         var next = 0;
         for (var range = 0; range < ranges.Length; range += 2)
         {
-            Append(complement ? next : ranges[range], complement ? ranges[range] - 1 : ranges[range + 1]);
+            AddInterval(complement ? next : ranges[range], complement ? ranges[range] - 1 : ranges[range + 1]);
             next = ranges[range + 1] + 1;
         }
-        if (complement) Append(next, 0x10FFFF);
-        foreach (var point in additions) Append(point, point);
+        if (complement) AddInterval(next, 0x10FFFF);
+        foreach (var point in additions) AddInterval(point, point);
+        var builder = new StringBuilder("(?:");
+        // Each alternative consumes one complete code point; try dense ranges before fragmented gaps.
+        foreach (var interval in intervals.OrderByDescending(static interval => interval.End - interval.Start))
+        {
+            if (builder.Length > 3) builder.Append('|');
+            builder.Append(CodePointRangePattern(interval.Start, interval.End));
+        }
         return builder.Length == 3 ? "(?!)" : builder.Append(')').ToString();
     }
 
