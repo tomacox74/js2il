@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(perf): make the missing SharpTS hosting abstraction dependency available
+  to BenchmarkDotNet's generated child executables as well as both benchmark
+  hosts, fixing all eleven SharpTS Dromaeo/Kraken release benchmark failures.
+  Disable unused native interop build generation and add child-process smoke
+  coverage for source, published-package, and previous-host configurations.
+  Pass package-selection properties through the environment so generated
+  benchmark children use the requested current or previous published release.
 - test262: verify 200 additional pinned built-in RegExp cases: 175 Unicode
   Script and 25 Script_Extensions property-escape cases, with all 400 required
   native variants passing and no eval-dependent cases in the selected batch.

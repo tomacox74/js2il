@@ -46,10 +46,26 @@ excluded by default and remain available with `--comprehensive` for upstream
 compatibility investigations. The source fixtures are unchanged.
 
 `SharpTS.Hosting` 1.0.12 omits its required `SharpTS.Hosting.Abstractions.dll`.
-Both benchmark projects download the matching official `SharpTS` tool package
-and reference that assembly. No global tool install or extra workflow setup is
-required. A direct `System.Security.Cryptography.Pkcs` reference overrides the
-hosting package's vulnerable transitive 8.0.1 dependency.
+The scoped `Directory.Build.targets` downloads the matching official `SharpTS`
+tool package and references that assembly in both benchmark hosts and
+BenchmarkDotNet's generated child projects. Referencing it only in the host is
+insufficient: each child needs the DLL in its own output and `.deps.json`.
+The targets also disable the hosting package's unused native .NET interop build
+generation; these benchmarks use its JavaScript compiler API directly. No global
+tool install or extra workflow setup is required. A direct
+`System.Security.Cryptography.Pkcs` reference overrides the hosting package's
+vulnerable transitive 8.0.1 dependency.
+
+Published-package runs pass `UsePublishedJrocPackages` and `JrocPackageVersion`
+through the environment so generated child builds inherit the same selection.
+The previous-release step overrides these with its own pinned package version.
+
+The `BenchmarkDotNet Smoke` PR workflow exercises all eleven enabled SharpTS
+cases in real child processes for source, published-package, and previous-host
+project configurations. Both package-backed configurations use the latest
+released coordinated packages as a dependency baseline, not as a previous-release
+performance comparison. These `Dry` runs check build/loading/execution, not
+statistical performance, and do not ingest results into Supabase.
 
 ```bash
 # Check lifecycle correctness and execute every enabled SharpTS scenario twice.
