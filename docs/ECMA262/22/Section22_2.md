@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-16T02:57:43Z
+> Last generated (UTC): 2026-10-17T06:44:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -53,8 +53,8 @@
 | 22.2.2.9.4 | AllCharacters ( rer ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-allcharacters) |
 | 22.2.2.9.5 | MaybeSimpleCaseFolding ( rer , A ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-maybesimplecasefolding) |
 | 22.2.2.9.6 | CharacterComplement ( rer , S ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-charactercomplement) |
-| 22.2.2.9.7 | UnicodeMatchProperty ( rer , p ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchproperty-p) |
-| 22.2.2.9.8 | UnicodeMatchPropertyValue ( p , v ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v) |
+| 22.2.2.9.7 | UnicodeMatchProperty ( rer , p ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchproperty-p) |
+| 22.2.2.9.8 | UnicodeMatchPropertyValue ( p , v ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v) |
 | 22.2.2.10 | Runtime Semantics: CompileClassSetString | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-compileclasssetstring) |
 | 22.2.3 | Abstract Operations for RegExp Creation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-regexp-creation) |
 | 22.2.3.1 | RegExpCreate ( P , F ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexpcreate) |
@@ -124,6 +124,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | RegExp modifiers | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/syntax/valid/ExecutionTests.cs` | suite `built_ins.RegExp.regexp_modifiers`<br>suite `built_ins.RegExp.regexp_modifiers.syntax.valid` | Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag supports the separately documented code-point subset; advanced Unicode set operations remain unsupported. |
 
+### 22.2.2.9.8 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Unicode Script and Script_Extensions property escapes | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpUnicodeScripts200ExecutionTests.cs`<br>`tests/Jroc.Tests/RegExpObjectRepresentationTests.cs` | `test/built-ins/RegExp/property-escapes/generated/Script_-_Adlam.js`<br>`test/built-ins/RegExp/property-escapes/generated/Script_-_Greek.js`<br>`test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js`<br>`test/built-ins/RegExp/property-escapes/generated/Script_-_Unknown.js`<br>`test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js` | Script/sc and Script_Extensions/scx accept exact Unicode 17 long and short value aliases. Composite ISO 15924 aliases such as Hrkt are rejected. Tables are generated from independently checksum-pinned Unicode Character Database files, including default Unknown ranges and explicit Script_Extensions overrides. Positive and negative escapes match complete code points while preserving lone surrogates. Unicode simple-case-folding deltas preserve u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. Two hundred additional pinned cases pass all 400 required native variants. Other Unicode properties and advanced v-set operations remain limited; this is not full Unicode regular-expression parity. |
+
 ### 22.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -177,7 +183,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/flags/ExecutionTests.cs` | suite `built_ins.RegExp.prototype.flags` | The intrinsic flags getter reads and boolean-coerces properties on any object receiver in canonical order (dgimsuvy), propagating accessor errors. The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction. |
+| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/flags/ExecutionTests.cs` | suite `built_ins.RegExp.prototype.flags` | The intrinsic flags getter reads and boolean-coerces properties on any object receiver in canonical order (dgimsuvy), propagating accessor errors. The g, i, m, s, u, d, y, and distinct v flags are reflected; v patterns retain the separately documented UnicodeSets limitations. |
 
 ### 22.2.6.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexphasflag))
 
@@ -267,13 +273,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| get RegExp.prototype.unicode | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) |  | Implemented in JavaScriptRuntime.RegExp.unicode from the stored u flag; it remains false for v-only patterns. Common code-point escapes, code-point-aware dots and ordinary character classes, and ASCII/Any/Script=Han property escapes are translated before compiling with .NET Regex. Lone surrogates remain distinct from valid pairs. Unicode property and case-folding coverage is not complete. |
+| get RegExp.prototype.unicode | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) |  | Implemented in JavaScriptRuntime.RegExp.unicode from the stored u flag; it remains false for v-only patterns. Common code-point escapes, code-point-aware dots and ordinary character classes, and ASCII/Any plus Unicode 17 Script/Script_Extensions property escapes are translated before compiling with .NET Regex. Lone surrogates remain distinct from valid pairs. Supported property escapes use Unicode simple-case-folding data and preserve u-mode complement ordering, including scoped i modifiers. Broader Unicode property and case-folding coverage is not complete. |
 
 ### 22.2.6.19 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| get RegExp.prototype.unicodeSets | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) | `test/built-ins/String/prototype/match/regexp-prototype-match-v-u-flag.js`<br>`test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-v-u-flag.js`<br>`test/built-ins/String/prototype/replace/regexp-prototype-replace-v-u-flag.js`<br>`test/built-ins/String/prototype/search/regexp-prototype-search-v-flag.js`<br>`test/built-ins/String/prototype/search/regexp-prototype-search-v-u-flag.js` | The distinct v flag sets unicodeSets, does not set unicode, and cannot coexist with u. Both Unicode modes use code-point-aware matching and empty-match advancement, including matchAll iterators. Supported v syntax includes literals, dots, ordinary character classes/ranges, and ASCII, Any, and Unicode 17 Script=Han property escapes and complements. Nested sets, intersection, subtraction, q string sets, and properties of strings are explicitly rejected with SyntaxError; other Unicode properties and complete Unicode case-folding parity remain limited. This is not complete UnicodeSets support. |
+| get RegExp.prototype.unicodeSets | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) | `test/built-ins/String/prototype/match/regexp-prototype-match-v-u-flag.js`<br>`test/built-ins/String/prototype/matchAll/regexp-prototype-matchAll-v-u-flag.js`<br>`test/built-ins/String/prototype/replace/regexp-prototype-replace-v-u-flag.js`<br>`test/built-ins/String/prototype/search/regexp-prototype-search-v-flag.js`<br>`test/built-ins/String/prototype/search/regexp-prototype-search-v-u-flag.js` | The distinct v flag sets unicodeSets, does not set unicode, and cannot coexist with u. Both Unicode modes use code-point-aware matching and empty-match advancement, including matchAll iterators. Supported v syntax includes literals, dots, ordinary character classes/ranges, and ASCII, Any, and Unicode 17 Script/Script_Extensions property escapes and complements. Supported property escapes preserve v-mode folding-before-complement and scoped i modifiers. Nested sets, intersection, subtraction, q string sets, and properties of strings are explicitly rejected with SyntaxError; other Unicode properties and complete Unicode case-folding parity remain limited. This is not complete UnicodeSets support. |
 
 ### 22.2.8.1 ([tc39.es](https://tc39.es/ecma262/#sec-lastindex))
 

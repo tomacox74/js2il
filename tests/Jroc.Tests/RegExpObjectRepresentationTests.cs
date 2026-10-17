@@ -5,6 +5,58 @@ namespace Jroc.Tests;
 
 public sealed class RegExpObjectRepresentationTests
 {
+    [Theory]
+    [InlineData("Script=Hrkt")]
+    [InlineData("sc=Katakana_Or_Hiragana")]
+    [InlineData("Script_Extensions=Hrkt")]
+    [InlineData("scx=Katakana_Or_Hiragana")]
+    public void UnicodeScriptProperties_RejectCompositeIsoScriptAliases(string property)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        foreach (var flags in new[] { "u", "v" })
+        {
+            Assert.Throws<JavaScriptRuntime.SyntaxError>(
+                () => new JavaScriptRuntime.RegExp($"\\p{{{property}}}", flags));
+        }
+    }
+
+    [Theory]
+    [InlineData("iu", "Script=Greek", "\u03B9", true)]
+    [InlineData("iv", "Script=Greek", "\u03B9", false)]
+    [InlineData("iu", "Script=Greek", "\u03BC", true)]
+    [InlineData("iv", "Script=Greek", "\u03BC", false)]
+    [InlineData("iu", "Script_Extensions=Greek", "\u03B9", false)]
+    [InlineData("iv", "Script_Extensions=Greek", "\u03B9", false)]
+    [InlineData("iu", "Script_Extensions=Greek", "\u03BC", true)]
+    [InlineData("iv", "Script_Extensions=Greek", "\u03BC", false)]
+    [InlineData("iu", "ASCII", "K", true)]
+    [InlineData("iv", "ASCII", "K", false)]
+    public void UnicodePropertyComplements_RespectModeSpecificCaseFolding(
+        string flags, string property, string input, bool expected)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp($"^\\P{{{property}}}$", flags).test(input));
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp($"^[\\P{{{property}}}]$", flags).test(input));
+    }
+
+    [Theory]
+    [InlineData("u", "^(?i:\\p{Script=Greek})$", "\u0345", true)]
+    [InlineData("u", "^(?i:\\P{Script=Greek})$", "\u03B9", true)]
+    [InlineData("v", "^(?i:\\P{Script=Greek})$", "\u03B9", false)]
+    [InlineData("iu", "^(?-i:\\p{Script=Greek})$", "\u0345", false)]
+    [InlineData("iv", "^(?-i:\\P{Script=Greek})$", "\u0345", true)]
+    [InlineData("u", "^(?i:\\p{sc=Greek})\\p{sc=Greek}$", "\u0345\u0345", false)]
+    [InlineData("iu", "^(?-i:\\p{sc=Greek})\\p{sc=Greek}$", "\u03B9\u0345", true)]
+    public void UnicodeScriptProperties_RespectScopedCaseFolding(
+        string flags, string pattern, string input, bool expected)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp(pattern, flags).test(input));
+    }
+
     [Fact]
     public void RegExpWrappers_UseInlineJsObjectStorage()
     {

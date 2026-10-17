@@ -1,5 +1,7 @@
 using JavaScriptRuntime;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Jroc.Tests.RegExp;
 
@@ -9,6 +11,45 @@ namespace Jroc.Tests.RegExp;
 /// </summary>
 public sealed class CompiledPatternCacheTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ColdPatternsDoNotRetainInputSizedClrRunnerBuffers(bool literal)
+    {
+        var suffix = Guid.NewGuid().ToString("N");
+        var source = "^(?<letters>\\P{Script=Adlam}+)" + suffix + "$";
+        var input = string.Concat(Enumerable.Repeat("\U0001F600", 100_000)) + suffix;
+        var weak = MatchColdPattern(source, input, literal);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+        Assert.False(weak.TryGetTarget(out _));
+
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var recreated = literal
+            ? JavaScriptRuntime.RegExp.CreateLiteral(source, "u")
+            : new JavaScriptRuntime.RegExp(source, "u");
+        var result = Assert.IsType<JavaScriptRuntime.Array>(recreated.exec(input));
+        Assert.Equal(input[..^suffix.Length], ObjectRuntime.GetProperty(ObjectRuntime.GetProperty(result, "groups")!, "letters"));
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference<System.Text.RegularExpressions.Regex> MatchColdPattern(
+        string source, string input, bool literal)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        var expression = literal
+            ? JavaScriptRuntime.RegExp.CreateLiteral(source, "u")
+            : new JavaScriptRuntime.RegExp(source, "u");
+        Assert.True(Matches(expression, input));
+        var regex = (System.Text.RegularExpressions.Regex)typeof(JavaScriptRuntime.RegExp)
+            .GetField("_regex", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(expression)!;
+        return new WeakReference<System.Text.RegularExpressions.Regex>(regex);
+    }
+
     [Fact]
     public void RepeatedConstructionKeepsIndependentInstanceState()
     {

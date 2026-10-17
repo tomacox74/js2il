@@ -6,7 +6,19 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: verify 200 additional pinned built-in RegExp cases: 175 Unicode
+  Script and 25 Script_Extensions property-escape cases, with all 400 required
+  native variants passing and no eval-dependent cases in the selected batch.
+  Generate Unicode 17 script ranges, exact aliases, extension overrides, and
+  case-folding deltas from the independently checksum-pinned Unicode database.
+  Preserve astral characters and lone surrogates, distinguish u/v complement
+  ordering under ignoreCase, and honor scoped i modifiers. Add native
+  buildString/testPropertyEscapes helpers without rewriting upstream assertions.
+  Prioritize dense, disjoint code-point intervals so full Unknown-script checks
+  stay within the normal execution budget without raising test timeouts.
+  Weakly retain cold CLR regex instances so Unicode-wide matching does not pin
+  input-sized backtracking buffers in the process-wide compilation cache.
+  Other Unicode properties and advanced v-set operations remain limited.
 
 ## v0.12.33 - 2026-10-17
 

@@ -1,0 +1,233 @@
+#!/usr/bin/env python3
+"""Generate RegExp Script/Script_Extensions tables from the pinned Unicode UCD.
+
+The archive checksum pins the production data independently of Test262 fixtures.
+"""
+
+import argparse
+from bisect import bisect_right
+from collections import defaultdict
+import hashlib
+from pathlib import Path
+import urllib.request
+import zipfile
+
+
+VERSION = "17.0.0"
+SHA256 = "2066d1909b2ea93916ce092da1c0ee4808ea3ef8407c94b4f14f5b7eb263d28e"
+URL = f"https://www.unicode.org/Public/{VERSION}/ucd/UCD.zip"
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT = ROOT / "src/JavaScriptRuntime/RegExpUnicodeScripts.Generated.cs"
+
+
+def merge(ranges):
+    result = []
+    for start, end in sorted(ranges):
+        if result and start <= result[-1][1] + 1:
+            result[-1] = (result[-1][0], max(end, result[-1][1]))
+        else:
+            result.append((start, end))
+    return result
+
+
+def subtract(ranges, excluded):
+    result = []
+    cursor = 0
+    for start, end in ranges:
+        while cursor < len(excluded) and excluded[cursor][1] < start:
+            cursor += 1
+        index = cursor
+        while index < len(excluded) and excluded[index][0] <= end:
+            low, high = excluded[index]
+            if start < low:
+                result.append((start, low - 1))
+            start = max(start, high + 1)
+            if start > end:
+                break
+            index += 1
+        if start <= end:
+            result.append((start, end))
+    return result
+
+
+def records(text):
+    for line in text.splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line:
+            yield [field.strip() for field in line.split(";")]
+
+
+def code_point_range(value):
+    bounds = value.split("..")
+    return int(bounds[0], 16), int(bounds[-1], 16)
+
+
+def read_ucd():
+    cache = ROOT / "artifacts/unicode" / VERSION / "UCD.zip"
+    if not cache.exists():
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(URL, timeout=60) as response:
+            data = response.read()
+        if hashlib.sha256(data).hexdigest() != SHA256:
+            raise SystemExit("Downloaded Unicode UCD archive failed its SHA-256 check")
+        cache.write_bytes(data)
+    if hashlib.sha256(cache.read_bytes()).hexdigest() != SHA256:
+        raise SystemExit(f"Unicode UCD archive failed its SHA-256 check: {cache}")
+    with zipfile.ZipFile(cache) as archive:
+        return {
+            name: archive.read(name).decode("utf-8")
+            for name in ("Scripts.txt", "ScriptExtensions.txt", "PropertyValueAliases.txt", "CaseFolding.txt")
+        }
+
+
+def generate():
+    data = read_ucd()
+    aliases = {}
+    names = {}
+    for fields in records(data["PropertyValueAliases.txt"]):
+        if fields[0] == "sc":
+            canonical = fields[2]
+            names[canonical] = fields[1:]
+            for alias in fields[1:]:
+                aliases[alias] = canonical
+
+    scripts = defaultdict(list)
+    for value, script in records(data["Scripts.txt"]):
+        scripts[script].append(code_point_range(value))
+    assigned = merge(interval for ranges in scripts.values() for interval in ranges)
+    scripts["Unknown"] = subtract([(0, 0x10FFFF)], assigned)
+    scripts = {name: merge(ranges) for name, ranges in scripts.items()}
+    # UCD aliases also include Hrkt, a composite ISO 15924 value, not a Script value.
+    names = {name: values for name, values in names.items() if name in scripts}
+
+    overrides = []
+    explicit_extensions = {name: [] for name in names}
+    for value, script_list in records(data["ScriptExtensions.txt"]):
+        interval = code_point_range(value)
+        overrides.append(interval)
+        for script in script_list.split():
+            explicit_extensions[aliases[script]].append(interval)
+    overrides = merge(overrides)
+    extensions = {
+        name: merge(subtract(ranges, overrides) + explicit_extensions[name])
+        for name, ranges in scripts.items()
+    }
+
+    folds = {}
+    for point, status, mapping, *_ in records(data["CaseFolding.txt"]):
+        if status in ("C", "S"):
+            folds[int(point, 16)] = int(mapping, 16)
+    assert all(target not in folds for target in folds.values())
+    equivalences = defaultdict(set)
+    for point, target in folds.items():
+        equivalences[target].update((point, target))
+
+    def case_fold_additions(ranges, complement):
+        starts = [start for start, _ in ranges]
+
+        def contains(point):
+            index = bisect_right(starts, point) - 1
+            return index >= 0 and point <= ranges[index][1]
+
+        additions = set()
+        for group in equivalences.values():
+            selected = {point for point in group if contains(point) != complement}
+            if selected:
+                additions.update(group - selected)
+        return sorted(additions)
+
+    lines = [
+        "// <auto-generated />",
+        f"// Unicode {VERSION}; generated by scripts/generateRegExpUnicodeScripts.py.",
+        "// Copyright (c) 2025 Unicode, Inc. Licensed under Unicode-3.0.",
+        "// See Unicode-LICENSE.txt for the copyright and permission notice.",
+        "",
+        "namespace JavaScriptRuntime;",
+        "",
+        "internal static class RegExpUnicodeScripts",
+        "{",
+        "    internal static int ResolveScript(string value) => value switch",
+        "    {",
+    ]
+    ordered = sorted(names)
+    for index, name in enumerate(ordered):
+        labels = " or ".join(f'"{alias}"' for alias in sorted(set(names[name])))
+        lines.append(f"        {labels} => {index},")
+    lines.extend([
+        "        _ => -1",
+        "    };",
+        "",
+        "    internal static ReadOnlySpan<int> GetRanges(int script, bool extensions)",
+        "        => extensions ? GetScriptExtensionsRanges(script) : GetScriptRanges(script);",
+        "",
+    ])
+
+    def emit_ranges(method, values, fallback, changed_only=False):
+        lines.extend([
+            f"    private static ReadOnlySpan<int> {method}(int script) => script switch",
+            "    {",
+        ])
+        for index, name in enumerate(ordered):
+            ranges = values[name]
+            if changed_only and ranges == scripts[name]:
+                continue
+            flat = [f"0x{point:X}" for interval in ranges for point in interval]
+            if not flat:
+                lines.append(f"        {index} => [],")
+                continue
+            lines.extend([f"        {index} =>", "        ["])
+            for start in range(0, len(flat), 10):
+                lines.append("            " + ", ".join(flat[start:start + 10]) + ",")
+            lines.append("        ],")
+        lines.extend([f"        _ => {fallback}", "    };", ""])
+
+    emit_ranges(
+        "GetScriptRanges", scripts,
+        "throw new ArgumentOutOfRangeException(nameof(script))")
+    emit_ranges(
+        "GetScriptExtensionsRanges", extensions,
+        "GetScriptRanges(script)", changed_only=True)
+    lines.extend([
+        "    internal static ReadOnlySpan<int> GetCaseFoldAdditions(int script, bool extensions, bool complement)",
+        "        => (script, extensions, complement) switch",
+        "    {",
+    ])
+    for index, name in enumerate(ordered):
+        for extended in (False, True):
+            for complement in (False, True):
+                additions = case_fold_additions((extensions if extended else scripts)[name], complement)
+                if additions:
+                    values = ", ".join(f"0x{point:X}" for point in additions)
+                    key = f"{index}, {str(extended).lower()}, {str(complement).lower()}"
+                    lines.append(f"        ({key}) => [{values}],")
+    lines.extend([
+        "        _ => []",
+        "    };",
+        "",
+        "    internal static ReadOnlySpan<int> GetAsciiCaseFoldAdditions(bool complement)",
+        "        => complement",
+    ])
+    for complement, prefix in ((True, "            ?"), (False, "            :")):
+        values = ", ".join(f"0x{point:X}" for point in case_fold_additions([(0, 127)], complement))
+        lines.append(f"{prefix} [{values}]" + ("" if complement else ";"))
+    lines.append("")
+    lines.extend(["}", ""])
+    return "\n".join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    generated = generate()
+    if args.check:
+        if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != generated:
+            raise SystemExit(f"Generated Unicode script tables are out of date: {OUTPUT}")
+        print(f"Verified {OUTPUT.relative_to(ROOT)}")
+    else:
+        OUTPUT.write_text(generated, encoding="utf-8", newline="\n")
+        print(f"Generated {OUTPUT.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    main()

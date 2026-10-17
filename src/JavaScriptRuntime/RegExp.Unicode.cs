@@ -5,18 +5,19 @@ namespace JavaScriptRuntime;
 
 public sealed partial class RegExp
 {
-    private static string RewriteUnicodeClassesAndProperties(string source, bool unicodeSets)
+    private static string RewriteUnicodeClassesAndProperties(string source, bool unicodeSets, bool ignoreCase)
     {
         var builder = new StringBuilder();
+        var groups = new Stack<bool>();
         for (var index = 0; index < source.Length;)
         {
             if (source[index] == '[')
             {
-                builder.Append(ReadUnicodeClass(source, ref index, unicodeSets));
+                builder.Append(ReadUnicodeClass(source, ref index, unicodeSets, ignoreCase));
             }
             else if (source[index] == '\\')
             {
-                if (TryReadUnicodeProperty(source, ref index, out var property))
+                if (TryReadUnicodeProperty(source, ref index, unicodeSets, ignoreCase, out var property))
                 {
                     builder.Append(property);
                 }
@@ -28,13 +29,33 @@ public sealed partial class RegExp
             }
             else
             {
+                if (source[index] == '(')
+                {
+                    groups.Push(ignoreCase);
+                    if (index + 1 < source.Length && source[index + 1] == '?')
+                    {
+                        var enabled = true;
+                        var modified = ignoreCase;
+                        var modifier = index + 2;
+                        for (; modifier < source.Length && source[modifier] is 'i' or 'm' or 's' or '-'; modifier++)
+                        {
+                            if (source[modifier] == '-') enabled = false;
+                            if (source[modifier] == 'i') modified = enabled;
+                        }
+                        if (modifier < source.Length && source[modifier] == ':') ignoreCase = modified;
+                    }
+                }
+                else if (source[index] == ')' && groups.Count > 0)
+                {
+                    ignoreCase = groups.Pop();
+                }
                 builder.Append(source[index++]);
             }
         }
         return builder.ToString();
     }
 
-    private static string ReadUnicodeClass(string source, ref int index, bool unicodeSets)
+    private static string ReadUnicodeClass(string source, ref int index, bool unicodeSets, bool ignoreCase)
     {
         index++;
         var negate = index < source.Length && source[index] == '^';
@@ -55,7 +76,7 @@ public sealed partial class RegExp
             {
                 throw new SyntaxError("Invalid character in a Unicode set");
             }
-            if (TryReadUnicodeProperty(source, ref index, out var property))
+            if (TryReadUnicodeProperty(source, ref index, unicodeSets, ignoreCase, out var property))
             {
                 alternatives.Add(property);
                 continue;
@@ -170,7 +191,8 @@ public sealed partial class RegExp
         };
     }
 
-    private static bool TryReadUnicodeProperty(string source, ref int index, out string pattern)
+    private static bool TryReadUnicodeProperty(
+        string source, ref int index, bool unicodeSets, bool ignoreCase, out string pattern)
     {
         pattern = string.Empty;
         if (index + 3 >= source.Length || source[index] != '\\'
@@ -180,27 +202,61 @@ public sealed partial class RegExp
         var property = source[(index + 3)..end];
         if (property is "ASCII" or "Any")
         {
-            pattern = property == "ASCII" ? CodePointRangePattern(0, 127) : UnicodeDotAllPattern;
-            if (source[index + 1] == 'P') pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
+            var negate = source[index + 1] == 'P';
+            var invertRanges = negate && !unicodeSets;
+            var additions = ignoreCase ? RegExpUnicodeScripts.GetAsciiCaseFoldAdditions(invertRanges) : default;
+            pattern = property == "ASCII"
+                ? CodePointRangesPattern([0, 127], invertRanges, additions)
+                : invertRanges ? "(?!)" : UnicodeDotAllPattern;
+            if (ignoreCase) pattern = "(?-i:" + pattern + ")";
+            if (negate && unicodeSets) pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
             index = end + 1;
             return true;
         }
-        if (property is not ("Script=Han" or "Script=Hani" or "sc=Han" or "sc=Hani")) return false;
-        // Unicode 17.0 Script=Han, as used by the pinned Test262 property-escape corpus.
-        (int Start, int End)[] ranges =
-        [
-            (0x2E80, 0x2E99), (0x2E9B, 0x2EF3), (0x2F00, 0x2FD5),
-            (0x3005, 0x3005), (0x3007, 0x3007), (0x3021, 0x3029), (0x3038, 0x303B),
-            (0x3400, 0x4DBF), (0x4E00, 0x9FFF), (0xF900, 0xFA6D), (0xFA70, 0xFAD9),
-            (0x16FE2, 0x16FE3), (0x16FF0, 0x16FF6), (0x20000, 0x2A6DF),
-            (0x2A700, 0x2B81D), (0x2B820, 0x2CEAD), (0x2CEB0, 0x2EBE0),
-            (0x2EBF0, 0x2EE5D), (0x2F800, 0x2FA1D), (0x30000, 0x3134A), (0x31350, 0x33479)
-        ];
-        pattern = "(?:" + string.Join("|", ranges.Select(static range =>
-            CodePointRangePattern(range.Start, range.End))) + ")";
-        if (source[index + 1] == 'P') pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
+        var separator = property.IndexOf('=');
+        if (separator < 0) return false;
+        var propertyName = property[..separator];
+        if (propertyName is not ("Script" or "sc" or "Script_Extensions" or "scx")) return false;
+        var script = RegExpUnicodeScripts.ResolveScript(property[(separator + 1)..]);
+        if (script < 0) throw new SyntaxError("Invalid Unicode script property escape");
+        var extensions = propertyName is "Script_Extensions" or "scx";
+        var ranges = RegExpUnicodeScripts.GetRanges(script, extensions);
+        var complement = source[index + 1] == 'P';
+        // u complements before case folding; v complements the case-folded set.
+        var invert = complement && !unicodeSets;
+        var folded = ignoreCase ? RegExpUnicodeScripts.GetCaseFoldAdditions(script, extensions, invert) : default;
+        pattern = CodePointRangesPattern(ranges, invert, folded);
+        if (ignoreCase) pattern = "(?-i:" + pattern + ")";
+        if (complement && unicodeSets) pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
         index = end + 1;
         return true;
+    }
+
+    private static string CodePointRangesPattern(
+        ReadOnlySpan<int> ranges, bool complement, ReadOnlySpan<int> additions)
+    {
+        var intervals = new List<(int Start, int End)>();
+        void AddInterval(int start, int end)
+        {
+            if (start <= end) intervals.Add((start, end));
+        }
+
+        var next = 0;
+        for (var range = 0; range < ranges.Length; range += 2)
+        {
+            AddInterval(complement ? next : ranges[range], complement ? ranges[range] - 1 : ranges[range + 1]);
+            next = ranges[range + 1] + 1;
+        }
+        if (complement) AddInterval(next, 0x10FFFF);
+        foreach (var point in additions) AddInterval(point, point);
+        var builder = new StringBuilder("(?:");
+        // Each alternative consumes one complete code point; try dense ranges before fragmented gaps.
+        foreach (var interval in intervals.OrderByDescending(static interval => interval.End - interval.Start))
+        {
+            if (builder.Length > 3) builder.Append('|');
+            builder.Append(CodePointRangePattern(interval.Start, interval.End));
+        }
+        return builder.Length == 3 ? "(?!)" : builder.Append(')').ToString();
     }
 
     private static string CodePointRangePattern(int start, int end)
