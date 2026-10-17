@@ -577,6 +577,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpUnicodeScripts200ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpUnicodeProperties200ExecutionTests.cs",
           "tests/Jroc.Tests/RegExpObjectRepresentationTests.cs"
         ],
         "test262Paths": [
@@ -586,7 +587,25 @@
           "test/built-ins/RegExp/property-escapes/generated/Script_-_Unknown.js",
           "test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js"
         ],
-        "notes": "Script/sc and Script_Extensions/scx accept exact Unicode 17 long and short value aliases. Composite ISO 15924 aliases such as Hrkt are rejected. Tables are generated from independently checksum-pinned Unicode Character Database files, including default Unknown ranges and explicit Script_Extensions overrides. Positive and negative escapes match complete code points while preserving lone surrogates. Unicode simple-case-folding deltas preserve u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. Two hundred additional pinned cases pass all 400 required native variants. Other Unicode properties and advanced v-set operations remain limited; this is not full Unicode regular-expression parity."
+        "notes": "Script/sc and Script_Extensions/scx accept exact Unicode 17 long and short value aliases. Composite ISO 15924 aliases such as Hrkt are rejected. Tables are generated from independently checksum-pinned Unicode Character Database files, including default Unknown ranges and explicit Script_Extensions overrides. Positive and negative escapes match complete code points while preserving lone surrogates. Unicode simple-case-folding deltas preserve u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. The two property-escape batches cover all 175 generated Script and all 175 generated Script_Extensions cases. Other Unicode properties and advanced v-set operations remain limited; this is not full Unicode regular-expression parity."
+      },
+      {
+        "clause": "22.2.2.9.8",
+        "feature": "Unicode General_Category and selected binary property escapes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpUnicodeProperties200ExecutionTests.cs",
+          "tests/Jroc.Tests/RegExpObjectRepresentationTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js",
+          "test/built-ins/RegExp/property-escapes/generated/General_Category_-_Surrogate.js",
+          "test/built-ins/RegExp/property-escapes/generated/General_Category_-_Cased_Letter.js",
+          "test/built-ins/RegExp/property-escapes/generated/Alphabetic.js",
+          "test/built-ins/RegExp/property-escapes/generated/Changes_When_Casefolded.js"
+        ],
+        "notes": "All 38 General_Category values, including composite categories, accept exact Unicode long and short aliases through General_Category=, gc=, and bare category escapes. Twelve binary properties are supported with their exact aliases: ASCII, ASCII_Hex_Digit, Alphabetic, Any, Assigned, Bidi_Control, Bidi_Mirrored, Case_Ignorable, Cased, Changes_When_Casefolded, Changes_When_Casemapped, and Changes_When_Lowercased. Ranges and simple-case-folding data come from independently checksum-pinned Unicode 17 UCD files, not Test262 assertions. Matching covers astral code points and lone surrogates, with u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. Together with 150 remaining generated Script_Extensions cases, the new batch verifies 200 cases across all 400 required native variants. No selected case requires eval. Other binary properties and advanced v-set operations remain limited."
       },
       {
         "clause": "22.2.5.3",

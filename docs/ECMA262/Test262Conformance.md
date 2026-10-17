@@ -111,8 +111,8 @@ Selection and validation are explicitly branch-local: catalogue MCP tools
 were unavailable and the Data API denied the reporting schema. These results
 are not central trusted acceptance.
 
-RegExp has 200 newly verified property-escape cases: 175 Unicode Script cases
-and 25 Script_Extensions cases. All 400 required strict/non-strict variants
+The first RegExp property-escape batch verifies 200 cases: 175 Unicode Script
+cases and 25 Script_Extensions cases. All 400 required strict/non-strict variants
 pass under one frozen Release build. Coverage exercises Unicode 17 ranges,
 exact long/short aliases, script-extension overrides, complements, astral
 characters, and lone surrogates. No case in this batch requires eval.
@@ -120,6 +120,19 @@ Script-property matching also preserves mode-specific ignoreCase complement
 ordering and scoped i modifiers. Selection and native validation are
 branch-local: catalogue MCP tools were unavailable and the reporting Data API
 denied access. These results are not central trusted acceptance.
+
+The second RegExp batch verifies another 200 cases: the remaining 150 generated
+Script_Extensions cases, all 38 generated General_Category cases, and twelve
+binary-property cases. All 400 required strict/non-strict variants pass under
+one frozen Release build, with no eval-related exclusions. General-category
+and selected binary-property matching now uses independently pinned Unicode 17
+ranges and exact aliases, including unassigned code points, composite
+categories, astral characters, and lone surrogates. Mode-specific case-folding
+complement order also applies to these properties. The two batches together
+verify every generated Script and Script_Extensions case. Other binary
+properties and advanced v-set operations remain limited. Selection and native
+validation have the same branch-local scope and central-access limitation as
+the first batch; these are not central trusted acceptance results.
 
 ## Native test runner
 
@@ -169,9 +182,9 @@ fallback, callback receiver/order, assertion messages, and iterator closing.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,374 | 24 | 6,114 | 23,512 | **73.89%** |
+| Built-in objects and APIs | 17,574 | 24 | 5,914 | 23,512 | **74.74%** |
 | Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
-| **Total** | 37,324 | 331 | 10,586 | 48,241 | **77.37%** |
+| **Total** | 37,524 | 331 | 10,386 | 48,241 | **77.78%** |
 
 ## Language Areas
 
@@ -363,7 +376,7 @@ fallback, callback receiver/order, assertion messages, and iterator closing.
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,378 | 0 | 501 | 1,879 | **73.34%** |
+| `RegExp` | 1,578 | 0 | 301 | 1,879 | **83.98%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |

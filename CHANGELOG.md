@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 200 more pinned built-in RegExp cases: the remaining 150
+  generated Script_Extensions cases, all 38 generated General_Category cases,
+  and twelve binary-property cases. All 400 required native variants pass;
+  the selected cases do not require eval. Replace incomplete CLR category
+  handling with independently checksum-pinned Unicode 17 ranges and exact
+  aliases, and support ASCII, ASCII_Hex_Digit, Alphabetic, Any, Assigned,
+  Bidi_Control, Bidi_Mirrored, Case_Ignorable, Cased,
+  Changes_When_Casefolded, Changes_When_Casemapped, and Changes_When_Lowercased.
+  Preserve complete-code-point matching, lone surrogates, scoped ignoreCase,
+  and distinct u/v case-folding complement order for these properties.
+  Other binary properties and advanced v-set operations remain limited.
 - fix(perf): make the missing SharpTS hosting abstraction dependency available
   to BenchmarkDotNet's generated child executables as well as both benchmark
   hosts, fixing all eleven SharpTS Dromaeo/Kraken release benchmark failures.

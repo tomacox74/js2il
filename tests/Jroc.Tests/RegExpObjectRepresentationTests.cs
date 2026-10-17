@@ -32,6 +32,14 @@ public sealed class RegExpObjectRepresentationTests
     [InlineData("iv", "Script_Extensions=Greek", "\u03BC", false)]
     [InlineData("iu", "ASCII", "K", true)]
     [InlineData("iv", "ASCII", "K", false)]
+    [InlineData("iu", "Lowercase_Letter", "a", true)]
+    [InlineData("iv", "Lowercase_Letter", "a", false)]
+    [InlineData("iu", "General_Category=Uppercase_Letter", "A", true)]
+    [InlineData("iv", "General_Category=Uppercase_Letter", "A", false)]
+    [InlineData("iu", "gc=Ll", "\U00010400", true)]
+    [InlineData("iv", "gc=Ll", "\U00010400", false)]
+    [InlineData("iu", "Changes_When_Casefolded", "a", true)]
+    [InlineData("iv", "Changes_When_Casefolded", "a", false)]
     public void UnicodePropertyComplements_RespectModeSpecificCaseFolding(
         string flags, string property, string input, bool expected)
     {
