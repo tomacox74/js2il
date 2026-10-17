@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.33 - 2026-10-17
+
 - test262: complete pinned identifiers and static-import coverage with 233
   newly verified exact fixtures: 116 identifier syntax negatives and 117
   import cases, with no eval-related skips. All 395 cases across both areas
