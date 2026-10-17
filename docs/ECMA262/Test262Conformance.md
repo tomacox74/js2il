@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.32](https://github.com/tomacox74/js2il/releases/tag/v0.12.32).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.33](https://github.com/tomacox74/js2il/releases/tag/v0.12.33).
 
 ## How to Read This Report
 
@@ -111,6 +111,16 @@ Selection and validation are explicitly branch-local: catalogue MCP tools
 were unavailable and the Data API denied the reporting schema. These results
 are not central trusted acceptance.
 
+RegExp has 200 newly verified property-escape cases: 175 Unicode Script cases
+and 25 Script_Extensions cases. All 400 required strict/non-strict variants
+pass under one frozen Release build. Coverage exercises Unicode 17 ranges,
+exact long/short aliases, script-extension overrides, complements, astral
+characters, and lone surrogates. No case in this batch requires eval.
+Script-property matching also preserves mode-specific ignoreCase complement
+ordering and scoped i modifiers. Selection and native validation are
+branch-local: catalogue MCP tools were unavailable and the reporting Data API
+denied access. These results are not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -148,14 +158,20 @@ Worker-based Atomics tests use a native `$262.agent` host implementation with
 independent compiled agent scripts, shared buffer backing stores, reports, and
 bounded worker cleanup.
 
+Fixtures including `regExpUtils.js` receive native `buildString`,
+`testPropertyEscapes`, and `matchValidator` helpers. String construction
+preserves code points, lone surrogates, and argument coercion order. Property
+checks first try the complete string, then retain the upstream per-code-point
+fallback, callback receiver/order, assertion messages, and iterator closing.
+
 ## Overall ECMA-262 Areas
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
+| Built-in objects and APIs | 17,374 | 24 | 6,114 | 23,512 | **73.89%** |
 | Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
-| **Total** | 37,124 | 331 | 10,786 | 48,241 | **76.96%** |
+| **Total** | 37,324 | 331 | 10,586 | 48,241 | **77.37%** |
 
 ## Language Areas
 
@@ -347,7 +363,7 @@ bounded worker cleanup.
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,178 | 0 | 701 | 1,879 | **62.69%** |
+| `RegExp` | 1,378 | 0 | 501 | 1,879 | **73.34%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
