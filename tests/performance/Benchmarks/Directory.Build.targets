@@ -1,0 +1,16 @@
+<Project>
+  <!-- These benchmarks use the JavaScript compiler API, not native .NET interop. -->
+  <PropertyGroup>
+    <SharpTSNativeInteropEnabled>false</SharpTSNativeInteropEnabled>
+  </PropertyGroup>
+
+  <!-- BenchmarkDotNet generates child projects below this directory. They need
+       the missing SharpTS dependency in their own output and .deps.json too. -->
+  <ItemGroup>
+    <PackageDownload Include="SharpTS" Version="[1.0.12]" />
+    <Reference Include="SharpTS.Hosting.Abstractions">
+      <HintPath>$(NuGetPackageRoot)sharpts/1.0.12/tools/net10.0/any/SharpTS.Hosting.Abstractions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
