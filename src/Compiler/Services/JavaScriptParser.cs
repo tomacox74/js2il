@@ -6,6 +6,10 @@ namespace Jroc.Services;
 
 public class JavaScriptParser : IParser
 {
+    private const ExperimentalESFeatures SupportedExperimentalFeatures =
+        ExperimentalESFeatures.Decorators
+        | ExperimentalESFeatures.SourcePhaseImports
+        | ExperimentalESFeatures.DeferImportEvaluation;
     private readonly Parser _scriptParser;
     private readonly Parser _topLevelAwaitParser;
     private readonly Parser _moduleParser;
@@ -18,12 +22,12 @@ public class JavaScriptParser : IParser
         _moduleParser = new Parser(new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
-            ExperimentalESFeatures = ExperimentalESFeatures.Decorators
+            ExperimentalESFeatures = SupportedExperimentalFeatures
         });
         _standardScriptParser = new Parser(new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
-            ExperimentalESFeatures = ExperimentalESFeatures.Decorators
+            ExperimentalESFeatures = SupportedExperimentalFeatures
         });
     }
 
@@ -32,7 +36,7 @@ public class JavaScriptParser : IParser
         return new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
-            ExperimentalESFeatures = ExperimentalESFeatures.Decorators,
+            ExperimentalESFeatures = SupportedExperimentalFeatures,
             AllowReturnOutsideFunction = true,
             AllowImportExportEverywhere = true,
             AllowAwaitOutsideFunction = allowAwaitOutsideFunction

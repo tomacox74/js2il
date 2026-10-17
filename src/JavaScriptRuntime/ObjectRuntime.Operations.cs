@@ -705,6 +705,10 @@ namespace JavaScriptRuntime
 
         private static List<string> GetOrderedOwnKeysIncludingSymbols(object obj)
         {
+            if (obj is Modules.ESM.ModuleNamespace moduleNamespace)
+            {
+                return moduleNamespace.GetOwnPropertyKeys().ToList();
+            }
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
                 var target = proxy.GetTarget("ownKeys");
@@ -6341,6 +6345,10 @@ namespace JavaScriptRuntime
         /// </summary>
         private static bool ReflectSetOrdinary(object target, string key, object? value, object? receiver)
         {
+            if (target is Modules.ESM.ModuleNamespace)
+            {
+                return false;
+            }
             if (target is Proxy proxy)
             {
                 var proxyTarget = proxy.GetTarget("set");
@@ -6801,6 +6809,12 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (obj is Modules.ESM.ModuleNamespace)
+            {
+                if (throwOnError)
+                    throw new TypeError($"Cannot assign to module namespace property '{name}'");
+                return value;
+            }
             if (obj is JavaScriptRuntime.Symbol)
             {
                 if (throwOnError)

@@ -2266,7 +2266,9 @@ partial class HIRMethodBuilder
     {
         if (classDeclaration.Id is not Identifier classIdentifier
             || string.IsNullOrWhiteSpace(classIdentifier.Name)
-            || classDeclaration.SuperClass != null)
+            || classDeclaration.SuperClass != null
+            || _rootScope.Bindings.TryGetValue(classIdentifier.Name, out var classBinding)
+                && classBinding.EsModuleExports is { Count: > 0 })
         {
             return false;
         }
@@ -3622,7 +3624,7 @@ partial class HIRMethodBuilder
             return false;
         }
 
-        hirStatement = new HIRVariableDeclaration(symbol, initExpr!);
+        hirStatement = new HIRVariableDeclaration(symbol, initExpr!) { InferredName = "default" };
         return true;
     }
 
@@ -4224,13 +4226,19 @@ partial class HIRMethodBuilder
                 return true;
 
             case ImportExpression importExpr:
-                // Dynamic import() - validated to have string literal specifier
                 if (!TryParseExpression(importExpr.Source, out var specifierExpr) || specifierExpr == null)
                 {
                     return false;
                 }
                 
-                hirExpr = new HIRImportExpression(specifierExpr);
+                HIRExpression? importOptions = null;
+                if (importExpr.Options != null
+                    && !TryParseExpression(importExpr.Options, out importOptions))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRImportExpression(specifierExpr, importOptions, importExpr.Phase.ToString());
                 return true;
 
             case NewExpression newExpr:

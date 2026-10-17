@@ -57,6 +57,7 @@ internal sealed class Test262FolderAssemblyCache : IDisposable
         var entries = new List<JrocInMemoryEntrySource>(names.Length);
         var fileSystem = new MockFileSystem();
         var includes = new HashSet<string>(StringComparer.Ordinal);
+        var dynamicImportTargets = new HashSet<string>(StringComparer.Ordinal);
         var identifiers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var aliasedPaths = new Dictionary<string, string>(StringComparer.Ordinal);
         var directoryNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -97,7 +98,8 @@ internal sealed class Test262FolderAssemblyCache : IDisposable
                     && normalized[0].Equals("Scripts", StringComparison.OrdinalIgnoreCase));
             var collidesWithDirectory = directoryNames.TryGetValue(identifier, out var directoryName)
                 && !string.Equals(directoryName, name.Replace('\\', '/'), StringComparison.Ordinal);
-            var logicalPath = !reservedName && !collidesWithDirectory && identifiers.Add(identifier)
+            var logicalPath = Test262SharedAssertHarness.IsModule(script)
+                && !reservedName && !collidesWithDirectory && identifiers.Add(identifier)
                 ? path
                 : Path.Combine(Path.GetDirectoryName(path)!, $"__test262_entry_{entries.Count:D5}.js");
             if (logicalPath != path && File.Exists(logicalPath))
@@ -115,6 +117,7 @@ internal sealed class Test262FolderAssemblyCache : IDisposable
                 ParseAsScript = !Test262SharedAssertHarness.IsModule(script)
             });
             includes.UnionWith(Test262SharedAssertHarness.GetHarnessIncludes(script));
+            dynamicImportTargets.UnionWith(Test262SharedAssertHarness.GetDynamicImportTargets(script, path));
         }
 
         try
@@ -123,6 +126,7 @@ internal sealed class Test262FolderAssemblyCache : IDisposable
             {
                 EmitPdb = true,
                 FileSystem = fileSystem,
+                AdditionalModulePaths = dynamicImportTargets.Order(StringComparer.Ordinal).ToArray(),
                 HostRuntimeIntrinsics = Test262HostRuntimeIntrinsics.Create(includes)
             });
             Interlocked.Increment(ref _compilationCount);

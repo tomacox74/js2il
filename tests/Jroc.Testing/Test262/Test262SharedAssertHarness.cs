@@ -37,7 +37,8 @@ public static class Test262SharedAssertHarness
                     timeoutMs: timeoutMs,
                     onCompilationCoverage: onCompilationCoverage,
                     parseAsModule: metadata.Module,
-                    parseAsScript: !metadata.Module));
+                    parseAsScript: !metadata.Module,
+                    additionalModulePaths: GetDynamicImportTargets(preparedEntryScript, entrySourcePath)));
     }
 
     public static InMemoryTestExecutionResult ExecuteCompiledEntry(
@@ -65,6 +66,27 @@ public static class Test262SharedAssertHarness
 
     public static bool IsModule(string entryScript)
         => ParseFrontmatter(entryScript).Module;
+
+    public static IReadOnlyList<string> GetDynamicImportTargets(string entryScript, string? sourcePath)
+    {
+        if (sourcePath is null || !Directory.Exists(Path.GetDirectoryName(sourcePath)))
+            return [];
+        var parser = new Jroc.Services.JavaScriptParser();
+        var ast = IsModule(entryScript)
+            ? parser.ParseJavaScriptModule(entryScript, sourcePath)
+            : parser.ParseJavaScriptScript(entryScript, sourcePath);
+        var computedImport = false;
+        parser.VisitAst(ast, node =>
+        {
+            if (node is Acornima.Ast.ImportExpression { Source: not Acornima.Ast.StringLiteral })
+                computedImport = true;
+        });
+        return computedImport
+            ? Directory.GetFiles(Path.GetDirectoryName(sourcePath)!, "*_FIXTURE.*")
+                .Where(path => Path.GetExtension(path) is ".js" or ".mjs" or ".cjs" or ".json")
+                .Order(StringComparer.Ordinal).ToArray()
+            : [];
+    }
 
     private static InMemoryTestExecutionResult ExecuteWithFixtureRuntime(
         string testName,

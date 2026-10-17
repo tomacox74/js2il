@@ -8,8 +8,12 @@ boundary for all mutable CommonJS and ECMAScript module graph state:
 - the compiled modules assembly and its lazily discovered module type map;
 - module-scoped require delegates used by dynamic import;
 - `import.meta` objects keyed by canonical URL;
-- ESM live binding cells and native namespace markers;
-- synthesized CommonJS namespace objects.
+- ESM live binding cells, native namespace markers, and cached namespace
+  exotic objects;
+- synthesized CommonJS namespace objects;
+- deferred ESM namespace identities and JSON/text import namespace identities;
+- lazily read compiled-module metadata for static dependencies, top-level
+  await, export names, deferred loading errors, and original JSON source.
 
 Identical canonical module IDs can therefore exist concurrently in different
 realms without sharing exports, bindings, namespace identity, or
@@ -25,3 +29,11 @@ an active parent module.
 Disposing a realm clears its module state as one operation. Runtime shutdown
 does not unregister entries from process-wide dictionaries because no mutable
 module graph is process-owned.
+
+Ordinary and deferred namespace objects have separate identities. Deferred
+namespaces evaluate their synchronous target on string-key operations, except
+the special `then` key; symbol operations do not trigger evaluation. Their
+asynchronous transitive dependencies finish before the import promise resolves.
+Evaluation failures remain attached to the realm's ESM module record so later
+imports reject with the same JavaScript error value rather than retrying the
+module body. Namespace and compiled-metadata caches are cleared with the realm.

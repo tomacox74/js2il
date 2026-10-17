@@ -10,6 +10,7 @@ public class Compiler
     private readonly string? outputDirectory;
     private readonly string? configuredAssemblyName;
     private readonly bool diagnosticsEnabled;
+    private readonly IReadOnlyList<string> _additionalModulePaths;
 
     private readonly SymbolTableBuilder _symbolTableBuilder;
 
@@ -32,6 +33,7 @@ public class Compiler
         this.outputDirectory = options.OutputDirectory;
         this.configuredAssemblyName = options.AssemblyName;
         this.diagnosticsEnabled = options.DiagnosticsEnabled;
+        _additionalModulePaths = options.AdditionalModulePaths;
         this.analyzeUnused = options.AnalyzeUnused;
         this._moduleLoader = moduleLoader;
         this._symbolTableBuilder = symbolTableBuilder;
@@ -132,7 +134,7 @@ public class Compiler
         }
 
         var modules = this._moduleLoader.LoadModules(entries, defaultEntryFilePath,
-            _coverage is null ? null : _coverage.RecordUnsupported);
+            _coverage is null ? null : _coverage.RecordUnsupported, _additionalModulePaths);
         if (modules == null)
         {
             return null;

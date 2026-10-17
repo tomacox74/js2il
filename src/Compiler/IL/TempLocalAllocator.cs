@@ -494,7 +494,9 @@ internal static partial class LIRInstructionInfo
             case LIRCallRequire value:
                 visitor.Visit(value.RequireValue); visitor.Visit(value.ModuleId); break;
             case LIRCallImport value:
-                visitor.Visit(value.ModuleSpecifier); visitor.Visit(value.CurrentModuleId); break;
+                visitor.Visit(value.ModuleSpecifier); visitor.Visit(value.CurrentModuleId);
+                if (value.Options is { } options) visitor.Visit(options);
+                break;
             case LIRConstructValue value:
                 visitor.Visit(value.ConstructorValue); visitor.Visit(value.ArgumentsArray); break;
             case LIRConstructValueFixed value:

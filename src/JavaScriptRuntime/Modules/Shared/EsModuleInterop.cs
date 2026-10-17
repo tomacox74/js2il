@@ -11,9 +11,13 @@ namespace JavaScriptRuntime.Modules.Shared
 
         public static object ToDynamicImportResult(object? exports)
         {
+            if (exports is ESM.ModuleNamespace)
+            {
+                return exports;
+            }
             if (IsEsModuleObject(exports))
             {
-                return exports!;
+                return ESM.EsModuleLinker.GetEsModuleNamespace(exports!);
             }
 
             if (!IsNamespaceObjectCandidate(exports))

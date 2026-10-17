@@ -30,6 +30,7 @@ Common request options:
 | `EntryFilePath` | Required source identity, diagnostic path, and dependency-resolution context. |
 | `SourceText` | Source supplied at runtime. If omitted, read the entry file. |
 | `FileSystem` | Supply a file-system abstraction for source/dependency resolution. |
+| `AdditionalModulePaths` | Bundle additional module files as possible computed `import()` targets without making them executable entries. Also available on multi-entry requests. |
 | `AssemblyName` | Assembly identity and artifact basename; defaults to the entry filename without its extension. |
 | `RootModuleIdOverride` | Override the root module's logical ID. |
 | `ParseAsModule` | Parse the entry with the Module goal, including sources without import/export syntax. Defaults to `false`; `.mjs` files use the Module goal unless `ParseAsScript` is selected. |
@@ -44,6 +45,15 @@ When `SourceText` is present, it overlays the entry file at `EntryFilePath`;
 other dependencies are resolved from the supplied file system or the default
 file system. In-memory output does not mean all source dependencies are
 automatically available in memory.
+
+JROC is an ahead-of-time compiler: a computed `import(specifier)` can load only
+targets bundled in the compiled assembly. Literal imports discover their
+dependencies automatically. For computed targets, provide their paths through
+`AdditionalModulePaths`; source is read through `FileSystem` when supplied.
+Bundling does not evaluate these modules, add them to `EntryModules`, or run
+them before the selected entry. Parse, resolution, and link failures in
+dynamic-only targets reject their import promises when requested; the same
+failures in an entry's static dependency graph still fail compilation.
 
 The default entry mode retains Node/CommonJS wrapper behavior. With
 `ParseAsScript`, top-level `var` and function declarations use global-object

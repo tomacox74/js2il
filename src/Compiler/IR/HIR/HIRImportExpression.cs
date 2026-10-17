@@ -5,13 +5,17 @@ namespace Jroc.HIR;
 /// </summary>
 public sealed class HIRImportExpression : HIRExpression
 {
-    public HIRImportExpression(HIRExpression specifier)
+    public HIRImportExpression(HIRExpression specifier, HIRExpression? options = null, string phase = "None")
     {
         Specifier = specifier;
+        Options = options;
+        Phase = phase;
     }
 
     /// <summary>
-    /// The module specifier expression (validated to be a string literal during AST validation).
+    /// The module specifier expression, converted to a string by the runtime.
     /// </summary>
     public HIRExpression Specifier { get; init; }
+    public HIRExpression? Options { get; init; }
+    public string Phase { get; init; }
 }
