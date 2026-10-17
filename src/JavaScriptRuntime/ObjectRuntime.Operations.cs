@@ -2641,7 +2641,9 @@ namespace JavaScriptRuntime
                     if (instance is not null && instance is not JsNull)
                     {
                         var defaultPrototype = constructionRealm.GetConstructorPrototype(type)
-                            ?? constructionRealm.ObjectPrototype;
+                            ?? (prototypeOwner is null
+                                ? GetProperty(type, "prototype")
+                                : constructionRealm.ObjectPrototype);
                         var newTargetPrototype = GetProperty(newTarget ?? prototypeOwner ?? type, "prototype");
                         PrototypeChain.SetPrototype(
                             instance,

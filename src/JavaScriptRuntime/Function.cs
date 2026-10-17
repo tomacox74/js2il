@@ -1203,7 +1203,14 @@ public static class Function
 
             var callArgs = args ?? System.Array.Empty<object?>();
 
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            using var realmScope = RuntimeServices.EnterFunctionRealm(constructor);
+            var callArguments = JsCallArguments.FromArray(callArgs);
+            var invocationState = RuntimeServices.PushInvocationFrame(
+                constructor.InvocationRequirements,
+                receiver,
+                callArguments,
+                constructor,
+                newTarget);
             try
             {
                 var result = Closure.InvokeBuiltinDelegate(
@@ -1225,7 +1232,7 @@ public static class Function
             }
             finally
             {
-                RuntimeServices.SetCurrentThis(previousThis);
+                RuntimeServices.RestoreInvocationFrame(invocationState);
             }
         }
 

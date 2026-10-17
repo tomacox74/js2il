@@ -180,6 +180,10 @@ internal sealed partial class LIRToILCompiler
                 && state.Kind == GeneratedFunctionStateKind.HomeObject)
             {
                 ilEncoder.LoadArgument(0);
+                ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.CaptureLexicalSuperConstructorContext),
+                    [typeof(object)]));
                 continue;
             }
             if (lexicalThis.HasValue

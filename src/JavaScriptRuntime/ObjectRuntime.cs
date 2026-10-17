@@ -258,7 +258,7 @@ namespace JavaScriptRuntime
 
         public static object GetSuperPropertyBase()
         {
-            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
+            var homeObject = RuntimeServices.GetCurrentSuperPropertyHomeObject();
             if (homeObject is null or JsNull)
             {
                 throw new TypeError("Super object is unavailable");

@@ -142,6 +142,11 @@ public partial class RuntimeServices
         public object? Value = TemporalDeadZoneSentinel;
     }
 
+    private sealed record LexicalSuperConstructorContext(
+        object Receiver,
+        JsClassConstructorObject Constructor,
+        object? NewTarget);
+
     private sealed class GeneratedClassMethodReceiverSlot(object? receiver)
     {
         public object? Receiver { get; } = receiver;
@@ -293,6 +298,21 @@ public partial class RuntimeServices
         var current = _currentInvocation.Value;
         return current?.CurrentLexicalSuperReceiver
             ?? ResolveLexicalThis(current?.CurrentThis);
+    }
+
+    public static object CaptureLexicalSuperConstructorContext(object receiver)
+    {
+        var constructor = GetCurrentCallee() as JsClassConstructorObject
+            ?? throw new InvalidOperationException("The executing class constructor is unavailable.");
+        return new LexicalSuperConstructorContext(receiver, constructor, GetCurrentNewTarget());
+    }
+
+    public static object? GetCurrentSuperPropertyHomeObject()
+    {
+        var homeObject = GetCurrentLexicalSuperReceiver();
+        return homeObject is LexicalSuperConstructorContext context
+            ? ObjectRuntime.GetProperty(context.Constructor, "prototype")
+            : homeObject;
     }
 
     public static object? ResolveGeneratedDirectCallThis(
@@ -453,7 +473,9 @@ public partial class RuntimeServices
 
     public static void ConstructDerivedFunctionBase(object receiver, object constructor, object[] args)
     {
-        var newTarget = GetCurrentNewTarget() ?? constructor;
+        var context = receiver as LexicalSuperConstructorContext;
+        receiver = context?.Receiver ?? receiver;
+        var newTarget = context?.NewTarget ?? GetCurrentNewTarget() ?? constructor;
         object? constructed;
         if (constructor is BuiltinDelegateFunctionAdapter builtinConstructor
             && builtinConstructor.IsConstructor)
@@ -727,6 +749,12 @@ public partial class RuntimeServices
             && callee.Type == ownerType)
         {
             return callee;
+        }
+        if (_currentInvocation.Value?.CurrentLexicalSuperReceiver
+            is LexicalSuperConstructorContext context
+            && context.Constructor.Type == ownerType)
+        {
+            return context.Constructor;
         }
         for (var constructor = GetCurrentNewTarget() as JsClassConstructorObject;
              constructor is not null;
