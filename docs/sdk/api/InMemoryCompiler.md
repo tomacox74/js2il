@@ -252,4 +252,6 @@ exist on disk. `JrocCompiledAssemblyArtifact.Materialize(...)` can create
 the required artifacts; the load overload accepts
 `Jroc.Runtime.JsModuleLoadOptions` with an explicit `CompiledAssemblyPath`.
 The host must arrange that path and keep the materialized files available.
+Materialization includes `JavaScriptRuntime.dll` and its Acornima parser
+dependency, which validates dynamic function-constructor grammar at runtime.
 Pure source-text loading does not infer or create a child-process launch path.

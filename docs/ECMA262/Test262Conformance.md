@@ -65,6 +65,22 @@ and deferred evaluation with asynchronous dependencies. These results are
 branch-local; catalogue MCP tools were unavailable and the Data API denied the
 reporting schema. They are not central trusted acceptance.
 
+The expression batch adds 200 exact pinned cases: 147 verified passing across
+all 263 required native variants and 53 explicit eval exclusions. Coverage
+includes super references and construction, tagged templates, import.meta,
+new.target, calls, assignments, function/generator grammar, and operators.
+All 1,987 runnable cases in the affected feature rows passed their 3,742
+required native variants during branch-local reconciliation. The new cases
+were checked again after the constructor regression repairs. Catalogue MCP
+tools were unavailable and the Data API denied the reporting schema; these
+results are not central trusted acceptance.
+
+The affected rows and expression aggregate are reconciled to unique pinned
+files, including correction of the assignment denominator from 489 to 485.
+Language and overall aggregates now sum their visible area rows. Earlier
+aggregate overcounts are corrected rather than carried forward as verified
+coverage. Eighteen expression cases remain without a published result.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -105,8 +121,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
-| Language syntax and semantics | 19,835 | 248 | 3,564 | 23,647 | **83.88%** |
-| **Total** | 37,069 | 272 | 10,904 | 48,245 | **76.84%** |
+| Language syntax and semantics | 19,648 | 301 | 3,694 | 23,643 | **83.10%** |
+| **Total** | 36,882 | 325 | 11,034 | 48,241 | **76.45%** |
 
 ## Language Areas
 
@@ -121,7 +137,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,828 | 189 | 21 | 11,038 | **98.10%** |
+| `expressions` | 10,778 | 242 | 18 | 11,038 | **97.64%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -148,48 +164,48 @@ bounded worker cleanup.
 | `addition` | 47 | 1 | 0 | 48 | **97.92%** |
 | `array` | 52 | 0 | 0 | 52 | **100.00%** |
 | `arrow-function` | 341 | 2 | 0 | 343 | **99.42%** |
-| `assignment` | 489 | 0 | 0 | 489 | **100.00%** |
+| `assignment` | 483 | 2 | 0 | 485 | **99.59%** |
 | `assignmenttargettype` | 324 | 0 | 0 | 324 | **100.00%** |
 | `async-arrow-function` | 59 | 1 | 0 | 60 | **98.33%** |
 | `async-function` | 89 | 4 | 0 | 93 | **95.70%** |
 | `async-generator` | 618 | 5 | 0 | 623 | **99.20%** |
 | `await` | 22 | 0 | 0 | 22 | **100.00%** |
-| `bitwise-and` | 29 | 0 | 1 | 30 | **96.67%** |
+| `bitwise-and` | 29 | 1 | 0 | 30 | **96.67%** |
 | `bitwise-not` | 15 | 1 | 0 | 16 | **93.75%** |
-| `bitwise-or` | 29 | 0 | 1 | 30 | **96.67%** |
-| `bitwise-xor` | 29 | 0 | 1 | 30 | **96.67%** |
-| `call` | 73 | 1 | 18 | 92 | **79.35%** |
+| `bitwise-or` | 29 | 1 | 0 | 30 | **96.67%** |
+| `bitwise-xor` | 29 | 1 | 0 | 30 | **96.67%** |
+| `call` | 75 | 12 | 5 | 92 | **81.52%** |
 | `class` | 3,955 | 104 | 0 | 4,059 | **97.44%** |
 | `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
 | `comma` | 4 | 1 | 1 | 6 | **66.67%** |
 | `compound-assignment` | 434 | 20 | 0 | 454 | **95.59%** |
-| `concatenation` | 0 | 0 | 5 | 5 | **0.00%** |
+| `concatenation` | 4 | 1 | 0 | 5 | **80.00%** |
 | `conditional` | 21 | 1 | 0 | 22 | **95.45%** |
 | `delete` | 68 | 1 | 0 | 69 | **98.55%** |
-| `division` | 43 | 0 | 2 | 45 | **95.56%** |
-| `does-not-equals` | 36 | 0 | 2 | 38 | **94.74%** |
+| `division` | 43 | 2 | 0 | 45 | **95.56%** |
+| `does-not-equals` | 36 | 2 | 0 | 38 | **94.74%** |
 | `dynamic-import` | 940 | 1 | 0 | 941 | **99.89%** |
-| `equals` | 45 | 0 | 2 | 47 | **95.74%** |
-| `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
-| `function` | 246 | 3 | 15 | 264 | **93.18%** |
-| `generators` | 262 | 0 | 28 | 290 | **90.34%** |
-| `greater-than-or-equal` | 42 | 0 | 1 | 43 | **97.67%** |
-| `greater-than` | 48 | 0 | 1 | 49 | **97.96%** |
+| `equals` | 45 | 2 | 0 | 47 | **95.74%** |
+| `exponentiation` | 44 | 0 | 0 | 44 | **100.00%** |
+| `function` | 258 | 6 | 0 | 264 | **97.73%** |
+| `generators` | 285 | 5 | 0 | 290 | **98.28%** |
+| `greater-than-or-equal` | 42 | 1 | 0 | 43 | **97.67%** |
+| `greater-than` | 48 | 1 | 0 | 49 | **97.96%** |
 | `grouping` | 8 | 1 | 0 | 9 | **88.89%** |
-| `import.meta` | 0 | 0 | 22 | 22 | **0.00%** |
+| `import.meta` | 21 | 1 | 0 | 22 | **95.45%** |
 | `in` | 35 | 1 | 0 | 36 | **97.22%** |
 | `instanceof` | 42 | 1 | 0 | 43 | **97.67%** |
-| `left-shift` | 45 | 0 | 0 | 45 | **100.00%** |
-| `less-than-or-equal` | 46 | 0 | 1 | 47 | **97.87%** |
-| `less-than` | 44 | 0 | 1 | 45 | **97.78%** |
+| `left-shift` | 44 | 1 | 0 | 45 | **97.78%** |
+| `less-than-or-equal` | 46 | 1 | 0 | 47 | **97.87%** |
+| `less-than` | 44 | 1 | 0 | 45 | **97.78%** |
 | `logical-and` | 17 | 1 | 0 | 18 | **94.44%** |
 | `logical-assignment` | 78 | 0 | 0 | 78 | **100.00%** |
 | `logical-not` | 17 | 2 | 0 | 19 | **89.47%** |
 | `logical-or` | 17 | 1 | 0 | 18 | **94.44%** |
 | `member-expression` | 1 | 0 | 0 | 1 | **100.00%** |
-| `modulus` | 39 | 0 | 1 | 40 | **97.50%** |
-| `multiplication` | 39 | 0 | 1 | 40 | **97.50%** |
-| `new.target` | 11 | 0 | 3 | 14 | **78.57%** |
+| `modulus` | 39 | 1 | 0 | 40 | **97.50%** |
+| `multiplication` | 39 | 1 | 0 | 40 | **97.50%** |
+| `new.target` | 14 | 0 | 0 | 14 | **100.00%** |
 | `new` | 57 | 2 | 0 | 59 | **96.61%** |
 | `object` | 1,148 | 22 | 0 | 1,170 | **98.12%** |
 | `optional-chaining` | 37 | 1 | 0 | 38 | **97.37%** |
@@ -198,15 +214,15 @@ bounded worker cleanup.
 | `prefix-decrement` | 34 | 0 | 0 | 34 | **100.00%** |
 | `prefix-increment` | 33 | 0 | 0 | 33 | **100.00%** |
 | `property-accessors` | 19 | 2 | 0 | 21 | **90.48%** |
-| `relational` | 0 | 0 | 1 | 1 | **0.00%** |
-| `right-shift` | 36 | 0 | 1 | 37 | **97.30%** |
-| `strict-does-not-equals` | 28 | 0 | 2 | 30 | **93.33%** |
-| `strict-equals` | 25 | 0 | 5 | 30 | **83.33%** |
-| `subtraction` | 37 | 0 | 1 | 38 | **97.37%** |
-| `super` | 42 | 0 | 52 | 94 | **44.68%** |
-| `tagged-template` | 0 | 0 | 27 | 27 | **0.00%** |
+| `relational` | 1 | 0 | 0 | 1 | **100.00%** |
+| `right-shift` | 36 | 1 | 0 | 37 | **97.30%** |
+| `strict-does-not-equals` | 28 | 2 | 0 | 30 | **93.33%** |
+| `strict-equals` | 28 | 2 | 0 | 30 | **93.33%** |
+| `subtraction` | 37 | 1 | 0 | 38 | **97.37%** |
+| `super` | 90 | 4 | 0 | 94 | **95.74%** |
+| `tagged-template` | 21 | 4 | 2 | 27 | **77.78%** |
 | `tco-pos.js` | 1 | 0 | 0 | 1 | **100.00%** |
-| `template-literal` | 3 | 0 | 54 | 57 | **5.26%** |
+| `template-literal` | 49 | 0 | 8 | 57 | **85.96%** |
 | `this` | 2 | 4 | 0 | 6 | **33.33%** |
 | `typeof` | 15 | 1 | 0 | 16 | **93.75%** |
 | `unary-minus` | 13 | 1 | 0 | 14 | **92.86%** |

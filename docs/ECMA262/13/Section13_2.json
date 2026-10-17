@@ -187,6 +187,17 @@
   "support": {
     "entries": [
       {
+        "clause": "13.2.8.4",
+        "feature": "Template escape processing and frozen template objects",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-gettemplateobject",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/template-literal/ExpressionsCompletion200ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/tagged-template/ExpressionsCompletion200ExecutionTests.cs"
+        ],
+        "notes": "Untagged invalid hexadecimal, octal, and Unicode escapes are rejected. Tagged invalid escapes produce undefined cooked entries without changing raw text; valid empty cooked strings remain empty. Cooked/raw arrays and their raw descriptor are immutable. Eval-dependent template identity cases remain unsupported, and the existing long-lived-host cache remains bounded."
+      },
+      {
         "clause": "13.2.1",
         "feature": "The this keyword",
         "status": "Supported with Limitations",

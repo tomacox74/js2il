@@ -30,6 +30,14 @@ JROC now has a real two-phase coordinator:
 - **Phase 1 (token preallocation)** reserves `MethodDefinitionHandle` row ids for planned callables so Phase 2 can compile bodies without changing metadata ordering.
   - Anonymous callables (arrow functions + function expressions) use a deterministic **MethodDef row id reservation** strategy.
   - Class callables are preallocated before class type definitions so `TypeDef.MethodList` can point at a contiguous per-type block (ECMA-335 requirement).
+  - Each class also reserves a protected CLR-only `.ctor(bool)` immediately after
+    its JavaScript constructor. It initializes the CLR base storage without
+    executing JavaScript constructor bodies. Derived constructors chain through
+    this helper before evaluating JavaScript code; `super()` independently
+    resolves and invokes the current superclass with the original `new.target`.
+    This keeps IL verifiable without initializing the JavaScript `this` binding
+    early or running base field initializers twice. These helpers are included
+    in assembly-wide MethodDef counts but are not JavaScript callables.
 - **Strict mode** is enabled before any body compilation so expression emission is **lookup-only** for callable tokens.
 - **Phase 2: Body compilation (Milestone 2c)** compiles callable bodies in the planner order and then finalizes MethodDef rows deterministically.
   - Class callables are finalized grouped by class type (TypeDef order) to preserve per-type `MethodList` contiguity.

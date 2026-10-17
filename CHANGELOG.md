@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: add 200 exact pinned language-expression fixtures: 147 verified
+  passing and 53 explicit eval skips. Fix super reference ordering, compound
+  and logical writes, updates and dynamic superclass construction; preserve
+  tagged-template and with-bound call receivers, cooked/raw template values,
+  frozen template descriptors and call-site identity. Correct import.meta
+  identity and null prototypes, method new.target, parenthesized assignment
+  name inference, and dynamic function-constructor grammar rejection. Separate
+  CLR storage initialization from JavaScript super() while preserving
+  inherited fields and verifiable constructor IL.
 - test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
 - test262: complete pinned dynamic-import coverage with 629 newly added exact
   fixtures and 301 existing parse-negative cases moved to canonical paths.

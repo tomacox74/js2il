@@ -79,6 +79,22 @@
   "support": {
     "entries": [
       {
+        "clause": "13.15.2",
+        "feature": "Super assignment references and parenthesized name inference",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/assignment/ExpressionsCompletion200ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/super/ExpressionsCompletion200ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/assignment/fn-name-lhs-cover.js",
+          "test/language/expressions/assignment/target-super-computed-reference-null.js",
+          "test/language/expressions/super/prop-expr-getsuperbase-before-topropertykey-putvalue-compound-assign.js"
+        ],
+        "notes": "Simple super assignments evaluate the reference before the right-hand side but defer key coercion and null-base validation until PutValue. Compound/logical assignments and updates preserve the captured base, receiver, and a single key coercion. Strict and sloppy failed writes retain their distinct behavior. Parenthesized identifier targets do not trigger anonymous function name inference."
+      },
+      {
         "clause": "13.15.1",
         "feature": "Import calls are invalid assignment targets",
         "status": "Supported",
