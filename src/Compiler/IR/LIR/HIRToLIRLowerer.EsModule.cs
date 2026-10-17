@@ -78,7 +78,27 @@ public sealed partial class HIRToLIRLowerer
             {
                 var specifierTemp = CreateEsModuleStringTemp(require.Specifier);
                 var moduleTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallRequire(requireTemp, specifierTemp, moduleTemp, ContractType: null));
+                if (require.Phase == "None" && require.ImportType is null)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCallRequire(requireTemp, specifierTemp, moduleTemp, ContractType: null));
+                }
+                else
+                {
+                    var typeTemp = require.ImportType is { } importType
+                        ? CreateEsModuleStringTemp(importType)
+                        : CreateTempVariable();
+                    if (require.ImportType is null)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(typeTemp));
+                        DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    }
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        EsModuleIntrinsic,
+                        nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.ImportSource),
+                        [CreateEsModuleStringTemp(plan.ModuleId), specifierTemp,
+                            CreateEsModuleStringTemp(require.Phase), typeTemp],
+                        moduleTemp));
+                }
                 DefineTempStorage(moduleTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 if (!TryStoreToBinding(require.SourceBinding, moduleTemp, out _))
                 {

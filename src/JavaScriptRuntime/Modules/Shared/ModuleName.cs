@@ -93,7 +93,8 @@ namespace JavaScriptRuntime.Modules.Shared
             {
                 relative = relative.Substring(0, relative.Length - 3);
             }
-            else if (!relative.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            else if (relative.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
+                || relative.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
             {
                 // Path.ChangeExtension handles removing extension, but keep forward slashes.
                 relative = Path.ChangeExtension(relative.Replace('/', Path.DirectorySeparatorChar), null) ?? relative;

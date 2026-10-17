@@ -80,6 +80,10 @@ public sealed class EsModuleSourceRequire
     public required string Specifier { get; init; }
 
     public required BindingInfo SourceBinding { get; init; }
+
+    public string Phase { get; init; } = "None";
+
+    public string? ImportType { get; init; }
 }
 
 /// <summary>

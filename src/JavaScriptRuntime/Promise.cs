@@ -520,6 +520,40 @@ public partial class Promise : JsObject, IJavaScriptPromise
         }
     }
 
+    public static void AwaitModule(object? awaited, object? module)
+    {
+        if (module is Modules.CommonJS.Module { EvaluationPromise: not null } nativeModule)
+            nativeModule.AsyncBodyPromise = awaited as Promise;
+        else
+            AwaitTopLevel(awaited);
+    }
+
+    internal static Promise CreateModuleEvaluation()
+    {
+        var promise = new Promise();
+        promise.MarkHandled();
+        return promise;
+    }
+
+    internal void CompleteModuleEvaluation(object? error, bool rejected)
+        => Settle(rejected ? State.Rejected : State.Fulfilled, error);
+
+    internal bool TryGetModuleEvaluationResult(out bool rejected, out object? result)
+    {
+        MarkHandled();
+        lock (_reactions)
+        {
+            rejected = _state == State.Rejected;
+            result = _result;
+            return _state != State.Pending;
+        }
+    }
+
+    internal void ObserveModuleEvaluation(Action<object?> fulfilled, Action<object?> rejected)
+        => @then(
+            new BuiltinFunction1((_, value) => { fulfilled(value); return null; }),
+            new BuiltinFunction1((_, reason) => { rejected(reason); return null; }));
+
     public static void AwaitTopLevel(object? awaited)
     {
         if (awaited is not Promise promise)

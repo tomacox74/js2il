@@ -547,10 +547,16 @@ test('generation preserves module sibling dependencies without registering suppo
     const upstream = path.join(cwd, 'upstream');
     const folder = path.join(upstream, 'test/language/module-code');
     fs.mkdirSync(folder, { recursive: true });
-    const source = '/*--- flags: [module] ---*/\nimport { value } from "./dependency_FIXTURE.js";\nassert.sameValue(value, 42);\n';
+    const source = '/*--- flags: [module] ---*/\nimport { value } from "./dependency_FIXTURE.js";\n'
+      + 'import text from "./text_FIXTURE" with { type: "text" };\n'
+      + 'import bytes from "./binary_FIXTURE.png" with { type: "bytes" };\n'
+      + 'assert.sameValue(value, 42);\n';
     const dependency = 'export const value = 42;\n';
+    const binary = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0xff, 0x00]);
     fs.writeFileSync(path.join(folder, 'entry.js'), source);
     fs.writeFileSync(path.join(folder, 'dependency_FIXTURE.js'), dependency);
+    fs.writeFileSync(path.join(folder, 'text_FIXTURE'), 'not JavaScript\n');
+    fs.writeFileSync(path.join(folder, 'binary_FIXTURE.png'), binary);
     const sha256 = crypto.createHash('sha256').update(source).digest('hex');
     const runId = createRun(cwd);
     const catalog = createCatalog(cwd, [{
@@ -591,6 +597,8 @@ test('generation preserves module sibling dependencies without registering suppo
       fs.readFileSync(path.join(targetFolder, 'dependency_FIXTURE.js'), 'utf8'),
       dependency,
     );
+    assert.equal(fs.readFileSync(path.join(targetFolder, 'text_FIXTURE'), 'utf8'), 'not JavaScript\n');
+    assert.deepEqual(fs.readFileSync(path.join(targetFolder, 'binary_FIXTURE.png')), binary);
     const registration = fs.readFileSync(path.join(
       cwd, 'tests/Jroc.Test262.Tests/language/module-code/NativePortBatch_batch_1.cs',
     ), 'utf8');

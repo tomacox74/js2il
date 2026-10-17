@@ -335,6 +335,9 @@ namespace JavaScriptRuntime
         internal bool IsDetached => _isDetached;
         internal bool IsImmutable => _isImmutable;
 
+        internal static ArrayBuffer FromImmutableBytes(byte[] bytes)
+            => new(bytes, cloneBuffer: false) { _isImmutable = true };
+
         internal void Detach()
         {
             if (this is SharedArrayBuffer)

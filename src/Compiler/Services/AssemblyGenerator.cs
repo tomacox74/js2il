@@ -529,10 +529,11 @@ namespace Jroc.Services
             ilEncoder.LoadArgument(4);
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(asyncBodyHandle);
+            ilEncoder.LoadArgument(2);
             var awaitTopLevelRef = _memberReferenceRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.Promise),
-                nameof(JavaScriptRuntime.Promise.AwaitTopLevel),
-                parameterTypes: new[] { typeof(object) });
+                nameof(JavaScriptRuntime.Promise.AwaitModule),
+                parameterTypes: new[] { typeof(object), typeof(object) });
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(awaitTopLevelRef);
             ilEncoder.OpCode(ILOpCode.Ret);
@@ -646,6 +647,11 @@ namespace Jroc.Services
                     if (node is Acornima.Ast.ImportExpression import
                         && (import.Phase != Acornima.Ast.ImportPhase.None || import.Options != null))
                         needsImportMetadata = true;
+                    if (node is Acornima.Ast.ImportDeclaration declaration
+                        && (declaration.Phase != Acornima.Ast.ImportPhase.None || declaration.Attributes.Count > 0)
+                        || node is Acornima.Ast.ExportNamedDeclaration { Attributes.Count: > 0 }
+                        || node is Acornima.Ast.ExportAllDeclaration { Attributes.Count: > 0 })
+                        needsImportMetadata = true;
                 });
             }
 
@@ -680,7 +686,8 @@ namespace Jroc.Services
                 {
                     var infoConstructor = _memberReferenceRegistry.GetOrAddConstructor(
                         typeof(Jroc.Runtime.JsCompiledEsModuleAttribute),
-                        [typeof(string), typeof(bool), typeof(string[]), typeof(string[]), typeof(string), typeof(string), typeof(string)]);
+                        [typeof(string), typeof(bool), typeof(string[]), typeof(string[]), typeof(string), typeof(string),
+                            typeof(string), typeof(string), typeof(string), typeof(string[]), typeof(bool)]);
                     var info = new BlobBuilder();
                     info.WriteUInt16(1);
                     WriteSerString(info, canonicalModuleId);
@@ -706,6 +713,18 @@ namespace Jroc.Services
                         WriteSerString(info, resolutionError);
                     else
                         info.WriteByte(0xff);
+                    if (module.TextSource is { } textSource)
+                        WriteSerString(info, textSource);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.BytesSource is { } bytesSource)
+                        WriteSerString(info, bytesSource);
+                    else
+                        info.WriteByte(0xff);
+                    info.WriteInt32(dependencies.Length);
+                    foreach (var request in module.ModuleRecord.RequestedModules)
+                        WriteSerString(info, request.ImportType is { } importType ? "Type:" + importType : request.Phase);
+                    info.WriteBoolean(module.UsesNativeStaticEsm);
                     info.WriteUInt16(0);
                     _metadataBuilder.AddCustomAttribute(_assemblyDefinition, infoConstructor, _metadataBuilder.GetOrAddBlob(info));
                 }
