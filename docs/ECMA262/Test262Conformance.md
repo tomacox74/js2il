@@ -129,10 +129,24 @@ and selected binary-property matching now uses independently pinned Unicode 17
 ranges and exact aliases, including unassigned code points, composite
 categories, astral characters, and lone surrogates. Mode-specific case-folding
 complement order also applies to these properties. The two batches together
-verify every generated Script and Script_Extensions case. Other binary
-properties and advanced v-set operations remain limited. Selection and native
+verify every generated Script and Script_Extensions case. Selection and native
 validation have the same branch-local scope and central-access limitation as
 the first batch; these are not central trusted acceptance results.
+
+The final core RegExp batch verifies 294 more cases across all 588 required
+strict/non-strict variants and explicitly excludes seven direct-eval cases.
+All 1,879 pinned core `built-ins/RegExp` cases now have an outcome: 1,872
+verified passing and seven known unsupported. The separately reported
+Annex B RegExp area is not included in this total. Coverage includes the
+remaining binary properties, all seven emoji properties of strings, nested
+v-mode unions/intersections/subtractions and string disjunctions, scoped
+modifiers, JavaScript character escapes, constructor coercion and early
+errors, Unicode capture names, capture resets, nullable repetitions, and
+large quantifier bounds. Official Unicode 17 UCD and emoji files are
+independently checksum-pinned. Long concatenation chains also exposed and
+fixed exponential compiler AST traversal. Selection and native validation
+remain branch-local because central reporting access was unavailable; these
+results are not central trusted acceptance.
 
 ## Native test runner
 
@@ -172,19 +186,22 @@ independent compiled agent scripts, shared buffer backing stores, reports, and
 bounded worker cleanup.
 
 Fixtures including `regExpUtils.js` receive native `buildString`,
-`testPropertyEscapes`, and `matchValidator` helpers. String construction
+`testPropertyEscapes`, `testPropertyOfStrings`, its identical
+`testExtendedCharacterClass` alias, and `matchValidator` helpers. String construction
 preserves code points, lone surrogates, and argument coercion order. Property
 checks first try the complete string, then retain the upstream per-code-point
 fallback, callback receiver/order, assertion messages, and iterator closing.
+String-property checks retain the upstream complete-string and conditional
+per-string fallback behavior. The standard host `print` binding is also available.
 
 ## Overall ECMA-262 Areas
 
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,574 | 24 | 5,914 | 23,512 | **74.74%** |
+| Built-in objects and APIs | 17,868 | 31 | 5,613 | 23,512 | **76.00%** |
 | Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
-| **Total** | 37,524 | 331 | 10,386 | 48,241 | **77.78%** |
+| **Total** | 37,818 | 338 | 10,085 | 48,241 | **78.39%** |
 
 ## Language Areas
 
@@ -376,7 +393,7 @@ fallback, callback receiver/order, assertion messages, and iterator closing.
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,578 | 0 | 301 | 1,879 | **83.98%** |
+| `RegExp` | 1,872 | 7 | 0 | 1,879 | **99.63%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |

@@ -80,6 +80,8 @@ public sealed class RegExpFastPathRuntimeTests
     [InlineData(".+", "s", "a\nb", null)]
     [InlineData("(a)", "", "aba", null)]
     [InlineData("(a)?b", "", "abc", null)]
+    [InlineData("(a?)*", "d", "ab", null)]
+    [InlineData("(?:a?)*", "", "ab", null)]
     public void OptimizedSplitMatchesObservableExecFallback(string pattern, string flags, string input, double? limit)
     {
         WithRealm(() =>

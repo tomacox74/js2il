@@ -17,6 +17,10 @@ public static class Test262HostRuntimeIntrinsics
         var included = harnessFiles?.ToHashSet(StringComparer.Ordinal)
             ?? [];
         var builder = new HostRuntimeIntrinsicDescriptorsBuilder()
+            .AddGlobalFactory("print", () => CreateFunction(
+                (Action<object?>)(static value => _ = DotNet2JSConversions.ToString(value)),
+                "print",
+                1))
             .AddGlobalFactory("assert", () => CreateNodeAssertAdapter(included))
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalFactory("$ERROR", () => CreateFunction(

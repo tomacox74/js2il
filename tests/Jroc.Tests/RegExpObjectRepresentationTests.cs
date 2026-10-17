@@ -169,6 +169,29 @@ public sealed class RegExpObjectRepresentationTests
         Assert.Equal($"a:ab{Environment.NewLine}", result.Output);
     }
 
+    [Fact]
+    public void RepetitionProgressCaptures_AreInternalToTheRegexEngine()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "regexp-internal-repetition-captures",
+            "RegExp.InternalCaptures",
+            static _ => ("""
+                const re = /(?<__jrocProgress1>a?)*/d;
+                const match = re.exec('a');
+                console.log(match.length, match.indices.length, Object.keys(match.groups).join(','));
+                console.log(match[1], match.indices[1].join(','));
+                console.log('a'.replace(re, '$1/$2/$<__jrocProgress1>'));
+                console.log('a'.replace(re, function() {
+                    return arguments.length + ':' + arguments[1] + ':' + arguments[2] + ':' + arguments[4].__jrocProgress1;
+                }));
+                const behind = /(?<=(a?){0,2})b/d.exec('ab');
+                console.log(behind.length, behind[1], behind.indices[1].join(','));
+                """, null));
+
+        Assert.Equal(string.Join(Environment.NewLine,
+            "2 2 __jrocProgress1", "a 0,1", "a/$2/a", "5:a:0:a", "2 a 0,1", ""), result.Output);
+    }
+
     private static (string Script, string? SourcePath) GetDescriptorIsolationScript(string testName)
         => testName switch
         {

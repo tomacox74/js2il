@@ -6,6 +6,26 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the pinned core built-in RegExp inventory with 301 exact
+  upstream fixtures: 294 verified cases across all 588 required native
+  variants, plus seven explicit direct-eval skips. The core area now has
+  1,872 verified cases and seven known unsupported cases out of 1,879;
+  separately tracked Annex B RegExp cases are unchanged.
+- fix(regexp): support the remaining binary properties, all seven Unicode
+  string properties, and nested v-mode union/intersection/subtraction and
+  string disjunctions using independently checksum-pinned Unicode 17 UCD
+  and emoji data. Preserve JavaScript character-class escapes, word
+  boundaries, scoped i/m/s modifiers, exact anchors, and mode-specific folding.
+  Validate constructor patterns with the JavaScript parser, preserve
+  constructor coercion/identity and escaped capture names, reset captures
+  across every quantified alternative, reject optional empty iterations,
+  and lower large quantifier bounds without the CLR integer syntax limit.
+  Keep repetition-helper captures out of JavaScript results and replacements.
+  Add native string-property harness helpers and the standard print binding.
+- fix(compiler): traverse each canonical AST child once during symbol-table
+  construction instead of visiting both reflected properties and ChildNodes.
+  This removes exponential compilation of long concatenation chains exposed
+  by three RegExp execution fixtures without increasing execution timeouts.
 - test262: verify 200 more pinned built-in RegExp cases: the remaining 150
   generated Script_Extensions cases, all 38 generated General_Category cases,
   and twelve binary-property cases. All 400 required native variants pass;
@@ -16,7 +36,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   Changes_When_Casefolded, Changes_When_Casemapped, and Changes_When_Lowercased.
   Preserve complete-code-point matching, lone surrogates, scoped ignoreCase,
   and distinct u/v case-folding complement order for these properties.
-  Other binary properties and advanced v-set operations remain limited.
+  Remaining properties and v-set operations are covered by the final batch above.
 - fix(perf): make the missing SharpTS hosting abstraction dependency available
   to BenchmarkDotNet's generated child executables as well as both benchmark
   hosts, fixing all eleven SharpTS Dromaeo/Kraken release benchmark failures.
@@ -36,7 +56,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   stay within the normal execution budget without raising test timeouts.
   Weakly retain cold CLR regex instances so Unicode-wide matching does not pin
   input-sized backtracking buffers in the process-wide compilation cache.
-  Other Unicode properties and advanced v-set operations remain limited.
+  Remaining Unicode properties and v-set operations are covered by the later batches above.
 
 ## v0.12.33 - 2026-10-17
 

@@ -20,6 +20,7 @@ namespace JavaScriptRuntime
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
             GlobalThis.ConfigureConstructorPrototypeSurface(constructorValue, JavaScriptRuntime.RegExp.Prototype, objectPrototype);
+            Function.DefineMetadataProperty(constructorValue, "length", 2d);
             GlobalThis.DefineSpeciesAccessorProperty(constructorValue);
             GlobalThis.DefineBuiltinFunctionProperty(constructorValue, "escape", _regExpEscapeValue, 1d);
         }
@@ -77,6 +78,7 @@ namespace JavaScriptRuntime
         private readonly (string Name, int Number)[] _namedGroups;
         private readonly int[] _captureResetAncestors;
         private readonly CaptureBoundaryKind[] _captureBoundaryKinds;
+        private readonly int _captureCount;
         private WellKnownSymbolFastPathFlags _wellKnownSymbolFastPathFlags;
 
         private enum CaptureBoundaryKind
@@ -99,9 +101,26 @@ namespace JavaScriptRuntime
         }
 
         public RegExp(object? pattern, object? flags)
+            : this(pattern, flags, null)
         {
-            _source = NormalizeSource(pattern);
-            var parsedFlags = ParseFlags(NormalizeFlags(pattern, flags));
+        }
+
+        private RegExp(object? pattern, object? flags, bool? isRegExp)
+        {
+            var patternIsRegExp = isRegExp ?? IsRegExp(pattern);
+            object? source = pattern;
+            if (pattern is RegExp existing)
+            {
+                source = existing._source;
+                flags ??= existing.flags;
+            }
+            else if (patternIsRegExp)
+            {
+                source = ObjectRuntime.GetItem(pattern!, "source");
+                flags ??= ObjectRuntime.GetItem(pattern!, "flags");
+            }
+            _source = source is null ? string.Empty : DotNet2JSConversions.ToStringRejectingSymbols(source);
+            var parsedFlags = ParseFlags(flags is null ? string.Empty : DotNet2JSConversions.ToStringRejectingSymbols(flags));
 
             _global = parsedFlags.Global;
             _sticky = parsedFlags.Sticky;
@@ -117,6 +136,7 @@ namespace JavaScriptRuntime
             _namedGroups = compiled.NamedGroups!;
             _captureResetAncestors = compiled.CaptureResetAncestors!;
             _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
+            _captureCount = compiled.CaptureCount;
             _simpleLiteralPattern = IsSimpleLiteralPattern(compiled, parsedFlags) ? _source : null;
 
             lastIndex = 0;
@@ -140,6 +160,7 @@ namespace JavaScriptRuntime
             _namedGroups = compiled.NamedGroups!;
             _captureResetAncestors = compiled.CaptureResetAncestors!;
             _captureBoundaryKinds = compiled.CaptureBoundaryKinds!;
+            _captureCount = compiled.CaptureCount;
             _simpleLiteralPattern = IsSimpleLiteralPattern(compiled, flags)
                 ? _source
                 : null;
@@ -183,16 +204,17 @@ namespace JavaScriptRuntime
 
         public static object Call(object? pattern, object? flags)
         {
-            if (flags == null && pattern is not null and not JsNull)
+            var isRegExp = IsRegExp(pattern);
+            if (flags == null && isRegExp)
             {
-                var constructor = JavaScriptRuntime.ObjectRuntime.GetItem(pattern, "constructor");
-                if (IsSameRegExpConstructor(constructor) && (IsRegExp(pattern) || constructor != null))
+                var constructor = JavaScriptRuntime.ObjectRuntime.GetItem(pattern!, "constructor");
+                if (IsSameRegExpConstructor(constructor))
                 {
-                    return pattern;
+                    return pattern!;
                 }
             }
 
-            return new RegExp(pattern, flags);
+            return new RegExp(pattern, flags, isRegExp);
         }
 
         public static string Escape(object? input)
@@ -375,8 +397,8 @@ namespace JavaScriptRuntime
 
             UpdateLastIndexAfterSuccess(s, match);
 
-            var result = new JavaScriptRuntime.Array(match.Groups.Count);
-            for (int i = 0; i < match.Groups.Count; i++)
+            var result = new JavaScriptRuntime.Array(_captureCount + 1);
+            for (int i = 0; i <= _captureCount; i++)
             {
                 var g = match.Groups[i];
                 result.Add(IsCaptureParticipating(match, i) ? g.Value : null);
@@ -959,12 +981,6 @@ namespace JavaScriptRuntime
 
             var flagsValue = ObjectRuntime.GetItem(regExp, "flags");
             var flags = DotNet2JSConversions.ToStringRejectingSymbols(flagsValue);
-            if (species is null)
-            {
-                // The intrinsic RegExp constructor observes @@match on its pattern.
-                IsRegExp(regExp);
-            }
-
             var matcher = species is null or JsNull
                 ? CallableOperations.Construct(
                     BuiltinDelegateFunctionAdapter.FromDelegate(GlobalThis.RegExp),
@@ -1092,31 +1108,6 @@ namespace JavaScriptRuntime
             return "/" + _source + "/" + flags;
         }
 
-        private static string NormalizeSource(object? pattern)
-        {
-            if (pattern is null)
-            {
-                return string.Empty;
-            }
-
-            if (pattern is RegExp existing)
-            {
-                return existing.source;
-            }
-
-            return DotNet2JSConversions.ToString(pattern) ?? string.Empty;
-        }
-
-        private static string NormalizeFlags(object? pattern, object? flags)
-        {
-            if (flags is null || flags is JsNull)
-            {
-                return pattern is RegExp existing ? existing.flags : string.Empty;
-            }
-
-            return DotNet2JSConversions.ToString(flags) ?? string.Empty;
-        }
-
         private static bool IsSimpleLiteralPattern(CompiledPattern compiled, ParsedFlags parsedFlags)
         {
             return compiled.SourceHasNoSpecialCharacters
@@ -1227,16 +1218,11 @@ namespace JavaScriptRuntime
         }
 
         private static string PreparePatternForDotNetRegex(
-            string source, bool unicode, bool dotAll, bool unicodeSets, bool ignoreCase)
+            string source, bool unicode, bool dotAll, bool unicodeSets, bool ignoreCase, bool multiline)
         {
-            var prepared = source;
-
-            prepared = RewriteEmptyCharacterClasses(prepared);
-            if (unicode)
-            {
-                prepared = RewriteUnicodeCodePointEscapes(
-                    RewriteUnicodeClassesAndProperties(prepared, unicodeSets, ignoreCase));
-            }
+            var prepared = unicode ? source : RewriteLegacyIdentityEscapes(source);
+            prepared = RewritePatternCharacters(prepared, unicode, unicodeSets, ignoreCase, dotAll, multiline);
+            if (unicode) prepared = RewriteUnicodeCodePointEscapes(prepared);
 
             if (!unicode)
             {
@@ -1244,7 +1230,6 @@ namespace JavaScriptRuntime
                 // special regex meaning (e.g. "\X", or "\x"/"\u" not followed by the right
                 // number of hex digits) is just an identity escape for that literal character.
                 // .NET has no such fallback and throws, so rewrite these before compiling.
-                prepared = RewriteLegacyIdentityEscapes(prepared);
 
                 // Annex B.1.2: "\k<name>" is only a backreference when "name" is an
                 // actually-defined named group; otherwise it is a legacy literal match for
@@ -1253,14 +1238,7 @@ namespace JavaScriptRuntime
                 prepared = RewriteUnresolvedNamedBackreferences(prepared);
             }
 
-            if (dotAll)
-            {
-                return unicode
-                    ? RewriteDots(prepared, UnicodeDotAllPattern)
-                    : prepared;
-            }
-
-            return RewriteDots(prepared, unicode ? UnicodeDotPattern : DotPattern);
+            return prepared;
         }
 
         private const string RecognizedRegexEscapeLetters = "dDwWsSbBnrtvfcxuk";
@@ -1352,7 +1330,7 @@ namespace JavaScriptRuntime
                     var closeIndex = pattern.IndexOf('>', i + 3);
                     if (closeIndex > i + 2)
                     {
-                        var name = pattern.Substring(i + 3, closeIndex - (i + 3));
+                        var name = DecodeCaptureName(pattern.Substring(i + 3, closeIndex - (i + 3)));
                         if (!definedNames.Contains(name))
                         {
                             builder.Append("k<").Append(Regex.Escape(name)).Append('>');
@@ -1395,7 +1373,7 @@ namespace JavaScriptRuntime
                     var closeIndex = pattern.IndexOf('>', i + 3);
                     if (closeIndex > i + 2)
                     {
-                        names.Add(pattern.Substring(i + 3, closeIndex - (i + 3)));
+                        names.Add(DecodeCaptureName(pattern.Substring(i + 3, closeIndex - (i + 3))));
                     }
                 }
             }
@@ -1403,7 +1381,7 @@ namespace JavaScriptRuntime
             return names;
         }
 
-        private static string RewriteCaptureGroups(string pattern, out (string Name, int Number)[] namedGroups)
+        private static string RewriteCaptureGroups(string pattern, out (string Name, int Number)[] namedGroups, out int captureCount)
         {
             var captures = new Dictionary<int, (int Number, int HeaderLength)>();
             var names = new Dictionary<string, List<int>>(StringComparer.Ordinal);
@@ -1432,11 +1410,7 @@ namespace JavaScriptRuntime
                 {
                     var end = pattern.IndexOf('>', index + 3);
                     if (end < 0) throw new SyntaxError("Invalid named capture group");
-                    var name = pattern[(index + 3)..end];
-                    if (!IsValidNamedCaptureIdentifier(name))
-                    {
-                        throw new SyntaxError("Invalid named capture identifier");
-                    }
+                    var name = DecodeCaptureName(pattern[(index + 3)..end]);
                     var number = captures.Count + 1;
                     captures.Add(index, (number, end - index + 1));
                     if (!names.TryGetValue(name, out var numbers))
@@ -1450,6 +1424,7 @@ namespace JavaScriptRuntime
                 }
             }
             namedGroups = groups.ToArray();
+            captureCount = captures.Count;
             if (captures.Count == 0) return pattern;
 
             var builder = new StringBuilder(pattern.Length);
@@ -1469,7 +1444,7 @@ namespace JavaScriptRuntime
                         end = pattern.IndexOf('>', index + 3);
                         if (end >= 0)
                         {
-                            names.TryGetValue(pattern[(index + 3)..end], out referencedGroups);
+                            names.TryGetValue(DecodeCaptureName(pattern[(index + 3)..end]), out referencedGroups);
                         }
                     }
                     else if (!inCharacterClass && pattern[index + 1] is >= '1' and <= '9')
@@ -1528,9 +1503,10 @@ namespace JavaScriptRuntime
                         var reset = new StringBuilder();
                         foreach (var number in frame.Captures)
                         {
-                            reset.Append("(?<-").Append(number).Append(">)*");
+                            reset.Append("(?>(?<-").Append(number).Append(">)*)");
                         }
-                        resets.Add((frame.BodyStart, reset.ToString()));
+                        resets.Add((frame.BodyStart, reset.Append("(?:").ToString()));
+                        resets.Add((builder.Length, ")"));
                     }
                 }
                 builder.Append(pattern[index]);
@@ -1546,92 +1522,21 @@ namespace JavaScriptRuntime
             return builder.ToString();
         }
 
-        private static bool IsValidNamedCaptureIdentifier(string name)
+        private static string DecodeCaptureName(string name)
         {
-            var first = true;
-            foreach (var rune in name.EnumerateRunes())
+            if (!name.Contains('\\')) return name;
+            var result = new StringBuilder();
+            for (var index = 0; index < name.Length;)
             {
-                var category = Rune.GetUnicodeCategory(rune);
-                var isStart = rune.Value is '$' or '_'
-                    || Rune.IsLetter(rune)
-                    || category == UnicodeCategory.LetterNumber;
-                if (first ? !isStart
-                    : !isStart && category is not (
-                        UnicodeCategory.DecimalDigitNumber or UnicodeCategory.NonSpacingMark
-                        or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.ConnectorPunctuation)
-                        && rune.Value is not (0x200C or 0x200D))
+                if (name[index] != '\\') result.Append(name[index++]);
+                else
                 {
-                    return false;
+                    var point = ReadClassCodeUnit(name, ref index, false)
+                        ?? throw new SyntaxError("Invalid named capture identifier");
+                    AppendUnicodePoint(result, point);
                 }
-
-                first = false;
             }
-
-            return !first;
-        }
-
-        /// <summary>
-        /// JS's "[]" (an empty character class, which never matches any character) and "[^]"
-        /// (its negation, which matches any single character) are not valid .NET character
-        /// classes — .NET requires at least one class member. Rewrite exactly those two forms
-        /// to .NET-compatible equivalents ("(?!)" and "[\s\S]" respectively); every other
-        /// (non-empty) character class is copied through untouched.
-        /// </summary>
-        private static string RewriteEmptyCharacterClasses(string pattern)
-        {
-            if (pattern.IndexOf('[') < 0)
-            {
-                return pattern;
-            }
-
-            var builder = new StringBuilder(pattern.Length);
-            var insideCharacterClass = false;
-
-            for (int i = 0; i < pattern.Length; i++)
-            {
-                var ch = pattern[i];
-                if (ch == '\\')
-                {
-                    builder.Append(ch);
-                    if (i + 1 < pattern.Length)
-                    {
-                        builder.Append(pattern[i + 1]);
-                        i++;
-                    }
-
-                    continue;
-                }
-
-                if (!insideCharacterClass && ch == '[')
-                {
-                    if (i + 1 < pattern.Length && pattern[i + 1] == ']')
-                    {
-                        builder.Append("(?!)");
-                        i++;
-                        continue;
-                    }
-
-                    if (i + 2 < pattern.Length && pattern[i + 1] == '^' && pattern[i + 2] == ']')
-                    {
-                        builder.Append(@"[\s\S]");
-                        i += 2;
-                        continue;
-                    }
-
-                    insideCharacterClass = true;
-                    builder.Append(ch);
-                    continue;
-                }
-
-                if (insideCharacterClass && ch == ']')
-                {
-                    insideCharacterClass = false;
-                }
-
-                builder.Append(ch);
-            }
-
-            return builder.ToString();
+            return result.ToString();
         }
 
         private static string RewriteUnicodeCodePointEscapes(string pattern)
@@ -1695,57 +1600,6 @@ namespace JavaScriptRuntime
             builder.Append(char.ConvertFromUtf32(codePoint));
         }
 
-        private static string RewriteDots(string pattern, string replacement)
-        {
-            if (pattern.IndexOf('.') < 0)
-            {
-                return pattern;
-            }
-
-            var builder = new StringBuilder(pattern.Length);
-            var insideCharacterClass = false;
-
-            for (int i = 0; i < pattern.Length; i++)
-            {
-                var ch = pattern[i];
-                if (ch == '\\')
-                {
-                    builder.Append(ch);
-                    if (i + 1 < pattern.Length)
-                    {
-                        builder.Append(pattern[i + 1]);
-                        i++;
-                    }
-
-                    continue;
-                }
-
-                if (ch == '[')
-                {
-                    insideCharacterClass = true;
-                    builder.Append(ch);
-                    continue;
-                }
-
-                if (ch == ']' && insideCharacterClass)
-                {
-                    insideCharacterClass = false;
-                    builder.Append(ch);
-                    continue;
-                }
-
-                if (ch == '.' && !insideCharacterClass)
-                {
-                    builder.Append(replacement);
-                    continue;
-                }
-
-                builder.Append(ch);
-            }
-
-            return builder.ToString();
-        }
-
         private void InitializeIntrinsicSurface()
         {
             PrototypeChain.InitializePrototype(this, Prototype);
@@ -1785,8 +1639,8 @@ namespace JavaScriptRuntime
 
         private JavaScriptRuntime.Array CreateIndicesArray(Match match)
         {
-            var indices = new JavaScriptRuntime.Array(match.Groups.Count);
-            for (int i = 0; i < match.Groups.Count; i++)
+            var indices = new JavaScriptRuntime.Array(_captureCount + 1);
+            for (int i = 0; i <= _captureCount; i++)
             {
                 var group = match.Groups[i];
                 if (!IsCaptureParticipating(match, i))
@@ -1851,6 +1705,7 @@ namespace JavaScriptRuntime
                 }
             }
             public (string Name, int Number)[]? NamedGroups;
+            public int CaptureCount;
             public int[]? CaptureResetAncestors;
             public CaptureBoundaryKind[]? CaptureBoundaryKinds;
             public bool SourceHasNoSpecialCharacters;
@@ -2021,10 +1876,18 @@ namespace JavaScriptRuntime
         {
             try
             {
+                var validationFlags = (unicodeSets ? "v" : unicode ? "u" : "")
+                    + ((options & RegexOptions.IgnoreCase) != 0 ? "i" : "");
+                if (!Acornima.Tokenizer.ValidateRegExp(source, validationFlags, out var error))
+                {
+                    return new CompiledPattern { SyntaxErrorMessage = error.Description };
+                }
                 var preparedPattern = RewriteCaptureGroups(
                     PreparePatternForDotNetRegex(
-                        source, unicode, dotAll, unicodeSets, (options & RegexOptions.IgnoreCase) != 0),
-                    out var namedGroups);
+                        source, unicode, dotAll, unicodeSets, (options & RegexOptions.IgnoreCase) != 0,
+                        (options & RegexOptions.Multiline) != 0),
+                    out var namedGroups, out var captureCount);
+                preparedPattern = new RepetitionRewriter(preparedPattern).Rewrite();
                 var regex = new Regex(preparedPattern, options);
                 var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex);
 
@@ -2032,6 +1895,7 @@ namespace JavaScriptRuntime
                 {
                     Regex = regex,
                     NamedGroups = namedGroups,
+                    CaptureCount = captureCount,
                     CaptureResetAncestors = ancestors,
                     CaptureBoundaryKinds = boundaryKinds,
                     SourceHasNoSpecialCharacters = HasNoSpecialRegexCharacters(source)
