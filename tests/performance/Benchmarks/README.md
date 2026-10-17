@@ -6,6 +6,7 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 - **Jint** - .NET JavaScript interpreter
 - **Okojo** - fully managed .NET JavaScript runtime
 - **YantraJS** - .NET JavaScript runtime
+- **SharpTS** - TypeScript/JavaScript-to-IL compiler, measured in Dromaeo and Kraken execution suites
 - **jroc** - JavaScript-to-IL AOT compiler
 - **JrocPrevious** - previous published JROC patch release, measured by CI on the same runner as the current release
 
@@ -18,6 +19,48 @@ This suite provides:
 3. **Structured scenario catalog** - Organized, reusable benchmark scenarios
 4. **Machine-readable outputs** - JSON and structured reports for historical trend analysis
 5. **Licensing compliance** - Tracked provenance for all benchmark scripts
+
+## SharpTS execution benchmarks
+
+SharpTS 1.0.12 runs all ten Dromaeo scenarios and Kraken's
+`json-parse-financial` scenario by default. Both suites report `sharpts-execute`;
+Supabase ingestion records the pinned `SharpTS.Hosting` version.
+
+Compilation, assembly loading, and delegate binding happen in `GlobalSetup`.
+Dromaeo invokes the compiled script body on every operation, reinitializing its
+top-level state. Kraken initializes its data and registers its workload once in
+setup, then invokes the prepared `runBenchmark` delegate for each operation.
+Neither timed method launches a process or reparses source. Cleanup releases the
+delegates and unloads the collectible assembly context.
+
+The adapter passes the original JavaScript source unchanged to SharpTS's lenient
+CommonJS checker using a virtual `.cjs` filename, then emits a single script with
+`ILCompiler.Compile`. This avoids TypeScript-only diagnostics for dynamic JS and
+the module initializer's run-once guard, which would make repeated Dromaeo
+measurements skip the workload. The caller's synchronization context is restored
+after each script entry-point invocation.
+
+SharpTS 1.0.12 emits invalid IL for `audio-dft`, `audio-oscillator`,
+`audio-beat-detection`, and `ai-astar`. Those SharpTS/scenario combinations are
+excluded by default and remain available with `--comprehensive` for upstream
+compatibility investigations. The source fixtures are unchanged.
+
+`SharpTS.Hosting` 1.0.12 omits its required `SharpTS.Hosting.Abstractions.dll`.
+Both benchmark projects download the matching official `SharpTS` tool package
+and reference that assembly. No global tool install or extra workflow setup is
+required. A direct `System.Security.Cryptography.Pkcs` reference overrides the
+hosting package's vulnerable transitive 8.0.1 dependency.
+
+```bash
+# Check lifecycle correctness and execute every enabled SharpTS scenario twice.
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- --validate-sharpts
+
+# Run only the SharpTS counters (use --job Dry for a smoke run).
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --dromaeo --filter '*SharpTs*'
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --kracken --filter '*SharpTs*'
+```
 
 ## Project Structure
 
@@ -665,6 +708,7 @@ dotnet run -c Release -- --exporters html,json,markdown
 - **Jint prepare**: Script preparation/parsing phase via `Engine.PrepareScript`
 - **Jint execute (prepared)**: Execution phase using a previously prepared script
 - **Okojo execute**: Execution phase using setup-prepared Okojo bytecode
+- **SharpTS execute**: Execution of setup-compiled IL in the Dromaeo and Kraken suites
 
 ### Interpreting Ratios
 
