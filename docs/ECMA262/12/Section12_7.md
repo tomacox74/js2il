@@ -4,7 +4,7 @@
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-08T21:54:24Z
+> Last generated (UTC): 2026-10-17T05:03:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,5 +28,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Identifier names, keywords, and reserved-word syntax | Supported with Limitations | `tests/Jroc.Test262.Tests/language/identifiers/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/keywords/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/future-reserved-words/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/reserved-words/LexicalSourceConformanceBatchTests.cs` |  | One hundred seventy pinned Test262 fixtures are natively verified across Unicode identifier names, keywords, future reserved words, and reserved-word property-name syntax. |
+| Identifier names, keywords, and reserved-word syntax | Supported with Limitations | `tests/Jroc.Test262.Tests/language/identifiers/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/identifiers/IdentifiersImportCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/keywords/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/future-reserved-words/LexicalSourceConformanceBatchTests.cs`<br>`tests/Jroc.Test262.Tests/language/reserved-words/LexicalSourceConformanceBatchTests.cs` |  | Pinned native coverage includes Unicode identifier names, keywords, future reserved words, and reserved-word property-name syntax. All 268 standalone language/identifiers cases now have verified results, including 116 additional syntax negatives covering reserved bindings, escaped keywords, and invalid identifier code points. Every required strict/non-strict variant is checked; no case in this area requires an eval exclusion. |
 

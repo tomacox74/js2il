@@ -213,9 +213,10 @@ contract is covered end to end by
 `scripts/test262/nativeScreeningHost.test.js`, which runs the built host and
 imports its real stdout.
 Strict and non-strict variants remain distinct, and runtime-negative tests must
-match their declared error type. Module and compile-negative fixtures are
-reported as explicit harness gaps in this first release rather than accepted
-without exact phase/type evidence. Outcomes are committed transactionally and
+match their declared error type. The first release reported Module and
+compile-negative fixtures as explicit harness gaps rather than accepting
+them without exact phase/type evidence; current support is described below.
+Outcomes are committed transactionally and
 include the fixture hash, upstream pin, compiler/runtime identity,
 harness/environment identity, phase, diagnostic and failure classification.
 The active compiler, harness and environment identity is persisted before
@@ -233,12 +234,18 @@ Module-goal entries with or without static import/export syntax (including
 top-level await and relative sibling dependencies), sibling fixture files and harness
 files. MVP-blocked async, agent, CanBlock and module fixtures remain eligible
 for native selection when they have no other unsupported reason. Unsupported
-raw fixtures, unknown helper includes, and early/resolution-negative fixtures remain explicit
-`harness-gap` outcomes; they are never accepted as passes. Worker isolation
+raw fixtures, unknown helper includes, early negatives, and resolution
+negatives other than SyntaxError remain explicit `harness-gap` outcomes;
+they are never accepted as passes. Resolution SyntaxError checks require a
+successfully parsed Module entry and a recognized missing/ambiguous-export
+diagnostic or an independently verified dependency syntax error. They never
+execute the module or accept missing files and unrelated compiler failures.
+Worker isolation
 and timeouts apply to every variant, and agent state is disposed with the
 worker runtime. Focused host integration tests verify successful async and
 agent completion, module dependency loading, undefined module-level this,
-module top-level await without import/export syntax, parse-negative SyntaxErrors, agent failure propagation,
+module top-level await without import/export syntax, parse-negative
+SyntaxErrors, phase-checked resolution SyntaxErrors, agent failure propagation,
 process-tree timeout cleanup and a clean success after those failures.
 
 This matrix is an execution capability declaration, not an assertion that

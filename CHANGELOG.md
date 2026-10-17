@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete pinned identifiers and static-import coverage with 233
+  newly verified exact fixtures: 116 identifier syntax negatives and 117
+  import cases, with no eval-related skips. All 395 cases across both areas
+  pass their 668 required native variants. Support static JSON/text/immutable
+  byte imports and typed re-exports, preserving resource bytes and distinct
+  request identities. Correct deferred evaluation, asynchronous dependency
+  ordering, readiness checks, cached failures, and live star re-exports.
+  Preserve computed class field keys for exotic superclass returns, reject
+  namespace field definitions/private additions, and keep private-brand checks
+  false after failed namespace initialization. Extend native deep equality,
+  phase-checked resolution negatives, and binary/extensionless fixture support.
 - test262: add 16 exact pinned expression fixtures: ten verified passing and
   six explicit eval-related skips. Preserve direct tail calls through nullish
   coalescing and final comma operands at the full upstream recursion depth,

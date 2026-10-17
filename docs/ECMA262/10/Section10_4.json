@@ -543,9 +543,11 @@
         "testScripts": [
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js",
-          "tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/import/import-defer/deferred-namespace-object/IdentifiersImportCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs"
         ],
-        "notes": "Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Deferred namespaces have separate identities and evaluate on string-key operations other than then. CommonJS uses its existing synthetic namespace projection; general host module-record hooks remain unsupported."
+        "notes": "Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Static deferred namespaces have separate identities and a Deferred Module tag; symbol-like operations and writes do not evaluate them, while other string-key operations excluding then do. Evaluation requires ready asynchronous dependencies and caches thrown values. Public field definitions honor namespace exotic rejection; private additions fail and do not establish a private brand. CommonJS retains its synthetic namespace projection; general host module-record hooks remain unsupported."
       },
       {
         "clause": "10.4.7",
