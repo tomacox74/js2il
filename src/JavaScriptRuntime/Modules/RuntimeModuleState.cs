@@ -33,6 +33,10 @@ internal sealed class RuntimeModuleState : IDisposable
 
     internal ConditionalWeakTable<object, object> CommonJsNamespaceCache { get; } = new();
 
+    internal Dictionary<string, ModuleNamespace> DeferredNamespaces { get; } = new(StringComparer.Ordinal);
+    internal Dictionary<(string ModuleId, string Type), ModuleNamespace> TypedNamespaces { get; } = new();
+    internal Dictionary<string, Jroc.Runtime.JsCompiledEsModuleAttribute>? CompiledEsModuleInfo { get; set; }
+
     internal Assembly? ModulesAssembly { get; set; }
 
     internal Dictionary<string, (string CanonicalId, string TypeName)>?
@@ -55,6 +59,9 @@ internal sealed class RuntimeModuleState : IDisposable
         EsModuleBindings.Clear();
         EsModuleNamespaces.Clear();
         CommonJsNamespaceCache.Clear();
+        DeferredNamespaces.Clear();
+        TypedNamespaces.Clear();
+        CompiledEsModuleInfo = null;
         ModulesAssembly = null;
         CompiledModuleTypeMap = null;
         MainModule = null;

@@ -157,6 +157,9 @@ public sealed class RuntimeModuleStateTests
             RuntimeServices.RegisterModuleRequire("shared.js", static _ => null);
             EsModuleLinker.MarkEsModule(exports);
             _ = EsModuleInterop.ToDynamicImportResult(commonJsExports);
+            context.Realm.ModuleState.DeferredNamespaces["shared"] = new ModuleNamespace([], () => exports);
+            context.Realm.ModuleState.TypedNamespaces[("shared", "text")] = new ModuleNamespace(commonJsExports);
+            context.Realm.ModuleState.CompiledEsModuleInfo = new();
         }
 
         context.Realm.Dispose();
@@ -165,6 +168,9 @@ public sealed class RuntimeModuleStateTests
         Assert.Empty(context.Realm.ModuleState.ImportMetaByUrl);
         Assert.Empty(context.Realm.ModuleState.RequireByModuleId);
         Assert.Empty(context.Realm.ModuleState.EsModuleBindings);
+        Assert.Empty(context.Realm.ModuleState.DeferredNamespaces);
+        Assert.Empty(context.Realm.ModuleState.TypedNamespaces);
+        Assert.Null(context.Realm.ModuleState.CompiledEsModuleInfo);
         Assert.False(
             context.Realm.ModuleState.EsModuleNamespaces.TryGetValue(
                 exports,

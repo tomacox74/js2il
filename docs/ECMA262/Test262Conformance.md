@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.30](https://github.com/tomacox74/js2il/releases/tag/v0.12.30).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.32](https://github.com/tomacox74/js2il/releases/tag/v0.12.32).
 
 ## How to Read This Report
 
@@ -48,6 +48,23 @@ Release build. Catalogue MCP tools were unavailable for this batch, so
 selection and acceptance are explicitly local diagnosis/PR validation, not
 fresh central reporting or trusted central acceptance.
 
+Yield expressions now have verified passing results for all 63 applicable
+pinned cases, including all 123 required native execution variants. The 36
+newly verified cases cover operand errors and delegated iterator next, return,
+throw, result-access, and cleanup semantics. No case in this area depends on
+unsupported eval. Selection and validation are branch-local: catalogue MCP
+tools were unavailable, and the Data API denied the reporting schema. These
+results are not presented as central trusted acceptance.
+
+Dynamic import now has results for every applicable pinned case: 940 verified
+passing and one unsupported eval case. All 1,776 required native variants of the
+940 runnable cases pass under one frozen Release build. Coverage includes
+specifier and options evaluation, import attributes, namespace exotic-object
+operations, cached evaluation failures, source-phase rejection for JavaScript,
+and deferred evaluation with asynchronous dependencies. These results are
+branch-local; catalogue MCP tools were unavailable and the Data API denied the
+reporting schema. They are not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -61,6 +78,10 @@ Fixtures marked `flags: [module]` explicitly select the Module parse goal
 without changing their paths, even when their source has no import or export declarations.
 Other fixtures select the standard Script goal, rejecting top-level return and
 import/export declarations and instantiating realm-wide global declarations.
+Script-goal entries use private logical paths while retaining their original
+source paths for diagnostics. Importing the original path therefore creates a
+distinct Module Record rather than reusing the Script Record. Computed imports
+bundle sibling module/JSON support files without executing them as entries.
 The native `$262.evalScript` helper compiles additional global scripts into
 collectible assemblies in the current realm; it does not implement JavaScript
 direct or indirect `eval`. Script completion values are not currently exposed
@@ -84,8 +105,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
-| Language syntax and semantics | 19,160 | 247 | 4,240 | 23,647 | **81.03%** |
-| **Total** | 36,394 | 271 | 11,580 | 48,245 | **75.44%** |
+| Language syntax and semantics | 19,835 | 248 | 3,564 | 23,647 | **83.88%** |
+| **Total** | 37,069 | 272 | 10,904 | 48,245 | **76.84%** |
 
 ## Language Areas
 
@@ -100,7 +121,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,153 | 188 | 697 | 11,038 | **91.98%** |
+| `expressions` | 10,828 | 189 | 21 | 11,038 | **98.10%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -147,7 +168,7 @@ bounded worker cleanup.
 | `delete` | 68 | 1 | 0 | 69 | **98.55%** |
 | `division` | 43 | 0 | 2 | 45 | **95.56%** |
 | `does-not-equals` | 36 | 0 | 2 | 38 | **94.74%** |
-| `dynamic-import` | 301 | 0 | 640 | 941 | **31.99%** |
+| `dynamic-import` | 940 | 1 | 0 | 941 | **99.89%** |
 | `equals` | 45 | 0 | 2 | 47 | **95.74%** |
 | `exponentiation` | 2 | 0 | 42 | 44 | **4.55%** |
 | `function` | 246 | 3 | 15 | 264 | **93.18%** |
@@ -192,7 +213,7 @@ bounded worker cleanup.
 | `unary-plus` | 15 | 2 | 0 | 17 | **88.24%** |
 | `unsigned-right-shift` | 45 | 0 | 0 | 45 | **100.00%** |
 | `void` | 8 | 1 | 0 | 9 | **88.89%** |
-| `yield` | 27 | 0 | 36 | 63 | **42.86%** |
+| `yield` | 63 | 0 | 0 | 63 | **100.00%** |
 
 ## Statement and Declaration Features
 

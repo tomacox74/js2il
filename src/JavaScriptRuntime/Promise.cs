@@ -1198,7 +1198,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
         return record;
     }
 
-    private static object? GetThrownJsValue(Exception ex)
+    internal static object? GetThrownJsValue(Exception ex)
     {
         if (ex is JsThrownValueException thrown)
         {

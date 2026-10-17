@@ -101,6 +101,11 @@ public sealed partial class HIRToLIRLowerer
         int count = 0;
         switch (expression)
         {
+            case HIRImportExpression importExpression:
+                count += CountYieldExpressionsInExpression(importExpression.Specifier);
+                if (importExpression.Options != null)
+                    count += CountYieldExpressionsInExpression(importExpression.Options);
+                break;
             case HIRInitializedUserClassTypeExpression classExpression:
                 foreach (var decorator in classExpression.Decorators)
                     count += CountYieldExpressionsInExpression(decorator);

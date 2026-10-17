@@ -30,13 +30,13 @@ Notes:
 
 ## Test262 Conformance Status
 
-For the current development branch following [JROC v0.12.30](https://github.com/tomacox74/js2il/releases/tag/v0.12.30), Test262 provides the following conformance evidence:
+For the current development branch following [JROC v0.12.32](https://github.com/tomacox74/js2il/releases/tag/v0.12.32), Test262 provides the following conformance evidence:
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 36,394 | **75.44%** |
-| Explicitly excluded due to known unsupported behavior | 271 | 0.56% |
-| Not yet verified | 11,580 | 24.00% |
+| Verified passing | 37,069 | **76.84%** |
+| Explicitly excluded due to known unsupported behavior | 272 | 0.56% |
+| Not yet verified | 10,904 | 22.60% |
 | **Total applicable ECMA-262 tests** | **48,245** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.

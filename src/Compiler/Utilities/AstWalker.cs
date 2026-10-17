@@ -271,6 +271,7 @@ public class AstWalker
 
             case ImportExpression importExpr:
                 Visit(importExpr.Source, visitor);
+                Visit(importExpr.Options, visitor);
                 break;
 
             case ExportNamedDeclaration exportNamed:
@@ -562,6 +563,7 @@ public class AstWalker
 
             case ImportExpression importExpr:
                 VisitWithContext(importExpr.Source, enterNode, exitNode);
+                VisitWithContext(importExpr.Options, enterNode, exitNode);
                 break;
 
             case ExportNamedDeclaration exportNamed:

@@ -15,14 +15,35 @@ namespace JavaScriptRuntime.Modules.ESM
         /// <param name="currentModuleId">The ID of the current module for relative path resolution.</param>
         /// <returns>A Promise that resolves to the module's exports or rejects on error.</returns>
         public static Promise Import(object? specifier, object? currentModuleId)
-        {
-            if (specifier is not string specifierStr)
-            {
-                return (Promise)Promise.reject(new TypeError("import() requires a string specifier"))!;
-            }
+            => Import(specifier, currentModuleId, null, "None");
 
+        public static Promise Import(object? specifier, object? currentModuleId, object? options, string phase)
+        {
             try
             {
+                var specifierStr = DotNet2JSConversions.ToStringRejectingSymbols(specifier);
+                string? type = null;
+                if (options != null)
+                {
+                    if (TypeUtilities.IsPrimitive(options))
+                        throw new TypeError("import() options must be an object");
+                    var attributes = ObjectRuntime.GetProperty(options, "with");
+                    if (attributes != null)
+                    {
+                        if (TypeUtilities.IsPrimitive(attributes))
+                            throw new TypeError("import() attributes must be an object");
+                        foreach (var key in ObjectRuntime.GetOwnPropertyKeysInOrder(attributes))
+                        {
+                            if (!ObjectRuntime.IsOwnPropertyPresentAndEnumerable(attributes, key))
+                                continue;
+                            if (ObjectRuntime.GetProperty(attributes, key) is not string attributeValue)
+                                throw new TypeError("import() attribute values must be strings");
+                            if (key == "type")
+                                type = attributeValue;
+                        }
+                    }
+                }
+
                 // Resolve require delegate by current module id/filename.
                 var requireDelegate = RuntimeServices.GetRequireForModule(currentModuleId as string);
                 
@@ -31,17 +52,19 @@ namespace JavaScriptRuntime.Modules.ESM
                     return (Promise)Promise.reject(new ReferenceError("import() requires a CommonJS module context"))!;
                 }
 
-                // Use the existing require mechanism to load the module synchronously.
-                // Dynamic import should still surface the same pragmatic ESM namespace/default
-                // projection used by the static import/export lowering path.
-                var exports = requireDelegate(specifierStr);
-                var importResult = EsModuleInterop.ToDynamicImportResult(exports);
-
-                return (Promise)Promise.resolve(importResult)!;
+                return (Promise)((Promise)Promise.resolve(null)!).then(
+                    new BuiltinFunction1((_, _) =>
+                    {
+                        if (phase != "None" || type is not null)
+                            return new CommonJS.Require(RuntimeExecutionContext.Current!.Realm.ModuleState)
+                                .ImportWithPhase((string)currentModuleId!, specifierStr, phase, type);
+                        var exports = requireDelegate(specifierStr);
+                        return EsModuleInterop.ToDynamicImportResult(exports);
+                    }))!;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not ScriptProcessExitException)
             {
-                return (Promise)Promise.reject(ex)!;
+                return (Promise)Promise.reject(Promise.GetThrownJsValue(ex))!;
             }
         }
     }

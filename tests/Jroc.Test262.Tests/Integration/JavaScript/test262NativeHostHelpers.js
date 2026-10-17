@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js, iteratorZipUtils.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js, iteratorZipUtils.js, fnGlobalObject.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -10,6 +10,10 @@ assert.strictEqual('abc', 'abc', 'strictEqual should alias sameValue');
 assert.notStrictEqual('abc', 'def', 'notStrictEqual should alias notSameValue');
 assert.compareArray([1, 2, 3], [1, 2, 3], 'compareArray should compare indexed elements');
 assert.deepEqual([[1, 2], [3, undefined]], [[1, 2], [3, undefined]], 'deepEqual should compare nested arrays');
+assert.sameValue(fnGlobalObject.name, 'fnGlobalObject');
+assert.sameValue(fnGlobalObject.length, 0);
+assert.sameValue(fnGlobalObject(), globalThis);
+assert.sameValue(fnGlobalObject(), fnGlobalObject());
 
 $262.evalScript('var nativeScriptVar = 1; function nativeScriptFunction() { return nativeScriptVar; }');
 assert.sameValue(nativeScriptFunction(), 1);

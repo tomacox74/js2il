@@ -60,7 +60,7 @@ public sealed partial class HIRToLIRLowerer
     private bool TryApplyInferredNameToDeclarationValue(HIRVariableDeclaration declaration, TempVariable value, out TempVariable namedValue)
         => TryApplyInferredNameToValue(
             declaration.Initializer,
-            declaration.Name.Name,
+            declaration.InferredName ?? declaration.Name.Name,
             value,
             out namedValue);
 
@@ -154,7 +154,7 @@ public sealed partial class HIRToLIRLowerer
             TempVariable initialValue;
             if (exprStmt.Initializer is not null)
             {
-                if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, binding.Name, out initialValue)
+                if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, exprStmt.InferredName ?? binding.Name, out initialValue)
                     || !TryApplyInferredNameToDeclarationValue(exprStmt, initialValue, out initialValue))
                 {
                     return false;
@@ -240,7 +240,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (exprStmt.Initializer != null)
         {
-            if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, exprStmt.Name.Name, out value))
+            if (!TryLowerExpressionWithInferredName(exprStmt.Initializer, exprStmt.InferredName ?? exprStmt.Name.Name, out value))
             {
                 IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
                 return false;

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-15T08:15:20Z
+> Last generated (UTC): 2026-10-16T20:38:32Z
 
 JROC supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
@@ -106,7 +106,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Invalid import-call grammar rejection | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs` |  | The native Test262 harness verifies rejection of 301 pinned parse-negative dynamic-import fixtures, including invalid import-call syntax, escaped `import`, and unsupported import attributes. This evidence is limited to invalid-source rejection; it does not expand the documented valid dynamic-import module-loading or options support. |
+| Invalid import-call grammar rejection | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/dynamic-import/syntax/invalid/DynamicImportCompletionExecutionTests.cs` |  | The native Test262 harness verifies all 311 pinned parse-negative dynamic-import fixtures, including invalid calls, assignment/update targets, escaped import, and malformed attributes and phase syntax. The complete area has 940 passing cases and one explicit eval exclusion. |
 
 ### 13.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-meta-properties))
 

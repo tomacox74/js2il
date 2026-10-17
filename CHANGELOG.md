@@ -7,6 +7,20 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
+- test262: complete pinned dynamic-import coverage with 629 newly added exact
+  fixtures and 301 existing parse-negative cases moved to canonical paths.
+  All 940 non-eval cases pass 1,776 required native variants; explicitly skip
+  the remaining eval-dependent case. Fix import options and coercion,
+  asynchronous loading and cached failures, module namespace descriptors,
+  default export names and escaped class metadata, JSON/text imports, and
+  deferred evaluation with asynchronous dependencies. Add the in-memory
+  `AdditionalModulePaths` option for ahead-of-time computed import targets.
+- test262: complete pinned yield-expression coverage with 36 exact upstream
+  fixtures; all 63 cases pass all 123 required native variants, with no
+  eval-dependent cases in this area. Preserve delegated iterator receivers,
+  argument counts and next values, forward return/throw with null-method and
+  missing-method semantics, validate iterator results, and route operand and
+  protocol errors plus delegated return completions through catch/finally.
 - fix(ci): skip Test262 central validation and publication when native screening
   produces no patch, avoiding a missing validation artifact failure for empty batches.
 - perf(compiler): reuse immutable boxed boolean and null primitives for

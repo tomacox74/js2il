@@ -114,6 +114,29 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (_isGenerator && !_isAsync
+            && _generatorTryCatchFinallyStack.Count > 0
+            && _generatorExpressionProtectionDepth == 0
+            && !HasActiveSynchronousExceptionHandler
+            && CountYieldExpressionsInExpression(expression) == 0)
+        {
+            var start = _methodBodyIR.Instructions.Count;
+            _generatorExpressionProtectionDepth++;
+            try
+            {
+                if (!TryLowerExpression(expression, out resultTempVar))
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _generatorExpressionProtectionDepth--;
+            }
+            ProtectGeneratorExpression(start);
+            return true;
+        }
+
         switch (expression)
         {
             case HIRPreparedDynamicFunctionExpression preparedFunction:
@@ -2224,22 +2247,12 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBuildArray(allArgTemps, argsArrayTemp));
         DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        // 5. Call the tag function with the arguments
-        // Need to get the scopes array for the current context
         var scopesArrayTemp = CreateTempVariable();
-        if (_callableKind is Services.ScopesAbi.CallableKind.Function)
+        if (!TryBuildCurrentScopesArray(scopesArrayTemp))
         {
-            // Load scopes from parameter
-            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(scopesArrayTemp));
-            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+            return false;
         }
-        else
-        {
-            // No scopes available (e.g., in ModuleMain or class methods) - create empty array
-            var emptyList = new List<TempVariable>();
-            _methodBodyIR.Instructions.Add(new LIRBuildArray(emptyList, scopesArrayTemp));
-            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        }
+        DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
         var callResultTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(tagTemp, scopesArrayTemp, argsArrayTemp, callResultTemp));

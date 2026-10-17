@@ -63,6 +63,8 @@ public class Module : DynamicObject
     /// </summary>
     public bool loaded { get; set; }
 
+    internal Exception? EvaluationError { get; set; }
+
     /// <summary>
     /// The module that first required this one, or null if this is the main module.
     /// </summary>

@@ -146,17 +146,27 @@
           {
             "feature": "import(specifier) with string literal",
             "status": "Supported with Limitations",
-            "notes": "Dynamic import() returns a Promise and, for string-literal specifiers, resolves through the existing CommonJS loader to the same pragmatic namespace/default projection used by the static ESM lowering. ESM-lowered modules resolve to their export object directly; CommonJS-style modules resolve to a cached namespace object that exposes `default`, `module.exports`, and getter-backed enumerable export keys."
+            "notes": "Dynamic import() returns a Promise, coerces its specifier using JavaScript ToString semantics, and loads bundled modules asynchronously. Dynamic-only parse, resolution, link, and evaluation failures reject the promise; ESM evaluation errors retain their original identity on subsequent imports. ESM namespaces are cached exotic objects with live export values, a null prototype, sorted export keys, non-configurable descriptors, and rejected writes. CommonJS modules retain the synthetic default/module.exports interop projection."
           },
           {
             "feature": "import(specifier) with non-literal expression",
             "status": "Supported with Limitations",
-            "notes": "Runtime-computed specifiers are allowed. Compile-time dependency discovery is best-effort for non-literal forms, so modules referenced only through dynamic values may require explicit inclusion."
+            "notes": "Runtime-computed specifiers are allowed, but their targets must already be bundled in the assembly. In-memory compilation requests expose AdditionalModulePaths for explicitly including targets without executing them or treating them as independent entries."
           },
           {
             "feature": "import(specifier, options)",
-            "status": "Not Supported",
-            "notes": "The second options parameter is not yet supported. Using it will cause a validation error."
+            "status": "Supported with Limitations",
+            "notes": "Evaluate source and options in order, then coerce the source and inspect options.with. Non-object options/attributes and non-string enumerable string-keyed attribute values reject the promise, preserving abrupt getter/coercion values. Bundled JSON supports type: json and type: text, with text exposing the original file contents. Static import/export attribute clauses remain unsupported."
+          },
+          {
+            "feature": "Pinned import.defer extension",
+            "status": "Supported with Limitations",
+            "notes": "Compiled ESM targets return a cached deferred namespace. Asynchronous transitive dependencies finish before resolution; synchronous target evaluation waits for namespace string-key operations, excluding the special then key. Internal promise coordination does not call a user override of Promise.prototype.then. This does not implement general host loading hooks or the complete async module graph algorithms."
+          },
+          {
+            "feature": "Pinned import.source extension for JavaScript targets",
+            "status": "Supported with Limitations",
+            "notes": "Parse source-phase import calls and evaluate/coerce their arguments. Bundled JavaScript modules reject with SyntaxError without evaluating their bodies because they have no source-phase representation; other source module formats are not implemented."
           }
         ]
       }
@@ -519,9 +529,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-import-calls",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/language/expressions/ExpressionSyntaxConformance7BatchParseTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/dynamic-import/syntax/invalid/DynamicImportCompletionExecutionTests.cs"
         ],
-        "notes": "The native Test262 harness verifies rejection of 301 pinned parse-negative dynamic-import fixtures, including invalid import-call syntax, escaped `import`, and unsupported import attributes. This evidence is limited to invalid-source rejection; it does not expand the documented valid dynamic-import module-loading or options support."
+        "notes": "The native Test262 harness verifies all 311 pinned parse-negative dynamic-import fixtures, including invalid calls, assignment/update targets, escaped import, and malformed attributes and phase syntax. The complete area has 940 passing cases and one explicit eval exclusion."
       },
       {
         "clause": "13.3.8",
