@@ -464,9 +464,13 @@ public partial class RuntimeServices
                 args,
                 newTarget);
         }
-        else if (constructor is JsClassConstructorObject)
+        else if (constructor is JsClassConstructorObject classConstructor)
         {
-            constructed = ObjectRuntime.ConstructValue(constructor, args, newTarget);
+            constructed = ObjectRuntime.ConstructValue(
+                constructor,
+                args,
+                newTarget,
+                classConstructor.Type.IsInstanceOfType(receiver) ? receiver : null);
         }
         else if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
@@ -667,7 +671,9 @@ public partial class RuntimeServices
             classConstructor.IsDerivedClass = true;
             classConstructor.PrivateBrandBaseConstructor =
                 validatedBase as JsClassConstructorObject;
-            PrototypeChain.SetPrototype(classConstructor, validatedBase);
+            PrototypeChain.SetPrototype(
+                classConstructor,
+                validatedBase is JsNull ? Function.Prototype : validatedBase);
             LinkClassInstancePrototype(classConstructor, validatedBase);
             return classConstructor;
         }
@@ -680,19 +686,15 @@ public partial class RuntimeServices
         JsClassConstructorObject derivedConstructor,
         object? baseConstructor)
     {
-        if (baseConstructor is null || baseConstructor is JsNull)
-        {
-            return;
-        }
-
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
             derivedConstructor,
             "prototype",
             out var derivedPrototypeDescriptor);
-        var basePrototype = ObjectRuntime.GetProperty(baseConstructor, "prototype");
+        var basePrototype = baseConstructor is JsNull
+            ? JsNull.Null
+            : ObjectRuntime.GetProperty(baseConstructor!, "prototype");
         if (derivedPrototypeDescriptor.Value is object derivedPrototype
-            && basePrototype is not null
-            && basePrototype is not JsNull)
+            && basePrototype is not null)
         {
             PrototypeChain.SetPrototype(derivedPrototype, basePrototype);
         }
@@ -700,12 +702,12 @@ public partial class RuntimeServices
 
     public static object? ValidateClassHeritage(object? heritage)
     {
-        if (heritage is null || heritage is JsNull)
+        if (heritage is JsNull)
         {
             return heritage;
         }
 
-        if (!ObjectRuntime.IsConstructibleValue(heritage))
+        if (heritage is null || !ObjectRuntime.IsConstructibleValue(heritage))
         {
             throw new TypeError("Class extends value is not a constructor or null");
         }
@@ -718,6 +720,37 @@ public partial class RuntimeServices
 
         return heritage;
     }
+
+    private static JsClassConstructorObject GetExecutingClassConstructor(Type ownerType)
+    {
+        if (GetCurrentCallee() is JsClassConstructorObject callee
+            && callee.Type == ownerType)
+        {
+            return callee;
+        }
+        for (var constructor = GetCurrentNewTarget() as JsClassConstructorObject;
+             constructor is not null;
+             constructor = constructor.PrivateBrandBaseConstructor)
+        {
+            if (constructor.Type == ownerType)
+            {
+                return constructor;
+            }
+        }
+        throw new InvalidOperationException("The executing class constructor is unavailable.");
+    }
+
+    public static object GetSuperConstructor(Type ownerType)
+        => PrototypeChain.GetPrototypeOrNull(GetExecutingClassConstructor(ownerType))
+            ?? JsNull.Null;
+
+    public static object GetConstructorSuperPropertyBase(Type ownerType)
+    {
+        return PrototypeChain.GetPrototypeOrNull(GetConstructorHomeObject(ownerType)) ?? JsNull.Null;
+    }
+
+    public static object GetConstructorHomeObject(Type ownerType)
+        => ObjectRuntime.GetProperty(GetExecutingClassConstructor(ownerType), "prototype")!;
 
     public static object RegisterLazyClassMethodDataProperty(
         object ownerValue,
@@ -2241,12 +2274,22 @@ public partial class RuntimeServices
         return value;
     }
 
+    public static object GetImportMeta(object? moduleId, object? sourcePath)
+    {
+        var filename = moduleId is string id
+            && GetCurrentModuleState().CommonJsModules.TryGetValue("compiled:" + id.Replace('\\', '/'), out var module)
+                ? module.filename
+                : sourcePath;
+        return GetImportMeta(filename);
+    }
+
     public static object GetImportMeta(object? moduleIdOrPath)
     {
         var url = GetImportMetaUrl(moduleIdOrPath);
         var meta = GetCurrentModuleState().ImportMetaByUrl.GetOrAdd(url, static key =>
         {
             var meta = new JsObject();
+            PrototypeChain.InitializePrototype(meta, JsNull.Null);
             if (!string.IsNullOrEmpty(key))
             {
                 meta["url"] = key;
@@ -2457,12 +2500,17 @@ public partial class RuntimeServices
         // Create array with cooked strings
         var templateObject = new Array(cooked);
 
-        // Add .raw property with raw strings
         var rawJsArray = new Array(raw);
-        ObjectRuntime.SetProperty(templateObject, "raw", rawJsArray);
+        ObjectRuntime.defineProperty(templateObject, "raw", new JsObject
+        {
+            ["value"] = rawJsArray,
+            ["writable"] = false,
+            ["enumerable"] = false,
+            ["configurable"] = false
+        });
 
-        // Template objects should be frozen (immutable)
-        // For now we just return the object - freezing can be added later if needed
+        ObjectRuntime.freeze(rawJsArray);
+        ObjectRuntime.freeze(templateObject);
         return templateObject;
     }
 

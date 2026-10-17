@@ -24,6 +24,7 @@ public class Scope
     /// </summary>
     public string Name { get; }
     public string? ModuleId { get; set; }
+    public string? ModulePath { get; set; }
 
     /// <summary>
     /// When set, this global (module) scope is compiled with native static ES module linking.

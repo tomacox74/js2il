@@ -480,6 +480,11 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (propAccessExpr.Object is HIRSuperExpression)
+        {
+            return TryLowerSuperUpdate(null, propAccessExpr.PropertyName, isIncrement, prefix, needsPostfixValue, out resultTempVar);
+        }
+
         // Early-bound object-literal member update (phase 4, #1432): read-modify-write
         // through the generated accessors so the backing field stays in sync.
         if (TryGetInferredObjectLiteralMember(propAccessExpr.Object, propAccessExpr.PropertyName, out var inferredShape, out var inferredMember))
@@ -572,6 +577,11 @@ public sealed partial class HIRToLIRLowerer
         out TempVariable resultTempVar)
     {
         resultTempVar = default;
+
+        if (indexAccessExpr.Object is HIRSuperExpression)
+        {
+            return TryLowerSuperUpdate(indexAccessExpr.Index, null, isIncrement, prefix, needsPostfixValue, out resultTempVar);
+        }
 
         if (!TryLowerExpression(indexAccessExpr.Object, out var objTemp))
         {
@@ -1899,10 +1909,11 @@ public sealed partial class HIRToLIRLowerer
             ?? throw new InvalidOperationException("Active with assignment requires a binding probe.");
         var hadPreviousValue = _variableMap.TryGetValue(binding, out var previousValue);
 
-        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, binding.Name, out var valueToStore)
+        var inferredName = assignmentExpression.InferName ? binding.Name : string.Empty;
+        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, inferredName, out var valueToStore)
             || !TryApplyInferredNameToValue(
                 assignmentExpression.Value,
-                binding.Name,
+                inferredName,
                 valueToStore,
                 out valueToStore))
         {
@@ -1964,10 +1975,11 @@ public sealed partial class HIRToLIRLowerer
             hasBinding));
         DefineTempStorage(hasBinding, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
-        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, binding.Name, out var valueToStore)
+        var inferredName = assignmentExpression.InferName ? binding.Name : string.Empty;
+        if (!TryLowerExpressionWithInferredName(assignmentExpression.Value, inferredName, out var valueToStore)
             || !TryApplyInferredNameToValue(
                 assignmentExpression.Value,
-                binding.Name,
+                inferredName,
                 valueToStore,
                 out valueToStore))
         {
@@ -2272,14 +2284,15 @@ public sealed partial class HIRToLIRLowerer
         if (assignExpr.Operator == Acornima.Operator.Assignment)
         {
             // Simple assignment: x = expr
-            if (!TryLowerExpressionWithInferredName(assignExpr.Value, binding.Name, out valueToStore))
+            var inferredName = assignExpr.InferName ? binding.Name : string.Empty;
+            if (!TryLowerExpressionWithInferredName(assignExpr.Value, inferredName, out valueToStore))
             {
                 return false;
             }
 
             if (!TryApplyInferredNameToValue(
                     assignExpr.Value,
-                    binding.Name,
+                    inferredName,
                     valueToStore,
                     out valueToStore))
             {

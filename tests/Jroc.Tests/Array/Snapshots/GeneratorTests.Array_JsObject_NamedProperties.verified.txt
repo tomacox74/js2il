@@ -210,24 +210,51 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
+			// Header size: 12
+			// Code size: 66 (0x42)
+			.maxstack 8
+			.locals init (
+				[0] class [System.Runtime]System.Type,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Array_JsObject_NamedProperties/DerivedArray::.ctor(bool)
+			IL_0007: ldtoken Modules.Array_JsObject_NamedProperties/DerivedArray
+			IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: ldtoken Modules.Array_JsObject_NamedProperties/DerivedArray
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_0022: stloc.1
+			IL_0023: ldarg.0
+			IL_0024: ldloc.1
+			IL_0025: ldc.i4.1
+			IL_0026: newarr [System.Runtime]System.Object
+			IL_002b: dup
+			IL_002c: ldc.i4.0
+			IL_002d: ldc.r8 2
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stelem.ref
+			IL_003c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0041: ret
+		} // end of method DerivedArray::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
 			// Header size: 1
-			// Code size: 42 (0x2a)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldc.i4.1
-			IL_0008: newarr [System.Runtime]System.Object
-			IL_000d: dup
-			IL_000e: ldc.i4.0
-			IL_000f: ldc.r8 2
-			IL_0018: box [System.Runtime]System.Double
-			IL_001d: stelem.ref
-			IL_001e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_0023: ldarg.0
-			IL_0024: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0029: ret
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(bool)
+			IL_0007: ret
 		} // end of method DerivedArray::.ctor
 
 	} // end of class DerivedArray

@@ -158,37 +158,7 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerSuperPropertyAssignment(HIRPropertyAssignmentExpression assignment, out TempVariable result)
     {
         result = default;
-        if (assignment.Operator != Acornima.Operator.Assignment)
-        {
-            return false;
-        }
-        var prototype = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.GetSuperPropertyBase),
-            [],
-            prototype));
-        DefineTempStorage(prototype, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        var receiver = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
-            [],
-            receiver));
-        DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        var key = EmitConstString(assignment.PropertyName);
-        if (!TryLowerExpression(assignment.Value, out var value))
-        {
-            return false;
-        }
-        var stored = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.SetSuperProperty),
-            [prototype, receiver, key, EnsureObject(value)],
-            stored));
-        DefineTempStorage(stored, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        result = stored;
-        return true;
+        return TryLowerSuperAssignment(null, assignment.PropertyName, assignment.Operator, assignment.Value, out result);
     }
 
     private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
@@ -439,6 +409,11 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
+
+        if (assignExpr.Object is HIRSuperExpression)
+        {
+            return TryLowerSuperAssignment(assignExpr.Index, null, assignExpr.Operator, assignExpr.Value, out resultTempVar);
+        }
 
         if (assignExpr.Operator is Acornima.Operator.NullishCoalescingAssignment
             or Acornima.Operator.LogicalAndAssignment

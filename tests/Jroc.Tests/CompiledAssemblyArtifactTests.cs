@@ -1,5 +1,6 @@
 using Jroc.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
@@ -65,7 +66,7 @@ public sealed class CompiledAssemblyArtifactTests
     }
 
     [Fact]
-    public void Materialize_WritesLaunchableAssemblyAndSymbols()
+    public async Task Materialize_WritesLaunchableAssemblyAndSymbols()
     {
         var root = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "CompiledAssemblyArtifact", Guid.NewGuid().ToString("N"));
         var outputPath = Path.Combine(root, "output");
@@ -74,7 +75,15 @@ public sealed class CompiledAssemblyArtifactTests
         {
             var entryPath = Path.Combine(root, "materialize.js");
             var mockFs = new MockFileSystem();
-            mockFs.AddFile(entryPath, "\"use strict\";\nconsole.log('materialized');\n");
+            mockFs.AddFile(entryPath, """
+                "use strict";
+                try {
+                    Function({ toString() { return "return }"; } });
+                } catch (error) {
+                    if (!(error instanceof SyntaxError)) throw error;
+                    console.log("materialized");
+                }
+                """);
 
             var artifact = JrocInMemoryCompiler.Compile(
                 new JrocInMemoryCompileRequest(entryPath)
@@ -89,8 +98,37 @@ public sealed class CompiledAssemblyArtifactTests
             Assert.True(File.Exists(materialized.AssemblyPath));
             Assert.True(File.Exists(materialized.PdbPath!));
             Assert.True(File.Exists(materialized.RuntimeConfigPath));
+            Assert.True(File.Exists(Path.Combine(outputPath, "Acornima.dll")));
             Assert.Equal(artifact.PeBytes, File.ReadAllBytes(materialized.AssemblyPath));
             Assert.Equal(artifact.PdbBytes, File.ReadAllBytes(materialized.PdbPath!));
+
+            var startInfo = new ProcessStartInfo("dotnet")
+            {
+                WorkingDirectory = outputPath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            };
+            startInfo.ArgumentList.Add(materialized.AssemblyPath);
+
+            using var process = Process.Start(startInfo)!;
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            try
+            {
+                var output = process.StandardOutput.ReadToEndAsync(timeout.Token);
+                var error = process.StandardError.ReadToEndAsync(timeout.Token);
+                await process.WaitForExitAsync(timeout.Token);
+                Assert.Equal(0, process.ExitCode);
+                Assert.Equal("materialized", (await output).Trim());
+                Assert.Equal(string.Empty, await error);
+            }
+            finally
+            {
+                if (!process.HasExited)
+                {
+                    process.Kill(entireProcessTree: true);
+                }
+            }
         }
         finally
         {

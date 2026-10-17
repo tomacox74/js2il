@@ -64,15 +64,22 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerCurrentModulePath(out TempVariable currentModulePathTemp)
     {
+        var root = GetRootScope(_scope);
+        if (!string.IsNullOrWhiteSpace(root?.ModulePath))
+        {
+            currentModulePathTemp = EmitConstString(root.ModulePath);
+            return true;
+        }
+
         var filenameBinding = TryResolveBinding(_scope, "__filename");
         if (filenameBinding != null
+            && filenameBinding.Kind != BindingKind.Global
             && TryLowerExpression(new HIRVariableExpression(new Symbol(filenameBinding)), out currentModulePathTemp))
         {
             currentModulePathTemp = EnsureObject(currentModulePathTemp);
             return true;
         }
 
-        var root = GetRootScope(_scope);
         currentModulePathTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstUndefined(currentModulePathTemp));
         DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

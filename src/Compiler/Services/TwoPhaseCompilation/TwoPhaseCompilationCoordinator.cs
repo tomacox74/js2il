@@ -815,6 +815,11 @@ public sealed class TwoPhaseCompilationCoordinator
                 var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
                 _registry.SetToken(callable, preallocated);
 
+                if (callable.Kind == CallableKind.ClassConstructor)
+                {
+                    nextRowId++;
+                }
+
                 if (_diagnosticsEnabled)
                 {
                     _diagnosticLogger.LogInformation(
@@ -973,7 +978,73 @@ public sealed class TwoPhaseCompilationCoordinator
                 }
 
                 _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body, bclReferences);
+                if (callable.Kind == CallableKind.ClassConstructor)
+                {
+                    EmitClassStorageConstructor(
+                        ScopeNaming.GetRegistryClassName(classScope),
+                        metadataBuilder,
+                        tb,
+                        methodBodyStreamEncoder,
+                        classRegistry);
+                }
             }
+        }
+    }
+
+    private static void EmitClassStorageConstructor(
+        string className,
+        MetadataBuilder metadataBuilder,
+        TypeBuilder typeBuilder,
+        MethodBodyStreamEncoder methodBodies,
+        ClassRegistry classRegistry)
+    {
+        var storage = classRegistry.GetStorageConstructor(className);
+        var signature = new BlobBuilder();
+        new BlobEncoder(signature).MethodSignature(isInstanceMethod: true).Parameters(
+            1, result => result.Void(), parameters => parameters.AddParameter().Type().Boolean());
+        var signatureHandle = metadataBuilder.GetOrAddBlob(signature);
+        var il = new InstructionEncoder(new BlobBuilder());
+        il.LoadArgument(0);
+        EntityHandle baseConstructor;
+        if (storage.IntrinsicBaseType is { } intrinsicBaseType)
+        {
+            var hasStorageConstructor = intrinsicBaseType.GetConstructor(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                binder: null, [typeof(bool)], modifiers: null) is { IsFamily: true };
+            BlobHandle baseSignature;
+            if (hasStorageConstructor)
+            {
+                il.LoadConstantI4(0);
+                baseSignature = signatureHandle;
+            }
+            else
+            {
+                var parameterlessSignature = new BlobBuilder();
+                new BlobEncoder(parameterlessSignature).MethodSignature(isInstanceMethod: true).Parameters(
+                    0, result => result.Void(), _ => { });
+                baseSignature = metadataBuilder.GetOrAddBlob(parameterlessSignature);
+            }
+            baseConstructor = metadataBuilder.AddMemberReference(
+                storage.BaseType, metadataBuilder.GetOrAddString(".ctor"), baseSignature);
+        }
+        else
+        {
+            if (storage.BaseType.Kind != HandleKind.TypeDefinition
+                || !classRegistry.TryGetName((TypeDefinitionHandle)storage.BaseType, out var baseName))
+            {
+                throw new InvalidOperationException($"Missing CLR storage base for '{className}'.");
+            }
+            il.LoadConstantI4(0);
+            baseConstructor = classRegistry.GetStorageConstructor(baseName).Constructor;
+        }
+        il.Call(baseConstructor);
+        il.OpCode(ILOpCode.Ret);
+        var actual = typeBuilder.AddMethodDefinition(
+            MethodAttributes.Family | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+            ".ctor", signatureHandle, methodBodies.AddMethodBody(il, maxStack: 2));
+        if (actual != storage.Constructor)
+        {
+            throw new InvalidOperationException($"CLR storage constructor token mismatch for '{className}'.");
         }
     }
 

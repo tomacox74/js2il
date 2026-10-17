@@ -345,6 +345,7 @@ namespace Jroc.SymbolTables
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
             {
                 ModuleId = module.ModuleId,
+                ModulePath = module.Path,
                 UsesScriptSemantics = module.UsesScriptSemantics
             };
 

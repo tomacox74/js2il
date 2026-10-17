@@ -649,6 +649,10 @@ internal static partial class LIRInstructionInfo
                 {
                     visitor.Visit(value.LexicalThis.Value);
                 }
+                if (value.HomeObject.HasValue)
+                {
+                    visitor.Visit(value.HomeObject.Value);
+                }
                 break;
             case LIRCreateBoundFunctionExpression value:
                 visitor.Visit(value.ScopesArray);

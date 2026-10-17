@@ -41,6 +41,10 @@ public sealed record JrocCompiledAssemblyArtifact(
 
         RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyPath, typeof(object).Assembly.GetName());
         CopyRuntimeAssembly(fullOutputDirectory);
+        var parserAssemblyPath = typeof(Acornima.Parser).Assembly.Location;
+        CopyFileIfChanged(
+            parserAssemblyPath,
+            Path.Combine(fullOutputDirectory, Path.GetFileName(parserAssemblyPath)));
 
         return new JrocMaterializedAssembly(
             assemblyPath,

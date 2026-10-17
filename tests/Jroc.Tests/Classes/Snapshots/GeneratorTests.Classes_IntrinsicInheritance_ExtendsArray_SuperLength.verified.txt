@@ -213,64 +213,89 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 127 (0x7f)
+			// Code size: 156 (0x9c)
 			.maxstack 8
 			.locals init (
-				[0] bool,
+				[0] class [System.Runtime]System.Type,
 				[1] object,
-				[2] object,
+				[2] bool,
 				[3] object,
-				[4] object
+				[4] object,
+				[5] object,
+				[6] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: brfalse IL_0020
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList::.ctor(bool)
+			IL_0007: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList
+			IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_0022: stloc.1
+			IL_0023: ldarg.1
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0029: stloc.2
+			IL_002a: ldloc.2
+			IL_002b: brfalse IL_0044
 
-			IL_000d: ldarg.1
-			IL_000e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_0013: box [System.Runtime]System.Double
-			IL_0018: stloc.1
-			IL_0019: ldloc.1
-			IL_001a: stloc.3
-			IL_001b: br IL_0022
+			IL_0030: ldarg.1
+			IL_0031: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.3
+			IL_003c: ldloc.3
+			IL_003d: stloc.s 5
+			IL_003f: br IL_0047
 
-			IL_0020: ldarg.1
-			IL_0021: stloc.3
+			IL_0044: ldarg.1
+			IL_0045: stloc.s 5
 
-			IL_0022: ldloc.3
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0028: stloc.0
-			IL_0029: ldloc.0
-			IL_002a: brtrue IL_0043
+			IL_0047: ldloc.s 5
+			IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_004e: stloc.2
+			IL_004f: ldloc.2
+			IL_0050: brtrue IL_006a
 
-			IL_002f: ldc.r8 0.0
-			IL_0038: box [System.Runtime]System.Double
-			IL_003d: stloc.3
-			IL_003e: br IL_0043
+			IL_0055: ldc.r8 0.0
+			IL_005e: box [System.Runtime]System.Double
+			IL_0063: stloc.s 5
+			IL_0065: br IL_006a
 
-			IL_0043: ldarg.0
-			IL_0044: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_0049: ldarg.0
-			IL_004a: ldc.i4.1
-			IL_004b: newarr [System.Runtime]System.Object
-			IL_0050: dup
-			IL_0051: ldc.i4.0
-			IL_0052: ldloc.3
-			IL_0053: stelem.ref
-			IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_0059: ldarg.0
-			IL_005a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0069: ldc.r8 0.0
-			IL_0072: ldstr "x"
-			IL_0077: ldc.i4.1
-			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
-			IL_007d: pop
-			IL_007e: ret
+			IL_006a: ldarg.0
+			IL_006b: ldloc.1
+			IL_006c: ldc.i4.1
+			IL_006d: newarr [System.Runtime]System.Object
+			IL_0072: dup
+			IL_0073: ldc.i4.0
+			IL_0074: ldloc.s 5
+			IL_0076: stelem.ref
+			IL_0077: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0086: ldc.r8 0.0
+			IL_008f: ldstr "x"
+			IL_0094: ldc.i4.1
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, object, bool)
+			IL_009a: pop
+			IL_009b: ret
+		} // end of method NodeList::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(bool)
+			IL_0007: ret
 		} // end of method NodeList::.ctor
 
 	} // end of class NodeList
@@ -414,33 +439,60 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 100 (0x64)
+			.maxstack 8
+			.locals init (
+				[0] class [System.Runtime]System.Type,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y::.ctor(bool)
+			IL_0007: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y
+			IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: ldtoken Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_0022: stloc.1
+			IL_0023: ldarg.0
+			IL_0024: ldloc.1
+			IL_0025: ldc.i4.3
+			IL_0026: newarr [System.Runtime]System.Object
+			IL_002b: dup
+			IL_002c: ldc.i4.0
+			IL_002d: ldc.r8 1
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stelem.ref
+			IL_003c: dup
+			IL_003d: ldc.i4.1
+			IL_003e: ldc.r8 2
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stelem.ref
+			IL_004d: dup
+			IL_004e: ldc.i4.2
+			IL_004f: ldc.r8 3
+			IL_0058: box [System.Runtime]System.Double
+			IL_005d: stelem.ref
+			IL_005e: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0063: ret
+		} // end of method Y::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldc.i4.3
-			IL_0008: newarr [System.Runtime]System.Object
-			IL_000d: dup
-			IL_000e: ldc.i4.0
-			IL_000f: ldc.r8 1
-			IL_0018: box [System.Runtime]System.Double
-			IL_001d: stelem.ref
-			IL_001e: dup
-			IL_001f: ldc.i4.1
-			IL_0020: ldc.r8 2
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: stelem.ref
-			IL_002f: dup
-			IL_0030: ldc.i4.2
-			IL_0031: ldc.r8 3
-			IL_003a: box [System.Runtime]System.Double
-			IL_003f: stelem.ref
-			IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::ConstructInto(object[])
-			IL_0045: ldarg.0
-			IL_0046: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_004b: ret
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(bool)
+			IL_0007: ret
 		} // end of method Y::.ctor
 
 	} // end of class Y

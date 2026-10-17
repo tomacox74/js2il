@@ -296,6 +296,20 @@
 			IL_0029: ret
 		} // end of method Base::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Base::.ctor
+
 		.method public hidebysig static 
 			object label () cil managed 
 		{
@@ -457,36 +471,60 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 59 (0x3b)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 			.locals init (
 				[0] object[],
-				[1] object
+				[1] class [System.Runtime]System.Type,
+				[2] object,
+				[3] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: stloc.0
-			IL_0002: ldarg.0
-			IL_0003: ldloc.0
-			IL_0004: stfld object[] Modules.Classes_GeneratedConstructorFunctionObjects/Derived::_scopes
-			IL_0009: ldarg.2
-			IL_000a: ldc.r8 1
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0018: stloc.1
-			IL_0019: ldc.i4.1
-			IL_001a: newarr [System.Runtime]System.Object
-			IL_001f: dup
-			IL_0020: ldc.i4.0
-			IL_0021: ldloc.1
-			IL_0022: stelem.ref
-			IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0028: ldarg.0
-			IL_0029: ldloc.1
-			IL_002a: call instance void Modules.Classes_GeneratedConstructorFunctionObjects/Base::.ctor(object)
-			IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0034: ldarg.0
-			IL_0035: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_003a: ret
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_GeneratedConstructorFunctionObjects/Derived::.ctor(bool)
+			IL_0007: ldarg.1
+			IL_0008: stloc.0
+			IL_0009: ldarg.0
+			IL_000a: ldloc.0
+			IL_000b: stfld object[] Modules.Classes_GeneratedConstructorFunctionObjects/Derived::_scopes
+			IL_0010: ldtoken Modules.Classes_GeneratedConstructorFunctionObjects/Derived
+			IL_0015: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001a: ldtoken Modules.Classes_GeneratedConstructorFunctionObjects/Derived
+			IL_001f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_002b: stloc.2
+			IL_002c: ldarg.2
+			IL_002d: ldc.r8 1
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_003b: stloc.3
+			IL_003c: ldarg.0
+			IL_003d: ldloc.2
+			IL_003e: ldc.i4.1
+			IL_003f: newarr [System.Runtime]System.Object
+			IL_0044: dup
+			IL_0045: ldc.i4.0
+			IL_0046: ldloc.3
+			IL_0047: stelem.ref
+			IL_0048: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_004d: ret
+		} // end of method Derived::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_GeneratedConstructorFunctionObjects/Base::.ctor(bool)
+			IL_0007: ret
 		} // end of method Derived::.ctor
 
 	} // end of class Derived
@@ -579,6 +617,20 @@
 			IL_0006: ldarg.0
 			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ret
+		} // end of method Alternate::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method Alternate::.ctor
 
 	} // end of class Alternate
@@ -688,6 +740,20 @@
 			IL_000f: ldloc.0
 			IL_0010: stfld object[] Modules.Classes_GeneratedConstructorFunctionObjects/Renamed::_scopes
 			IL_0015: ret
+		} // end of method Renamed::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method Renamed::.ctor
 
 		.method private hidebysig specialname rtspecialname static 
@@ -867,6 +933,20 @@
 			IL_000c: ret
 		} // end of method NamedMethod::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method NamedMethod::.ctor
+
 		.method public hidebysig static 
 			object name () cil managed 
 		{
@@ -973,6 +1053,20 @@
 			IL_000c: ret
 		} // end of method ClassExpression_L57C18::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method ClassExpression_L57C18::.ctor
+
 	} // end of class ClassExpression_L57C18
 
 	.class nested public auto ansi beforefieldinit ClassExpression_L60C15
@@ -1065,6 +1159,20 @@
 			IL_000c: ret
 		} // end of method ClassExpression_L60C15::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method ClassExpression_L60C15::.ctor
+
 	} // end of class ClassExpression_L60C15
 
 	.class nested public auto ansi beforefieldinit ClassExpression_L61C16
@@ -1155,6 +1263,20 @@
 			IL_0006: ldarg.0
 			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ret
+		} // end of method ClassExpression_L61C16::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method ClassExpression_L61C16::.ctor
 
 	} // end of class ClassExpression_L61C16

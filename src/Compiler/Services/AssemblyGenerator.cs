@@ -126,7 +126,7 @@ namespace Jroc.Services
                 .DiscoverAll()
                 .Reverse()
                 .Distinct()
-                .Count());
+                .Sum(callable => callable.Kind == CallableKind.ClassConstructor ? 2 : 1));
             var totalModuleEntryMethods = modules._modules.Values.Sum(m => m.SymbolTable!.Root.IsAsync ? 2 : 1);
 
             var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
@@ -243,7 +243,9 @@ namespace Jroc.Services
                 var coordinator = _serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
 
                 // Count callables for this module (deterministic; used for global MethodDef row assignment).
-                var callableCount = new CallableDiscovery(symbolTable).DiscoverAll().Distinct().Count();
+                var discoveredCallables = new CallableDiscovery(symbolTable).DiscoverAll().Distinct().ToArray();
+                var callableCount = discoveredCallables.Length
+                    + discoveredCallables.Count(callable => callable.Kind == CallableKind.ClassConstructor);
 
                 // Phase 1 (per module): allocate future MethodDef row ids for all callables.
                 // IMPORTANT: do this before declaring any owner TypeDefs so we can keep TypeDef.MethodList monotonic.

@@ -265,6 +265,13 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case HIRNewTargetExpression:
+                if (_callableKind == CallableKind.ClassMethod)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
                 if (_callableKind == CallableKind.Constructor && _isDerivedConstructor)
                 {
                     resultTempVar = CreateTempVariable();
@@ -298,8 +305,8 @@ public sealed partial class HIRToLIRLowerer
 
             case HIRImportMetaExpression:
                 {
-                    TempVariable moduleIdTemp;
-                    if (!TryLowerCurrentModulePath(out moduleIdTemp))
+                    if (!TryLowerCurrentModuleId(out var moduleIdTemp)
+                        || !TryLowerCurrentModulePath(out var modulePathTemp))
                     {
                         return false;
                     }
@@ -307,7 +314,7 @@ public sealed partial class HIRToLIRLowerer
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
                         MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetImportMeta),
-                        Arguments: new[] { moduleIdTemp },
+                        Arguments: new[] { moduleIdTemp, modulePathTemp },
                         Result: resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     return true;
@@ -2062,6 +2069,23 @@ public sealed partial class HIRToLIRLowerer
             lexicalThis = EnsureObject(capturedThis);
         }
 
+        TempVariable? homeObject = null;
+        if (_callableKind == CallableKind.Constructor
+            && (arrowExpr.CallableId.Semantics.UsesSuper || arrowExpr.CallableId.Semantics.NestedArrowUsesSuper)
+            && !arrowExpr.RequiresLexicalSuperConstructorContext
+            && TryGetEnclosingClassRegistryName(out var className)
+            && className != null)
+        {
+            var owner = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(className, owner));
+            DefineTempStorage(owner, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+            homeObject = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                nameof(JavaScriptRuntime.RuntimeServices.GetConstructorHomeObject),
+                [owner], homeObject.Value, [typeof(Type)]));
+            DefineTempStorage(homeObject.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCreateBoundArrowFunction(
             CallableId: arrowExpr.CallableId,
@@ -2069,7 +2093,8 @@ public sealed partial class HIRToLIRLowerer
             IsAsync: arrowScope.IsAsync,
             RequiresLexicalSuperConstructorContext: arrowExpr.RequiresLexicalSuperConstructorContext,
             Result: resultTempVar,
-            LexicalThis: lexicalThis));
+            LexicalThis: lexicalThis,
+            HomeObject: homeObject));
         DefineTempStorage(resultTempVar, GetMaterializedCallableStorage(arrowExpr.CallableId));
 
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
@@ -2121,7 +2146,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Start with the first quasi (or empty string if missing).
         var current = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstString(quasis.Count > 0 ? quasis[0] : string.Empty, current));
+        _methodBodyIR.Instructions.Add(new LIRConstString(quasis.Count > 0 ? quasis[0] ?? string.Empty : string.Empty, current));
         DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
         for (int i = 0; i < exprs.Count; i++)
@@ -2171,7 +2196,7 @@ public sealed partial class HIRToLIRLowerer
         var exprs = template.Expressions;
 
         // 1. Evaluate the tag expression
-        if (!TryLowerExpression(taggedTemplate.Tag, out var tagTemp))
+        if (!TryLowerCallReference(taggedTemplate.Tag, out var tagTemp, out var tagReceiver))
         {
             return false;
         }
@@ -2187,8 +2212,16 @@ public sealed partial class HIRToLIRLowerer
         for (int i = 0; i < quasis.Count; i++)
         {
             var stringTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString(quasis[i], stringTemp));
-            DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            if (quasis[i] is { } cooked)
+            {
+                _methodBodyIR.Instructions.Add(new LIRConstString(cooked, stringTemp));
+                DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(stringTemp));
+                DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
             cookedStringTemps.Add(stringTemp);
         }
 
@@ -2201,7 +2234,7 @@ public sealed partial class HIRToLIRLowerer
         var rawArrayCount = quasis.Count;
         for (int i = 0; i < rawArrayCount; i++)
         {
-            var rawString = rawQuasis?[i] ?? quasis[i];
+            var rawString = rawQuasis?[i] ?? quasis[i] ?? string.Empty;
             var stringTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(rawString, stringTemp));
             DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
@@ -2247,15 +2280,12 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBuildArray(allArgTemps, argsArrayTemp));
         DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        var scopesArrayTemp = CreateTempVariable();
-        if (!TryBuildCurrentScopesArray(scopesArrayTemp))
-        {
-            return false;
-        }
-        DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
         var callResultTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(tagTemp, scopesArrayTemp, argsArrayTemp, callResultTemp));
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CallWithThis),
+            [EnsureObject(tagTemp), tagReceiver, argsArrayTemp],
+            callResultTemp,
+            [typeof(object), typeof(object), typeof(object[])]));
         DefineTempStorage(callResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         resultTempVar = callResultTemp;
