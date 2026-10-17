@@ -56,6 +56,10 @@ tool install or extra workflow setup is required. A direct
 `System.Security.Cryptography.Pkcs` reference overrides the hosting package's
 vulnerable transitive 8.0.1 dependency.
 
+Published-package runs pass `UsePublishedJrocPackages` and `JrocPackageVersion`
+through the environment so generated child builds inherit the same selection.
+The previous-release step overrides these with its own pinned package version.
+
 The `BenchmarkDotNet Smoke` PR workflow exercises all eleven enabled SharpTS
 cases in real child processes for source, published-package, and previous-host
 project configurations. Both package-backed configurations use the latest

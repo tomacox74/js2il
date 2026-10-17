@@ -89,6 +89,110 @@ assert.compareIterator({
     }
 }, [matchValidator(['a'], 0, 'a')], 'RegExp helper validators should be available');
 
+assert.sameValue(buildString.name, 'buildString');
+assert.sameValue(buildString.length, 1);
+assert.sameValue(testPropertyEscapes.name, 'testPropertyEscapes');
+assert.sameValue(testPropertyEscapes.length, 3);
+assert.sameValue(buildString({
+    loneCodePoints: [0x61, 0x1F600, 0xD800],
+    ranges: [[0x30, 0x32], [0x10FFFF, 0x10FFFF]]
+}), 'a\u{1F600}\uD800012\u{10FFFF}');
+assert.sameValue(buildString({loneCodePoints: null, ranges: [[2, 1]]}), '');
+assert.throws(RangeError, function() {
+    buildString({loneCodePoints: [0x110000], ranges: []});
+});
+var regExpBuildOrder = [];
+var regExpLonePoints = {length: 2};
+Object.defineProperty(regExpLonePoints, '0', {get: function() {
+    regExpBuildOrder.push('get0');
+    return {valueOf: function() { regExpBuildOrder.push('value0'); return 65; }};
+}});
+Object.defineProperty(regExpLonePoints, '1', {get: function() {
+    regExpBuildOrder.push('get1');
+    return {valueOf: function() { regExpBuildOrder.push('value1'); return 66; }};
+}});
+assert.sameValue(buildString({
+    get loneCodePoints() { regExpBuildOrder.push('loneCodePoints'); return regExpLonePoints; },
+    get ranges() { regExpBuildOrder.push('ranges'); return []; }
+}), 'AB');
+assert.compareArray(regExpBuildOrder, ['loneCodePoints', 'ranges', 'get0', 'get1', 'value0', 'value1']);
+assert.sameValue(buildString({
+    loneCodePoints: [],
+    ranges: [[{valueOf: function() { return 0; }}, 10000]]
+}).length, 10001);
+var regExpHelperCalls = [];
+var regExpHelperProbe = {
+    test: function(input) {
+        assert.sameValue(this, regExpHelperProbe);
+        regExpHelperCalls.push(input);
+        return input.length === 1;
+    }
+};
+testPropertyEscapes(regExpHelperProbe, 'abc', {
+    toString: function() { regExpHelperCalls.push('message'); return 'probe'; }
+});
+assert.compareArray(regExpHelperCalls, ['abc', 'a', 'message', 'b', 'message', 'c', 'message']);
+var regExpHelperSymbols = [];
+testPropertyEscapes({
+    test: function(input) {
+        if (input === 'a\u{1F600}\uD800') return false;
+        regExpHelperSymbols.push(input);
+        return true;
+    }
+}, 'a\u{1F600}\uD800', 'code points');
+assert.compareArray(regExpHelperSymbols, ['a', '\u{1F600}', '\uD800']);
+var regExpRawOrder = [];
+assert.sameValue(buildString({
+    loneCodePoints: [],
+    ranges: {0: [65, 65], length: 1n}
+}), 'A');
+var regExpRawSymbol = {
+    codePointAt: function(index) {
+        assert.sameValue(this, regExpRawSymbol);
+        assert.sameValue(index, 0);
+        regExpRawOrder.push('codePointAt');
+        return {toString: function(radix) {
+            assert.sameValue(radix, 16);
+            regExpRawOrder.push('hex');
+            return '41';
+        }};
+    },
+    toString: function() { regExpRawOrder.push('symbol'); return 'A'; }
+};
+var regExpRawSymbols = [regExpRawSymbol];
+testPropertyEscapes({test: function(input) {
+    if (input === regExpRawSymbols) return false;
+    assert.sameValue(input, regExpRawSymbol);
+    regExpRawOrder.push('test');
+    return true;
+}}, regExpRawSymbols, {
+    toString: function() { regExpRawOrder.push('expression'); return 'raw'; }
+});
+assert.compareArray(regExpRawOrder, ['codePointAt', 'hex', 'test', 'expression', 'symbol']);
+assert.throws(TypeError, function() {
+    testPropertyEscapes({test: function() { return false; }}, [''], 'empty symbol');
+});
+var regExpHelperClosed = 0;
+var regExpHelperIterable = {
+    [Symbol.iterator]: function() {
+        return {
+            next: function() { return {value: '!', done: false}; },
+            return: function() {
+                regExpHelperClosed++;
+                throw new Test262Error('Iterator close must preserve the original assertion');
+            }
+        };
+    }
+};
+var regExpHelperFailure;
+try {
+    testPropertyEscapes({test: function() { return false; }}, regExpHelperIterable, 'failure');
+} catch (error) {
+    regExpHelperFailure = error;
+}
+assert(regExpHelperFailure.message.includes('should match U+000021'));
+assert.sameValue(regExpHelperClosed, 1);
+
 var value = {};
 Object.defineProperty(value, 'answer', {
     value: 42,

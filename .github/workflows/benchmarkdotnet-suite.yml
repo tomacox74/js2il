@@ -266,6 +266,8 @@ jobs:
           BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
           BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
           COMPREHENSIVE_BENCHMARKS: ${{ github.event.inputs.comprehensive || 'false' }}
+          UsePublishedJrocPackages: ${{ env.USE_PUBLISHED_JROC_PACKAGES }}
+          JrocPackageVersion: ${{ env.JROC_PACKAGE_VERSION }}
         run: |
           set -euo pipefail
           cd tests/performance/Benchmarks
@@ -323,6 +325,8 @@ jobs:
           BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
           JROC_METHOD_FILTER: ${{ matrix.jroc_method_filter }}
           COMPREHENSIVE_BENCHMARKS: ${{ github.event.inputs.comprehensive || 'false' }}
+          UsePublishedJrocPackages: 'true'
+          JrocPackageVersion: ${{ env.JROC_PREVIOUS_PACKAGE_VERSION }}
         run: |
           set -euo pipefail
           cd tests/performance/Benchmarks
