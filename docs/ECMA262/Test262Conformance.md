@@ -33,8 +33,8 @@ cases (including 54 parse-negative cases) and 16 explicit eval skips. The
 affected operator rows are reconciled against unique pinned files and fresh
 native results for their already-registered cases, producing a net increase of
 306 verified passing results in this report. These rows now contain 484 verified
-passing cases and 16 known-unsupported eval cases; comma retains one unverified
-proper-tail-call case, and coalesce retains two outside this batch. Candidate
+passing cases and 16 known-unsupported eval cases. The remaining comma and
+coalesce tail-call cases are verified by the follow-up below. Candidate
 selection used current central registration reporting through the registered
 MCP connector. Native validation remains branch-local, not central trusted
 acceptance.
@@ -79,7 +79,23 @@ The affected rows and expression aggregate are reconciled to unique pinned
 files, including correction of the assignment denominator from 489 to 485.
 Language and overall aggregates now sum their visible area rows. Earlier
 aggregate overcounts are corrected rather than carried forward as verified
-coverage. Eighteen expression cases remain without a published result.
+coverage.
+
+The expression follow-up adds 16 exact pinned cases: ten verified passing
+across all 17 required native variants and six explicit eval-related
+exclusions. Seven cases verify template-literal syntax errors; three verify
+direct tail calls through nullish coalescing and final comma operands at the
+upstream recursion depth of 100,000. Three exclusions call a rebound identifier
+named `eval`, rather than the intrinsic eval function; calls through that
+binding are currently rejected by the compiler. All 204 runnable cases in the
+five affected feature rows were rechecked with their required native variants.
+This is branch-local evidence, not central trusted acceptance.
+
+The unsigned-right-shift row previously claimed its eval-dependent whitespace
+case as passing. It is now correctly classified as known unsupported, so the
+net increase in verified results is nine rather than ten. Three expression
+cases remain without a published result: a dynamic tail call and two
+tagged-template tail calls, which require general proper-tail-call support.
 
 ## Native test runner
 
@@ -121,8 +137,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
-| Language syntax and semantics | 19,648 | 301 | 3,694 | 23,643 | **83.10%** |
-| **Total** | 36,882 | 325 | 11,034 | 48,241 | **76.45%** |
+| Language syntax and semantics | 19,657 | 307 | 3,679 | 23,643 | **83.14%** |
+| **Total** | 36,891 | 331 | 11,019 | 48,241 | **76.47%** |
 
 ## Language Areas
 
@@ -137,7 +153,7 @@ bounded worker cleanup.
 | `directive-prologue` | 55 | 0 | 7 | 62 | **88.71%** |
 | `eval-code` | 0 | 0 | 347 | 347 | **0.00%** |
 | `export` | 3 | 0 | 0 | 3 | **100.00%** |
-| `expressions` | 10,778 | 242 | 18 | 11,038 | **97.64%** |
+| `expressions` | 10,787 | 248 | 3 | 11,038 | **97.73%** |
 | `function-code` | 204 | 13 | 0 | 217 | **94.01%** |
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
@@ -174,10 +190,10 @@ bounded worker cleanup.
 | `bitwise-not` | 15 | 1 | 0 | 16 | **93.75%** |
 | `bitwise-or` | 29 | 1 | 0 | 30 | **96.67%** |
 | `bitwise-xor` | 29 | 1 | 0 | 30 | **96.67%** |
-| `call` | 75 | 12 | 5 | 92 | **81.52%** |
+| `call` | 75 | 16 | 1 | 92 | **81.52%** |
 | `class` | 3,955 | 104 | 0 | 4,059 | **97.44%** |
-| `coalesce` | 22 | 0 | 2 | 24 | **91.67%** |
-| `comma` | 4 | 1 | 1 | 6 | **66.67%** |
+| `coalesce` | 24 | 0 | 0 | 24 | **100.00%** |
+| `comma` | 5 | 1 | 0 | 6 | **83.33%** |
 | `compound-assignment` | 434 | 20 | 0 | 454 | **95.59%** |
 | `concatenation` | 4 | 1 | 0 | 5 | **80.00%** |
 | `conditional` | 21 | 1 | 0 | 22 | **95.45%** |
@@ -222,12 +238,12 @@ bounded worker cleanup.
 | `super` | 90 | 4 | 0 | 94 | **95.74%** |
 | `tagged-template` | 21 | 4 | 2 | 27 | **77.78%** |
 | `tco-pos.js` | 1 | 0 | 0 | 1 | **100.00%** |
-| `template-literal` | 49 | 0 | 8 | 57 | **85.96%** |
+| `template-literal` | 56 | 1 | 0 | 57 | **98.25%** |
 | `this` | 2 | 4 | 0 | 6 | **33.33%** |
 | `typeof` | 15 | 1 | 0 | 16 | **93.75%** |
 | `unary-minus` | 13 | 1 | 0 | 14 | **92.86%** |
 | `unary-plus` | 15 | 2 | 0 | 17 | **88.24%** |
-| `unsigned-right-shift` | 45 | 0 | 0 | 45 | **100.00%** |
+| `unsigned-right-shift` | 44 | 1 | 0 | 45 | **97.78%** |
 | `void` | 8 | 1 | 0 | 9 | **88.89%** |
 | `yield` | 63 | 0 | 0 | 63 | **100.00%** |
 

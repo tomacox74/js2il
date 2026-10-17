@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: add 16 exact pinned expression fixtures: ten verified passing and
+  six explicit eval-related skips. Preserve direct tail calls through nullish
+  coalescing and final comma operands at the full upstream recursion depth,
+  and cover seven additional template-literal syntax errors. General dynamic
+  and tagged-template proper tail calls remain unsupported.
 - test262: add 200 exact pinned language-expression fixtures: 147 verified
   passing and 53 explicit eval skips. Fix super reference ordering, compound
   and logical writes, updates and dynamic superclass construction; preserve
