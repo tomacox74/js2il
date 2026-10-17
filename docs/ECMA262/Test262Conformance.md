@@ -104,9 +104,9 @@ bounded worker cleanup.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,170 | 24 | 6,318 | 23,512 | **73.03%** |
-| Language syntax and semantics | 19,818 | 248 | 3,581 | 23,647 | **83.81%** |
-| **Total** | 37,048 | 272 | 10,925 | 48,245 | **76.79%** |
+| Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
+| Language syntax and semantics | 19,835 | 248 | 3,564 | 23,647 | **83.88%** |
+| **Total** | 37,069 | 272 | 10,904 | 48,245 | **76.84%** |
 
 ## Language Areas
 
@@ -131,13 +131,13 @@ bounded worker cleanup.
 | `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
 | `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
 | `literals` | 505 | 0 | 29 | 534 | **94.57%** |
-| `module-code` | 34 | 0 | 560 | 594 | **5.72%** |
+| `module-code` | 48 | 0 | 546 | 594 | **8.08%** |
 | `punctuators` | 11 | 0 | 0 | 11 | **100.00%** |
 | `reserved-words` | 26 | 0 | 1 | 27 | **96.30%** |
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,887 | 36 | 2,414 | 9,337 | **73.76%** |
+| `statements` | 6,890 | 36 | 2,411 | 9,337 | **73.79%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -219,7 +219,7 @@ bounded worker cleanup.
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| `async-function` | 45 | 0 | 29 | 74 | **60.81%** |
+| `async-function` | 48 | 0 | 26 | 74 | **64.86%** |
 | `async-generator` | 300 | 1 | 0 | 301 | **99.67%** |
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
@@ -298,7 +298,7 @@ bounded worker cleanup.
 | `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
-| `RegExp` | 1,174 | 0 | 705 | 1,879 | **62.48%** |
+| `RegExp` | 1,178 | 0 | 701 | 1,879 | **62.69%** |
 | `RegExpStringIteratorPrototype` | 15 | 0 | 2 | 17 | **88.24%** |
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |

@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
 - test262: complete pinned dynamic-import coverage with 629 newly added exact
   fixtures and 301 existing parse-negative cases moved to canonical paths.
   All 940 non-eval cases pass 1,776 required native variants; explicitly skip
