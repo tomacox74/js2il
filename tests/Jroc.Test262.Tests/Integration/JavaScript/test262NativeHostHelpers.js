@@ -93,6 +93,50 @@ assert.sameValue(buildString.name, 'buildString');
 assert.sameValue(buildString.length, 1);
 assert.sameValue(testPropertyEscapes.name, 'testPropertyEscapes');
 assert.sameValue(testPropertyEscapes.length, 3);
+assert.sameValue(testPropertyOfStrings.name, 'testPropertyOfStrings');
+assert.sameValue(testPropertyOfStrings.length, 1);
+assert.sameValue(testExtendedCharacterClass, testPropertyOfStrings);
+testPropertyOfStrings({
+    regExp: /^(?:ab|\u{1F600})+$/u,
+    expression: 'native string-property helper',
+    matchStrings: ['ab', '\u{1F600}'],
+    nonMatchStrings: ['a', 'b']
+});
+var nativeStringPropertyRejected = false;
+try {
+    testExtendedCharacterClass({
+        regExp: {test: function() { return false; }},
+        expression: 'must preserve assertions',
+        matchStrings: ['a']
+    });
+} catch (error) {
+    nativeStringPropertyRejected = error.message.includes('should match a');
+}
+assert.sameValue(nativeStringPropertyRejected, true);
+var nativeStringPropertyClosed = false;
+var nativeStringPropertyFailure;
+try {
+    testPropertyOfStrings({
+        regExp: {test: function() { return false; }},
+        expression: 'close the fallback iterator',
+        matchStrings: {
+            join: function() { return 'a'; },
+            [Symbol.iterator]: function() {
+                return {
+                    next: function() { return {value: 'a', done: false}; },
+                    return: function() {
+                        nativeStringPropertyClosed = true;
+                        return {done: true};
+                    }
+                };
+            }
+        }
+    });
+} catch (error) {
+    nativeStringPropertyFailure = error;
+}
+assert.sameValue(nativeStringPropertyClosed, true);
+assert.sameValue(nativeStringPropertyFailure.message.includes('U+000061'), true);
 assert.sameValue(buildString({
     loneCodePoints: [0x61, 0x1F600, 0xD800],
     ranges: [[0x30, 0x32], [0x10FFFF, 0x10FFFF]]

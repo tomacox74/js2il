@@ -60,7 +60,7 @@
     {
       "clause": "22.2.1.8",
       "title": "Static Semantics: MayContainStrings",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-maycontainstrings"
     },
     {
@@ -587,15 +587,16 @@
           "test/built-ins/RegExp/property-escapes/generated/Script_-_Unknown.js",
           "test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js"
         ],
-        "notes": "Script/sc and Script_Extensions/scx accept exact Unicode 17 long and short value aliases. Composite ISO 15924 aliases such as Hrkt are rejected. Tables are generated from independently checksum-pinned Unicode Character Database files, including default Unknown ranges and explicit Script_Extensions overrides. Positive and negative escapes match complete code points while preserving lone surrogates. Unicode simple-case-folding deltas preserve u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. The two property-escape batches cover all 175 generated Script and all 175 generated Script_Extensions cases. Other Unicode properties and advanced v-set operations remain limited; this is not full Unicode regular-expression parity."
+        "notes": "Script/sc and Script_Extensions/scx accept exact Unicode 17 long and short value aliases. Composite ISO 15924 aliases such as Hrkt are rejected. Tables are generated from independently checksum-pinned Unicode Character Database files, including default Unknown ranges and explicit Script_Extensions overrides. Positive and negative escapes match complete code points while preserving lone surrogates. Unicode simple-case-folding deltas preserve u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. The two property-escape batches cover all 175 generated Script and all 175 generated Script_Extensions cases. Binary properties, properties of strings, and v-set operations are documented separately; execution remains backed by .NET Regex rather than a complete standalone ECMAScript matcher."
       },
       {
         "clause": "22.2.2.9.8",
-        "feature": "Unicode General_Category and selected binary property escapes",
+        "feature": "Unicode General_Category and binary property escapes",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-unicodematchpropertyvalue-p-v",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpUnicodeProperties200ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/RegExpRemainingExecutionTests.cs",
           "tests/Jroc.Tests/RegExpObjectRepresentationTests.cs"
         ],
         "test262Paths": [
@@ -605,7 +606,41 @@
           "test/built-ins/RegExp/property-escapes/generated/Alphabetic.js",
           "test/built-ins/RegExp/property-escapes/generated/Changes_When_Casefolded.js"
         ],
-        "notes": "All 38 General_Category values, including composite categories, accept exact Unicode long and short aliases through General_Category=, gc=, and bare category escapes. Twelve binary properties are supported with their exact aliases: ASCII, ASCII_Hex_Digit, Alphabetic, Any, Assigned, Bidi_Control, Bidi_Mirrored, Case_Ignorable, Cased, Changes_When_Casefolded, Changes_When_Casemapped, and Changes_When_Lowercased. Ranges and simple-case-folding data come from independently checksum-pinned Unicode 17 UCD files, not Test262 assertions. Matching covers astral code points and lone surrogates, with u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers. Together with 150 remaining generated Script_Extensions cases, the new batch verifies 200 cases across all 400 required native variants. No selected case requires eval. Other binary properties and advanced v-set operations remain limited."
+        "notes": "All 38 General_Category values, including composite categories, accept exact Unicode long and short aliases through General_Category=, gc=, and bare category escapes. All ECMA-262-listed binary character properties and their exact aliases are supported, including the remaining case-change, identifier, whitespace, punctuation, and emoji character properties. Ranges and simple/legacy case mappings come from independently checksum-pinned Unicode 17 UCD files, not Test262 assertions. Matching covers astral code points and lone surrogates, with u-mode complement-before-folding and v-mode folding-before-complement, including scoped i modifiers."
+      },
+      {
+        "clause": "22.2.2.9",
+        "feature": "Unicode v-mode sets and properties of strings",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-compiletocharset",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/unicodeSets/generated/RegExpRemainingExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/property-escapes/generated/strings/RegExpRemainingExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/unicodeSets/generated/character-class-difference-string-literal.js",
+          "test/built-ins/RegExp/property-escapes/generated/strings/Basic_Emoji.js",
+          "test/built-ins/RegExp/property-escapes/generated/strings/RGI_Emoji.js"
+        ],
+        "notes": "Unicode sets support nested classes, union, intersection, subtraction, and q string disjunctions. Case folding precedes v-set operations, and syntactic MayContainStrings rules govern negation. All seven properties of strings use independently checksum-pinned official Unicode 17 emoji sequence/ZWJ data; RGI_Emoji is their union. Matching prefers longer strings and preserves complete-code-point and lone-surrogate behavior. The final core batch verifies 294 cases across all 588 required variants; seven direct-eval cases are explicitly excluded. Across the pinned core RegExp corpus, 1,872 cases are verified and seven are known unsupported. Annex B is tracked separately."
+      },
+      {
+        "clause": "22.2.2.3.1",
+        "feature": "Quantified capture resets and nullable repetitions",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-repeatmatcher-abstract-operation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/RegExpRemainingExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/RegExpRemainingExecutionTests.cs",
+          "tests/Jroc.Tests/RegExpObjectRepresentationTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/RegExp/nullable-quantifier.js",
+          "test/built-ins/RegExp/lookahead-quantifier-match-groups.js",
+          "test/built-ins/RegExp/quantifier-integer-limit.js",
+          "test/built-ins/RegExp/named-groups/duplicate-names-exec.js"
+        ],
+        "notes": "Capture reset prefixes cover every quantified alternative and cannot backtrack to resurrect a previous iteration's capture. Optional zero-length iterations are rejected while mandatory empty iterations retain their captures. Nullable optional bodies use engine-private suffix/prefix position guards; helpers never appear in match arrays, indices, named groups, or replacement arguments. Large quantifier bounds are represented by equivalent nested CLR-sized repetitions rather than rejected or silently clamped. Execution remains subject to the regex timeout; nullable-body guards can add input scanning costs on pathological repetitions."
       },
       {
         "clause": "22.2.5.3",
@@ -710,7 +745,7 @@
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-09.js",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-10.js"
         ],
-        "notes": "RegExp literals with unsupported v-flag UnicodeSets syntax are rejected during parse/compilation before runtime execution, matching these negative test262 parse tests so $DONOTEVALUATE() is never evaluated. Full regexp-v-flag and UnicodeSets semantics are still not implemented."
+        "notes": "Invalid ECMAScript RegExp literals are rejected during parsing before runtime execution, so negative syntax fixtures never evaluate $DONOTEVALUATE(). RegExp constructor patterns are independently validated with the same JavaScript grammar before translation to CLR syntax, including Unicode escapes, named groups, scoped modifiers, and v-set restrictions."
       },
       {
         "clause": "22.2.2.7.4",
@@ -721,7 +756,7 @@
           "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/RegExp/regexp-modifiers/syntax/valid/ExecutionTests.cs"
         ],
-        "notes": "Scoped s, i, and m modifiers are lowered to the corresponding .NET regular-expression options, including nested additions and removals. The v flag supports the separately documented code-point subset; advanced Unicode set operations remain unsupported.",
+        "notes": "Scoped s, i, and m additions and removals are tracked independently across groups and alternatives. Dot, line anchors, word boundaries, character-class escapes, and explicit Unicode/legacy case mappings preserve JavaScript behavior rather than inheriting CLR character categories or final-newline anchor behavior.",
         "test262Suites": [
           "built_ins.RegExp.regexp_modifiers",
           "built_ins.RegExp.regexp_modifiers.syntax.valid"
@@ -743,7 +778,7 @@
           "tests/Jroc.Tests/RegExp/CompiledPatternCacheTests.cs",
           "tests/Jroc.Tests/RegExp/AdaptiveCompilationTests.cs"
         ],
-        "notes": "Constructor-like calls and CreateLiteral evaluations share source/compilation-option artifacts while preserving fresh RegExp identity and independent lastIndex. Patterns start interpreted; the 64th dynamic or literal construction attempts one compiled-tier promotion, with at most 256 cached/in-flight compiled entries. Concurrent constructors may keep using the interpreted tier; eviction retires compiled cache references, and failed promotion reports a Trace warning and permanently retains the interpreted tier. Runtimes without dynamic code remain interpreted. Matching does not increment construction counts. The g, i, m, s, u, d, and y flags are parsed and reflected; v supports the separately documented limited code-point subset. Unicode behavior remains a limited subset backed by .NET Regex and common-case rewrites, not full ECMAScript parity. Test262 evidence covers constructor identity and flags, literal parsing, legacy pattern semantics, and supported lookbehind forms.",
+        "notes": "Constructor-like calls and CreateLiteral evaluations share source/compilation-option artifacts while preserving fresh RegExp identity and independent lastIndex. Patterns start interpreted; the 64th dynamic or literal construction attempts one compiled-tier promotion, with at most 256 cached/in-flight compiled entries. Concurrent constructors may keep using the interpreted tier; eviction retires compiled cache references, and failed promotion reports a Trace warning and permanently retains the interpreted tier. Runtimes without dynamic code remain interpreted. Matching does not increment construction counts. All g, i, m, s, u, v, d, and y flags are parsed and reflected. Construction observes IsRegExp once, reads source/flags in specification order, distinguishes omitted flags from null, and rejects Symbol string coercions. Callable identity return additionally requires IsRegExp and the original constructor. Constructor length is 2. Unicode capture names, including escaped identifiers, are validated by the JavaScript grammar and decoded independently of CLR Unicode versions. The implementation remains .NET Regex-backed, not a claim of complete standalone ECMAScript matcher parity.",
         "test262Suites": [
           "built_ins.RegExp",
           "built_ins.RegExp.lookBehind"

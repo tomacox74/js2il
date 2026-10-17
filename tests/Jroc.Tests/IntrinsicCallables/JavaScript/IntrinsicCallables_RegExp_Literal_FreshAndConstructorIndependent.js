@@ -14,14 +14,7 @@ console.log(second.lastIndex);
 console.log(third.test("aa"));
 console.log(third.lastIndex);
 
-// A literal that fails at runtime must throw a fresh SyntaxError on every evaluation.
-function unsupported() {
-    return /[a&&b]/v;
-}
-let firstError;
-try { unsupported(); } catch (e) { firstError = e; firstError.tag = "first"; }
-try { unsupported(); } catch (e) {
-    console.log(e instanceof SyntaxError);
-    console.log(e !== firstError);
-    console.log(e.tag);
-}
+const intersection = /[a&&b]/v;
+console.log(intersection.test("a"));
+console.log(intersection.test("b"));
+console.log(intersection.unicodeSets);
