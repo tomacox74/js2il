@@ -279,6 +279,11 @@ public partial class Promise : JsObject, IJavaScriptPromise
     }
 
     // Constructors
+    // CLR storage initialization must not run an executor or publish async-hook events.
+    protected Promise(bool _)
+    {
+    }
+
     public Promise(object? executor)
     {
         InitializeIntrinsicSurface();

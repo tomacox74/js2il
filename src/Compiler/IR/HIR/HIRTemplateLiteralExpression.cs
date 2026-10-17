@@ -6,7 +6,7 @@ namespace Jroc.HIR;
 public sealed class HIRTemplateLiteralExpression : HIRExpression
 {
     public HIRTemplateLiteralExpression(
-        IReadOnlyList<string> quasis, 
+        IReadOnlyList<string?> quasis,
         IReadOnlyList<HIRExpression> expressions,
         IReadOnlyList<string>? rawQuasis = null)
     {
@@ -18,7 +18,7 @@ public sealed class HIRTemplateLiteralExpression : HIRExpression
     /// <summary>
     /// The cooked text parts of the template literal. Typically has length Expressions.Count + 1.
     /// </summary>
-    public IReadOnlyList<string> Quasis { get; }
+    public IReadOnlyList<string?> Quasis { get; }
 
     /// <summary>
     /// The interpolated expressions between quasi segments.

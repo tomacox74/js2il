@@ -93,7 +93,7 @@ internal static class DynamicFunctionSupport
         var syntheticSource = BuildSyntheticFunctionExpressionSource(literalArgs, startLine, startColumn, createFactory);
         try
         {
-            var program = parser.ParseJavaScript(syntheticSource, sourceFile);
+            var program = parser.ParseJavaScriptScript(syntheticSource, sourceFile);
             if (program.Body.FirstOrDefault() is ExpressionStatement { Expression: FunctionExpression parsedFunction })
             {
                 functionExpression = parsedFunction;

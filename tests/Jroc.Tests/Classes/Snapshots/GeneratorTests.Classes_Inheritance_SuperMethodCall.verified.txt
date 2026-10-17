@@ -247,6 +247,20 @@
 			IL_000c: ret
 		} // end of method B::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method B::.ctor
+
 		.method public hidebysig 
 			instance float64 m () cil managed 
 		{
@@ -473,22 +487,52 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 22 (0x16)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] object[]
+				[0] class [System.Runtime]System.Type,
+				[1] object,
+				[2] object[]
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void Modules.Classes_Inheritance_SuperMethodCall/B::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Classes_Inheritance_SuperMethodCall/D::_scopes
-			IL_0015: ret
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_Inheritance_SuperMethodCall/D::.ctor(bool)
+			IL_0007: ldtoken Modules.Classes_Inheritance_SuperMethodCall/D
+			IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: ldtoken Modules.Classes_Inheritance_SuperMethodCall/D
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_0022: stloc.1
+			IL_0023: call object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentArguments()
+			IL_0028: stloc.2
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: ldloc.2
+			IL_002c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0031: ldarg.1
+			IL_0032: stloc.2
+			IL_0033: ldarg.0
+			IL_0034: ldloc.2
+			IL_0035: stfld object[] Modules.Classes_Inheritance_SuperMethodCall/D::_scopes
+			IL_003a: ret
+		} // end of method D::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_Inheritance_SuperMethodCall/B::.ctor(bool)
+			IL_0007: ret
 		} // end of method D::.ctor
 
 		.method public hidebysig 
@@ -498,20 +542,42 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 24 (0x18)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object,
+				[1] object,
+				[2] string,
+				[3] object[],
+				[4] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance float64 Modules.Classes_Inheritance_SuperMethodCall/B::m()
-			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldc.r8 2
-			IL_0011: add
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: ret
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperPropertyReceiver()
+			IL_0005: stloc.0
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperPropertyBase()
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0010: stloc.1
+			IL_0011: ldstr "m"
+			IL_0016: stloc.2
+			IL_0017: ldloc.1
+			IL_0018: ldloc.0
+			IL_0019: ldloc.2
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperProperty(object, object, object)
+			IL_001f: stloc.1
+			IL_0020: ldc.i4.0
+			IL_0021: newarr [System.Runtime]System.Object
+			IL_0026: stloc.3
+			IL_0027: ldloc.1
+			IL_0028: ldloc.0
+			IL_0029: ldloc.3
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+			IL_002f: stloc.0
+			IL_0030: ldloc.0
+			IL_0031: ldc.r8 2
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_003f: stloc.s 4
+			IL_0041: ldloc.s 4
+			IL_0043: ret
 		} // end of method D::m
 
 	} // end of class D

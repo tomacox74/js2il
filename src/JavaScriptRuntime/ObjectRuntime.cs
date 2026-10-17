@@ -231,14 +231,14 @@ namespace JavaScriptRuntime
 
         public static object? GetSuperProperty(string propertyName)
         {
-            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
-            if (homeObject is null or JsNull)
-            {
-                throw new TypeError("Super object is unavailable");
-            }
-            var prototype = PrototypeChain.GetPrototypeOrNull(homeObject)
-                ?? throw new TypeError("Super object has no prototype");
             var receiver = RuntimeServices.GetCurrentLexicalSuperPropertyReceiver();
+            return GetSuperProperty(GetSuperPropertyBase(), receiver, propertyName);
+        }
+
+        public static object? GetSuperProperty(object prototypeValue, object? receiver, object? propertyKey)
+        {
+            var prototype = RequireObjectCoercible(prototypeValue);
+            var propertyName = ToPropertyKeyString(propertyKey);
 
             if (TryGetOwnPropertyValue(prototype, propertyName, receiver!, out var value)
                 || TryGetInheritedPropertyValue(prototype, propertyName, receiver!, out value))
@@ -258,18 +258,22 @@ namespace JavaScriptRuntime
 
         public static object GetSuperPropertyBase()
         {
-            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
+            var homeObject = RuntimeServices.GetCurrentSuperPropertyHomeObject();
             if (homeObject is null or JsNull)
             {
                 throw new TypeError("Super object is unavailable");
             }
             return PrototypeChain.GetPrototypeOrNull(homeObject)
-                ?? throw new TypeError("Super object has no prototype");
+                ?? JsNull.Null;
         }
 
         public static object? SetSuperProperty(object prototype, object? receiver, string propertyName, object? value)
+            => SetSuperProperty(prototype, receiver, propertyName, value, strict: true);
+
+        public static object? SetSuperProperty(object prototype, object? receiver, object? propertyName, object? value, bool strict)
         {
-            if (!ReflectSet(prototype, propertyName, value, receiver))
+            RequireObjectCoercible(prototype);
+            if (!ReflectSet(prototype, propertyName!, value, receiver) && strict)
             {
                 throw new TypeError($"Cannot assign to super property '{propertyName}'");
             }

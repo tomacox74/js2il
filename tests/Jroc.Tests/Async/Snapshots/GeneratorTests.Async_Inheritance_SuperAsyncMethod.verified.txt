@@ -388,6 +388,20 @@
 			IL_000c: ret
 		} // end of method Base::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Base::.ctor
+
 		.method public hidebysig 
 			instance object inc (
 				object[] scopes,
@@ -757,22 +771,52 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 22 (0x16)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] object[]
+				[0] class [System.Runtime]System.Type,
+				[1] object,
+				[2] object[]
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void Modules.Async_Inheritance_SuperAsyncMethod/Base::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived::_scopes
-			IL_0015: ret
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Async_Inheritance_SuperAsyncMethod/Derived::.ctor(bool)
+			IL_0007: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Derived
+			IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: ldtoken Modules.Async_Inheritance_SuperAsyncMethod/Derived
+			IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_0022: stloc.1
+			IL_0023: call object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentArguments()
+			IL_0028: stloc.2
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: ldloc.2
+			IL_002c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0031: ldarg.1
+			IL_0032: stloc.2
+			IL_0033: ldarg.0
+			IL_0034: ldloc.2
+			IL_0035: stfld object[] Modules.Async_Inheritance_SuperAsyncMethod/Derived::_scopes
+			IL_003a: ret
+		} // end of method Derived::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Async_Inheritance_SuperAsyncMethod/Base::.ctor(bool)
+			IL_0007: ret
 		} // end of method Derived::.ctor
 
 		.method public hidebysig 
@@ -785,11 +829,14 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 268 (0x10c)
+			// Code size: 350 (0x15e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Async_Inheritance_SuperAsyncMethod/Derived/Scope_run,
-				[1] object
+				[1] object,
+				[2] object,
+				[3] string,
+				[4] object[]
 			)
 
 			IL_0000: ldarg.1
@@ -827,14 +874,14 @@
 			IL_0057: brtrue IL_0068
 
 			IL_005c: ldloc.0
-			IL_005d: ldc.i4.1
+			IL_005d: ldc.i4.4
 			IL_005e: newarr [System.Runtime]System.Object
 			IL_0063: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
 
 			IL_0068: ldloc.0
 			IL_0069: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
 			IL_006e: ldc.i4.0
-			IL_006f: ble IL_007f
+			IL_006f: ble IL_0096
 
 			IL_0074: ldloc.0
 			IL_0075: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
@@ -842,63 +889,109 @@
 			IL_007b: ldc.i4.0
 			IL_007c: ldelem.ref
 			IL_007d: stloc.1
-			IL_007e: pop
+			IL_007e: dup
+			IL_007f: ldc.i4.1
+			IL_0080: ldelem.ref
+			IL_0081: stloc.2
+			IL_0082: dup
+			IL_0083: ldc.i4.2
+			IL_0084: ldelem.ref
+			IL_0085: castclass [System.Runtime]System.String
+			IL_008a: stloc.3
+			IL_008b: dup
+			IL_008c: ldc.i4.3
+			IL_008d: ldelem.ref
+			IL_008e: castclass object[]
+			IL_0093: stloc.s 4
+			IL_0095: pop
 
-			IL_007f: ldloc.0
-			IL_0080: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0085: switch (IL_0092, IL_00d6)
+			IL_0096: ldloc.0
+			IL_0097: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_009c: switch (IL_00a9, IL_0128)
 
-			IL_0092: ldarg.0
-			IL_0093: ldarg.1
-			IL_0094: ldnull
-			IL_0095: ldc.r8 4
-			IL_009e: box [System.Runtime]System.Double
-			IL_00a3: call instance object Modules.Async_Inheritance_SuperAsyncMethod/Base::inc(object[], object, object)
-			IL_00a8: stloc.1
-			IL_00a9: ldloc.0
-			IL_00aa: ldc.i4.1
-			IL_00ab: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00b0: ldloc.0
-			IL_00b1: ldloc.1
-			IL_00b2: ldarg.1
-			IL_00b3: ldc.i4.1
-			IL_00b4: ldloc.0
-			IL_00b5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation)
-			IL_00bf: ldloc.0
-			IL_00c0: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_00c5: dup
-			IL_00c6: ldc.i4.0
-			IL_00c7: ldloc.1
-			IL_00c8: stelem.ref
-			IL_00c9: pop
-			IL_00ca: ldloc.0
-			IL_00cb: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_00d0: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_00d5: ret
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperPropertyReceiver()
+			IL_00ae: stloc.1
+			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperPropertyBase()
+			IL_00b4: stloc.2
+			IL_00b5: ldloc.2
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00bb: stloc.2
+			IL_00bc: ldstr "inc"
+			IL_00c1: stloc.3
+			IL_00c2: ldloc.2
+			IL_00c3: ldloc.1
+			IL_00c4: ldloc.3
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperProperty(object, object, object)
+			IL_00ca: stloc.2
+			IL_00cb: ldc.i4.1
+			IL_00cc: newarr [System.Runtime]System.Object
+			IL_00d1: dup
+			IL_00d2: ldc.i4.0
+			IL_00d3: ldc.r8 4
+			IL_00dc: box [System.Runtime]System.Double
+			IL_00e1: stelem.ref
+			IL_00e2: stloc.s 4
+			IL_00e4: ldloc.2
+			IL_00e5: ldloc.1
+			IL_00e6: ldloc.s 4
+			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+			IL_00ed: stloc.1
+			IL_00ee: ldloc.0
+			IL_00ef: ldc.i4.1
+			IL_00f0: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00f5: ldloc.0
+			IL_00f6: ldloc.1
+			IL_00f7: ldarg.1
+			IL_00f8: ldc.i4.1
+			IL_00f9: ldloc.0
+			IL_00fa: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_00ff: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, class [JavaScriptRuntime]JavaScriptRuntime.CompiledContinuation)
+			IL_0104: ldloc.0
+			IL_0105: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_010a: dup
+			IL_010b: ldc.i4.0
+			IL_010c: ldloc.1
+			IL_010d: stelem.ref
+			IL_010e: dup
+			IL_010f: ldc.i4.1
+			IL_0110: ldloc.2
+			IL_0111: stelem.ref
+			IL_0112: dup
+			IL_0113: ldc.i4.2
+			IL_0114: ldloc.3
+			IL_0115: stelem.ref
+			IL_0116: dup
+			IL_0117: ldc.i4.3
+			IL_0118: ldloc.s 4
+			IL_011a: stelem.ref
+			IL_011b: pop
+			IL_011c: ldloc.0
+			IL_011d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0122: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0127: ret
 
-			IL_00d6: ldloc.0
-			IL_00d7: ldfld object Modules.Async_Inheritance_SuperAsyncMethod/Derived/Scope_run::_awaited1
-			IL_00dc: stloc.1
-			IL_00dd: ldloc.0
-			IL_00de: ldc.i4.m1
-			IL_00df: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00e4: ldloc.0
-			IL_00e5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_00ef: ldarg.1
-			IL_00f0: ldc.i4.1
-			IL_00f1: newarr [System.Runtime]System.Object
-			IL_00f6: dup
-			IL_00f7: ldc.i4.0
-			IL_00f8: ldloc.1
-			IL_00f9: stelem.ref
-			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_00ff: pop
-			IL_0100: ldloc.0
-			IL_0101: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0106: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_010b: ret
+			IL_0128: ldloc.0
+			IL_0129: ldfld object Modules.Async_Inheritance_SuperAsyncMethod/Derived/Scope_run::_awaited1
+			IL_012e: stloc.1
+			IL_012f: ldloc.0
+			IL_0130: ldc.i4.m1
+			IL_0131: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0136: ldloc.0
+			IL_0137: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_013c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_0141: ldarg.1
+			IL_0142: ldc.i4.1
+			IL_0143: newarr [System.Runtime]System.Object
+			IL_0148: dup
+			IL_0149: ldc.i4.0
+			IL_014a: ldloc.1
+			IL_014b: stelem.ref
+			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0151: pop
+			IL_0152: ldloc.0
+			IL_0153: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0158: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_015d: ret
 		} // end of method Derived::run
 
 	} // end of class Derived
@@ -941,7 +1034,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 733 (0x2dd)
+		// Code size: 729 (0x2d9)
 		.maxstack 13
 		.locals init (
 			[0] class Modules.Async_Inheritance_SuperAsyncMethod/Scope,
@@ -1184,67 +1277,58 @@
 		IL_0238: stloc.s 5
 		IL_023a: ldloc.s 5
 		IL_023c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0241: stloc.s 5
-		IL_0243: ldloc.s 5
-		IL_0245: isinst Modules.Async_Inheritance_SuperAsyncMethod/Derived
-		IL_024a: dup
-		IL_024b: brfalse IL_0267
+		IL_0241: volatile.
+		IL_0243: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_0248: brfalse IL_025c
 
-		IL_0250: ldc.i4.1
-		IL_0251: newarr [System.Runtime]System.Object
-		IL_0256: dup
-		IL_0257: ldc.i4.0
-		IL_0258: ldloc.0
-		IL_0259: stelem.ref
-		IL_025a: ldnull
-		IL_025b: callvirt instance object Modules.Async_Inheritance_SuperAsyncMethod/Derived::run(object[], object)
-		IL_0260: stloc.s 5
-		IL_0262: br IL_0276
+		IL_024d: ldstr "run"
+		IL_0252: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0257: br IL_0270
 
-		IL_0267: pop
-		IL_0268: ldloc.s 5
-		IL_026a: ldstr "run"
-		IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0274: stloc.s 5
+		IL_025c: ldstr "run"
+		IL_0261: ldstr "Async_Inheritance_SuperAsyncMethod:Modules.Async_Inheritance_SuperAsyncMethod:__js_module_init__:57"
+		IL_0266: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_0276: ldloc.s 5
-		IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_027d: stloc.s 5
-		IL_027f: ldc.i4.1
-		IL_0280: newarr [System.Runtime]System.Object
-		IL_0285: dup
-		IL_0286: ldc.i4.0
-		IL_0287: ldloc.0
-		IL_0288: stelem.ref
-		IL_0289: stloc.2
-		IL_028a: newobj instance void Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject::.ctor()
-		IL_028f: ldc.i4.1
-		IL_0290: conv.r8
-		IL_0291: ldstr ""
-		IL_0296: ldc.i4.0
-		IL_0297: ldc.i4.0
-		IL_0298: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_029d: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0)
-		IL_02a2: stloc.s 7
-		IL_02a4: volatile.
-		IL_02a6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_02ab: brfalse IL_02c3
+		IL_0270: stloc.s 5
+		IL_0272: ldloc.s 5
+		IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0279: stloc.s 5
+		IL_027b: ldc.i4.1
+		IL_027c: newarr [System.Runtime]System.Object
+		IL_0281: dup
+		IL_0282: ldc.i4.0
+		IL_0283: ldloc.0
+		IL_0284: stelem.ref
+		IL_0285: stloc.2
+		IL_0286: newobj instance void Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject::.ctor()
+		IL_028b: ldc.i4.1
+		IL_028c: conv.r8
+		IL_028d: ldstr ""
+		IL_0292: ldc.i4.0
+		IL_0293: ldc.i4.0
+		IL_0294: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0299: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Async_Inheritance_SuperAsyncMethod/ArrowFunction_L15C26/FunctionObject>(!!0)
+		IL_029e: stloc.s 7
+		IL_02a0: volatile.
+		IL_02a2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_02a7: brfalse IL_02bf
 
-		IL_02b0: ldloc.s 5
-		IL_02b2: ldstr "then"
-		IL_02b7: ldloc.s 7
-		IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_02be: br IL_02db
+		IL_02ac: ldloc.s 5
+		IL_02ae: ldstr "then"
+		IL_02b3: ldloc.s 7
+		IL_02b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_02ba: br IL_02d7
 
-		IL_02c3: ldloc.s 5
-		IL_02c5: ldstr "then"
-		IL_02ca: ldloc.s 7
-		IL_02cc: ldstr "Async_Inheritance_SuperAsyncMethod:Modules.Async_Inheritance_SuperAsyncMethod:__js_module_init__:61"
-		IL_02d1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_02d6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_02bf: ldloc.s 5
+		IL_02c1: ldstr "then"
+		IL_02c6: ldloc.s 7
+		IL_02c8: ldstr "Async_Inheritance_SuperAsyncMethod:Modules.Async_Inheritance_SuperAsyncMethod:__js_module_init__:61"
+		IL_02cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
+		IL_02d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_02db: pop
-		IL_02dc: ret
+		IL_02d7: pop
+		IL_02d8: ret
 	} // end of method Async_Inheritance_SuperAsyncMethod::__js_module_init__
 
 } // end of class Modules.Async_Inheritance_SuperAsyncMethod
@@ -1277,6 +1361,7 @@
 	.field assembly static int32 __jroc_dynamicLookup_12
 	.field assembly static int32 __jroc_dynamicLookup_13
 	.field assembly static int32 __jroc_dynamicLookup_14
+	.field assembly static int32 __jroc_dynamicLookup_15
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

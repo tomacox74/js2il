@@ -13,12 +13,14 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        if (propAccessExpr.Object is HIRSuperExpression
-            && _callableKind == CallableKind.Constructor
-            && _isDerivedConstructor
-            && !_superConstructorCalled)
+        if (propAccessExpr.Object is HIRSuperExpression)
         {
-            return TryLowerExpression(new HIRThisExpression(), out resultTempVar);
+            if (!TryLowerSuperPropertyReference(null, propAccessExpr.PropertyName, read: true, out var reference))
+            {
+                return false;
+            }
+            resultTempVar = EmitGetSuperProperty(reference);
+            return true;
         }
 
         // Early-bound object-literal member read (phase 4, #1432): when the receiver is a
@@ -154,65 +156,6 @@ public sealed partial class HIRToLIRLowerer
                 ? ValueStorageKind.UnboxedValue
                 : ValueStorageKind.Reference;
             DefineTempStorage(resultTempVar, new ValueStorage(storageKind, fieldClrType));
-            return true;
-        }
-
-        if (propAccessExpr.Object is HIRSuperExpression
-            && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
-            && baseClassRegistryName != null)
-        {
-            if (!TryLowerExpression(new HIRThisExpression(), out _))
-            {
-                return false;
-            }
-
-            TempVariable baseConstructorTemp;
-            if (TryGetEnclosingSuperClassExpression(out var superClassExpression)
-                && superClassExpression != null
-                && TryLowerExpression(superClassExpression, out baseConstructorTemp))
-            {
-                baseConstructorTemp = EnsureObject(baseConstructorTemp);
-            }
-            else
-            {
-                baseConstructorTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(baseClassRegistryName, baseConstructorTemp));
-                DefineTempStorage(baseConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-            }
-
-            var prototypeKeyTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString("prototype", prototypeKeyTemp));
-            DefineTempStorage(prototypeKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-            var prototypeTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(baseConstructorTemp), EnsureObject(prototypeKeyTemp), prototypeTemp));
-            DefineTempStorage(prototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-            var propertyKeyTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, propertyKeyTemp));
-            DefineTempStorage(propertyKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(prototypeTemp), EnsureObject(propertyKeyTemp), resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            return true;
-        }
-
-        if (propAccessExpr.Object is HIRSuperExpression)
-        {
-            var propertyName = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(
-                new LIRConstString(propAccessExpr.PropertyName, propertyName));
-            DefineTempStorage(
-                propertyName,
-                new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.GetSuperProperty),
-                Arguments: [propertyName],
-                Result: resultTempVar));
-            DefineTempStorage(
-                resultTempVar,
-                new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 
@@ -450,57 +393,13 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        if (indexAccessExpr.Object is HIRSuperExpression
-            && _callableKind == CallableKind.Constructor
-            && _isDerivedConstructor
-            && !_superConstructorCalled)
+        if (indexAccessExpr.Object is HIRSuperExpression)
         {
-            return TryLowerExpression(new HIRThisExpression(), out resultTempVar);
-        }
-
-        if (indexAccessExpr.Object is HIRSuperExpression
-            && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
-            && baseClassRegistryName != null)
-        {
-            if (!TryLowerExpression(new HIRThisExpression(), out _))
+            if (!TryLowerSuperPropertyReference(indexAccessExpr.Index, null, read: true, out var reference))
             {
                 return false;
             }
-
-            TempVariable baseConstructorTemp;
-            if (TryGetEnclosingSuperClassExpression(out var superClassExpression)
-                && superClassExpression != null
-                && TryLowerExpression(superClassExpression, out baseConstructorTemp))
-            {
-                baseConstructorTemp = EnsureObject(baseConstructorTemp);
-            }
-            else
-            {
-                baseConstructorTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(baseClassRegistryName, baseConstructorTemp));
-                DefineTempStorage(baseConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-            }
-
-            var prototypeKeyTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString("prototype", prototypeKeyTemp));
-            DefineTempStorage(prototypeKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-            var prototypeTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(baseConstructorTemp), EnsureObject(prototypeKeyTemp), prototypeTemp));
-            DefineTempStorage(prototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-            if (!TryLowerExpression(indexAccessExpr.Index, out var superIndexTemp))
-            {
-                return false;
-            }
-
-            var superIndexStorage = GetTempStorage(superIndexTemp);
-            TempVariable superIndexForGet = superIndexStorage.Kind == ValueStorageKind.UnboxedValue && superIndexStorage.ClrType == typeof(double)
-                ? superIndexTemp
-                : EnsureObject(superIndexTemp);
-
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(prototypeTemp), superIndexForGet, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            resultTempVar = EmitGetSuperProperty(reference);
             return true;
         }
 

@@ -54,6 +54,10 @@ public sealed class ILVerificationTests
     [InlineData("Classes_ClassMethod_CallsAnotherMethod")]
     [InlineData("Classes_ClassWithMethod_HelloWorld")]
     [InlineData("Classes_Inheritance_SuperMethodCall")]
+    [InlineData("Classes_Inheritance_SuperCapturedScopeVar")]
+    [InlineData("Classes_Inheritance_NestedClassExtendsGlobal")]
+    [InlineData("Classes_Inheritance_ThisBeforeSuper_Throws")]
+    [InlineData("Classes_IntrinsicInheritance_ExtendsArray_SuperLength")]
     public void ILVerify_ShouldPass_ForEmittedAssembly(string testName)
     {
         // Arrange: Compile the JS test case to a DLL

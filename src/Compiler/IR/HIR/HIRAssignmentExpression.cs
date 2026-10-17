@@ -29,4 +29,6 @@ public sealed class HIRAssignmentExpression : HIRExpression
     /// The value expression being assigned.
     /// </summary>
     public HIRExpression Value { get; }
+
+    public bool InferName { get; init; } = true;
 }

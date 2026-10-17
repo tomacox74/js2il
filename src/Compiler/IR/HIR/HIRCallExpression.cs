@@ -21,4 +21,5 @@ public sealed class HIRCallExpression : HIRExpression
     public HIRStableDirectCallableTarget? StableDirectCallableTarget { get; init; }
     public HIRStaticClassMethodTarget? StaticClassMethodTarget { get; init; }
     public bool IsBigIntLiteral { get; init; }
+    public bool IsDefaultDerivedConstructorCall { get; init; }
 }

@@ -373,9 +373,8 @@ public static class HIRBuilder
                         return baseCtorFunc.Params.Count;
                     }
 
-                    // Default derived constructors forward every received argument to super(...).
-                    // For statically known user classes, retain the direct fixed-arity constructor path.
-                    // Dynamic and intrinsic bases use a rest parameter so the complete argument list is preserved.
+                    // Retain the declared CLR signature; the default super call forwards the
+                    // complete JavaScript invocation arguments independently of that signature.
                     var parameterPatterns = new List<HIRPattern>();
                     var superArgs = new List<HIRExpression>();
                     HIRExpression? superClassExpression = null;
@@ -429,7 +428,10 @@ public static class HIRBuilder
                     if (emitImplicitSuperCall)
                     {
                         ctorStatements.Add(new HIRExpressionStatement(
-                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())));
+                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())
+                            {
+                                IsDefaultDerivedConstructorCall = true
+                            }));
                     }
 
                     // Store scopes array to this._scopes if constructor has scopes parameter.
@@ -3999,16 +4001,10 @@ partial class HIRMethodBuilder
                     static string GetQuasiText(TemplateElement te)
                     {
                         var val = te.Value;
-                        // Prefer cooked when available; fall back to raw.
-                        var cooked = val.Cooked;
-                        if (!string.IsNullOrEmpty(cooked))
-                        {
-                            return cooked!;
-                        }
-                        return val.Raw ?? string.Empty;
+                        return val.Cooked ?? string.Empty;
                     }
 
-                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    var quasis = new List<string?>(templateLiteral.Quasis.Count);
                     foreach (var quasi in templateLiteral.Quasis)
                     {
                         quasis.Add(GetQuasiText(quasi));
@@ -4039,14 +4035,14 @@ partial class HIRMethodBuilder
                     // Parse the template literal with raw strings
                     var templateLiteral = taggedTemplate.Quasi;
                     
-                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    var quasis = new List<string?>(templateLiteral.Quasis.Count);
                     var rawQuasis = new List<string>(templateLiteral.Quasis.Count);
                     
                     foreach (var quasi in templateLiteral.Quasis)
                     {
                         var val = quasi.Value;
                         // Cooked strings (with escape sequences processed)
-                        quasis.Add(val.Cooked ?? val.Raw ?? string.Empty);
+                        quasis.Add(val.Cooked);
                         // Raw strings (escape sequences not processed)
                         rawQuasis.Add(val.Raw ?? string.Empty);
                     }
@@ -4062,7 +4058,7 @@ partial class HIRMethodBuilder
                     }
 
                     var template = new HIRTemplateLiteralExpression(quasis, expressions, rawQuasis);
-                    var location = SourceLocation.FromNode(taggedTemplate);
+                    var location = SourceLocation.FromNode(taggedTemplate.Quasi);
                     hirExpr = new HIRTaggedTemplateExpression(tagExpr!, template, location);
                     return true;
                 }
@@ -4442,7 +4438,10 @@ partial class HIRMethodBuilder
                         return true;
                     }
 
-                    hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
+                    hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!)
+                    {
+                        InferName = assignExpr.Start == assignTargetId.Start
+                    };
                     return true;
                 }
 

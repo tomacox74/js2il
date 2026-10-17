@@ -195,6 +195,20 @@
 			IL_0013: ret
 		} // end of method B::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method B::.ctor
+
 	} // end of class B
 
 	.class nested public auto ansi beforefieldinit D
@@ -341,33 +355,56 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 69 (0x45)
+			// Code size: 75 (0x4b)
 			.maxstack 8
 			.locals init (
-				[0] object[]
+				[0] object[],
+				[1] class [System.Runtime]System.Type,
+				[2] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: stloc.0
-			IL_0002: ldarg.0
-			IL_0003: ldloc.0
-			IL_0004: stfld object[] Modules.Classes_Inheritance_SuperConstructor_Args/D::_scopes
-			IL_0009: ldc.i4.1
-			IL_000a: newarr [System.Runtime]System.Object
-			IL_000f: dup
-			IL_0010: ldc.i4.0
-			IL_0011: ldc.r8 5
-			IL_001a: box [System.Runtime]System.Double
-			IL_001f: stelem.ref
-			IL_0020: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0025: ldarg.0
-			IL_0026: ldc.r8 5
-			IL_002f: box [System.Runtime]System.Double
-			IL_0034: call instance void Modules.Classes_Inheritance_SuperConstructor_Args/B::.ctor(object)
-			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_003e: ldarg.0
-			IL_003f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-			IL_0044: ret
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_Inheritance_SuperConstructor_Args/D::.ctor(bool)
+			IL_0007: ldarg.1
+			IL_0008: stloc.0
+			IL_0009: ldarg.0
+			IL_000a: ldloc.0
+			IL_000b: stfld object[] Modules.Classes_Inheritance_SuperConstructor_Args/D::_scopes
+			IL_0010: ldtoken Modules.Classes_Inheritance_SuperConstructor_Args/D
+			IL_0015: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001a: ldtoken Modules.Classes_Inheritance_SuperConstructor_Args/D
+			IL_001f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_002b: stloc.2
+			IL_002c: ldarg.0
+			IL_002d: ldloc.2
+			IL_002e: ldc.i4.1
+			IL_002f: newarr [System.Runtime]System.Object
+			IL_0034: dup
+			IL_0035: ldc.i4.0
+			IL_0036: ldc.r8 5
+			IL_003f: box [System.Runtime]System.Double
+			IL_0044: stelem.ref
+			IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_004a: ret
+		} // end of method D::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Classes_Inheritance_SuperConstructor_Args/B::.ctor(bool)
+			IL_0007: ret
 		} // end of method D::.ctor
 
 	} // end of class D

@@ -108,7 +108,8 @@ internal static class GeneratedFunctionObjectPlanner
             requirements |=
                 JavaScriptRuntime.InvocationContextRequirements.LexicalSuper;
         }
-        if (callable.Semantics.UsesSuper)
+        if (callable.Semantics.UsesSuper
+            || callable.Semantics.NestedArrowUsesSuper)
         {
             requirements |=
                 JavaScriptRuntime.InvocationContextRequirements.This;
@@ -322,7 +323,10 @@ internal static class GeneratedFunctionObjectPlanner
         }
 
         if (callable.Kind == CallableKind.Arrow
-            && (callable.Semantics.UsesThis || callable.Semantics.UsesSuper))
+            && (callable.Semantics.UsesThis
+                || callable.Semantics.NestedArrowUsesThis
+                || callable.Semantics.UsesSuper
+                || callable.Semantics.NestedArrowUsesSuper))
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_lexicalThis",
@@ -336,7 +340,8 @@ internal static class GeneratedFunctionObjectPlanner
                 GeneratedFunctionStateKind.LexicalNewTarget));
         }
 
-        if (callable.Semantics.UsesSuper)
+        if (callable.Semantics.UsesSuper
+            || callable.Semantics.NestedArrowUsesSuper)
         {
             state.Add(new GeneratedFunctionStatePlan(
                 "_homeObject",

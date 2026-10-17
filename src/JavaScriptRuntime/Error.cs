@@ -426,6 +426,8 @@ namespace JavaScriptRuntime
         public object? ErrorValue { get; }
         public object? SuppressedValue { get; }
 
+        protected SuppressedError(bool _) { }
+
         public SuppressedError(object? error, object? suppressed, string? message)
             : base(message)
         {

@@ -2463,7 +2463,7 @@ namespace JavaScriptRuntime
         {
         }
 
-        private Array(bool initializeIntrinsicSurface)
+        protected Array(bool initializeIntrinsicSurface)
         {
             _logicalLength = 0;
             _virtualLength = 0;

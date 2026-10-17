@@ -301,6 +301,7 @@ namespace Jroc.Services.ILGenerators
             // If this is a derived class (extends), ensure it can pass scopes to the base class constructor
             // when the base class requires it.
             EntityHandle baseTypeHandle = _bcl.ObjectType;
+            Type? intrinsicStorageBaseType = typeof(object);
             if (superClass is Identifier superId)
             {
                 var baseScope = FindClassScope(classScope, superId.Name);
@@ -311,6 +312,7 @@ namespace Jroc.Services.ILGenerators
                     if (_classRegistry.TryGet(baseRegistryName, out var baseTypeDef) && !baseTypeDef.IsNil)
                     {
                         baseTypeHandle = baseTypeDef;
+                        intrinsicStorageBaseType = null;
                     }
 
                     // Propagate base scope requirements.
@@ -368,6 +370,7 @@ namespace Jroc.Services.ILGenerators
                         if (intrinsicBaseType is { IsClass: true, IsSealed: false })
                         {
                             baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsicBaseType);
+                            intrinsicStorageBaseType = intrinsicBaseType;
                         }
                     }
                     catch
@@ -714,6 +717,11 @@ namespace Jroc.Services.ILGenerators
                 _nestedTypeRelationshipRegistry.Add(typeHandle, parentType);
             }
             _classRegistry.Register(registryClassName, typeHandle);
+            _classRegistry.RegisterStorageConstructor(
+                registryClassName,
+                MetadataTokens.MethodDefinitionHandle(MetadataTokens.GetRowNumber(ctorMethodDef) + 1),
+                baseTypeHandle,
+                intrinsicStorageBaseType);
 
             // Register constructor signature for call-site validation.
             // Rest parameters are collected from the invocation frame, not passed in the CLR signature.
@@ -877,6 +885,10 @@ namespace Jroc.Services.ILGenerators
                     jsParamCount,
                     parameterClrTypes,
                     isGeneratorMethod);
+                if (methodCallable.Semantics.UsesSuper || methodCallable.Semantics.NestedArrowUsesSuper)
+                {
+                    _classRegistry.RequireMethodSuperContext((MethodDefinitionHandle)methodToken);
+                }
             }
 
             return typeHandle;

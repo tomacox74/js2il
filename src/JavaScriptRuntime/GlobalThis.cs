@@ -994,6 +994,7 @@ namespace JavaScriptRuntime
         {
             var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
                 : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)
+                : ReferenceEquals(target, _suppressedErrorConstructorValue) ? typeof(JavaScriptRuntime.SuppressedError)
                 : ReferenceEquals(target, _errorConstructorValue) ? typeof(JavaScriptRuntime.Error)
                 : ReferenceEquals(target, _evalErrorConstructorValue) ? typeof(JavaScriptRuntime.EvalError)
                 : ReferenceEquals(target, _rangeErrorConstructorValue) ? typeof(JavaScriptRuntime.RangeError)
