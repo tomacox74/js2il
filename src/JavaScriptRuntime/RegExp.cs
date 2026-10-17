@@ -1226,7 +1226,8 @@ namespace JavaScriptRuntime
             return parsed;
         }
 
-        private static string PreparePatternForDotNetRegex(string source, bool unicode, bool dotAll, bool unicodeSets)
+        private static string PreparePatternForDotNetRegex(
+            string source, bool unicode, bool dotAll, bool unicodeSets, bool ignoreCase)
         {
             var prepared = source;
 
@@ -1234,7 +1235,7 @@ namespace JavaScriptRuntime
             if (unicode)
             {
                 prepared = RewriteUnicodeCodePointEscapes(
-                    RewriteUnicodeClassesAndProperties(prepared, unicodeSets));
+                    RewriteUnicodeClassesAndProperties(prepared, unicodeSets, ignoreCase));
             }
 
             if (!unicode)
@@ -1997,7 +1998,9 @@ namespace JavaScriptRuntime
             try
             {
                 var preparedPattern = RewriteCaptureGroups(
-                    PreparePatternForDotNetRegex(source, unicode, dotAll, unicodeSets), out var namedGroups);
+                    PreparePatternForDotNetRegex(
+                        source, unicode, dotAll, unicodeSets, (options & RegexOptions.IgnoreCase) != 0),
+                    out var namedGroups);
                 var regex = new Regex(preparedPattern, options);
                 var (ancestors, boundaryKinds) = GetCaptureResetAncestors(source, regex);
 
