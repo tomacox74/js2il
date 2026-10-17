@@ -1761,9 +1761,4 @@ internal static class RegExpUnicodeScripts
         _ => []
     };
 
-    internal static ReadOnlySpan<int> GetAsciiCaseFoldAdditions(bool complement)
-        => complement
-            ? [0x4B, 0x53, 0x6B, 0x73]
-            : [0x17F, 0x212A];
-
 }

@@ -200,31 +200,46 @@ public sealed partial class RegExp
         var end = source.IndexOf('}', index + 3);
         if (end < 0) return false;
         var property = source[(index + 3)..end];
-        if (property is "ASCII" or "Any")
-        {
-            var negate = source[index + 1] == 'P';
-            var invertRanges = negate && !unicodeSets;
-            var additions = ignoreCase ? RegExpUnicodeScripts.GetAsciiCaseFoldAdditions(invertRanges) : default;
-            pattern = property == "ASCII"
-                ? CodePointRangesPattern([0, 127], invertRanges, additions)
-                : invertRanges ? "(?!)" : UnicodeDotAllPattern;
-            if (ignoreCase) pattern = "(?-i:" + pattern + ")";
-            if (negate && unicodeSets) pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
-            index = end + 1;
-            return true;
-        }
         var separator = property.IndexOf('=');
-        if (separator < 0) return false;
-        var propertyName = property[..separator];
-        if (propertyName is not ("Script" or "sc" or "Script_Extensions" or "scx")) return false;
-        var script = RegExpUnicodeScripts.ResolveScript(property[(separator + 1)..]);
-        if (script < 0) throw new SyntaxError("Invalid Unicode script property escape");
-        var extensions = propertyName is "Script_Extensions" or "scx";
-        var ranges = RegExpUnicodeScripts.GetRanges(script, extensions);
+        var script = -1;
+        var propertyId = -1;
+        var extensions = false;
+        if (separator < 0)
+        {
+            propertyId = RegExpUnicodeProperties.ResolveBinaryProperty(property);
+            if (propertyId < 0) propertyId = RegExpUnicodeProperties.ResolveGeneralCategory(property);
+            if (propertyId < 0) return false;
+        }
+        else
+        {
+            var propertyName = property[..separator];
+            var value = property[(separator + 1)..];
+            if (propertyName is "Script" or "sc" or "Script_Extensions" or "scx")
+            {
+                script = RegExpUnicodeScripts.ResolveScript(value);
+                if (script < 0) throw new SyntaxError("Invalid Unicode script property escape");
+                extensions = propertyName is "Script_Extensions" or "scx";
+            }
+            else if (propertyName is "General_Category" or "gc")
+            {
+                propertyId = RegExpUnicodeProperties.ResolveGeneralCategory(value);
+                if (propertyId < 0) throw new SyntaxError("Invalid Unicode general category property escape");
+            }
+            else return false;
+        }
+        var ranges = script >= 0
+            ? RegExpUnicodeScripts.GetRanges(script, extensions)
+            : RegExpUnicodeProperties.GetRanges(propertyId);
         var complement = source[index + 1] == 'P';
         // u complements before case folding; v complements the case-folded set.
         var invert = complement && !unicodeSets;
-        var folded = ignoreCase ? RegExpUnicodeScripts.GetCaseFoldAdditions(script, extensions, invert) : default;
+        ReadOnlySpan<int> folded = default;
+        if (ignoreCase)
+        {
+            folded = script >= 0
+                ? RegExpUnicodeScripts.GetCaseFoldAdditions(script, extensions, invert)
+                : RegExpUnicodeProperties.GetCaseFoldAdditions(propertyId, invert);
+        }
         pattern = CodePointRangesPattern(ranges, invert, folded);
         if (ignoreCase) pattern = "(?-i:" + pattern + ")";
         if (complement && unicodeSets) pattern = "(?!" + pattern + ")" + UnicodeDotAllPattern;
