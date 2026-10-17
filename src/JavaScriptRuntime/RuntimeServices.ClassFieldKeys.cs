@@ -20,8 +20,9 @@ public partial class RuntimeServices
 
     public static object GetClassComputedFieldKey(Type ownerType, object? receiver, object fieldId)
     {
+        var constructor = CaptureClassPrivateBrand(ownerType, receiver, GetCurrentCallee()) as JsClassConstructorObject
+            ?? GetExecutingClassConstructor(ownerType);
         if (fieldId is not string id
-            || CaptureClassPrivateBrand(ownerType, receiver, GetCurrentCallee()) is not JsClassConstructorObject constructor
             || !constructor.ComputedFieldKeys.TryGetValue(id, out var key))
         {
             throw new InvalidOperationException("The computed class field name was not captured during class evaluation.");

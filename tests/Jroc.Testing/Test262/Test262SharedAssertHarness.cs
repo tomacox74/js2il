@@ -67,6 +67,9 @@ public static class Test262SharedAssertHarness
     public static bool IsModule(string entryScript)
         => ParseFrontmatter(entryScript).Module;
 
+    public static bool IsResolutionSyntaxError(string entryScript)
+        => ParseFrontmatter(entryScript) is { NegativePhase: "resolution", NegativeType: "SyntaxError" };
+
     public static IReadOnlyList<string> GetDynamicImportTargets(string entryScript, string? sourcePath)
     {
         if (sourcePath is null || !Directory.Exists(Path.GetDirectoryName(sourcePath)))

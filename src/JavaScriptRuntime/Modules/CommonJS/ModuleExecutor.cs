@@ -82,7 +82,10 @@ internal sealed class ModuleExecutor
         var previousThis = RuntimeServices.SetCurrentThis(GlobalThis.globalThis);
         try
         {
-            scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
+            if (!requireService.TryExecuteNativeModule(mainModule,
+                () => scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname)))
+                scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
+            Promise.AwaitTopLevel(mainModule.EvaluationPromise);
         }
         finally
         {

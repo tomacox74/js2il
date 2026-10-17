@@ -42,7 +42,7 @@ if (args.Length == 1 && args[0] == "--capabilities")
             "testTypedArray.js", "tcoHelper.js", "wellKnownIntrinsicObjects.js"
         },
         dependencies = new { sibling_files = true, harness_files = true },
-        negative = new { parse = "SyntaxError", runtime = true },
+        negative = new { parse = "SyntaxError", resolution = "SyntaxError", runtime = true },
         isolation = new { worker_process = true, timeout = true, agent_cleanup = true }
     }, recordOptions));
     return 0;
@@ -236,6 +236,19 @@ static ScreeningResult Screen(string root, ScreeningCandidate candidate, string 
             return Result("pass", null, "parse", "", "SyntaxError");
         }
     }
+    if (metadata.NegativePhase == "resolution" && metadata.NegativeType == "SyntaxError")
+    {
+        try
+        {
+            Test262CompilationAssertions.AssertResolutionSyntaxError(
+                Path.GetFileNameWithoutExtension(candidate.Path), source, sourcePath);
+            return Result("pass", null, "resolution", "", "SyntaxError");
+        }
+        catch (Exception error)
+        {
+            return Result("fail", "product-failure", "resolution", error.ToString());
+        }
+    }
     if (metadata.NegativePhase is "parse" or "early" or "resolution")
     {
         return Result("unsupported", "harness-gap", metadata.NegativePhase,
@@ -332,7 +345,7 @@ static IReadOnlyList<string> FindMissingRelativeDependencies(
     {
         var specifier = match.Groups["specifier"].Value;
         var dependency = Path.GetFullPath(Path.Combine(directory, specifier));
-        if (Path.GetExtension(dependency).Length == 0)
+        if (!File.Exists(dependency) && Path.GetExtension(dependency).Length == 0)
         {
             dependency += ".js";
         }

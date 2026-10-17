@@ -173,8 +173,16 @@ public class ModuleLoader
         var hadAnyErrors = false;
 
         var explicitParseGoals = entries.All(entry => entry.ParseAsModule || entry.ParseAsScript);
+        void CaptureImportSource(ModuleDefinition module, string type)
+        {
+            if (type == "text")
+                module.TextSource ??= _fileSystem.ReadAllText(module.Path);
+            else if (type == "bytes")
+                module.BytesSource ??= Convert.ToBase64String(_fileSystem.ReadAllBytes(module.Path));
+        }
+
         void LoadRecursive(string currentPath, string? requestedAliasModuleId = null, bool deferSyntaxErrors = false,
-            bool importedAsModule = false)
+            bool importedAsModule = false, string? importType = null)
         {
             if (moduleCache.TryGetValue(currentPath, out var cached))
             {
@@ -182,7 +190,12 @@ public class ModuleLoader
                 {
                     AddAliasIfMissing(cached, requestedAliasModuleId);
                 }
-                return;
+                if (!cached.IsDataOnly || importType is "text" or "bytes")
+                {
+                    if (importType is "text" or "bytes")
+                        CaptureImportSource(cached, importType);
+                    return;
+                }
             }
 
             entryOverrides.TryGetValue(currentPath, out var entryOverride);
@@ -196,7 +209,7 @@ public class ModuleLoader
                 scriptGoalEntries.Contains(currentPath),
                 unsupportedSiteRecorder,
                 out var module,
-                deferSyntaxErrors);
+                deferSyntaxErrors, importType);
             if (module is null)
             {
                 hadAnyErrors = true;
@@ -205,6 +218,15 @@ public class ModuleLoader
 
             // Preserve insertion order (and therefore emitted module order) matching the old loader.
             moduleCache[currentPath] = module;
+            if (cached is not null)
+            {
+                module.TextSource = cached.TextSource;
+                module.BytesSource = cached.BytesSource;
+                foreach (var alias in cached.AliasModuleIds)
+                    AddAliasIfMissing(module, alias);
+            }
+            if (importType is "text" or "bytes")
+                CaptureImportSource(module, importType);
             if (!loadOk)
             {
                 hadAnyErrors = true;
@@ -218,7 +240,8 @@ public class ModuleLoader
                 LoadRecursive(dep.ResolvedPath, dep.RequestedAliasModuleId,
                     deferSyntaxErrors || dep.IsDynamicImport,
                     explicitParseGoals && dep.IsEsModule
-                        && !string.Equals(Path.GetExtension(dep.ResolvedPath), ".cjs", StringComparison.OrdinalIgnoreCase));
+                        && !string.Equals(Path.GetExtension(dep.ResolvedPath), ".cjs", StringComparison.OrdinalIgnoreCase),
+                    dep.ImportType);
             }
         }
 
@@ -233,6 +256,15 @@ public class ModuleLoader
             LoadRecursive(Path.GetFullPath(additionalPath), deferSyntaxErrors: true,
                 importedAsModule: explicitParseGoals
                     && !string.Equals(Path.GetExtension(additionalPath), ".cjs", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (moduleCache.Values.Any(module => module.NeedsRawImportSources))
+        {
+            foreach (var module in moduleCache.Values)
+            {
+                CaptureImportSource(module, "text");
+                CaptureImportSource(module, "bytes");
+            }
         }
 
         diagnostics.Flush(_ux);
@@ -342,7 +374,8 @@ public class ModuleLoader
         {
             if (!eagerModules.Add(module))
                 return;
-            foreach (var dependency in module.Dependencies.Where(dependency => !dependency.IsDynamicImport))
+            foreach (var dependency in module.Dependencies.Where(dependency =>
+                !dependency.IsDynamicImport && dependency.ImportType is not ("text" or "bytes")))
             {
                 if (modules._modules.TryGetValue(dependency.ResolvedPath, out var target))
                     VisitEager(target);
@@ -447,13 +480,17 @@ public class ModuleLoader
         bool parseAsScript,
         Action<SourceSpan, string>? unsupportedSiteRecorder,
         out ModuleDefinition? module,
-        bool deferSyntaxErrors = false)
+        bool deferSyntaxErrors = false,
+        string? importType = null)
     {
         parseAsModule |= !parseAsScript && string.Equals(Path.GetExtension(modulePath), ".mjs", StringComparison.OrdinalIgnoreCase);
+        var isDataOnly = importType is "text" or "bytes";
         string jsSource;
         try
         {
-            jsSource = _fileSystem.ReadAllText(modulePath);
+            jsSource = isDataOnly
+                ? $"throw new TypeError({CreateJsStringLiteral($"Module '{modulePath}' was compiled as data; specify its import type.")});"
+                : _fileSystem.ReadAllText(modulePath);
         }
         catch (Exception ex)
         {
@@ -464,7 +501,7 @@ public class ModuleLoader
 
         string? jsonSource = null;
         string? deferredSyntaxError = null;
-        if (string.Equals(Path.GetExtension(modulePath), ".json", StringComparison.OrdinalIgnoreCase))
+        if (!isDataOnly && string.Equals(Path.GetExtension(modulePath), ".json", StringComparison.OrdinalIgnoreCase))
         {
             jsonSource = jsSource;
             if (!TryCreateJsonModuleSource(jsSource, modulePath, out jsSource, out var jsonError))
@@ -625,7 +662,7 @@ public class ModuleLoader
         var compilationModuleId = string.IsNullOrWhiteSpace(packageInstallationDiscriminator)
             ? canonicalModuleId
             : $"{canonicalModuleId}@{packageInstallationDiscriminator}";
-        var internalKey = isPackageModule
+        var internalKey = isPackageModule || isDataOnly
             ? NodeModuleResolver.EncodeModuleIdToClrIdentifier(compilationModuleId)
             : JavaScriptRuntime.Modules.Shared.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
 
@@ -666,8 +703,16 @@ public class ModuleLoader
             UsesScriptSemantics = parseAsScript,
             DeferredSyntaxError = deferredSyntaxError,
             DeferredResolutionError = deferredResolutionError,
-            JsonSource = jsonSource
+            JsonSource = jsonSource,
+            IsDataOnly = isDataOnly
         };
+        var needsRawImportSources = false;
+        _parser.VisitAst(ast, node =>
+        {
+            if (node is ImportExpression { Options: not null })
+                needsRawImportSources = true;
+        });
+        module.NeedsRawImportSources = needsRawImportSources;
 
         if (isPackageModule
             && !string.IsNullOrWhiteSpace(requestedAliasModuleId)
@@ -901,7 +946,7 @@ function __jroc_esm_export(name, getter) {
         var edits = new List<TextEdit>();
 
         void HandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription,
-            bool dynamicImport = false)
+            bool dynamicImport = false, string? importType = null)
         {
             var specifier = literal.Value;
             if (string.IsNullOrWhiteSpace(specifier) || IsBuiltInModuleSpecifier(specifier))
@@ -909,7 +954,17 @@ function __jroc_esm_export(name, getter) {
                 return;
             }
 
-            if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out var resolvedPath, out var resolveError))
+            var dataPath = importType is "text" or "bytes"
+                && (specifier.StartsWith(".", StringComparison.Ordinal) || Path.IsPathRooted(specifier))
+                ? Path.GetFullPath(Path.Combine(baseDirectory, specifier))
+                : null;
+            string? resolveError = null;
+            string resolvedPath;
+            if (dataPath is not null && _fileSystem.FileExists(dataPath))
+            {
+                resolvedPath = dataPath;
+            }
+            else if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out resolvedPath, out resolveError))
             {
                 var message = $"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}";
                 if (resolutionMode == ModuleResolutionMode.Require || dynamicImport)
@@ -946,7 +1001,8 @@ function __jroc_esm_export(name, getter) {
                 ResolvedPath = resolvedPath,
                 RequestedAliasModuleId = requestedAliasModuleId,
                 IsDynamicImport = dynamicImport,
-                IsEsModule = resolutionMode == ModuleResolutionMode.Import
+                IsEsModule = resolutionMode == ModuleResolutionMode.Import,
+                ImportType = importType
             });
         }
 
@@ -954,16 +1010,19 @@ function __jroc_esm_export(name, getter) {
         {
             switch (node)
             {
-                case ImportDeclaration { Source: StringLiteral sourceLiteral }:
-                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import '{sourceLiteral.Value}'");
+                case ImportDeclaration { Source: StringLiteral sourceLiteral } declaration:
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import '{sourceLiteral.Value}'",
+                        importType: ModuleRequestSyntax.GetImportType(declaration));
                     break;
 
-                case ExportNamedDeclaration { Source: StringLiteral sourceLiteral }:
-                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-from '{sourceLiteral.Value}'");
+                case ExportNamedDeclaration { Source: StringLiteral sourceLiteral } declaration:
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-from '{sourceLiteral.Value}'",
+                        importType: ModuleRequestSyntax.GetImportType(declaration));
                     break;
 
-                case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
-                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-all-from '{sourceLiteral.Value}'");
+                case ExportAllDeclaration { Source: StringLiteral sourceLiteral } declaration:
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-all-from '{sourceLiteral.Value}'",
+                        importType: ModuleRequestSyntax.GetImportType(declaration));
                     break;
 
                 case ImportExpression importExpression when importExpression.Source is StringLiteral sourceLiteral:
@@ -2764,10 +2823,11 @@ function __jroc_esm_export(name, getter) {
     {
         var record = new ModuleRecord();
 
-        void AddRequestedModule(string moduleRequest)
+        void AddRequestedModule(string moduleRequest, Node declaration)
         {
             var dependency = moduleDependencies.FirstOrDefault(existing =>
-                string.Equals(existing.Request, moduleRequest, StringComparison.Ordinal));
+                string.Equals(existing.Request, moduleRequest, StringComparison.Ordinal)
+                && existing.ImportType == ModuleRequestSyntax.GetImportType(declaration));
             if (dependency == null)
             {
                 return;
@@ -2775,7 +2835,9 @@ function __jroc_esm_export(name, getter) {
 
             if (record.RequestedModules.Any(existing =>
                     string.Equals(existing.Specifier, dependency.Request, StringComparison.Ordinal)
-                    && string.Equals(existing.ResolvedPath, dependency.ResolvedPath, StringComparison.OrdinalIgnoreCase)))
+                    && string.Equals(existing.ResolvedPath, dependency.ResolvedPath, StringComparison.OrdinalIgnoreCase)
+                    && existing.Phase == ModuleRequestSyntax.GetPhase(declaration)
+                    && existing.ImportType == ModuleRequestSyntax.GetImportType(declaration)))
             {
                 return;
             }
@@ -2783,7 +2845,9 @@ function __jroc_esm_export(name, getter) {
             record.RequestedModules.Add(new ModuleRequestRecord
             {
                 Specifier = dependency.Request,
-                ResolvedPath = dependency.ResolvedPath
+                ResolvedPath = dependency.ResolvedPath,
+                Phase = ModuleRequestSyntax.GetPhase(declaration),
+                ImportType = ModuleRequestSyntax.GetImportType(declaration)
             });
         }
 
@@ -2793,13 +2857,14 @@ function __jroc_esm_export(name, getter) {
             {
                 case ImportDeclaration { Source: StringLiteral sourceLiteral } importDeclaration:
                     record.HasStaticModuleSyntax = true;
-                    AddRequestedModule(sourceLiteral.Value);
+                    AddRequestedModule(sourceLiteral.Value, importDeclaration);
                     if (importDeclaration.Specifiers.Count == 0)
                     {
                         record.ImportEntries.Add(new ModuleImportEntry
                         {
                             Kind = ModuleImportKind.SideEffect,
-                            ModuleRequest = sourceLiteral.Value
+                            ModuleRequest = sourceLiteral.Value,
+                            ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                         });
                         break;
                     }
@@ -2814,7 +2879,8 @@ function __jroc_esm_export(name, getter) {
                                     Kind = ModuleImportKind.Default,
                                     ModuleRequest = sourceLiteral.Value,
                                     LocalName = defaultLocal.Name,
-                                    ImportName = "default"
+                                    ImportName = "default",
+                                    ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                                 });
                                 break;
 
@@ -2823,7 +2889,8 @@ function __jroc_esm_export(name, getter) {
                                 {
                                     Kind = ModuleImportKind.Namespace,
                                     ModuleRequest = sourceLiteral.Value,
-                                    LocalName = namespaceLocal.Name
+                                    LocalName = namespaceLocal.Name,
+                                    ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                                 });
                                 break;
 
@@ -2833,7 +2900,8 @@ function __jroc_esm_export(name, getter) {
                                     Kind = ModuleImportKind.Named,
                                     ModuleRequest = sourceLiteral.Value,
                                     LocalName = importLocal.Name,
-                                    ImportName = GetExpressionName(importSpecifier.Imported)
+                                    ImportName = GetExpressionName(importSpecifier.Imported),
+                                    ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                                 });
                                 break;
                         }
@@ -2848,7 +2916,7 @@ function __jroc_esm_export(name, getter) {
 
                 case ExportNamedDeclaration { Source: StringLiteral sourceLiteral } exportNamedFrom:
                     record.HasStaticModuleSyntax = true;
-                    AddRequestedModule(sourceLiteral.Value);
+                    AddRequestedModule(sourceLiteral.Value, exportNamedFrom);
                     foreach (var specifier in exportNamedFrom.Specifiers)
                     {
                         record.IndirectExportEntries.Add(new ModuleExportEntry
@@ -2856,7 +2924,8 @@ function __jroc_esm_export(name, getter) {
                             Kind = ModuleExportKind.Indirect,
                             ExportName = GetExpressionName(specifier.Exported),
                             LocalName = GetExpressionName(specifier.Local),
-                            ModuleRequest = sourceLiteral.Value
+                            ModuleRequest = sourceLiteral.Value,
+                            ImportType = ModuleRequestSyntax.GetImportType(exportNamedFrom)
                         });
                     }
 
@@ -2895,24 +2964,26 @@ function __jroc_esm_export(name, getter) {
 
                 case ExportAllDeclaration { Source: StringLiteral sourceLiteral } exportAllDeclaration when exportAllDeclaration.Exported != null:
                     record.HasStaticModuleSyntax = true;
-                    AddRequestedModule(sourceLiteral.Value);
+                    AddRequestedModule(sourceLiteral.Value, exportAllDeclaration);
                     record.IndirectExportEntries.Add(new ModuleExportEntry
                     {
                         Kind = ModuleExportKind.Namespace,
                         ExportName = GetExpressionName(exportAllDeclaration.Exported),
                         LocalName = "*namespace*",
-                        ModuleRequest = sourceLiteral.Value
+                        ModuleRequest = sourceLiteral.Value,
+                        ImportType = ModuleRequestSyntax.GetImportType(exportAllDeclaration)
                     });
                     break;
 
-                case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
+                case ExportAllDeclaration { Source: StringLiteral sourceLiteral } exportAllDeclaration:
                     record.HasStaticModuleSyntax = true;
-                    AddRequestedModule(sourceLiteral.Value);
+                    AddRequestedModule(sourceLiteral.Value, exportAllDeclaration);
                     record.StarExportEntries.Add(new ModuleExportEntry
                     {
                         Kind = ModuleExportKind.Star,
                         ExportName = "*",
-                        ModuleRequest = sourceLiteral.Value
+                        ModuleRequest = sourceLiteral.Value,
+                        ImportType = ModuleRequestSyntax.GetImportType(exportAllDeclaration)
                     });
                     break;
             }
@@ -3036,7 +3107,7 @@ function __jroc_esm_export(name, getter) {
                 continue;
             }
 
-            if (!TryGetDependencyModule(module, importEntry.ModuleRequest, modules, out var dependencyModule))
+            if (!TryGetDependencyModule(module, importEntry.ModuleRequest, modules, out var dependencyModule, importEntry.ImportType))
             {
                 record.LinkErrors.Add($"Import request '{importEntry.ModuleRequest}' in module '{module.ModuleId}' could not be resolved during module linking.");
                 hadErrors = true;
@@ -3044,6 +3115,15 @@ function __jroc_esm_export(name, getter) {
             }
 
             var importedName = importEntry.ImportName ?? "default";
+            if (importEntry.ImportType is "json" or "text" or "bytes")
+            {
+                if (importedName != "default")
+                {
+                    record.LinkErrors.Add($"Module '{dependencyModule.ModuleId}' does not export '{importedName}' required by '{module.ModuleId}'.");
+                    hadErrors = true;
+                }
+                continue;
+            }
             var resolution = ResolveExport(dependencyModule, importedName, modules, new HashSet<string>(StringComparer.Ordinal));
             switch (resolution.Status)
             {
@@ -3091,6 +3171,8 @@ function __jroc_esm_export(name, getter) {
 
         foreach (var starExport in record.StarExportEntries)
         {
+            if (starExport.ImportType is "json" or "text" or "bytes")
+                continue;
             if (!TryGetDependencyModule(module, starExport.ModuleRequest, modules, out var dependencyModule))
             {
                 continue;
@@ -3164,7 +3246,7 @@ function __jroc_esm_export(name, getter) {
 
         foreach (var indirectExport in record.IndirectExportEntries.Where(entry => string.Equals(entry.ExportName, exportName, StringComparison.Ordinal)))
         {
-            if (!TryGetDependencyModule(module, indirectExport.ModuleRequest, modules, out var dependencyModule))
+            if (!TryGetDependencyModule(module, indirectExport.ModuleRequest, modules, out var dependencyModule, indirectExport.ImportType))
             {
                 continue;
             }
@@ -3177,8 +3259,22 @@ function __jroc_esm_export(name, getter) {
                     ExportName = exportName,
                     TargetModule = dependencyModule,
                     BindingName = "*namespace*",
-                    Kind = ModuleExportKind.Namespace
+                    Kind = ModuleExportKind.Namespace,
+                    ImportType = indirectExport.ImportType
                 });
+            }
+            else if (indirectExport.ImportType is "json" or "text" or "bytes")
+            {
+                candidateResolution = indirectExport.LocalName == "default"
+                    ? ModuleExportResolution.Resolved(new ModuleResolvedExport
+                    {
+                        ExportName = "default",
+                        TargetModule = dependencyModule,
+                        BindingName = "default",
+                        Kind = ModuleExportKind.Default,
+                        ImportType = indirectExport.ImportType
+                    })
+                    : ModuleExportResolution.NotFound();
             }
             else
             {
@@ -3209,6 +3305,8 @@ function __jroc_esm_export(name, getter) {
 
         foreach (var starExport in record.StarExportEntries)
         {
+            if (starExport.ImportType is "json" or "text" or "bytes")
+                continue;
             if (!TryGetDependencyModule(module, starExport.ModuleRequest, modules, out var dependencyModule))
             {
                 continue;
@@ -3246,10 +3344,12 @@ function __jroc_esm_export(name, getter) {
 
         return ReferenceEquals(current.TargetModule, candidate.TargetModule)
             && string.Equals(current.BindingName, candidate.BindingName, StringComparison.Ordinal)
-            && current.Kind == candidate.Kind;
+            && current.Kind == candidate.Kind
+            && current.ImportType == candidate.ImportType;
     }
 
-    private static bool TryGetDependencyModule(ModuleDefinition module, string? moduleRequest, Modules modules, out ModuleDefinition dependencyModule)
+    private static bool TryGetDependencyModule(ModuleDefinition module, string? moduleRequest, Modules modules,
+        out ModuleDefinition dependencyModule, string? importType = null)
     {
         dependencyModule = null!;
         if (string.IsNullOrWhiteSpace(moduleRequest))
@@ -3258,10 +3358,12 @@ function __jroc_esm_export(name, getter) {
         }
 
         var resolvedPath = module.ModuleRecord?.RequestedModules
-            .FirstOrDefault(request => string.Equals(request.Specifier, moduleRequest, StringComparison.Ordinal))
+            .FirstOrDefault(request => string.Equals(request.Specifier, moduleRequest, StringComparison.Ordinal)
+                && request.ImportType == importType)
             ?.ResolvedPath
             ?? module.Dependencies
-                .FirstOrDefault(dependency => string.Equals(dependency.Request, moduleRequest, StringComparison.Ordinal))
+                .FirstOrDefault(dependency => string.Equals(dependency.Request, moduleRequest, StringComparison.Ordinal)
+                    && dependency.ImportType == importType)
                 ?.ResolvedPath;
 
         if (resolvedPath != null && modules._modules.TryGetValue(resolvedPath, out var resolvedDependencyModule))
@@ -3308,22 +3410,16 @@ function __jroc_esm_export(name, getter) {
     {
         error = null;
 
-        // Import/export attributes (`with { type: "json" }`) are not yet supported. The legacy
-        // source-rewrite path rejected them with a clear compile-time error; preserve that behavior on
-        // the native path instead of silently dropping the attribute.
         foreach (var statement in ast.Body)
         {
-            switch (statement)
+            foreach (var attribute in ModuleRequestSyntax.GetAttributes(statement))
             {
-                case ImportDeclaration { Attributes.Count: > 0 } importWithAttributes:
-                    error = $"Import attributes are not yet supported (line {importWithAttributes.Location.Start.Line}).";
+                if (attribute.Key is not (Identifier { Name: "type" } or StringLiteral { Value: "type" })
+                    || attribute.Value.Value is not ("json" or "text" or "bytes"))
+                {
+                    error = $"Unsupported import attribute (line {attribute.Location.Start.Line}).";
                     return false;
-                case ExportNamedDeclaration { Attributes.Count: > 0 } exportWithAttributes:
-                    error = $"Export attributes are not yet supported (line {exportWithAttributes.Location.Start.Line}).";
-                    return false;
-                case ExportAllDeclaration { Attributes.Count: > 0 } exportAllWithAttributes:
-                    error = $"Export attributes are not yet supported (line {exportAllWithAttributes.Location.Start.Line}).";
-                    return false;
+                }
             }
         }
 

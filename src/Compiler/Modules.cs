@@ -6,6 +6,25 @@ using System.Collections.Generic;
 
 namespace Jroc;
 
+internal static class ModuleRequestSyntax
+{
+    internal static string GetPhase(Node declaration)
+        => declaration is ImportDeclaration import ? import.Phase.ToString() : "None";
+
+    internal static IEnumerable<ImportAttribute> GetAttributes(Node declaration)
+        => declaration switch
+        {
+            ImportDeclaration import => import.Attributes,
+            ExportNamedDeclaration export => export.Attributes,
+            ExportAllDeclaration export => export.Attributes,
+            _ => []
+        };
+
+    internal static string? GetImportType(Node declaration)
+        => GetAttributes(declaration).FirstOrDefault(attribute =>
+            attribute.Key is Identifier { Name: "type" } or StringLiteral { Value: "type" })?.Value.Value;
+}
+
 public sealed class ModuleDefinition
 {
     // Module definition details would go here
@@ -78,6 +97,10 @@ public sealed class ModuleDefinition
     internal string? DeferredSyntaxError { get; set; }
     internal string? DeferredResolutionError { get; set; }
     internal string? JsonSource { get; set; }
+    internal string? TextSource { get; set; }
+    internal string? BytesSource { get; set; }
+    internal bool IsDataOnly { get; set; }
+    internal bool NeedsRawImportSources { get; set; }
 
     public SymbolTable? SymbolTable { get; set; }
 
@@ -95,6 +118,8 @@ public sealed class ModuleDependency
     public bool IsDynamicImport { get; init; }
 
     public bool IsEsModule { get; init; }
+
+    public string? ImportType { get; init; }
 }
 
 public enum ModuleLinkPhase
@@ -136,6 +161,10 @@ public sealed class ModuleRequestRecord
     public required string Specifier { get; set; }
 
     public required string ResolvedPath { get; set; }
+
+    public string Phase { get; init; } = "None";
+
+    public string? ImportType { get; init; }
 }
 
 public sealed class ModuleImportEntry
@@ -147,6 +176,8 @@ public sealed class ModuleImportEntry
     public string? LocalName { get; set; }
 
     public string? ImportName { get; set; }
+
+    public string? ImportType { get; init; }
 }
 
 public sealed class ModuleExportEntry
@@ -154,6 +185,8 @@ public sealed class ModuleExportEntry
     public required ModuleExportKind Kind { get; set; }
 
     public required string ExportName { get; set; }
+
+    public string? ImportType { get; init; }
 
     public string? LocalName { get; set; }
 
@@ -163,6 +196,8 @@ public sealed class ModuleExportEntry
 public sealed class ModuleResolvedExport
 {
     public required string ExportName { get; set; }
+
+    public string? ImportType { get; init; }
 
     public required ModuleDefinition TargetModule { get; set; }
 

@@ -114,6 +114,15 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7.10",
+        "feature": "Class fields on module namespace superclass returns",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs"
+        ],
+        "notes": "When super() returns a module namespace object, computed field names retain their defining constructor's captured keys. Public fields use the namespace's exotic property-definition behavior rather than bypassing it through CLR storage. Private field addition throws TypeError, and a failed initialization does not establish a private brand. The pinned deferred-namespace class-field evaluation-trigger cases pass; other exotic subclass edge cases remain limited."
+      },
+      {
         "clause": "15.7.14",
         "feature": "Class-expression Test262 coverage and evaluation identity",
         "status": "Supported with Limitations",

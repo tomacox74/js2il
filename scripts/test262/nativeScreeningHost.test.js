@@ -50,6 +50,48 @@ test('screening host publishes its capability matrix', () => {
   assert.ok(capabilities.includes.includes('asyncHelpers.js'));
   assert.equal(capabilities.flags.module, 'module-goal');
   assert.equal(capabilities.negative.parse, 'SyntaxError');
+  assert.equal(capabilities.negative.resolution, 'SyntaxError');
+});
+
+test('resolution negatives require a valid entry and a verified syntax or linking failure', () => {
+  const cwd = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'native-resolution-')));
+  try {
+    const directory = path.join(cwd, 'test', area);
+    fs.mkdirSync(directory, { recursive: true });
+    fs.writeFileSync(path.join(directory, 'valid_FIXTURE.js'), 'export const value = 1;\n');
+    fs.writeFileSync(path.join(directory, 'invalid_FIXTURE.js'), 'export const = ;\n');
+    fs.writeFileSync(path.join(directory, 'invalid_FIXTURE.json'), '{ invalid json }\n');
+    const metadata = '/*---\nflags: [module]\nnegative:\n  phase: resolution\n  type: SyntaxError\n---*/\n';
+    const fixtures = [
+      ['dependency-syntax', 'import "./invalid_FIXTURE.js";', 'pass'],
+      ['json-syntax', 'import value from "./invalid_FIXTURE.json" with { type: "json" };', 'pass'],
+      ['missing-export', 'import { missing } from "./valid_FIXTURE.js";', 'pass'],
+      ['wrong-phase', 'var = ;', 'fail'],
+      ['missing-file', 'import "./absent_FIXTURE.js";', 'fail'],
+      ['no-error', 'export {};', 'fail'],
+    ];
+    const candidates = fixtures.map(([name, body]) => {
+      const source = metadata + body + '\n';
+      fs.writeFileSync(path.join(directory, name + '.js'), source);
+      return {
+        path: `test/${area}/${name}.js`,
+        sha256: crypto.createHash('sha256').update(source).digest('hex'),
+        variants: ['module'],
+      };
+    });
+    const plan = path.join(cwd, 'plan.json');
+    fs.writeFileSync(plan, JSON.stringify({
+      upstream_root: cwd, timeout_ms: 10000,
+      variant_limit: candidates.length, time_limit_seconds: 120, candidates,
+    }));
+    const results = execFileSync('dotnet', [host, '--plan', plan], {
+      cwd: repository, encoding: 'utf8',
+    }).trim().split('\n').map(JSON.parse);
+    assert.deepEqual(results.map(result => result.outcome), fixtures.map(fixture => fixture[2]));
+    assert.ok(results.every(result => result.phase === 'resolution'));
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
 });
 
 function run(args, cwd) {

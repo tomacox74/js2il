@@ -9,7 +9,7 @@ This report provides detailed Test262 conformance evidence for the current devel
 
 ## How to Read This Report
 
-- **Verified passing**: the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase.
+- **Verified passing**: the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse, resolution, or runtime phase.
 - **Known unsupported**: the test exercises behavior explicitly excluded from the release, primarily `eval`.
 - **No published result**: JROC has not published a conformance result for the test. This does not imply either support or failure.
 - **Verified**: verified passing tests divided by applicable tests in that row.
@@ -97,6 +97,20 @@ net increase in verified results is nine rather than ten. Three expression
 cases remain without a published result: a dynamic tail call and two
 tagged-template tail calls, which require general proper-tail-call support.
 
+Identifiers and static imports now have verified passing results for all 395
+applicable pinned cases: 268 identifier cases and 127 import cases. The 233
+newly verified cases comprise 116 identifier syntax negatives and 117 import
+cases, with no eval-related exclusions. All 668 required native variants
+across both complete areas pass under one frozen Release build. Coverage
+includes static JSON/text/immutable-byte attributes, deferred namespaces,
+asynchronous dependency ordering and readiness, cached failures, and class
+initialization against module namespace objects. Resolution-negative checks
+require a successfully parsed entry and a verified dependency syntax or
+linking failure; missing files and unrelated compiler failures do not qualify.
+Selection and validation are explicitly branch-local: catalogue MCP tools
+were unavailable and the Data API denied the reporting schema. These results
+are not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -127,6 +141,9 @@ shared successful assembly: they retain separate in-memory compilation and
 their own diagnostic assertions. Skipped facts and support files are not
 compiled as independent entries. An unexpected failure building a runnable
 folder fails its test cases rather than retrying them as individual assemblies.
+Resolution-negative SyntaxError facts additionally require valid entry syntax
+and a recognized linking diagnostic or an independently verified dependency
+syntax error, without executing the module.
 Worker-based Atomics tests use a native `$262.agent` host implementation with
 independent compiled agent scripts, shared buffer backing stores, reports, and
 bounded worker cleanup.
@@ -137,8 +154,8 @@ bounded worker cleanup.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,174 | 24 | 6,314 | 23,512 | **73.04%** |
-| Language syntax and semantics | 19,657 | 307 | 3,679 | 23,643 | **83.14%** |
-| **Total** | 36,891 | 331 | 11,019 | 48,241 | **76.47%** |
+| Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
+| **Total** | 37,124 | 331 | 10,786 | 48,241 | **76.96%** |
 
 ## Language Areas
 
@@ -158,8 +175,8 @@ bounded worker cleanup.
 | `future-reserved-words` | 55 | 0 | 0 | 55 | **100.00%** |
 | `global-code` | 41 | 1 | 0 | 42 | **97.62%** |
 | `identifier-resolution` | 8 | 0 | 6 | 14 | **57.14%** |
-| `identifiers` | 152 | 0 | 116 | 268 | **56.72%** |
-| `import` | 10 | 0 | 117 | 127 | **7.87%** |
+| `identifiers` | 268 | 0 | 0 | 268 | **100.00%** |
+| `import` | 127 | 0 | 0 | 127 | **100.00%** |
 | `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
 | `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
 | `literals` | 505 | 0 | 29 | 534 | **94.57%** |

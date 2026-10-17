@@ -7,6 +7,7 @@ namespace JavaScriptRuntime.Modules.ESM
     internal sealed class ModuleNamespaceMarker
     {
         internal ModuleNamespace? Namespace { get; set; }
+        internal HashSet<string>? PredeclaredExports { get; set; }
     }
 
     /// <summary>
@@ -70,6 +71,20 @@ namespace JavaScriptRuntime.Modules.ESM
     /// </summary>
     public static class EsModuleLinker
     {
+        public static object ImportSource(string moduleId, string specifier, string phase, string? type)
+            => new CommonJS.Require(State).ImportWithPhase(moduleId, specifier, phase, type);
+
+        internal static void PredeclareExports(object? exports, string moduleId, string[] names)
+        {
+            if (exports is null or JsNull)
+                throw new TypeError("Cannot initialize a null or undefined module exports object");
+            foreach (var name in names)
+                RegisterLocalExport(exports, moduleId, name);
+            MarkEsModule(exports);
+            State.EsModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker())
+                .PredeclaredExports = new HashSet<string>(names, StringComparer.Ordinal);
+        }
+
         private static RuntimeModuleState State
             => RuntimeExecutionContext.Current?.Realm.ModuleState
                ?? throw new InvalidOperationException(
@@ -141,6 +156,8 @@ namespace JavaScriptRuntime.Modules.ESM
             var binding = GetOrCreateBinding(moduleId, name);
             Func<object?> getter = binding.Get;
             ObjectRuntime.DefineObjectLiteralAccessorProperty(exports, name, getter, null);
+            if (State.EsModuleNamespaces.TryGetValue(exports, out var marker))
+                marker.PredeclaredExports?.Remove(name);
         }
 
         /// <summary>
@@ -170,6 +187,8 @@ namespace JavaScriptRuntime.Modules.ESM
 
             Func<object?> getter = () => GetImport(sourceModule, importName);
             ObjectRuntime.DefineObjectLiteralAccessorProperty(exports, exportName, getter, null);
+            if (State.EsModuleNamespaces.TryGetValue(exports, out var marker))
+                marker.PredeclaredExports?.Remove(exportName);
         }
 
         /// <summary>
@@ -187,6 +206,8 @@ namespace JavaScriptRuntime.Modules.ESM
 
             Func<object?> getter = () => GetNamespace(sourceModule);
             ObjectRuntime.DefineObjectLiteralAccessorProperty(exports, exportName, getter, null);
+            if (State.EsModuleNamespaces.TryGetValue(exports, out var marker))
+                marker.PredeclaredExports?.Remove(exportName);
         }
 
         /// <summary>
@@ -207,14 +228,15 @@ namespace JavaScriptRuntime.Modules.ESM
             // not throw during linking; the installed accessors read values live on demand.
             foreach (var key in ObjectRuntime.GetOwnEnumerableKeysInOrder(sourceModule))
             {
-                if (IsReservedStarExportKey(key) || ObjectRuntime.hasOwn(exports, key))
+                if (IsReservedStarExportKey(key)
+                    || ObjectRuntime.hasOwn(exports, key)
+                        && !(State.EsModuleNamespaces.TryGetValue(exports, out var marker)
+                            && marker.PredeclaredExports?.Contains(key) == true))
                 {
                     continue;
                 }
 
-                var capturedKey = key;
-                Func<object?> getter = () => GetImport(sourceModule, capturedKey);
-                ObjectRuntime.DefineObjectLiteralAccessorProperty(exports, capturedKey, getter, null);
+                RegisterReexport(exports, key, sourceModule, key);
             }
         }
 

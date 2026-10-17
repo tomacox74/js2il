@@ -363,6 +363,16 @@ namespace JavaScriptRuntime
         {
             var key = ToPropertyKeyString(prop);
             ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
+            if (target is IExoticJsObject)
+            {
+                var descriptor = new JsObject();
+                descriptor.SetValue("value", value);
+                descriptor.SetBoolean("writable", true);
+                descriptor.SetBoolean("enumerable", true);
+                descriptor.SetBoolean("configurable", true);
+                defineProperty(target, key, descriptor);
+                return value!;
+            }
             if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
                 || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
                 && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
@@ -377,6 +387,13 @@ namespace JavaScriptRuntime
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);
+        }
+
+        public static object EnsureCanAddPrivateElement(object target)
+        {
+            if (target is Modules.ESM.ModuleNamespace)
+                throw new TypeError("Cannot add a private element to a module namespace object");
+            return target;
         }
 
         public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)

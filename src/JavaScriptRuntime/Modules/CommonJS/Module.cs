@@ -64,6 +64,10 @@ public class Module : DynamicObject
     public bool loaded { get; set; }
 
     internal Exception? EvaluationError { get; set; }
+    internal Promise? EvaluationPromise { get; set; }
+    internal Promise? AsyncBodyPromise { get; set; }
+    internal bool IsSchedulingEvaluation { get; set; }
+    internal bool IsExecutingBody { get; set; }
 
     /// <summary>
     /// The module that first required this one, or null if this is the main module.

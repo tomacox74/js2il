@@ -206,6 +206,30 @@ export const value = 41;
             && entry.LocalName == "combined");
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void LinkModules_DifferentTypedReexportsOfSameFile_AreAmbiguous(bool namespaceExport)
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var loader = new ModuleLoader(new CompilerOptions(), fileSystem, new NodeModuleResolver(fileSystem), logger);
+        var directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "jroc-tests", Guid.NewGuid().ToString("N")));
+        var rootPath = Path.Combine(directory, "root.mjs");
+        var clause = namespaceExport ? "* as shared" : "{ default as shared }";
+        fileSystem.AddFile(rootPath, "export * from './left.mjs'; export * from './right.mjs';");
+        fileSystem.AddFile(Path.Combine(directory, "left.mjs"),
+            $"export {clause} from './resource.txt' with {{ type: 'text' }};");
+        fileSystem.AddFile(Path.Combine(directory, "right.mjs"),
+            $"export {clause} from './resource.txt' with {{ type: 'bytes' }};");
+        fileSystem.AddFile(Path.Combine(directory, "resource.txt"), "original bytes");
+
+        var modules = loader.LoadModules(rootPath);
+        Assert.NotNull(modules);
+        Assert.False(loader.LinkModules(modules));
+        Assert.Contains("Ambiguous export 'shared'", logger.Errors);
+    }
+
     [Fact]
     public void LoadModules_StaticModuleSyntax_AllowsNodeBuiltinImportsWithoutLinkErrors()
     {

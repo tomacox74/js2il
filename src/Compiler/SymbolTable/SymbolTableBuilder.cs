@@ -428,17 +428,22 @@ namespace Jroc.SymbolTables
             globalScope.EsModuleLink = plan;
 
             // 1. Imports: one hidden source binding per distinct specifier, plus per-specifier local bindings.
-            var sourceBindingBySpecifier = new Dictionary<string, BindingInfo>(StringComparer.Ordinal);
+            var sourceBindingBySpecifier = new Dictionary<(string Specifier, string Phase, string? Type), BindingInfo>();
 
-            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode)
+            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode, string? importType = null)
             {
-                if (sourceBindingBySpecifier.TryGetValue(specifier, out var existing))
+                var phase = ModuleRequestSyntax.GetPhase(declarationNode);
+                importType ??= ModuleRequestSyntax.GetImportType(declarationNode);
+                var key = (specifier, phase, importType);
+                if (sourceBindingBySpecifier.TryGetValue(key, out var existing))
                 {
                     return existing;
                 }
 
                 var sourceBinding = new BindingInfo(
-                    EsModuleNames.SourceBindingName(specifier),
+                    phase == "None" && importType is null
+                        ? EsModuleNames.SourceBindingName(specifier)
+                        : $"*esm-{phase}-{importType}-src:{specifier}",
                     BindingKind.Const,
                     globalScope,
                     declarationNode)
@@ -449,8 +454,14 @@ namespace Jroc.SymbolTables
                     HasWrite = true
                 };
                 globalScope.Bindings[sourceBinding.Name] = sourceBinding;
-                sourceBindingBySpecifier[specifier] = sourceBinding;
-                plan.Requires.Add(new EsModuleSourceRequire { Specifier = specifier, SourceBinding = sourceBinding });
+                sourceBindingBySpecifier[key] = sourceBinding;
+                plan.Requires.Add(new EsModuleSourceRequire
+                {
+                    Specifier = specifier,
+                    SourceBinding = sourceBinding,
+                    Phase = phase,
+                    ImportType = importType
+                });
                 return sourceBinding;
             }
 
@@ -598,7 +609,7 @@ namespace Jroc.SymbolTables
                     continue;
                 }
 
-                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast);
+                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast, indirectExport.ImportType);
                 if (indirectExport.Kind == ModuleExportKind.Namespace)
                 {
                     plan.NamespaceReexports.Add(new EsModuleNamespaceReexport
@@ -627,7 +638,7 @@ namespace Jroc.SymbolTables
                     continue;
                 }
 
-                var sourceBinding = GetOrCreateSourceBinding(starExport.ModuleRequest!, module.Ast);
+                var sourceBinding = GetOrCreateSourceBinding(starExport.ModuleRequest!, module.Ast, starExport.ImportType);
                 plan.StarReexports.Add(new EsModuleStarReexport { SourceBinding = sourceBinding });
             }
         }

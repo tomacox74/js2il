@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-16T20:50:41Z
+> Last generated (UTC): 2026-10-17T05:03:58Z
 
 JROC implements spec-defined exotic-object behavior for the features it currently supports. Arrays provide dedicated index and length internal operations over dense and sparse storage; bound functions, typed arrays, and namespace imports retain the limitations documented below.
 
@@ -116,7 +116,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Compiled ESM module namespace exotic objects | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js)<br>`tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs` |  | Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Deferred namespaces have separate identities and evaluate on string-key operations other than then. CommonJS uses its existing synthetic namespace projection; general host module-record hooks remain unsupported. |
+| Compiled ESM module namespace exotic objects | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js)<br>`tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/import/import-defer/deferred-namespace-object/IdentifiersImportCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs` |  | Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Static deferred namespaces have separate identities and a Deferred Module tag; symbol-like operations and writes do not evaluate them, while other string-key operations excluding then do. Evaluation requires ready asynchronous dependencies and caches thrown values. Public field definitions honor namespace exotic rejection; private additions fail and do not establish a private brand. CommonJS retains its synthetic namespace projection; general host module-record hooks remain unsupported. |
 
 ### 10.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects))
 

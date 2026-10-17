@@ -7583,6 +7583,14 @@ namespace JavaScriptRuntime
         public static bool HasPropertyForArrayLike(object? key, object target)
             => HasProperty(target, ToPropertyKeyString(key));
 
+        public static object? ResolvePrivateBrandTarget(object? value)
+        {
+            var target = RequirePrivateBrandTarget(value);
+            return target is Modules.ESM.ModuleNamespace
+                ? null
+                : RuntimeServices.ResolveGeneratedClassStorageReceiver(target);
+        }
+
         public static object RequirePrivateBrandTarget(object? value)
         {
             if (value is null || value is JsNull || TypeUtilities.IsPrimitive(value))
