@@ -1820,12 +1820,36 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Immutable, pattern-derived compilation artifacts shared by every <see cref="RegExp"/>
-        /// created from the same source/flag combination.
+        /// Pattern-derived artifacts shared by every <see cref="RegExp"/> with the same source/flags.
+        /// Cold CLR runner state is weakly retained rather than owned by this process-wide metadata.
         /// </summary>
         private sealed class CompiledPattern
         {
-            public Regex? Regex;
+            private readonly WeakReference<Regex>? _regex;
+            private readonly string? _preparedPattern;
+            private readonly RegexOptions _options;
+            private readonly TimeSpan _matchTimeout;
+
+            public Regex? Regex
+            {
+                get
+                {
+                    if (_regex is null) return null;
+                    if (_regex.TryGetTarget(out var regex)) return regex;
+                    regex = new Regex(_preparedPattern!, _options, _matchTimeout);
+                    _regex.SetTarget(regex);
+                    return regex;
+                }
+                init
+                {
+                    if (value is null) return;
+                    _preparedPattern = value.ToString();
+                    _options = value.Options;
+                    _matchTimeout = value.MatchTimeout;
+                    // CLR runners retain input-sized backtracking buffers, not just compilation data.
+                    _regex = new WeakReference<Regex>(value);
+                }
+            }
             public (string Name, int Number)[]? NamedGroups;
             public int[]? CaptureResetAncestors;
             public CaptureBoundaryKind[]? CaptureBoundaryKinds;
