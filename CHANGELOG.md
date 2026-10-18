@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 400 more pinned class-generator method cases across all
+  790 required native variants: 266 parameter-destructuring cases and 134
+  async-generator method cases. Cover private/static methods, defaults,
+  rest and nested patterns, iterator cleanup, promise rejection, delegated
+  iteration, and restricted caller/arguments properties. All cases pass
+  without product or harness changes; none requires eval.
 - test262: verify 352 more pinned class-declaration method cases across all
   704 required native variants: 350 async-generator method parameter
   destructuring cases and both computed-accessor function-name cases.
