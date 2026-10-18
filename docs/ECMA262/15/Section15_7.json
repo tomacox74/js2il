@@ -115,6 +115,25 @@
     "entries": [
       {
         "clause": "15.7.13",
+        "feature": "Class method async-generator parameters and computed accessor names",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/ClassMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/definition/ClassMethodsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/definition/fn-name-accessor-get.js",
+          "test/language/statements/class/definition/fn-name-accessor-set.js",
+          "test/language/statements/class/dstr/async-gen-meth-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-gen-meth-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-gen-meth-static-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-private-gen-meth-ary-init-iter-close.js"
+        ],
+        "notes": "Class-declaration methods have 352 additional verified passing Test262 results across all 704 required native variants: 350 async-generator method parameter-destructuring cases and both computed-accessor name cases. Parameter coverage includes defaults, rest, nested array/object patterns, iterator cleanup, static methods, and private methods. Computed class getters and setters receive specification-compliant names for string and Symbol keys, preserving the get/set prefix and trailing space for undescribed Symbols and bracketing described Symbol names on both instance and static accessors. The shared accessor-name helper preserves existing explicit metadata. No selected case requires eval. Results are branch-local native validation, not central trusted acceptance, and do not claim complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
         "feature": "Class-declaration elements and private assignment targets",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",

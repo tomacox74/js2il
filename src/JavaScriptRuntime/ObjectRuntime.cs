@@ -400,6 +400,9 @@ namespace JavaScriptRuntime
         {
             var key = ToPropertyKeyString(prop);
             EnsureClassElementCanBeDefined(target, key);
+            var propertyKey = ToExternalPropertyKey(key);
+            Function.SetAccessorNameIfAnonymous(getter, propertyKey, "get");
+            Function.SetAccessorNameIfAnonymous(setter, propertyKey, "set");
             return DefineAccessorProperty(target, key, getter, setter, enumerable: false, createDictionarySlot: false);
         }
 

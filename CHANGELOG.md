@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 352 more pinned class-declaration method cases across all
+  704 required native variants: 350 async-generator method parameter
+  destructuring cases and both computed-accessor function-name cases.
+  Cover defaults, rest, nested patterns, iterator cleanup, static methods,
+  and private methods. No selected case requires eval.
+- fix(runtime): assign specification-compliant names to computed class
+  getters and setters, including static accessors and Symbol keys.
+  Preserve the get/set prefix and trailing space for undescribed Symbols,
+  and bracket described Symbol names, using the shared accessor-name helper.
 - test262: port 339 exact pinned class-declaration element fixtures: 309
   verified cases across all 618 required native variants, plus 30 explicit
   eval skips. Cover private/public fields, private methods/accessors,

@@ -206,12 +206,20 @@ indirect super calls remain limited; this is not complete class conformance.
 Catalogue reporting was unavailable, so these results are branch-local
 native validation, not central trusted acceptance.
 
+Class-declaration methods have 352 further verified passing results across all
+704 required native variants. These cover 350 async-generator method parameter
+destructuring cases, including defaults, rest, nested patterns, iterator cleanup,
+static methods, and private methods, plus both computed getter/setter name cases.
+Computed accessors preserve their get/set prefixes and Symbol descriptions on
+instance and static methods. None of these cases requires eval. These are
+branch-local native results; catalogue reporting remained unavailable.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 20,199 | 337 | 3,107 | 23,643 | **85.43%** |
-| **Total** | 38,129 | 368 | 9,744 | 48,241 | **79.04%** |
+| Language syntax and semantics | 20,551 | 337 | 2,755 | 23,643 | **86.92%** |
+| **Total** | 38,481 | 368 | 9,392 | 48,241 | **79.77%** |
 
 ## Language Areas
 
@@ -329,7 +337,7 @@ native validation, not central trusted acceptance.
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 2,785 | 30 | 1,552 | 4,367 | **63.77%** |
+| `class` | 3,137 | 30 | 1,200 | 4,367 | **71.83%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |
