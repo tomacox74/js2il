@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 2 additional pinned fixtures from native batch `35ae23bc-1df9-5e1d-acb7-1f40b6d77cf3`.
 - test262: complete the pinned core built-in RegExp inventory with 301 exact
   upstream fixtures: 294 verified cases across all 588 required native
   variants, plus seven explicit direct-eval skips. The core area now has

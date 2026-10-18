@@ -199,9 +199,9 @@ per-string fallback behavior. The standard host `print` binding is also availabl
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,868 | 31 | 5,613 | 23,512 | **76.00%** |
+| Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
 | Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
-| **Total** | 37,818 | 338 | 10,085 | 48,241 | **78.39%** |
+| **Total** | 37,820 | 338 | 10,083 | 48,241 | **78.40%** |
 
 ## Language Areas
 
@@ -372,8 +372,8 @@ per-string fallback behavior. The standard host `print` binding is also availabl
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 422 | 1 | 86 | 509 | **82.91%** |
-| `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
+| `Function` | 423 | 1 | 85 | 509 | **83.10%** |
+| `GeneratorFunction` | 22 | 0 | 1 | 23 | **95.65%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
 | `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
