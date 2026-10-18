@@ -5,77 +5,15 @@ namespace JavaScriptRuntime;
 
 public sealed partial class RegExp
 {
-    private static string RewriteUnicodeClassesAndProperties(string source, bool unicodeSets, bool ignoreCase)
-    {
-        var builder = new StringBuilder();
-        var groups = new Stack<bool>();
-        for (var index = 0; index < source.Length;)
-        {
-            if (source[index] == '[')
-            {
-                builder.Append(ReadUnicodeClass(source, ref index, unicodeSets, ignoreCase));
-            }
-            else if (source[index] == '\\')
-            {
-                if (TryReadUnicodeProperty(source, ref index, unicodeSets, ignoreCase, out var property))
-                {
-                    builder.Append(property);
-                }
-                else
-                {
-                    builder.Append(source[index++]);
-                    if (index < source.Length) builder.Append(source[index++]);
-                }
-            }
-            else
-            {
-                if (source[index] == '(')
-                {
-                    groups.Push(ignoreCase);
-                    if (index + 1 < source.Length && source[index + 1] == '?')
-                    {
-                        var enabled = true;
-                        var modified = ignoreCase;
-                        var modifier = index + 2;
-                        for (; modifier < source.Length && source[modifier] is 'i' or 'm' or 's' or '-'; modifier++)
-                        {
-                            if (source[modifier] == '-') enabled = false;
-                            if (source[modifier] == 'i') modified = enabled;
-                        }
-                        if (modifier < source.Length && source[modifier] == ':') ignoreCase = modified;
-                    }
-                }
-                else if (source[index] == ')' && groups.Count > 0)
-                {
-                    ignoreCase = groups.Pop();
-                }
-                builder.Append(source[index++]);
-            }
-        }
-        return builder.ToString();
-    }
-
     private static string ReadUnicodeClass(string source, ref int index, bool unicodeSets, bool ignoreCase)
     {
+        if (unicodeSets) return ReadUnicodeSet(source, ref index, ignoreCase).ToPattern(ignoreCase);
         index++;
         var negate = index < source.Length && source[index] == '^';
         if (negate) index++;
         var alternatives = new List<string>();
         while (index < source.Length && source[index] != ']')
         {
-            if (unicodeSets && (source[index] == '['
-                || source.AsSpan(index).StartsWith("&&")
-                || source.AsSpan(index).StartsWith("--")
-                || source.AsSpan(index).StartsWith(@"\q{")))
-            {
-                throw new SyntaxError("Nested Unicode sets, set operations, and string properties are not supported yet");
-            }
-            if (unicodeSets && (source[index] is '(' or ')' or '{' or '}' or '/' or '|'
-                || index + 1 < source.Length && source[index] == source[index + 1]
-                    && "!#$%&*+,.:;<=>?@^`~".Contains(source[index])))
-            {
-                throw new SyntaxError("Invalid character in a Unicode set");
-            }
             if (TryReadUnicodeProperty(source, ref index, unicodeSets, ignoreCase, out var property))
             {
                 alternatives.Add(property);
@@ -86,16 +24,14 @@ public sealed partial class RegExp
             if (first is null)
             {
                 var token = source[start..index];
-                var positive = token switch
+                if (token.Length != 2 || !"dDsSwW".Contains(token[1]))
                 {
-                    @"\d" or @"\D" => "[0-9]",
-                    @"\w" or @"\W" => "[A-Za-z0-9_]",
-                    @"\s" or @"\S" => "[\\u0009-\\u000D\\u0020\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF]",
-                    _ => "[" + token + "]"
-                };
-                alternatives.Add(token is @"\D" or @"\W" or @"\S"
-                    ? "(?!" + positive + ")" + UnicodeDotAllPattern
-                    : positive);
+                    throw new SyntaxError("Invalid Unicode character class escape");
+                }
+                var set = CharacterEscapeSet(char.ToLowerInvariant(token[1]));
+                if (ignoreCase) set.Fold();
+                if (char.IsUpper(token[1])) set.Complement();
+                alternatives.Add(set.ToPattern(ignoreCase));
                 continue;
             }
             if (index + 1 < source.Length && source[index] == '-' && source[index + 1] != ']')
@@ -104,15 +40,17 @@ public sealed partial class RegExp
                 var last = ReadClassScalar(source, ref index, unicodeSets)
                     ?? throw new SyntaxError("Invalid Unicode character class range");
                 if (last < first) throw new SyntaxError("Character class range is out of order");
-                alternatives.Add(CodePointRangePattern(first.Value, last));
+                var set = new UnicodeSet();
+                set.Ranges.Add((first.Value, last));
+                if (ignoreCase) set.Fold();
+                alternatives.Add(set.ToPattern(ignoreCase));
             }
             else
             {
-                if (unicodeSets && source[start] == '-')
-                {
-                    throw new SyntaxError("A literal hyphen must be escaped in a Unicode set");
-                }
-                alternatives.Add(CodePointRangePattern(first.Value, first.Value));
+                var set = new UnicodeSet();
+                set.Ranges.Add((first.Value, first.Value));
+                if (ignoreCase) set.Fold();
+                alternatives.Add(set.ToPattern(ignoreCase));
             }
         }
         if (index >= source.Length) throw new SyntaxError("Unterminated character class");
@@ -195,6 +133,11 @@ public sealed partial class RegExp
         string source, ref int index, bool unicodeSets, bool ignoreCase, out string pattern)
     {
         pattern = string.Empty;
+        if (unicodeSets && TryReadUnicodePropertySet(source, ref index, ignoreCase, out var set))
+        {
+            pattern = set.ToPattern(ignoreCase);
+            return true;
+        }
         if (index + 3 >= source.Length || source[index] != '\\'
             || source[index + 1] is not ('p' or 'P') || source[index + 2] != '{') return false;
         var end = source.IndexOf('}', index + 3);

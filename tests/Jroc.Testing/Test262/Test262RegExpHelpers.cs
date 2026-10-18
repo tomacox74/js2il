@@ -16,6 +16,12 @@ internal static class Test262RegExpHelpers
             (Action<object?, object?, object?>)TestPropertyEscapes,
             "testPropertyEscapes",
             3));
+        builder.AddGlobalFactory("testPropertyOfStrings", () => Test262HostRuntimeIntrinsics.CreateFunction(
+            (Action<object?>)TestPropertyOfStrings,
+            "testPropertyOfStrings",
+            1));
+        builder.AddGlobalFactory("testExtendedCharacterClass",
+            () => ObjectRuntime.GetItem(GlobalThis.GetGlobalThis(), "testPropertyOfStrings"));
         builder.AddGlobalFactory("matchValidator", () => Test262HostRuntimeIntrinsics.CreateFunction(
             (Func<object?, object?, object?, object?>)MatchValidator,
             "matchValidator",
@@ -111,6 +117,64 @@ internal static class Test262RegExpHelpers
             {
                 ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
                 throw;
+            }
+        }
+    }
+
+    private static void TestPropertyOfStrings(object? arguments)
+    {
+        var regExp = ObjectRuntime.GetItem(arguments!, "regExp");
+        var expression = ObjectRuntime.GetItem(arguments!, "expression");
+        var matches = ObjectRuntime.GetItem(arguments!, "matchStrings");
+        var nonMatches = ObjectRuntime.GetItem(arguments!, "nonMatchStrings");
+        CheckStrings(matches, true);
+        if (TypeUtilities.ToBoolean(nonMatches)) CheckStrings(nonMatches, false);
+
+        void CheckStrings(object? strings, bool expected)
+        {
+            var joined = ObjectRuntime.CallMember(strings!, "join", [""]);
+            if (TypeUtilities.ToBoolean(ObjectRuntime.CallMember(regExp!, "test", [joined!])) == expected) return;
+            var iterator = ObjectRuntime.GetIterator(strings);
+            while (true)
+            {
+                var next = iterator.Next();
+                if (next.done) return;
+                try
+                {
+                    var matched = TypeUtilities.ToBoolean(ObjectRuntime.CallMember(regExp!, "test", [next.value!]));
+                    var text = DotNet2JSConversions.ToString(expression);
+                    var value = DotNet2JSConversions.ToString(next.value);
+                    var points = new List<string>();
+                    var symbols = ObjectRuntime.GetIterator(next.value);
+                    while (true)
+                    {
+                        var symbol = symbols.Next();
+                        if (symbol.done) break;
+                        try
+                        {
+                            var point = ObjectRuntime.CallMember(symbol.value!, "codePointAt", [0d]);
+                            var hex = ObjectRuntime.CallMember(point!, "toString", [16d]);
+                            var upper = ObjectRuntime.CallMember(hex!, "toUpperCase", []);
+                            var padded = ObjectRuntime.CallMember(upper!, "padStart", [6d, "0"]);
+                            points.Add("U+" + DotNet2JSConversions.ToString(padded));
+                        }
+                        catch
+                        {
+                            ObjectRuntime.IteratorCloseForThrowCompletion(symbols);
+                            throw;
+                        }
+                    }
+                    if (matched != expected)
+                    {
+                        Test262HostRuntimeIntrinsics.ThrowAssertion(null,
+                            $"`{text}` should {(expected ? "" : "not ")}match {value} ({string.Join(" ", points)})");
+                    }
+                }
+                catch
+                {
+                    ObjectRuntime.IteratorCloseForThrowCompletion(iterator);
+                    throw;
+                }
             }
         }
     }

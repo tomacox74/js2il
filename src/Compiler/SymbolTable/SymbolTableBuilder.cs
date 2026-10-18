@@ -3193,25 +3193,11 @@ namespace Jroc.SymbolTables
 
         private void ProcessChildNodes(Scope globalScope, Node node, Scope currentScope)
         {
-            // Use reflection to get all node properties and recursively process them
-            var properties = node.GetType().GetProperties();
-            foreach (var prop in properties)
+            foreach (var child in node.ChildNodes)
             {
-                var value = prop.GetValue(node);
-                if (value is Node childNode)
+                if (child is not null)
                 {
-                    BuildScopeRecursive(globalScope, childNode, currentScope);
-                }
-                else if (value is System.Collections.IEnumerable enumerable && 
-                         !(value is string))
-                {
-                    foreach (var item in enumerable)
-                    {
-                        if (item is Node childNodeInList)
-                        {
-                            BuildScopeRecursive(globalScope, childNodeInList, currentScope);
-                        }
-                    }
+                    BuildScopeRecursive(globalScope, child, currentScope);
                 }
             }
         }
