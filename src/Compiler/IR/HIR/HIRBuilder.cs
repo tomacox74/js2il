@@ -4004,6 +4004,19 @@ partial class HIRMethodBuilder
                 // Handle MetaProperty forms used by jroc.
                 if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                 {
+                    for (var scopeCursor = _currentScope; scopeCursor != null; scopeCursor = scopeCursor.Parent)
+                    {
+                        if (scopeCursor.AstNode is StaticBlock)
+                        {
+                            hirExpr = new HIRLiteralExpression(JavascriptType.Undefined, null);
+                            return true;
+                        }
+                        if (scopeCursor.Kind == ScopeKind.Function
+                            && scopeCursor.AstNode is not ArrowFunctionExpression)
+                        {
+                            break;
+                        }
+                    }
                     hirExpr = new HIRNewTargetExpression();
                     return true;
                 }
