@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 400 more pinned async class-method and element cases
+  across all 790 required native variants. Cover private/static async
+  methods, async-generator delegation and rejection, default parameters,
+  lexical arguments/new.target, restricted caller/arguments properties,
+  and class-element names, separators, and private-member forms. All
+  cases pass without product or harness changes; none requires eval.
 - test262: verify 400 more pinned class-generator method cases across all
   790 required native variants: 266 parameter-destructuring cases and 134
   async-generator method cases. Cover private/static methods, defaults,
