@@ -209,9 +209,9 @@ native validation, not central trusted acceptance.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,868 | 31 | 5,613 | 23,512 | **76.00%** |
+| Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
 | Language syntax and semantics | 20,199 | 337 | 3,107 | 23,643 | **85.43%** |
-| **Total** | 38,127 | 368 | 9,746 | 48,241 | **79.03%** |
+| **Total** | 38,129 | 368 | 9,744 | 48,241 | **79.04%** |
 
 ## Language Areas
 
@@ -382,8 +382,8 @@ native validation, not central trusted acceptance.
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 422 | 1 | 86 | 509 | **82.91%** |
-| `GeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
+| `Function` | 423 | 1 | 85 | 509 | **83.10%** |
+| `GeneratorFunction` | 22 | 0 | 1 | 23 | **95.65%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
 | `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
