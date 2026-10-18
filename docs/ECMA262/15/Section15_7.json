@@ -114,6 +114,30 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7.13",
+        "feature": "Class-declaration elements and private assignment targets",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/evaluation-error/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/private-methods/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/syntax/valid/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Tests/HIRPrivateAssignmentTargetTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/elements/privatefieldset-evaluation-order-2.js",
+          "test/language/statements/class/elements/privatefieldset-evaluation-order-3.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-6.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-7.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-8.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-9.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-10.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-11.js"
+        ],
+        "notes": "Class-declaration elements have 309 additional verified passing Test262 results across all 618 required native variants and 30 known unsupported eval cases. Private field and accessor targets in destructuring and for-in/for-of loop heads use lexically resolved private metadata. Receiver evaluation precedes property access and rest copying; private-brand checks occur when storing, after getter side effects and defaults. Setter dispatch and readonly-member TypeErrors share ordinary private-assignment lowering. Existing iterator cleanup is retained. Coverage also includes private/public fields, computed names, private methods/accessors, initialization, and valid syntax. Class-definition details, private-brand lifecycle, private access in computed names, and indirect-super field initialization remain limited; this is not complete class-declaration conformance. Results are branch-local native validation, not central trusted acceptance."
+      },
+      {
         "clause": "15.7.10",
         "feature": "Class fields on module namespace superclass returns",
         "status": "Supported with Limitations",

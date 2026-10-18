@@ -196,12 +196,22 @@ per-string fallback behavior. The standard host `print` binding is also availabl
 
 ## Overall ECMA-262 Areas
 
+Class-declaration elements have 309 additional verified passing results
+across all 618 required native variants and 30 known unsupported eval cases.
+Coverage includes field and private-member forms,
+computed names, initialization, valid syntax, and private assignment targets
+in destructuring and loop heads. Class-definition details, private-brand
+lifecycle, private access in computed names, and field initialization through
+indirect super calls remain limited; this is not complete class conformance.
+Catalogue reporting was unavailable, so these results are branch-local
+native validation, not central trusted acceptance.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,868 | 31 | 5,613 | 23,512 | **76.00%** |
-| Language syntax and semantics | 19,890 | 307 | 3,446 | 23,643 | **84.13%** |
-| **Total** | 37,818 | 338 | 10,085 | 48,241 | **78.39%** |
+| Language syntax and semantics | 20,199 | 337 | 3,107 | 23,643 | **85.43%** |
+| **Total** | 38,127 | 368 | 9,746 | 48,241 | **79.03%** |
 
 ## Language Areas
 
@@ -319,7 +329,7 @@ per-string fallback behavior. The standard host `print` binding is also availabl
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 2,476 | 0 | 1,891 | 4,367 | **56.70%** |
+| `class` | 2,785 | 30 | 1,552 | 4,367 | **63.77%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |

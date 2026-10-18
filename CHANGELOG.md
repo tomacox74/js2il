@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 339 exact pinned class-declaration element fixtures: 309
+  verified cases across all 618 required native variants, plus 30 explicit
+  eval skips. Cover private/public fields, private methods/accessors,
+  computed names, initialization, and valid class-element syntax.
+- fix(compiler): lower private field and accessor assignment targets in
+  destructuring and for-in/for-of loop heads. Resolve receivers before
+  property reads and rest copying, but defer private-brand checks until
+  storing the extracted value. Preserve getter side effects, setter
+  dispatch, readonly-member errors, and existing iterator cleanup.
+  Separate class-definition, private-brand lifecycle, computed-name private
+  scope, and indirect-super initialization gaps remain outside this batch.
 - test262: complete the pinned core built-in RegExp inventory with 301 exact
   upstream fixtures: 294 verified cases across all 588 required native
   variants, plus seven explicit direct-eval skips. The core area now has
