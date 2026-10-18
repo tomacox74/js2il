@@ -6,6 +6,15 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: register 339 more exact pinned class-definition fixtures: 265
+  verified cases across all 505 required native variants and 74 explicit
+  eval skips. Cover computed names, method restrictions, fields, subclass
+  initialization, and class grammar. Separate private-brand, inheritance,
+  decorator, and metadata-parser gaps remain deferred.
+- fix(compiler): keep static-block var bindings inside their own block,
+  including declarations nested in ordinary blocks. Accept new.target in
+  class static blocks and lower it to undefined, including through lexical
+  arrows, without changing ordinary nested function behavior.
 - test262: verify 400 more pinned async class-method and element cases
   across all 790 required native variants. Cover private/static async
   methods, async-generator delegation and rejection, default parameters,
