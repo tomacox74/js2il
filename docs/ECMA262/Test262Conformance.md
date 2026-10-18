@@ -214,12 +214,21 @@ Computed accessors preserve their get/set prefixes and Symbol descriptions on
 instance and static methods. None of these cases requires eval. These are
 branch-local native results; catalogue reporting remained unavailable.
 
+Class-generator methods have 400 additional verified passing results across all
+790 required native variants: 266 parameter-destructuring cases and 134
+async-generator method cases. Coverage includes private/static methods, defaults,
+rest and nested patterns, iterator cleanup, promise rejection, delegated
+iteration, and restricted caller/arguments properties. These cases require no
+product or harness changes, and none requires eval. Results are branch-local
+native validation, not central trusted acceptance; catalogue reporting remained
+unavailable.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 20,551 | 337 | 2,755 | 23,643 | **86.92%** |
-| **Total** | 38,481 | 368 | 9,392 | 48,241 | **79.77%** |
+| Language syntax and semantics | 20,951 | 337 | 2,355 | 23,643 | **88.61%** |
+| **Total** | 38,881 | 368 | 8,992 | 48,241 | **80.60%** |
 
 ## Language Areas
 
@@ -337,7 +346,7 @@ branch-local native results; catalogue reporting remained unavailable.
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 3,137 | 30 | 1,200 | 4,367 | **71.83%** |
+| `class` | 3,537 | 30 | 800 | 4,367 | **80.99%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |

@@ -115,6 +115,29 @@
     "entries": [
       {
         "clause": "15.7.13",
+        "feature": "Class generator method parameters and async delegation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/forbidden-ext/b1/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/forbidden-ext/b2/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/forbidden-ext/b1/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/forbidden-ext/b2/ClassGeneratorMethodsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/dstr/gen-meth-ary-init-iter-get-err.js",
+          "test/language/statements/class/dstr/async-private-gen-meth-static-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/async-gen-method/yield-promise-reject-next-catch.js",
+          "test/language/statements/class/async-gen-method-static/yield-star-async-return.js",
+          "test/language/statements/class/async-gen-method-static/forbidden-ext/b1/cls-decl-async-gen-meth-static-forbidden-ext-direct-access-prop-caller.js"
+        ],
+        "notes": "Class-generator methods have 400 additional verified passing Test262 results across all 790 required native variants: 266 method parameter-destructuring cases and 134 async-generator method cases. Coverage includes private/static methods, defaults, rest and nested array/object patterns, iterator cleanup, promise rejection, delegated iteration, and restricted caller/arguments properties. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. This is not complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
         "feature": "Class method async-generator parameters and computed accessor names",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
