@@ -879,32 +879,14 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                var privateAccessorOwner = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(
-                    privateAccessorAssignExpr.RegistryClassName, privateAccessorOwner));
-                DefineTempStorage(privateAccessorOwner, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
-                var setterCallee = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                    nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
-                    Array.Empty<TempVariable>(), setterCallee));
-                DefineTempStorage(setterCallee, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                if (!TryLowerExpression(new HIRThisExpression(), out var setterLexicalThis))
+                if (!TryLowerPrivateAccessorStore(
+                    privateAccessorAssignExpr.RegistryClassName,
+                    privateAccessorAssignExpr.SetterMethodName,
+                    privateAccessorReceiver,
+                    privateAccessorValueTemp))
                 {
                     return false;
                 }
-                var privateAccessorSetterName = CreateStringConstant(privateAccessorAssignExpr.SetterMethodName);
-                var privateAccessorArguments = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRBuildArray(
-                    [EnsureObject(privateAccessorValueTemp)], privateAccessorArguments));
-                DefineTempStorage(privateAccessorArguments, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-                var privateSetterResultTemp = CreateTempVariable();
-                DefineTempStorage(privateSetterResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                    nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
-                    [EnsureObject(privateAccessorReceiver), privateAccessorOwner,
-                        privateAccessorSetterName, privateAccessorArguments, setterCallee, EnsureObject(setterLexicalThis)],
-                    privateSetterResultTemp,
-                    [typeof(object), typeof(Type), typeof(string), typeof(object[]), typeof(object), typeof(object)]));
 
                 resultTempVar = privateAccessorValueTemp;
                 return true;
@@ -1584,6 +1566,39 @@ public sealed partial class HIRToLIRLowerer
             result));
         DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return result;
+    }
+
+    private bool TryLowerPrivateAccessorStore(
+        string registryClassName,
+        string setterMethodName,
+        TempVariable receiver,
+        TempVariable value)
+    {
+        var owner = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, owner));
+        DefineTempStorage(owner, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        var callee = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
+            Array.Empty<TempVariable>(), callee));
+        DefineTempStorage(callee, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        if (!TryLowerExpression(new HIRThisExpression(), out var lexicalThis))
+        {
+            return false;
+        }
+
+        var arguments = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray([EnsureObject(value)], arguments));
+        DefineTempStorage(arguments, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var result = CreateTempVariable();
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CallDirectClassPrivateMethod),
+            [EnsureObject(receiver), owner, CreateStringConstant(setterMethodName),
+                arguments, callee, EnsureObject(lexicalThis)],
+            result,
+            [typeof(object), typeof(Type), typeof(string), typeof(object[]), typeof(object), typeof(object)]));
+        return true;
     }
 
     private bool TryLowerPrivateReceiverField(

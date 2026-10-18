@@ -3765,6 +3765,25 @@ partial class HIRMethodBuilder
                     return true;
                 }
 
+                if (memberExpr.Property is PrivateIdentifier privateTargetId)
+                {
+                    if (!TryGetPrivateMemberClassDefinition(privateTargetId.Name, out var privateOwner, out _))
+                    {
+                        return false;
+                    }
+
+                    var isAccessorOrMethod = TryResolvePrivateAccessorOrMethod(
+                        privateTargetId, out _, out _, out var setterName, out _, out _);
+                    pattern = new HIRPrivateTargetPattern
+                    {
+                        Receiver = targetObjectExpr!,
+                        RegistryClassName = GetRegistryClassName(privateOwner),
+                        FieldName = isAccessorOrMethod ? null : privateTargetId.Name,
+                        SetterMethodName = setterName
+                    };
+                    return true;
+                }
+
                 if (memberExpr.Property is not Acornima.Ast.Identifier targetPropertyId)
                 {
                     return false;
