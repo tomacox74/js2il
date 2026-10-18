@@ -115,6 +115,35 @@
     "entries": [
       {
         "clause": "15.7.13",
+        "feature": "Async class methods and class-element grammar",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/forbidden-ext/b1/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/forbidden-ext/b2/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/forbidden-ext/b1/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/forbidden-ext/b2/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-gen-private-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-gen-private-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-private-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-private-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/private-methods/ClassAsyncElementsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/async-method/dflt-params-abrupt.js",
+          "test/language/statements/class/elements/after-same-line-static-async-gen-computed-symbol-names.js",
+          "test/language/statements/class/elements/async-gen-private-method/yield-star-sync-throw.js",
+          "test/language/statements/class/elements/async-private-method-static/returns-async-arrow-returns-arguments-from-parent-function.js",
+          "test/language/statements/class/elements/private-methods/prod-private-async-generator.js"
+        ],
+        "notes": "Async class methods and elements have 400 additional verified passing Test262 results across all 790 required native variants. Coverage includes private/static async methods, async-generator delegation and promise rejection, default parameters, lexical arguments/new.target, restricted caller/arguments properties, and class-element names, separators, and private-member forms. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. Broader private-brand lifecycle and class-definition edge cases remain limited; this is not complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
         "feature": "Class generator method parameters and async delegation",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
