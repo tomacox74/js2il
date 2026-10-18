@@ -41,6 +41,14 @@ public sealed class HIRIndexTargetPattern : HIRPattern
     public HIRExpression Index { get; }
 }
 
+public sealed class HIRPrivateTargetPattern : HIRPattern
+{
+    public required HIRExpression Receiver { get; init; }
+    public required string RegistryClassName { get; init; }
+    public string? FieldName { get; init; }
+    public string? SetterMethodName { get; init; }
+}
+
 public sealed class HIRDefaultPattern : HIRPattern
 {
     public HIRDefaultPattern(HIRPattern target, HIRExpression @default)
