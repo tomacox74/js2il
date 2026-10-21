@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(test262): retain upstream specification identifiers and descriptive metadata
+  in catalogue ingestion and exports. Add source-verified immutable enrichment for
+  existing sealed corpora and a reporting view that preserves revision/path/digest
+  provenance without interpreting legacy references as current-edition clauses.
 - test262: complete the pinned variable and with statement areas with 148
   exact upstream fixtures: 116 verified cases and 32 explicit direct/indirect
   eval skips. Revalidate all 327 supported cases across 453 native variants;
