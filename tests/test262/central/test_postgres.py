@@ -126,6 +126,167 @@ class PostgresTests(unittest.TestCase):
         self.assertEqual(summary['sha256'],footer['sha256'])
         self.assertEqual(sum(footer['counts'].values()),len(lines)-2)
 
+    def test_specification_metadata_ingestion_enrichment_reporting_and_export(self):
+        import copy
+        import hashlib
+        import subprocess
+        import tempfile
+        from types import SimpleNamespace
+        from psycopg.conninfo import make_conninfo
+        from scripts.test262 import catalog
+        from scripts.test262.central.client import Client, bytea, sha
+        from scripts.test262.central.inventory import enrich_specification_metadata, normalize_fixture, register
+
+        repository, producer = str(uuid.uuid4()), str(uuid.uuid4())
+        role = 'catalogue_specification_worker'
+        self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github','specification-metadata','test/specification')", (repository,))
+        self.db.execute("INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'local','specification test',%s)", (producer, repository, role))
+        self.db.execute("CREATE ROLE catalogue_specification_worker LOGIN INHERIT PASSWORD 'disposable-specification-test'; GRANT test262_coordinator,test262_reporter TO catalogue_specification_worker")
+        self.db.execute("INSERT INTO test262.api_subjects VALUES(%s,%s,%s,'coordinator','trusted',true)", (role, repository, producer))
+        client = Client(make_conninfo(DSN, user=role, password='disposable-specification-test'), 1)
+        self.addCleanup(client.close)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'test').mkdir()
+            fixtures = {
+                'modern': 'esid: sec-example\ndescription: Modern description\ninfo: Algorithm detail',
+                'legacy': 'es5id: 10.5-1-s\ndescription: Legacy description',
+                'absent': 'description: No reference',
+            }
+            for name, frontmatter in fixtures.items():
+                (root / 'test' / (name + '.js')).write_text('/*---\n' + frontmatter + '\nflags: [raw]\n---*/\nvoid 0;\n')
+            subprocess.run(['git', 'init', '-q', str(root)], check=True)
+            subprocess.run(['git', '-C', str(root), 'add', 'test'], check=True)
+            subprocess.run(['git', '-C', str(root), '-c', 'user.name=Catalogue Test',
+                            '-c', 'user.email=catalogue-test@example.invalid', 'commit', '-qm', 'Source fixtures'], check=True)
+            revision = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+            original = catalog.bridge({'command': 'metadata', 'root': str(root),
+                                       'paths': ['test/' + name + '.js' for name in fixtures]})
+            rows = [normalize_fixture(row, root) for row in original]
+            upstream = {'cloneUrl': 'https://example.invalid/test262', 'commit': revision}
+            new_corpus, new_ids = register(client, repository, upstream, copy.deepcopy(rows))
+            new_report = client.db.execute("""
+                SELECT upstream_path,reference_state,raw_identifiers,description,metadata_source,
+                       upstream_revision,content_sha256,mapping_status,specification_edition,interpreted_clause
+                FROM test262_reporting.v_fixture_specification_references
+                WHERE repository_id=%s AND corpus_id=%s ORDER BY upstream_path
+                """, (repository, new_corpus)).fetchall()
+            self.assertEqual([r[1] for r in new_report], ['absent', 'legacy', 'unresolved'])
+            self.assertEqual([r[2] for r in new_report], [{}, {'es5id': '10.5-1-s'}, {'esid': 'sec-example'}])
+            self.assertEqual([r[3] for r in new_report], ['No reference', 'Legacy description', 'Modern description'])
+            for row in new_report:
+                self.assertEqual((row[4], row[5], row[7], row[8], row[9]),
+                                 ('inventory', revision, 'not-attempted', None, None))
+                self.assertEqual(row[6], hashlib.sha256((root / row[0]).read_bytes()).hexdigest())
+
+            # Model the already-deployed stripped inventory, then attach evidence to it.
+            old_rows = copy.deepcopy(rows)
+            for row in old_rows:
+                for key in ('description', 'info', 'author', 'esid', 'es5id', 'es6id', 'specification'):
+                    row['metadata'].pop(key)
+            old_corpus, old_ids = register(client, repository, upstream, old_rows)
+            self.assertNotEqual(new_corpus, old_corpus)
+            provenance = str(uuid.uuid4())
+            client.put('provenances', [{
+                'provenance_id': provenance, 'repository_id': repository, 'corpus_id': old_corpus,
+                'evidence_kind': 'native', 'identity_version': 1, 'identity_sha256': bytea(sha('identity')),
+                'identity_document': {}, 'capability_sha256': bytea(sha('capabilities')),
+            }])
+            run, observation = str(uuid.uuid4()), str(uuid.uuid4())
+            client.call('start_run', {'run_id': run, 'provenance_id': provenance,
+                                     'external_run_key': 'before-enrichment',
+                                     'source_revision': 'b' * 40, 'run_kind': 'native'})
+            client.call('ingest', str(uuid.uuid4()), [{
+                'observation_id': observation, 'repository_id': repository, 'run_id': run,
+                'provenance_id': provenance, 'fixture_id': old_ids['test/modern.js'],
+                'variant': 'non-strict', 'outcome': 'pass', 'phase': 'runtime',
+                'started_at': '2026-10-21T00:00:00Z', 'finished_at': '2026-10-21T00:00:01Z',
+                'active_ms': 1000, 'source_kind': 'live', 'payload': {'original': True},
+            }])
+            before = {table: client.rows(table, **filters) for table, filters in (
+                ('fixtures', {'corpus_id': old_corpus}), ('corpora', {'corpus_id': old_corpus}),
+                ('observations', {'run_id': run}), ('observation_payloads', {'observation_id': observation}),
+            )}
+            unavailable = client.db.execute("""
+                SELECT reference_state,metadata_source FROM test262_reporting.v_fixture_specification_references
+                WHERE repository_id=%s AND corpus_id=%s
+                """, (repository, old_corpus)).fetchall()
+            self.assertEqual(unavailable, [('unresolved', 'unavailable')] * 3)
+            args = SimpleNamespace(corpus=old_corpus, root=root)
+            for _ in range(2):
+                self.assertEqual(enrich_specification_metadata(client, args)['enriched_fixtures'], 3)
+            after = {table: client.rows(table, **filters) for table, filters in (
+                ('fixtures', {'corpus_id': old_corpus}), ('corpora', {'corpus_id': old_corpus}),
+                ('observations', {'run_id': run}), ('observation_payloads', {'observation_id': observation}),
+            )}
+            self.assertEqual(after, before)
+            enriched_report = client.db.execute("""
+                SELECT upstream_path,reference_state,raw_identifiers,metadata_source,upstream_revision,content_sha256
+                FROM test262_reporting.v_fixture_specification_references
+                WHERE repository_id=%s AND corpus_id=%s ORDER BY upstream_path
+                """, (repository, old_corpus)).fetchall()
+            self.assertEqual([r[:3] for r in enriched_report], [r[:3] for r in new_report])
+            for row in enriched_report:
+                self.assertEqual((row[3], row[4]), ('enrichment', revision))
+                self.assertEqual(row[5], hashlib.sha256((root / row[0]).read_bytes()).hexdigest())
+            annotations = client.rows('fixture_specification_metadata')
+            self.assertEqual(len(annotations), 3)
+            self.assertEqual({r['actor'] for r in annotations}, {role})
+            self.assertEqual(list(client.read('fixture_specification_metadata', page=1)), annotations)
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                client.db.execute('SELECT * FROM test262.fixture_specification_metadata')
+            annotation = next(r for r in annotations if r['fixture_id'] == old_ids['test/modern.js'])
+            payload = {key: annotation[key] for key in (
+                'fixture_id', 'upstream_revision', 'upstream_path', 'content_sha256', 'metadata', 'metadata_sha256')}
+            with self.assertRaises(psycopg.errors.RaiseException):
+                client.put('fixture_specification_metadata', [dict(payload, metadata={})])
+            for patch in ({'upstream_revision': 'c' * 40}, {'upstream_path': 'test/wrong.js'},
+                          {'content_sha256': bytea('d' * 64)}, {'metadata_sha256': bytea('e' * 64)}):
+                with self.subTest(patch=patch), self.assertRaises(psycopg.errors.CheckViolation):
+                    client.put('fixture_specification_metadata', [
+                        dict(payload, fixture_id=new_ids['test/modern.js'], **patch)])
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                client.put('fixture_specification_metadata', [dict(payload, fixture_id=self.fixtures[0])])
+            self.db.execute("UPDATE test262.api_subjects SET trust_class='legacy' WHERE login_name=%s", (role,))
+            try:
+                with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                    client.put('fixture_specification_metadata', [payload])
+            finally:
+                self.db.execute("UPDATE test262.api_subjects SET trust_class='trusted' WHERE login_name=%s", (role,))
+            for statement in ('UPDATE test262.fixture_specification_metadata SET metadata=metadata WHERE fixture_id=%s',
+                              'DELETE FROM test262.fixture_specification_metadata WHERE fixture_id=%s'):
+                with self.assertRaises(psycopg.errors.CheckViolation):
+                    self.db.execute(statement, (payload['fixture_id'],))
+            with self.worker() as other:
+                invisible = other.execute('SELECT test262.api_read(1,%s,%s,NULL,10)',
+                                          ('fixture_specification_metadata', Jsonb({}))).fetchone()[0]
+                self.assertEqual(invisible['rows'], [])
+            output = root / 'export.ndjson'
+            summary = client.export(output)
+            records = [json.loads(line) for line in output.read_text().splitlines()]
+            self.assertEqual(summary['counts']['fixture_specification_metadata'], 3)
+            exported = [r['row'] for r in records if r.get('table') == 'fixture_specification_metadata']
+            self.assertEqual(sorted(exported, key=lambda r: r['fixture_id']),
+                             sorted(annotations, key=lambda r: r['fixture_id']))
+            exported_fixtures = {r['row']['fixture_id']: r['row'] for r in records if r.get('table') == 'fixtures'}
+            self.assertEqual(exported_fixtures[new_ids['test/modern.js']]['metadata']['esid'], 'sec-example')
+            self.assertEqual(exported_fixtures[new_ids['test/legacy.js']]['metadata']['es5id'], '10.5-1-s')
+            self.assertEqual(exported_fixtures[new_ids['test/absent.js']]['metadata']['specification']['reference_state'], 'absent')
+            self.assertEqual(next(r['row'] for r in records if r.get('table') == 'observations'),
+                             before['observations'][0])
+            staging_corpus, staging_fixture = str(uuid.uuid4()), str(uuid.uuid4())
+            client.put('corpora', [{
+                'corpus_id': staging_corpus, 'upstream_url': upstream['cloneUrl'], 'revision': revision,
+                'revision_algorithm': 'sha1', 'inventory_digest': bytea(sha('staging')), 'expected_fixture_count': 1,
+            }])
+            client.put('repository_corpora', [{'repository_id': repository, 'corpus_id': staging_corpus}])
+            client.put('fixtures', [{
+                'fixture_id': staging_fixture, 'corpus_id': staging_corpus, 'upstream_path': payload['upstream_path'],
+                'content_sha256': payload['content_sha256'], 'metadata_state': 'valid',
+            }])
+            with self.assertRaises(psycopg.errors.CheckViolation):
+                client.put('fixture_specification_metadata', [dict(payload, fixture_id=staging_fixture)])
+
     def test_overlapping_mvp_snapshots_preserve_old_run_and_replay_outbox(self):
         """Real restricted APIs: old initialization revision must not block older snapshots."""
         import sqlite3, tempfile

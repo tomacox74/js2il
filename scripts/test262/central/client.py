@@ -12,7 +12,8 @@ import sqlite3
 import uuid
 from contextlib import contextmanager
 
-EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_variants', 'fixture_dependencies',
+EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_specification_metadata',
+                 'fixture_variants', 'fixture_dependencies',
                  'provenances', 'provenance_fixture_eligibility', 'runs', 'observations', 'observation_payloads',
                  'observation_invalidations', 'validation_events', 'work_items', 'work_leases', 'budget_reservations',
                  'budget_scopes', 'budget_work_items', 'registration_snapshots', 'registrations', 'reporting_targets',
@@ -196,4 +197,3 @@ def fixture_environment(source=None):
     allowed = ('PATH','HOME','TMPDIR','TEMP','TMP','LANG','LC_ALL','DOTNET_ROOT','DOTNET_NOLOGO',
                'DOTNET_SKIP_FIRST_TIME_EXPERIENCE','DOTNET_CLI_TELEMETRY_OPTOUT')
     return {key: source[key] for key in allowed if key in source}
-
