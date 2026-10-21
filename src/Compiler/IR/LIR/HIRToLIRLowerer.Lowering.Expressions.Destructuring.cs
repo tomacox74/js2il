@@ -56,15 +56,7 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(
             new LIRBranchIfFalse(activeProbe.HasBinding, lexicalLabel));
 
-        var withValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-            new[] { activeProbe.WithObject, activeProbe.Name },
-            withValue));
-        DefineTempStorage(
-            withValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var withValue = EmitGetWithBindingValue(activeProbe.WithObject, activeProbe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(withValue), result));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
@@ -92,29 +84,14 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(
             new LIRBranchIfFalse(probe.HasBinding, globalLabel));
 
-        var withValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-            new[] { probe.WithObject, probe.Name },
-            withValue));
-        DefineTempStorage(
-            withValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var withValue = EmitGetWithBindingValue(probe.WithObject, probe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(withValue), result));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
 
         _methodBodyIR.Instructions.Add(new LIRLabel(globalLabel));
         ClearNumericRefinementsAtLabel();
-        var fallbackValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
-            new[] { EnsureObject(probe.Name) },
-            fallbackValue));
-        DefineTempStorage(
-            fallbackValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var fallbackValue = EmitResolveBoundWithGlobalValue(probe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(fallbackValue), result));
 

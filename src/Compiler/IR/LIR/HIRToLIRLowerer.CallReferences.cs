@@ -112,11 +112,7 @@ public sealed partial class HIRToLIRLowerer
 
         void EmitReference(TempVariable withObject)
         {
-            var value = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-                [withObject, nameTemp], value));
-            DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            var value = EmitGetWithBindingValue(withObject, nameTemp);
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(value, resultFunction));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(withObject, resultReceiver));
         }

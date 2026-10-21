@@ -84,13 +84,13 @@
     {
       "clause": "9.1.1.2",
       "title": "Object Environment Records",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records"
     },
     {
       "clause": "9.1.1.2.1",
       "title": "HasBinding ( N )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-hasbinding-n"
     },
     {
@@ -114,13 +114,13 @@
     {
       "clause": "9.1.1.2.5",
       "title": "SetMutableBinding ( N , V , S )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-setmutablebinding-n-v-s"
     },
     {
       "clause": "9.1.1.2.6",
       "title": "GetBindingValue ( N , S )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-getbindingvalue-n-s"
     },
     {
@@ -387,12 +387,19 @@
       {
         "clause": "9.1.1.2",
         "feature": "Object Environment Records (with-based environments)",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records",
         "testScripts": [
-          "tests/Jroc.Tests/ValidatorTests.cs"
+          "tests/Jroc.Tests/ValidatorTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/with/VariableWithCompletionExecutionTests.cs"
         ],
-        "notes": "with statement/object environment semantics are intentionally rejected in validation."
+        "test262Paths": [
+          "test/language/statements/with/get-binding-value-idref-with-proxy-env.js",
+          "test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopables-strict-mode.js",
+          "test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js",
+          "test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js"
+        ],
+        "notes": "Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Proxy traps receive the symbol-valued unscopables key on first use, independently of earlier Symbol property access. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results."
       },
       {
         "clause": "9.1.1.3",

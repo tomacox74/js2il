@@ -66,10 +66,55 @@ public sealed partial class HIRToLIRLowerer
         var resolvedTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             MethodName: nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrDefault),
-            Arguments: new[] { EnsureObject(nameTemp), EnsureObject(lexicalValueTemp) },
-            Result: resolvedTemp));
+            Arguments: new[] { EnsureObject(nameTemp), EnsureObject(lexicalValueTemp), EmitWithStrictFlag() },
+            Result: resolvedTemp,
+            ParameterTypes: new[] { typeof(object), typeof(object), typeof(bool) }));
         DefineTempStorage(resolvedTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return resolvedTemp;
+    }
+
+    private TempVariable EmitWithStrictFlag()
+    {
+        var strict = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(UsesStrictAssignmentSemantics(), strict));
+        DefineTempStorage(strict, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return strict;
+    }
+
+    private TempVariable EmitGetWithBindingValue(TempVariable withObject, TempVariable name)
+    {
+        var value = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.GetWithBindingValue),
+            [withObject, EnsureObject(name), EmitWithStrictFlag()],
+            value,
+            [typeof(object), typeof(object), typeof(bool)]));
+        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return value;
+    }
+
+    private TempVariable EmitSetWithBindingValue(TempVariable withObject, TempVariable name, TempVariable value)
+    {
+        var result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetWithBindingValue),
+            [withObject, EnsureObject(name), EnsureObject(value), EmitWithStrictFlag()],
+            result,
+            [typeof(object), typeof(object), typeof(object), typeof(bool)]));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return result;
+    }
+
+    private TempVariable EmitResolveBoundWithGlobalValue(TempVariable name)
+    {
+        var value = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
+            [EnsureObject(name), EmitWithStrictFlag()],
+            value,
+            [typeof(object), typeof(bool)]));
+        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return value;
     }
 
     private bool MayUseBoundWithEnvironmentForIdentifier(BindingInfo binding)

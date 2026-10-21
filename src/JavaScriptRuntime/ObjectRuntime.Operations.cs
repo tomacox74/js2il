@@ -7561,7 +7561,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var unscopables = GetProperty(obj!, Symbol.unscopables.DebugId);
+            var unscopables = GetItem(obj!, Symbol.unscopables);
             return TypeUtilities.IsPrimitive(unscopables)
                 || !TypeUtilities.ToBoolean(GetProperty(unscopables!, name));
         }

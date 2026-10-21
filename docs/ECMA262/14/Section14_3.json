@@ -68,6 +68,23 @@
   "support": {
     "entries": [
       {
+        "clause": "14.3.2",
+        "feature": "Variable-statement Test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-variable-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/variable/VariableWithCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/variable/dstr/VariableWithCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/variable/arguments-fn-strict-list-repeated.js",
+          "test/language/statements/variable/eval-strict-single.js",
+          "test/language/statements/variable/dstr/ary-ptrn-elem-id-static-init-await-valid.js",
+          "test/language/statements/variable/dstr/ary-ptrn-rest-not-final-id.js"
+        ],
+        "notes": "All 178 applicable pinned variable-statement cases have a documented outcome: 163 verified passing and 15 known unsupported direct/indirect eval cases. Coverage includes strict binding-name early errors, declaration lists, hoisting/redeclaration, destructuring grammar, and await bindings in class static blocks. Syntax-negative tests restricting the identifier eval remain runnable because they do not execute eval. Native validation covers every required variant under one branch-local build; it is not central trusted acceptance. This does not claim completion of the separate let, const, or destructuring feature areas."
+      },
+      {
         "clause": "14.3.3",
         "feature": "TypedArray destructuring with resizable backing buffers",
         "status": "Supported",

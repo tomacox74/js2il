@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-10T03:30:16Z
+> Last generated (UTC): 2026-10-21T20:52:59Z
 
 JROC supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
@@ -45,6 +45,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | let declarations + shadowing | Supported | [`Variable_LetShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetShadowing.js)<br>[`Variable_LetNestedShadowingChain.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js)<br>[`Variable_LetFunctionNestedShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js)<br>[`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |  |
 | temporal dead zone (TDZ) | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneCapturedRead.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneCapturedRead.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) |  | Reads of lexical bindings throw a ReferenceError before initialization, including captured reads and nested shadowing cases that must still preserve access to the outer initialized binding. |
 
+### 14.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-variable-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Variable-statement Test262 coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/variable/VariableWithCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/variable/dstr/VariableWithCompletionExecutionTests.cs` | `test/language/statements/variable/arguments-fn-strict-list-repeated.js`<br>`test/language/statements/variable/eval-strict-single.js`<br>`test/language/statements/variable/dstr/ary-ptrn-elem-id-static-init-await-valid.js`<br>`test/language/statements/variable/dstr/ary-ptrn-rest-not-final-id.js` | All 178 applicable pinned variable-statement cases have a documented outcome: 163 verified passing and 15 known unsupported direct/indirect eval cases. Coverage includes strict binding-name early errors, declaration lists, hoisting/redeclaration, destructuring grammar, and await bindings in class static blocks. Syntax-negative tests restricting the identifier eval remain runnable because they do not execute eval. Native validation covers every required variant under one branch-local build; it is not central trusted acceptance. This does not claim completion of the separate let, const, or destructuring feature areas. |
+
 ### 14.3.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-variable-statement-runtime-semantics-evaluation))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -81,4 +87,3 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | computed object binding keys preserve with-environment lookup ordering | Supported |  | `test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js` | Computed object binding names are supported in binding patterns, including the observable lookup ordering exercised by sloppy-mode `with` environments and default initializers. |
-

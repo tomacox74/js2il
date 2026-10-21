@@ -1110,6 +1110,7 @@ partial class HIRMethodBuilder
     readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
     readonly JavaScriptParser _parser = new();
     string? _staticThisRegistryClassName;
+    int _activeWithDepth;
 
     public HIRMethodBuilder(
         Scope scope,
@@ -2946,13 +2947,21 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
-                    if (!TryParseNestedStatement(withStmt.Body, out var withBody))
+                    _activeWithDepth++;
+                    try
                     {
-                        return false;
-                    }
+                        if (!TryParseNestedStatement(withStmt.Body, out var withBody))
+                        {
+                            return false;
+                        }
 
-                    hirStatement = new HIRWithStatement(withObjectExpr!, withBody!);
-                    return true;
+                        hirStatement = new HIRWithStatement(withObjectExpr!, withBody!);
+                        return true;
+                    }
+                    finally
+                    {
+                        _activeWithDepth--;
+                    }
                 }
 
             case ReturnStatement returnStmt:
@@ -4444,7 +4453,9 @@ partial class HIRMethodBuilder
                 }
 
                 // Synthetic global binding: prefer known global constants when not shadowed.
-                if (KnownGlobalConstants.TryGetValue(identifierExpr.Name, out var constant))
+                if (_activeWithDepth == 0
+                    && !_rootScope.MayUseBoundWithObject
+                    && KnownGlobalConstants.TryGetValue(identifierExpr.Name, out var constant))
                 {
                     hirExpr = new HIRLiteralExpression(constant.Kind, constant.Value);
                     return true;

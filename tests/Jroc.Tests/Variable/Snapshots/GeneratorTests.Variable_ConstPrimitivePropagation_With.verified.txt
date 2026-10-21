@@ -491,7 +491,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 66 (0x42)
+				// Code size: 67 (0x43)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -502,29 +502,30 @@
 				IL_0000: ldstr "VALUE"
 				IL_0005: ldc.r8 1
 				IL_000e: box [System.Runtime]System.Double
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-				IL_0018: stloc.0
-				IL_0019: ldloc.0
-				IL_001a: ldc.r8 1
-				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_0028: stloc.1
-				IL_0029: ldc.i4.1
-				IL_002a: newarr [System.Runtime]System.Object
-				IL_002f: dup
-				IL_0030: ldc.i4.0
-				IL_0031: ldarg.0
-				IL_0032: ldc.i4.0
-				IL_0033: ldelem.ref
-				IL_0034: stelem.ref
-				IL_0035: stloc.2
-				IL_0036: ldnull
-				IL_0037: ldloc.1
-				IL_0038: tail.
-				IL_003a: call object Modules.Variable_ConstPrimitivePropagation_With/receive::__js_call__(object, object)
-				IL_003f: ret
+				IL_0013: ldc.i4.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object, bool)
+				IL_0019: stloc.0
+				IL_001a: ldloc.0
+				IL_001b: ldc.r8 1
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_0029: stloc.1
+				IL_002a: ldc.i4.1
+				IL_002b: newarr [System.Runtime]System.Object
+				IL_0030: dup
+				IL_0031: ldc.i4.0
+				IL_0032: ldarg.0
+				IL_0033: ldc.i4.0
+				IL_0034: ldelem.ref
+				IL_0035: stelem.ref
+				IL_0036: stloc.2
+				IL_0037: ldnull
+				IL_0038: ldloc.1
+				IL_0039: tail.
+				IL_003b: call object Modules.Variable_ConstPrimitivePropagation_With/receive::__js_call__(object, object)
+				IL_0040: ret
 
-				IL_0040: ldnull
-				IL_0041: ret
+				IL_0041: ldnull
+				IL_0042: ret
 			} // end of method ArrowFunction_L13C12::__js_call__
 
 		} // end of class ArrowFunction_L13C12
@@ -659,7 +660,7 @@
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 12
-			// Code size: 65 (0x41)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/Scope,
@@ -671,36 +672,37 @@
 			IL_0000: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldarg.2
-			IL_0007: stloc.1
-			IL_0008: ldc.i4.2
-			IL_0009: newarr [System.Runtime]System.Object
-			IL_000e: dup
-			IL_000f: ldc.i4.0
-			IL_0010: ldarg.0
-			IL_0011: stelem.ref
-			IL_0012: dup
-			IL_0013: ldc.i4.1
-			IL_0014: ldloc.0
-			IL_0015: stelem.ref
-			IL_0016: stloc.2
-			IL_0017: ldloc.2
-			IL_0018: ldc.i4.0
-			IL_0019: ldelem.ref
-			IL_001a: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
-			IL_001f: ldloc.2
-			IL_0020: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object[])
-			IL_0025: ldc.i4.0
-			IL_0026: conv.r8
-			IL_0027: ldstr ""
-			IL_002c: ldc.i4.1
-			IL_002d: ldc.i4.0
-			IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject>(!!0)
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: ldloc.1
-			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::BindWithObject(object, object)
-			IL_0040: ret
+			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToObject(object)
+			IL_000c: stloc.1
+			IL_000d: ldc.i4.2
+			IL_000e: newarr [System.Runtime]System.Object
+			IL_0013: dup
+			IL_0014: ldc.i4.0
+			IL_0015: ldarg.0
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.1
+			IL_0019: ldloc.0
+			IL_001a: stelem.ref
+			IL_001b: stloc.2
+			IL_001c: ldloc.2
+			IL_001d: ldc.i4.0
+			IL_001e: ldelem.ref
+			IL_001f: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
+			IL_0024: ldloc.2
+			IL_0025: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object[])
+			IL_002a: ldc.i4.0
+			IL_002b: conv.r8
+			IL_002c: ldstr ""
+			IL_0031: ldc.i4.1
+			IL_0032: ldc.i4.0
+			IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20/ArrowFunction_L13C12/FunctionObject>(!!0)
+			IL_003d: stloc.3
+			IL_003e: ldloc.3
+			IL_003f: ldloc.1
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Function::BindWithObject(object, object)
+			IL_0045: ret
 		} // end of method ArrowFunction_L11C20::__js_call__
 
 	} // end of class ArrowFunction_L11C20
@@ -818,7 +820,7 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 50 (0x32)
+				// Code size: 51 (0x33)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -828,25 +830,26 @@
 				IL_0000: ldstr "VALUE"
 				IL_0005: ldc.r8 1
 				IL_000e: box [System.Runtime]System.Double
-				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-				IL_0018: stloc.0
-				IL_0019: ldc.i4.1
-				IL_001a: newarr [System.Runtime]System.Object
-				IL_001f: dup
-				IL_0020: ldc.i4.0
-				IL_0021: ldarg.0
-				IL_0022: ldc.i4.0
-				IL_0023: ldelem.ref
-				IL_0024: stelem.ref
-				IL_0025: stloc.1
-				IL_0026: ldnull
-				IL_0027: ldloc.0
-				IL_0028: tail.
-				IL_002a: call object Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier::__js_call__(object, object)
-				IL_002f: ret
+				IL_0013: ldc.i4.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object, bool)
+				IL_0019: stloc.0
+				IL_001a: ldc.i4.1
+				IL_001b: newarr [System.Runtime]System.Object
+				IL_0020: dup
+				IL_0021: ldc.i4.0
+				IL_0022: ldarg.0
+				IL_0023: ldc.i4.0
+				IL_0024: ldelem.ref
+				IL_0025: stelem.ref
+				IL_0026: stloc.1
+				IL_0027: ldnull
+				IL_0028: ldloc.0
+				IL_0029: tail.
+				IL_002b: call object Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier::__js_call__(object, object)
+				IL_0030: ret
 
-				IL_0030: ldnull
-				IL_0031: ret
+				IL_0031: ldnull
+				IL_0032: ret
 			} // end of method ArrowFunction_L19C12::__js_call__
 
 		} // end of class ArrowFunction_L19C12
@@ -981,7 +984,7 @@
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
 			// Header size: 12
-			// Code size: 65 (0x41)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/Scope,
@@ -993,36 +996,37 @@
 			IL_0000: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldarg.2
-			IL_0007: stloc.1
-			IL_0008: ldc.i4.2
-			IL_0009: newarr [System.Runtime]System.Object
-			IL_000e: dup
-			IL_000f: ldc.i4.0
-			IL_0010: ldarg.0
-			IL_0011: stelem.ref
-			IL_0012: dup
-			IL_0013: ldc.i4.1
-			IL_0014: ldloc.0
-			IL_0015: stelem.ref
-			IL_0016: stloc.2
-			IL_0017: ldloc.2
-			IL_0018: ldc.i4.0
-			IL_0019: ldelem.ref
-			IL_001a: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
-			IL_001f: ldloc.2
-			IL_0020: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object[])
-			IL_0025: ldc.i4.0
-			IL_0026: conv.r8
-			IL_0027: ldstr ""
-			IL_002c: ldc.i4.1
-			IL_002d: ldc.i4.0
-			IL_002e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject>(!!0)
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: ldloc.1
-			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::BindWithObject(object, object)
-			IL_0040: ret
+			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToObject(object)
+			IL_000c: stloc.1
+			IL_000d: ldc.i4.2
+			IL_000e: newarr [System.Runtime]System.Object
+			IL_0013: dup
+			IL_0014: ldc.i4.0
+			IL_0015: ldarg.0
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.1
+			IL_0019: ldloc.0
+			IL_001a: stelem.ref
+			IL_001b: stloc.2
+			IL_001c: ldloc.2
+			IL_001d: ldc.i4.0
+			IL_001e: ldelem.ref
+			IL_001f: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
+			IL_0024: ldloc.2
+			IL_0025: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject::.ctor(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object[])
+			IL_002a: ldc.i4.0
+			IL_002b: conv.r8
+			IL_002c: ldstr ""
+			IL_0031: ldc.i4.1
+			IL_0032: ldc.i4.0
+			IL_0033: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0038: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30/ArrowFunction_L19C12/FunctionObject>(!!0)
+			IL_003d: stloc.3
+			IL_003e: ldloc.3
+			IL_003f: ldloc.1
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Function::BindWithObject(object, object)
+			IL_0045: ret
 		} // end of method ArrowFunction_L17C30::__js_call__
 
 	} // end of class ArrowFunction_L17C30
@@ -1111,21 +1115,22 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 624 (0x270)
-		.maxstack 8
+		// Code size: 641 (0x281)
+		.maxstack 9
 		.locals init (
 			[0] class Modules.Variable_ConstPrimitivePropagation_With/Scope,
 			[1] float64,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object[],
-			[5] class Modules.Variable_ConstPrimitivePropagation_With/receive/FunctionObject,
-			[6] class Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier/FunctionObject,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[9] object,
-			[10] bool,
-			[11] object
+			[3] object,
+			[4] object,
+			[5] object[],
+			[6] class Modules.Variable_ConstPrimitivePropagation_With/receive/FunctionObject,
+			[7] class Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier/FunctionObject,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[10] object,
+			[11] bool,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/Scope::.ctor()
@@ -1136,7 +1141,7 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: stloc.s 4
+		IL_0010: stloc.s 5
 		IL_0012: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/receive/FunctionObject::.ctor()
 		IL_0017: ldc.i4.1
 		IL_0018: conv.r8
@@ -1145,9 +1150,9 @@
 		IL_001f: ldc.i4.0
 		IL_0020: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/receive/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0025: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Variable_ConstPrimitivePropagation_With/receive/FunctionObject>(!!0)
-		IL_002a: stloc.s 5
+		IL_002a: stloc.s 6
 		IL_002c: ldloc.0
-		IL_002d: ldloc.s 5
+		IL_002d: ldloc.s 6
 		IL_002f: stfld object Modules.Variable_ConstPrimitivePropagation_With/Scope::receive
 		IL_0034: ldc.i4.1
 		IL_0035: newarr [System.Runtime]System.Object
@@ -1155,7 +1160,7 @@
 		IL_003b: ldc.i4.0
 		IL_003c: ldloc.0
 		IL_003d: stelem.ref
-		IL_003e: stloc.s 4
+		IL_003e: stloc.s 5
 		IL_0040: newobj instance void Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier/FunctionObject::.ctor()
 		IL_0045: ldc.i4.1
 		IL_0046: conv.r8
@@ -1164,92 +1169,92 @@
 		IL_004d: ldc.i4.0
 		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier/FunctionObject>(!!0, float64, string, bool, bool)
 		IL_0053: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeLegacyFunctionProperties<class Modules.Variable_ConstPrimitivePropagation_With/receiveIdentifier/FunctionObject>(!!0)
-		IL_0058: stloc.s 6
+		IL_0058: stloc.s 7
 		IL_005a: ldloc.0
-		IL_005b: ldloc.s 6
+		IL_005b: ldloc.s 7
 		IL_005d: stfld object Modules.Variable_ConstPrimitivePropagation_With/Scope::receiveIdentifier
 		IL_0062: nop
 		IL_0063: nop
 		IL_0064: nop
 		IL_0065: nop
 		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006b: stloc.s 7
+		IL_006b: stloc.s 8
 		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0072: dup
 		IL_0073: ldstr "VALUE"
 		IL_0078: ldstr "shadow"
 		IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0082: stloc.s 8
+		IL_0082: stloc.s 9
 		IL_0084: ldloc.0
 		IL_0085: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
 		IL_008a: ldnull
-		IL_008b: ldloc.s 8
+		IL_008b: ldloc.s 9
 		IL_008d: call object Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20::__js_call__(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object, object)
-		IL_0092: stloc.s 9
-		IL_0094: ldloc.s 9
+		IL_0092: stloc.s 10
+		IL_0094: ldloc.s 10
 		IL_0096: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00a0: stloc.s 9
-		IL_00a2: ldloc.s 7
-		IL_00a4: ldloc.s 9
+		IL_00a0: stloc.s 10
+		IL_00a2: ldloc.s 8
+		IL_00a4: ldloc.s 10
 		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00ab: pop
 		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b1: stloc.s 7
+		IL_00b1: stloc.s 8
 		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00b8: stloc.s 8
+		IL_00b8: stloc.s 9
 		IL_00ba: ldloc.0
 		IL_00bb: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
 		IL_00c0: ldnull
-		IL_00c1: ldloc.s 8
+		IL_00c1: ldloc.s 9
 		IL_00c3: call object Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L11C20::__js_call__(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object, object)
-		IL_00c8: stloc.s 9
-		IL_00ca: ldloc.s 9
+		IL_00c8: stloc.s 10
+		IL_00ca: ldloc.s 10
 		IL_00cc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00d6: stloc.s 9
-		IL_00d8: ldloc.s 7
-		IL_00da: ldloc.s 9
+		IL_00d6: stloc.s 10
+		IL_00d8: ldloc.s 8
+		IL_00da: ldloc.s 10
 		IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00e1: pop
 		IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e7: stloc.s 7
+		IL_00e7: stloc.s 8
 		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_00ee: dup
 		IL_00ef: ldstr "VALUE"
 		IL_00f4: ldstr "shadow"
 		IL_00f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00fe: stloc.s 8
+		IL_00fe: stloc.s 9
 		IL_0100: ldloc.0
 		IL_0101: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
 		IL_0106: ldnull
-		IL_0107: ldloc.s 8
+		IL_0107: ldloc.s 9
 		IL_0109: call object Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30::__js_call__(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object, object)
-		IL_010e: stloc.s 9
-		IL_0110: ldloc.s 9
+		IL_010e: stloc.s 10
+		IL_0110: ldloc.s 10
 		IL_0112: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_011c: stloc.s 9
-		IL_011e: ldloc.s 7
-		IL_0120: ldloc.s 9
+		IL_011c: stloc.s 10
+		IL_011e: ldloc.s 8
+		IL_0120: ldloc.s 10
 		IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0127: pop
 		IL_0128: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012d: stloc.s 7
+		IL_012d: stloc.s 8
 		IL_012f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0134: stloc.s 8
+		IL_0134: stloc.s 9
 		IL_0136: ldloc.0
 		IL_0137: castclass Modules.Variable_ConstPrimitivePropagation_With/Scope
 		IL_013c: ldnull
-		IL_013d: ldloc.s 8
+		IL_013d: ldloc.s 9
 		IL_013f: call object Modules.Variable_ConstPrimitivePropagation_With/ArrowFunction_L17C30::__js_call__(class Modules.Variable_ConstPrimitivePropagation_With/Scope, object, object)
-		IL_0144: stloc.s 9
-		IL_0146: ldloc.s 9
+		IL_0144: stloc.s 10
+		IL_0146: ldloc.s 10
 		IL_0148: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0152: stloc.s 9
-		IL_0154: ldloc.s 7
-		IL_0156: ldloc.s 9
+		IL_0152: stloc.s 10
+		IL_0154: ldloc.s 8
+		IL_0156: ldloc.s 10
 		IL_0158: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_015d: pop
 		IL_015e: ldc.r8 1
@@ -1260,93 +1265,98 @@
 		IL_0173: ldc.r8 2
 		IL_017c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0181: stloc.2
-		IL_0182: nop
-		IL_0183: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0182: ldloc.2
+		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToObject(object)
 		IL_0188: stloc.3
-		IL_0189: ldstr "NESTED_VALUE"
-		IL_018e: ldloc.3
-		IL_018f: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasWithBinding(object, object)
-		IL_0194: stloc.s 10
-		IL_0196: ldloc.s 10
-		IL_0198: brfalse IL_01d1
+		IL_0189: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::ToObject(object)
+		IL_0193: stloc.s 4
+		IL_0195: ldstr "NESTED_VALUE"
+		IL_019a: ldloc.s 4
+		IL_019c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasWithBinding(object, object)
+		IL_01a1: stloc.s 11
+		IL_01a3: ldloc.s 11
+		IL_01a5: brfalse IL_01e1
 
-		IL_019d: ldloc.3
-		IL_019e: ldstr "NESTED_VALUE"
-		IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_01a8: stloc.s 9
-		IL_01aa: ldloc.s 9
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
-		IL_01b1: stloc.s 9
-		IL_01b3: ldloc.s 9
-		IL_01b5: ldc.i4.1
-		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
-		IL_01bb: stloc.s 9
-		IL_01bd: ldloc.3
-		IL_01be: ldstr "NESTED_VALUE"
-		IL_01c3: ldloc.s 9
-		IL_01c5: ldc.i4.0
-		IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_01cb: pop
-		IL_01cc: br IL_022b
+		IL_01aa: ldloc.s 4
+		IL_01ac: ldstr "NESTED_VALUE"
+		IL_01b1: ldc.i4.0
+		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetWithBindingValue(object, object, bool)
+		IL_01b7: stloc.s 10
+		IL_01b9: ldloc.s 10
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+		IL_01c0: stloc.s 10
+		IL_01c2: ldloc.s 10
+		IL_01c4: ldc.i4.1
+		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+		IL_01ca: stloc.s 10
+		IL_01cc: ldloc.s 4
+		IL_01ce: ldstr "NESTED_VALUE"
+		IL_01d3: ldloc.s 10
+		IL_01d5: ldc.i4.0
+		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetWithBindingValue(object, object, object, bool)
+		IL_01db: pop
+		IL_01dc: br IL_023c
 
-		IL_01d1: ldstr "NESTED_VALUE"
-		IL_01d6: ldloc.2
-		IL_01d7: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasWithBinding(object, object)
-		IL_01dc: stloc.s 10
-		IL_01de: ldloc.s 10
-		IL_01e0: brfalse IL_021d
+		IL_01e1: ldstr "NESTED_VALUE"
+		IL_01e6: ldloc.3
+		IL_01e7: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasWithBinding(object, object)
+		IL_01ec: stloc.s 11
+		IL_01ee: ldloc.s 11
+		IL_01f0: brfalse IL_022e
 
-		IL_01e5: ldloc.2
-		IL_01e6: ldstr "NESTED_VALUE"
-		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_01f0: stloc.s 9
-		IL_01f2: ldloc.s 9
-		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
-		IL_01f9: stloc.s 9
-		IL_01fb: ldloc.s 9
-		IL_01fd: ldc.i4.1
-		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
-		IL_0203: stloc.s 9
-		IL_0205: ldloc.2
-		IL_0206: ldstr "NESTED_VALUE"
-		IL_020b: ldloc.s 9
-		IL_020d: ldc.i4.0
-		IL_020e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0213: pop
-		IL_0214: ldloc.s 9
-		IL_0216: stloc.s 11
-		IL_0218: br IL_022b
+		IL_01f5: ldloc.3
+		IL_01f6: ldstr "NESTED_VALUE"
+		IL_01fb: ldc.i4.0
+		IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetWithBindingValue(object, object, bool)
+		IL_0201: stloc.s 10
+		IL_0203: ldloc.s 10
+		IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ToNumeric(object)
+		IL_020a: stloc.s 10
+		IL_020c: ldloc.s 10
+		IL_020e: ldc.i4.1
+		IL_020f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ApplyNumericUpdate(object, bool)
+		IL_0214: stloc.s 10
+		IL_0216: ldloc.3
+		IL_0217: ldstr "NESTED_VALUE"
+		IL_021c: ldloc.s 10
+		IL_021e: ldc.i4.0
+		IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetWithBindingValue(object, object, object, bool)
+		IL_0224: pop
+		IL_0225: ldloc.s 10
+		IL_0227: stloc.s 12
+		IL_0229: br IL_023c
 
-		IL_021d: ldstr "Assignment to constant variable."
-		IL_0222: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0227: throw
+		IL_022e: ldstr "Assignment to constant variable."
+		IL_0233: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0238: throw
 
-		IL_0228: ldnull
-		IL_0229: stloc.s 11
+		IL_0239: ldnull
+		IL_023a: stloc.s 12
 
-		IL_022b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0230: stloc.s 7
-		IL_0232: volatile.
-		IL_0234: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_0239: brfalse IL_024e
+		IL_023c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0241: stloc.s 8
+		IL_0243: volatile.
+		IL_0245: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_024a: brfalse IL_025f
 
-		IL_023e: ldloc.2
-		IL_023f: ldstr "NESTED_VALUE"
-		IL_0244: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0249: br IL_0263
+		IL_024f: ldloc.2
+		IL_0250: ldstr "NESTED_VALUE"
+		IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_025a: br IL_0274
 
-		IL_024e: ldloc.2
-		IL_024f: ldstr "NESTED_VALUE"
-		IL_0254: ldstr "Variable_ConstPrimitivePropagation_With:Modules.Variable_ConstPrimitivePropagation_With:__js_module_init__:88"
-		IL_0259: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_025f: ldloc.2
+		IL_0260: ldstr "NESTED_VALUE"
+		IL_0265: ldstr "Variable_ConstPrimitivePropagation_With:Modules.Variable_ConstPrimitivePropagation_With:__js_module_init__:94"
+		IL_026a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+		IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0263: stloc.s 11
-		IL_0265: ldloc.s 7
-		IL_0267: ldloc.s 11
-		IL_0269: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_026e: pop
-		IL_026f: ret
+		IL_0274: stloc.s 12
+		IL_0276: ldloc.s 8
+		IL_0278: ldloc.s 12
+		IL_027a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_027f: pop
+		IL_0280: ret
 	} // end of method Variable_ConstPrimitivePropagation_With::__js_module_init__
 
 } // end of class Modules.Variable_ConstPrimitivePropagation_With

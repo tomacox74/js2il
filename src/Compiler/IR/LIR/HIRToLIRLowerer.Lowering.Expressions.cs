@@ -927,9 +927,7 @@ public sealed partial class HIRToLIRLowerer
                     resultTempVar = CreateTempVariable();
                     if (MayUseBoundWithEnvironmentForIdentifier(binding))
                     {
-                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
-                            new[] { name }, resultTempVar));
+                        resultTempVar = EmitResolveBoundWithGlobalValue(name);
                     }
                     else
                     {
@@ -1315,11 +1313,7 @@ public sealed partial class HIRToLIRLowerer
                         resultTempVar = CreateTempVariable();
                         if (_scope?.MayUseBoundWithObject == true)
                         {
-                            _methodBodyIR.Instructions.Add(
-                                new LIRCallRuntimeServicesStatic(
-                                    nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
-                                    new[] { EnsureObject(keyTemp) },
-                                    resultTempVar));
+                            resultTempVar = EmitResolveBoundWithGlobalValue(keyTemp);
                         }
                         else
                         {
