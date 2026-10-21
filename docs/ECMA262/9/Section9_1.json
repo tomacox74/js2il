@@ -399,7 +399,7 @@
           "test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js",
           "test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js"
         ],
-        "notes": "Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results."
+        "notes": "Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Proxy traps receive the symbol-valued unscopables key on first use, independently of earlier Symbol property access. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results."
       },
       {
         "clause": "9.1.1.3",

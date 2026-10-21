@@ -16,7 +16,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - fix(runtime): preserve the separate HasBinding, GetBindingValue, and
   SetMutableBinding steps for with environments, including Proxy trap order,
   strict-mode reads after unscopables deletes a binding, and sloppy var
-  initializer writes. Keep existing runtime helper overloads for compatibility.
+  initializer writes. Preserve the symbol-valued unscopables key in Proxy
+  traps on first use, without depending on earlier Symbol property access.
+  Keep existing runtime helper overloads for compatibility.
 - test262: register 339 more exact pinned class-definition fixtures: 265
   verified cases across all 505 required native variants and 74 explicit
   eval skips. Cover computed names, method restrictions, fields, subclass

@@ -4,7 +4,7 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-21T20:52:59Z
+> Last generated (UTC): 2026-10-21T21:07:39Z
 
 JROC models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.
 
@@ -91,7 +91,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object Environment Records (with-based environments) | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/with/VariableWithCompletionExecutionTests.cs` | `test/language/statements/with/get-binding-value-idref-with-proxy-env.js`<br>`test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopables-strict-mode.js`<br>`test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js`<br>`test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js` | Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results. |
+| Object Environment Records (with-based environments) | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/with/VariableWithCompletionExecutionTests.cs` | `test/language/statements/with/get-binding-value-idref-with-proxy-env.js`<br>`test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopables-strict-mode.js`<br>`test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js`<br>`test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js` | Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Proxy traps receive the symbol-valued unscopables key on first use, independently of earlier Symbol property access. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results. |
 
 ### 9.1.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-environment-records))
 
