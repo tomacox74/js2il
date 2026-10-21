@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the pinned variable and with statement areas with 148
+  exact upstream fixtures: 116 verified cases and 32 explicit direct/indirect
+  eval skips. Revalidate all 327 supported cases across 453 native variants;
+  all 359 applicable cases now have a documented outcome.
+- fix(compiler): preserve captured outer variables referenced in with
+  expressions and bodies, box the environment once, and keep undefined,
+  NaN, and Infinity dynamically shadowable in active and captured with scopes.
+- fix(runtime): preserve the separate HasBinding, GetBindingValue, and
+  SetMutableBinding steps for with environments, including Proxy trap order,
+  strict-mode reads after unscopables deletes a binding, and sloppy var
+  initializer writes. Keep existing runtime helper overloads for compatibility.
 - test262: register 339 more exact pinned class-definition fixtures: 265
   verified cases across all 505 required native variants and 74 explicit
   eval skips. Cover computed names, method restrictions, fields, subclass

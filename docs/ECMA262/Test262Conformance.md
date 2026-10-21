@@ -249,12 +249,28 @@ explicitly offline/branch-local because catalogue MCP tools were unavailable and
 the Data API rejected the reporting schema. These are not central trusted
 acceptance results.
 
+Variable and with statements now have outcomes for all 359 applicable pinned
+cases: 163 verified variable-statement cases and 15 unsupported eval cases,
+plus 164 verified with-statement cases and 17 unsupported eval cases. Every
+required native variant of the 327 supported cases passed under one frozen
+Release build. Coverage includes strict binding-name early errors, declaration
+and destructuring grammar, primitive with environments, captured outer variables,
+dynamic constant shadowing, Symbol.unscopables, Proxy trap order, and strict
+reads after binding deletion. Eval-dependent cases include direct calls and
+calls through aliases; syntax negatives restricting the identifier eval do not
+execute eval and remain verified.
+
+Previously unpublished results in these two rows are reconciled against the
+same fresh native evidence, producing a net increase of 292 verified results.
+This remains explicitly branch-local native evidence, not central trusted
+acceptance.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 21,616 | 411 | 1,616 | 23,643 | **91.43%** |
-| **Total** | 39,546 | 442 | 8,253 | 48,241 | **81.98%** |
+| Language syntax and semantics | 21,908 | 443 | 1,292 | 23,643 | **92.66%** |
+| **Total** | 39,838 | 474 | 7,929 | 48,241 | **82.58%** |
 
 ## Language Areas
 
@@ -285,7 +301,7 @@ acceptance results.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 7,155 | 110 | 2,072 | 9,337 | **76.63%** |
+| `statements` | 7,447 | 142 | 1,748 | 9,337 | **79.76%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -393,9 +409,9 @@ acceptance results.
 | `throw` | 14 | 0 | 0 | 14 | **100.00%** |
 | `try` | 152 | 0 | 49 | 201 | **75.62%** |
 | `using` | 23 | 0 | 55 | 78 | **29.49%** |
-| `variable` | 35 | 0 | 143 | 178 | **19.66%** |
+| `variable` | 163 | 15 | 0 | 178 | **91.57%** |
 | `while` | 19 | 0 | 19 | 38 | **50.00%** |
-| `with` | 0 | 0 | 181 | 181 | **0.00%** |
+| `with` | 164 | 17 | 0 | 181 | **90.61%** |
 
 ## Built-in Objects and APIs
 
