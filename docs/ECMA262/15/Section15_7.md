@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-18T08:00:56Z
+> Last generated (UTC): 2026-10-18T08:50:27Z
 
 JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. String- and numeric-literal class accessor names, string-literal field names, computed class field names, and computed method/accessor names are supported, including observable key coercion and duplicate accessor replacement. Broader class-field and exotic subclass edge cases remain limited.
 
@@ -27,7 +27,7 @@ JROC supports class declarations/expressions, methods (including async and gener
 | 15.7.9 | Static Semantics: ContainsArguments | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsarguments) |
 | 15.7.10 | Runtime Semantics: ClassFieldDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation) |
 | 15.7.11 | Runtime Semantics: ClassStaticBlockDefinitionEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation) |
-| 15.7.12 | Runtime Semantics: EvaluateClassStaticBlockBody | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody) |
+| 15.7.12 | Runtime Semantics: EvaluateClassStaticBlockBody | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody) |
 | 15.7.13 | Runtime Semantics: ClassElementEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation) |
 | 15.7.14 | Runtime Semantics: ClassDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) |
 | 15.7.15 | Runtime Semantics: BindingClassDeclarationEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindingclassdeclarationevaluation) |
@@ -117,7 +117,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Class static blocks (static { ... }) | Supported | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Classes_ClassStaticBlock_DeclarationOrder.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js) |  | Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization. |
+| Class static blocks (static { ... }) | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>[`Classes_ClassStaticBlock_DeclarationOrder.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js) |  | Static blocks execute during each class evaluation in declaration order relative to static field initialization, rather than through CLR .cctor execution. Each block owns its var bindings, and new.target is undefined. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization. Some super and nested arguments cases remain limited. |
+
+### 15.7.12 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Class static-block scope and class-definition coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/class/ClassDefinitionConformanceExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/class/definition/ClassDefinitionConformanceExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/class/elements/ClassDefinitionConformanceExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/class/subclass/ClassDefinitionConformanceExecutionTests.cs`<br>`tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>`tests/Jroc.Tests/ValidatorTests.cs`<br>`tests/Jroc.Tests/HIRClassStaticBlockTests.cs` | `test/language/statements/class/static-init-expr-new-target.js`<br>`test/language/statements/class/static-init-scope-var-close.js` | The class-definition follow-up registers 339 exact pinned fixtures: 265 verified passing cases across all 505 required native variants and 74 known unsupported eval cases. Coverage includes computed names, method restrictions, fields, subclass initialization, and class grammar. Each static block is its own var-hoisting boundary, including nested ordinary blocks; bindings do not leak into sibling static blocks. new.target is valid and evaluates to undefined in a static block and its lexical arrows, while ordinary nested functions retain their own new.target. Structural compiler guards cover scope ownership, validation, and callable boundaries. Private-brand lifecycle, inheritance, decorators, other static-block super/arguments cases, and two local metadata-parser gaps remain deferred. Results are branch-local native validation, not central trusted acceptance; this is not complete class-declaration conformance. |
 
 ### 15.7.13 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation))
 

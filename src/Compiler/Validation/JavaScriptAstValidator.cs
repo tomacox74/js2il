@@ -157,7 +157,7 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InDerivedClass = currentContext.InDerivedClass,
-                    AllowsNewTarget = false,
+                    AllowsNewTarget = true,
                     AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
@@ -273,10 +273,9 @@ public class JavaScriptAstValidator : IAstValidator
                     {
                         if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                         {
-                            // new.target is only valid in functions/constructors
                             if (!currentContext.AllowsNewTarget)
                             {
-                                result.Errors.Add($"new.target is only valid inside functions or constructors (line {node.Location.Start.Line})");
+                                result.Errors.Add($"new.target is only valid inside functions, constructors, or class static blocks (line {node.Location.Start.Line})");
                                 result.IsValid = false;
                             }
                         }

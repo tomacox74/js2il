@@ -231,12 +231,30 @@ names, separators, and private-member forms. All selected cases pass without
 product or harness changes, and none requires eval. These are branch-local native
 results, not central trusted acceptance; catalogue reporting remained unavailable.
 
+The class-definition follow-up registers 339 exact pinned fixtures: 265 verified
+passing cases across all 505 required native variants and 74 explicit eval skips.
+Coverage includes computed names, method restrictions, fields, subclass
+initialization, and class grammar. Static-block var declarations now remain in
+their own block, and new.target is undefined in static blocks and their lexical
+arrows without changing ordinary nested functions.
+
+The complete remaining inventory contained 394 unregistered paths. This batch
+leaves 55 unregistered: 53 metadata-valid cases with other nonpassing baseline
+results, including one worker infrastructure failure, and two cases blocked by
+the local metadata parser. Private-brand lifecycle, inheritance, decorators, and
+other static-block edge cases remain deferred rather than skipped as passing.
+The class row retains six previously registered cases without published results;
+they are not counted as verified coverage. Selection and native validation are
+explicitly offline/branch-local because catalogue MCP tools were unavailable and
+the Data API rejected the reporting schema. These are not central trusted
+acceptance results.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 21,351 | 337 | 1,955 | 23,643 | **90.31%** |
-| **Total** | 39,281 | 368 | 8,592 | 48,241 | **81.43%** |
+| Language syntax and semantics | 21,616 | 411 | 1,616 | 23,643 | **91.43%** |
+| **Total** | 39,546 | 442 | 8,253 | 48,241 | **81.98%** |
 
 ## Language Areas
 
@@ -267,7 +285,7 @@ results, not central trusted acceptance; catalogue reporting remained unavailabl
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 6,890 | 36 | 2,411 | 9,337 | **73.79%** |
+| `statements` | 7,155 | 110 | 2,072 | 9,337 | **76.63%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -354,7 +372,7 @@ results, not central trusted acceptance; catalogue reporting remained unavailabl
 | `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 3,937 | 30 | 400 | 4,367 | **90.15%** |
+| `class` | 4,202 | 104 | 61 | 4,367 | **96.22%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |

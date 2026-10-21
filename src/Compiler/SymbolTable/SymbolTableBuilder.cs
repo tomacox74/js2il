@@ -1936,7 +1936,10 @@ namespace Jroc.SymbolTables
                         $"StaticBlock_L{staticBlock.Location.Start.Line}C{staticBlock.Location.Start.Column}",
                         ScopeKind.Block,
                         currentScope,
-                        staticBlock);
+                        staticBlock)
+                    {
+                        IsVarHoistingScope = true
+                    };
                     foreach (var statement in staticBlock.Body)
                     {
                         BuildScopeRecursive(globalScope, statement, staticBlockScope);

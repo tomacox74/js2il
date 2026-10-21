@@ -79,7 +79,7 @@
     {
       "clause": "15.7.12",
       "title": "Runtime Semantics: EvaluateClassStaticBlockBody",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody"
     },
     {
@@ -113,6 +113,26 @@
   },
   "support": {
     "entries": [
+      {
+        "clause": "15.7.12",
+        "feature": "Class static-block scope and class-definition coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/definition/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/ValidatorTests.cs",
+          "tests/Jroc.Tests/HIRClassStaticBlockTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/static-init-expr-new-target.js",
+          "test/language/statements/class/static-init-scope-var-close.js"
+        ],
+        "notes": "The class-definition follow-up registers 339 exact pinned fixtures: 265 verified passing cases across all 505 required native variants and 74 known unsupported eval cases. Coverage includes computed names, method restrictions, fields, subclass initialization, and class grammar. Each static block is its own var-hoisting boundary, including nested ordinary blocks; bindings do not leak into sibling static blocks. new.target is valid and evaluates to undefined in a static block and its lexical arrows, while ordinary nested functions retain their own new.target. Structural compiler guards cover scope ownership, validation, and callable boundaries. Private-brand lifecycle, inheritance, decorators, other static-block super/arguments cases, and two local metadata-parser gaps remain deferred. Results are branch-local native validation, not central trusted acceptance; this is not complete class-declaration conformance."
+      },
       {
         "clause": "15.7.13",
         "feature": "Async class methods and class-element grammar",
@@ -1036,13 +1056,13 @@
       {
         "clause": "15.7.11",
         "feature": "Class static blocks (static { ... })",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation",
         "testScripts": [
           "tests/Jroc.Tests/ValidatorTests.cs",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
         ],
-        "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization."
+        "notes": "Static blocks execute during each class evaluation in declaration order relative to static field initialization, rather than through CLR .cctor execution. Each block owns its var bindings, and new.target is undefined. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization. Some super and nested arguments cases remain limited."
       },
       {
         "clause": "15.7.1",

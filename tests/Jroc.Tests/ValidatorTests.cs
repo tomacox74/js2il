@@ -680,6 +680,17 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_NewTarget_InClassStaticBlock_IsValid()
+    {
+        var ast = ParseStrict("class C { static { const read = () => new.target; new.target; } }");
+
+        var result = _validator.Validate(ast);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_NewTarget_AtTopLevel_ReportsError()
     {
         var js = "console.log(new.target);";
