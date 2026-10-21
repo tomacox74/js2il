@@ -38,6 +38,95 @@ An agent without central access must disclose offline scope, not fall back to
 SQLite authority. The central workflow checks out master; after merging a manual
 port/fix, verify exact-SHA master CI and a subsequent central registration refresh.
 
+## Upstream specification references
+
+New inventories retain upstream `esid`, legacy `es5id`/`es6id`, `description`,
+`info`, and `author` in fixture metadata. The versioned `specification` object
+also retains the parsed identifier values without trimming or translating them,
+and the exact frontmatter text, including its original line endings. The fixture
+content SHA-256 identifies the original source bytes; the corpus records the
+Test262 upstream URL and exact revision. No identifier is inferred from a filename.
+
+The additive migration
+`20261021230000_test262_catalogue_specification_metadata.sql` exposes
+`test262_reporting.v_fixture_specification_references` to `test262_reporter`.
+Deploy this migration before using the updated central exporter or enrichment
+command. It does not grant public Data API access, activate authority, change
+reporting targets, or touch performance data. This document describes the
+supported migration/tooling, not a claim that production has already been enriched.
+The backup operator must include the new table in the existing catalogue-only
+SELECT/backup allowlist, without broadening access to performance or public data.
+
+The view has one row per repository/corpus/fixture. Join it to
+`v_current_fixture_status` or observation exports by **repository ID and fixture ID**,
+not just the upstream path: a path can have different source bytes or references
+at different pins. Filter by repository and corpus/fixture and bound the result,
+for example:
+
+```sql
+SELECT fixture_id, upstream_revision, upstream_path, content_sha256,
+       raw_identifiers, description, reference_state, metadata_source,
+       mapping_status, specification_edition
+FROM test262_reporting.v_fixture_specification_references
+WHERE repository_id = '<repository-uuid>'::uuid
+  AND corpus_id = '<corpus-uuid>'::uuid
+  AND inventory_state = 'sealed'
+ORDER BY upstream_path
+LIMIT 100;
+```
+
+`raw_identifiers` retains the upstream field names and parsed values. The
+`esid`/`es5id`/`es6id` columns are JSON values so malformed non-string values
+are not silently coerced. Reference states describe the source, not conformance:
+
+| `reference_state` | Meaning |
+| --- | --- |
+| `absent` | Parsed frontmatter declares none of the three identifier fields. |
+| `legacy` | A single nonempty legacy `es5id` or `es6id` is present. |
+| `unresolved` | A modern `esid` has not been resolved to an edition, or source metadata is unavailable/unparseable. |
+| `ambiguous` | Multiple/repeated identifier fields, an empty identifier, or a non-string identifier need interpretation. |
+
+Multiple fields are preserved, not assumed equivalent. Unparseable metadata has
+a diagnostic and any extractable raw frontmatter. Older stripped inventories have
+`metadata_source='unavailable'` and `reference_state='unresolved'`, **not** `absent`.
+The view explicitly returns `mapping_status='not-attempted'`, a null
+`specification_edition`, and a null `interpreted_clause`. Even a `sec-*` anchor
+is only an upstream reference; this surface neither resolves it against today's
+ECMA-262 edition nor establishes conformance to an entire clause.
+
+### Enriching existing sealed corpora
+
+Use the existing dedicated **trusted coordinator** login and current epoch only
+in the trusted supervisor process. Given a clean upstream checkout at the original
+corpus revision, an authorized operator can run:
+
+```bash
+python -m scripts.test262.central.cli \
+  --repository '<repository-uuid>' --producer '<coordinator-producer-uuid>' \
+  enrich-specification-metadata --corpus '<corpus-uuid>' --root /path/to/test262
+```
+
+The command performs no fixture execution, work allocation, observation ingestion,
+or publication. It reads the selected corpus in bounded pages, extracts metadata
+in batches of at most 250, verifies the checkout revision and each original
+fixture path/content SHA-256, then appends one immutable
+`fixture_specification_metadata` record per fixture. SQL rechecks the sealed
+source identity and canonical metadata digest, records the actor/time, and
+rejects cross-repository, untrusted, conflicting, or mutable-inventory writes.
+Sealed fixture metadata, inventory digests, fixture IDs, observations and payloads
+are unchanged. Repeating identical enrichment is idempotent; an interrupted
+multi-batch operation can be retried, while conflicting extraction requires an
+explicit reviewed migration rather than overwriting the previous annotation.
+Sparse/missing files or mismatched bytes fail explicitly.
+
+New ingestion includes references in the normal inventory identity, so re-ingesting
+the same source with richer metadata creates a new corpus rather than rewriting
+the old one. Enrichment is the separate path for attaching references to existing
+evidence. The coherent NDJSON export includes original `fixtures.metadata`,
+`corpora`, and the additive `fixture_specification_metadata` records with source
+revision/path/content digest, metadata digest, and actor/time. Consumers can retain
+the original evidence and distinguish inventory metadata from later annotation.
+
 ## Local agent read access
 
 ### Registered MCP access
@@ -593,7 +682,7 @@ workers. A backup job's successful upload is not proof of a completed restore dr
 
 ```bash
 python -m unittest discover -s tests/test262/central -p 'test_client.py' -v
-node --test scripts/test262/catalog.test.js scripts/test262/nativePorting.test.js
+node --test scripts/test262/catalog.test.js scripts/test262/specificationMetadata.test.js scripts/test262/nativePorting.test.js
 node --test scripts/test262/nativeScreeningHost.test.js
 # Empty disposable PostgreSQL only; CI supplies a PostgreSQL 17 service:
 python -m unittest discover -s tests/test262/central -p 'test_*.py' -v
@@ -721,4 +810,3 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
-

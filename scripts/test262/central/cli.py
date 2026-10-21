@@ -18,6 +18,10 @@ def parser():
     i.add_argument('--outbox',required=True)
     e=sub.add_parser('export'); e.add_argument('--output',required=True)
     e.add_argument('--seconds', type=int, help='Total export deadline; incomplete output stays .partial')
+    enrichment=sub.add_parser('enrich-specification-metadata',
+                              help='Append source-verified specification metadata to an existing corpus')
+    enrichment.add_argument('--corpus',required=True)
+    enrichment.add_argument('--root',required=True)
     f=sub.add_parser('flush'); f.add_argument('--outbox',required=True)
     q=sub.add_parser('prepare')
     q.add_argument('--kind',choices=['mvp-composite','native'],required=True)
@@ -63,6 +67,9 @@ def main(argv=None):
             raise ValueError('Configured identities do not match authenticated database subject')
         if args.command=='export':
             result=client.export(args.output, seconds=args.seconds)
+        elif args.command=='enrich-specification-metadata':
+            from .inventory import enrich_specification_metadata
+            result=enrich_specification_metadata(client,args)
         elif args.command=='flush':
             Outbox(args.outbox,args.repository,args.producer,client.epoch).flush(client)
             result={'flushed':True}
@@ -109,4 +116,3 @@ def run(argv=None):
 
 if __name__=='__main__':
     raise SystemExit(run())
-
