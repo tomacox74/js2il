@@ -2150,6 +2150,9 @@ public partial class RuntimeServices
     }
 
     public static object? ResolveWithBindingOrDefault(object? nameValue, object? defaultValue)
+        => ResolveWithBindingOrDefault(nameValue, defaultValue, strict: false);
+
+    public static object? ResolveWithBindingOrDefault(object? nameValue, object? defaultValue, bool strict)
     {
         var callee = _currentInvocation.Value?.CurrentCallee;
         if (callee is not null
@@ -2159,7 +2162,7 @@ public partial class RuntimeServices
             var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
             if (JavaScriptRuntime.ObjectRuntime.HasWithBinding(name, withObject))
             {
-                return JavaScriptRuntime.ObjectRuntime.GetProperty(withObject, name);
+                return GetWithBindingValue(withObject, name, strict);
             }
         }
 
@@ -2167,6 +2170,9 @@ public partial class RuntimeServices
     }
 
     public static object? ResolveWithBindingOrGlobal(object? nameValue)
+        => ResolveWithBindingOrGlobal(nameValue, strict: false);
+
+    public static object? ResolveWithBindingOrGlobal(object? nameValue, bool strict)
     {
         var name = nameValue as string
             ?? DotNet2JSConversions.ToString(nameValue);
@@ -2180,9 +2186,7 @@ public partial class RuntimeServices
                 name,
                 withObject))
         {
-            return JavaScriptRuntime.ObjectRuntime.GetProperty(
-                withObject,
-                name);
+            return GetWithBindingValue(withObject, name, strict);
         }
 
         return JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue(name);
@@ -2215,6 +2219,9 @@ public partial class RuntimeServices
     }
 
     public static object? GetBoundWithBindingValue(object? nameValue)
+        => GetBoundWithBindingValue(nameValue, strict: false);
+
+    public static object? GetBoundWithBindingValue(object? nameValue, bool strict)
     {
         var callee = _currentInvocation.Value?.CurrentCallee;
         if (callee is null
@@ -2224,9 +2231,22 @@ public partial class RuntimeServices
             throw new ReferenceError("Bound with-environment is unavailable");
         }
 
-        return JavaScriptRuntime.ObjectRuntime.GetProperty(
-            withObject,
-            nameValue as string ?? DotNet2JSConversions.ToString(nameValue));
+        return GetWithBindingValue(withObject, nameValue, strict);
+    }
+
+    public static object? GetWithBindingValue(object withObject, object? nameValue, bool strict)
+    {
+        var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
+        if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn(name, withObject))
+        {
+            if (strict)
+            {
+                throw new ReferenceError($"{name} is not defined");
+            }
+            return null;
+        }
+
+        return JavaScriptRuntime.ObjectRuntime.GetProperty(withObject, name);
     }
 
     public static object? SetBoundWithBindingValue(

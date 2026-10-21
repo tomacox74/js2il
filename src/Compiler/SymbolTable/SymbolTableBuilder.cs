@@ -948,6 +948,10 @@ namespace Jroc.SymbolTables
                            ContainsFreeVariable(forIn.Body, localVariables);
                 }
 
+                case WithStatement withStatement:
+                    return ContainsFreeVariable(withStatement.Object, localVariables) ||
+                           ContainsFreeVariable(withStatement.Body, localVariables);
+
                 case WhileStatement ws:
                     return ContainsFreeVariable(ws.Test, localVariables) ||
                            ContainsFreeVariable(ws.Body, localVariables);
@@ -2804,6 +2808,11 @@ namespace Jroc.SymbolTables
                     CollectFreeVariables(forIn.Body, loopLocals, targetVariables, result);
                     break;
                 }
+
+                case WithStatement withStatement:
+                    CollectFreeVariables(withStatement.Object, localVariables, targetVariables, result);
+                    CollectFreeVariables(withStatement.Body, localVariables, targetVariables, result);
+                    break;
 
                 case WhileStatement ws:
                     CollectFreeVariables(ws.Test, localVariables, targetVariables, result);

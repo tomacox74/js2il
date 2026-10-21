@@ -575,12 +575,15 @@ namespace JavaScriptRuntime
         {
             if (withHasBinding)
             {
-                SetProperty(withObject, name, assignedValue, throwOnError: true);
+                RuntimeServices.SetWithBindingValue(withObject, name, assignedValue, strict: false);
                 return fallbackBindingValue;
             }
 
             return assignedValue;
         }
+
+        public static object ToObject(object? value)
+            => Construct(RequireObjectCoercible(value));
 
         public static object RequireObjectCoercible(object? value)
             => RequireObjectCoercible<object?>(value)!;

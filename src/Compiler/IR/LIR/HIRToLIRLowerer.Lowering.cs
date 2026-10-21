@@ -110,7 +110,13 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    var withObjectValue = EnsureObject(withObject);
+                    var withObjectValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.ToObject),
+                        [EnsureObject(withObject)],
+                        withObjectValue));
+                    DefineTempStorage(withObjectValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (GetTempVariableSlot(withObjectValue) < 0)
                     {
                         SetTempVariableSlot(withObjectValue, CreateAnonymousVariableSlot(
