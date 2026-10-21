@@ -50,6 +50,29 @@ test('MVP instrumentation is opt-in and embeds the actual compilation report', (
   }
 });
 
+test('catalogue bridge preserves commandless worker execution and explicit run requests', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'jroc-bridge-execution-'));
+  try {
+    fs.writeFileSync(path.join(directory, 'sample.js'), '/*---\nflags: [raw]\n---*/\nvar number = 1;');
+    for (const command of [undefined, 'run']) {
+      const output = path.join(directory, command || 'commandless');
+      const request = {
+        root: directory, output, fixture: 'sample.js', variant: 'non-strict',
+        jroc: cli, timeout: 5, compileTimeout: 30, compilationCoverage: command === 'run',
+        ...(command ? { command } : {}),
+      };
+      const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'catalogBridge.js')], {
+        input: JSON.stringify(request), encoding: 'utf8', stdio: 'pipe',
+      }));
+      assert.equal(result.classification.verdict, 'matched');
+      assert.equal(Object.hasOwn(result, 'compilation_coverage'), command === 'run');
+      assert.equal(fs.existsSync(output), false);
+    }
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
 test('native host retains complete, partial and unavailable reports without changing correctness', () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'jroc-native-coverage-'));
   try {

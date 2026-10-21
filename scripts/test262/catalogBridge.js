@@ -108,8 +108,7 @@ if (require.main === module) {
       throw new Error('Metadata requests require at most 250 relative fixture paths.');
     }
     result = request.paths.map(p => classify(request.root, p, pin));
-  } else if (request.command === 'run') result = run(request);
-  else throw new Error('Unsupported catalogue bridge command.');
+  } else result = run(request);
   process.stdout.write(JSON.stringify(result));
 }
 
