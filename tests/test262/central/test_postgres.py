@@ -103,6 +103,124 @@ class PostgresTests(unittest.TestCase):
                                  (self.prov, fixture)).fetchone()
         self.assertEqual(stored, ('runnable', {'replay_test': True}))
 
+    def test_indexed_read_cursors_seek_on_actual_api_queries_at_scale(self):
+        """Inspect nested api_read plans, not a hand-written approximation of its SQL."""
+        plans = []
+
+        def capture(notice):
+            message = notice.message_primary
+            if 'plan:\n{' in message:
+                plan = json.loads(message[message.index('{'):])
+                if 'SELECT coalesce(jsonb_agg(r.j ORDER BY r.n)' in plan.get('Query Text', ''):
+                    plans.append(plan)
+
+        def nodes(plan):
+            yield plan
+            for child in plan.get('Plans', []):
+                yield from nodes(child)
+
+        def fixture_id(index):
+            return '10000000-0000-0000-0000-' + format(index, '012x')
+
+        self.db.execute("LOAD 'auto_explain'")
+        self.db.add_notice_handler(capture)
+        try:
+            with self.db.transaction(force_rollback=True):
+                self.db.execute("SET LOCAL client_min_messages='notice'; SET LOCAL auto_explain.log_level='notice'; SET LOCAL auto_explain.log_format='json'; SET LOCAL auto_explain.log_analyze=on; SET LOCAL auto_explain.log_timing=off; SET LOCAL auto_explain.log_nested_statements=on; SET LOCAL auto_explain.log_min_duration=-1")
+                other, own_corpus, other_corpus = (str(uuid.uuid4()) for _ in range(3))
+                self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,'test/pagination-other')", (other, other))
+                # Temporary operator binding allows auto_explain settings in this disposable DB.
+                # The function's normal api_identity/scope checks still execute unchanged.
+                self.db.execute("INSERT INTO test262.api_subjects VALUES(session_user,%s,%s,'coordinator','trusted',true)", (self.repo, self.producer))
+                for repository, corpus in ((self.repo, own_corpus), (other, other_corpus)):
+                    self.db.execute("INSERT INTO test262.corpora(corpus_id,upstream_url,revision,revision_algorithm,inventory_digest,expected_fixture_count) VALUES(%s,'disposable-pagination',repeat('a',40),'sha1',sha256(%s::bytea),16384)", (corpus, corpus.encode()))
+                    self.db.execute('INSERT INTO test262.repository_corpora(repository_id,corpus_id) VALUES(%s,%s)', (repository, corpus))
+                # Interleave foreign fixtures so a missing ownership predicate is observable.
+                self.db.execute("""INSERT INTO test262.fixtures(fixture_id,corpus_id,upstream_path,content_sha256,metadata_state)
+                    SELECT ('10000000-0000-0000-0000-'||lpad(to_hex(i),12,'0'))::uuid,
+                           CASE WHEN mod(i,2)=0 THEN %s::uuid ELSE %s::uuid END,
+                           'test/pagination-'||i||'.js',sha256('fixture'::bytea),'valid'
+                    FROM generate_series(1,32768) i""", (own_corpus, other_corpus))
+                self.db.execute("UPDATE test262.corpora SET inventory_state='sealed' WHERE corpus_id IN (%s,%s)", (own_corpus, other_corpus))
+                provenances = ['20000000-0000-0000-0000-' + format(i, '012x') for i in (1, 2, 3)]
+                for index, provenance in enumerate(provenances):
+                    repository, corpus = (self.repo, own_corpus) if index < 2 else (other, other_corpus)
+                    self.db.execute("INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256) VALUES(%s,%s,%s,'native',1,sha256(%s::bytea),'{}',sha256('cap'::bytea))", (provenance, repository, corpus, provenance.encode()))
+                    self.db.execute("INSERT INTO test262.provenance_fixture_eligibility(repository_id,provenance_id,fixture_id,eligibility) SELECT %s,%s,fixture_id,'runnable' FROM test262.fixtures WHERE corpus_id=%s", (repository, provenance, corpus))
+                for table in ('fixtures', 'provenance_fixture_eligibility'):
+                    self.db.execute('ANALYZE test262.' + table)
+
+                def read(table, filters, after, page=64):
+                    plans.clear()
+                    self.db.execute('SET LOCAL auto_explain.log_min_duration=0')
+                    try:
+                        result = self.db.execute('SELECT test262.api_read(1,%s,%s,%s,%s)',
+                                                 (table, Jsonb(filters), Jsonb(after) if after else None, page)).fetchone()[0]
+                    finally:
+                        self.db.execute('SET LOCAL auto_explain.log_min_duration=-1')
+                    self.assertEqual(len(plans), 1, plans)
+                    scans = [node for node in nodes(plans[0]['Plan'])
+                             if node.get('Relation Name') == table and node.get('Index Cond')]
+                    self.assertTrue(scans, plans[0])
+                    return result, scans
+
+                for offset in (4096, 30000):
+                    with self.subTest(table='fixtures', offset=offset):
+                        result, scans = read('fixtures', {}, {'fixture_id': fixture_id(offset)})
+                        self.assertEqual([row['fixture_id'] for row in result['rows']],
+                                         [fixture_id(i) for i in range(offset+2, offset+130, 2)])
+                        self.assertTrue(any('>' in scan['Index Cond'] for scan in scans), scans)
+                        # Count examined rows rather than impose a flaky wall-clock threshold.
+                        self.assertLessEqual(sum(scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0)
+                                                 for scan in scans), 256, scans)
+
+                    with self.subTest(table='provenance_fixture_eligibility', offset=offset):
+                        result, scans = read('provenance_fixture_eligibility', {},
+                                             {'provenance_id': provenances[0], 'fixture_id': fixture_id(offset)})
+                        self.assertEqual([(row['provenance_id'], row['fixture_id']) for row in result['rows']],
+                                         [(provenances[0], fixture_id(i)) for i in range(offset+2, offset+130, 2)])
+                        self.assertTrue(any('>' in scan['Index Cond'] and 'provenance_id' in scan['Index Cond']
+                                            and 'fixture_id' in scan['Index Cond'] for scan in scans), scans)
+                        self.assertLessEqual(sum(scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0)
+                                                 for scan in scans), 256, scans)
+
+                # Compound cursor must cross the provenance boundary without skipping/duplicating.
+                result, _ = read('provenance_fixture_eligibility', {},
+                                 {'provenance_id': provenances[0], 'fixture_id': fixture_id(32760)})
+                expected = [(provenances[0], fixture_id(i)) for i in range(32762, 32769, 2)]
+                expected += [(provenances[1], fixture_id(i)) for i in range(2, 121, 2)]
+                self.assertEqual([(row['provenance_id'], row['fixture_id']) for row in result['rows']], expected)
+                # Typed equality filters must also be index conditions, including UUID normalization.
+                result, scans = read('fixtures', {'fixture_id': fixture_id(30010).upper()}, None)
+                self.assertEqual([row['fixture_id'] for row in result['rows']], [fixture_id(30010)])
+                self.assertTrue(any('fixture_id =' in scan['Index Cond'] for scan in scans), scans)
+                result, _ = read('provenance_fixture_eligibility', {'provenance_id': provenances[1]},
+                                 {'provenance_id': provenances[1], 'fixture_id': fixture_id(30000)})
+                self.assertEqual({row['provenance_id'] for row in result['rows']}, {provenances[1]})
+                # A known foreign fixture/provenance must remain invisible through the same API.
+                for table, filters in (('fixtures', {'fixture_id': fixture_id(30001)}),
+                                       ('provenance_fixture_eligibility', {'provenance_id': provenances[2]})):
+                    self.assertEqual(self.db.execute('SELECT test262.api_read(1,%s,%s,NULL,64)',
+                                                     (table, Jsonb(filters))).fetchone()[0]['rows'], [])
+        finally:
+            self.db.remove_notice_handler(capture)
+
+    def test_indexed_reader_keeps_invalid_argument_rejection(self):
+        with self.worker() as db:
+            for table, filters, after, size in (
+                ('fixtures', [], None, 10),
+                ('fixtures', {'fixture_id': None}, None, 10),
+                ('fixtures', {'fixture_id;--': self.fixtures[0]}, None, 10),
+                ('fixtures', {}, [], 10),
+                ('fixtures', {}, {}, 10),
+                ('provenance_fixture_eligibility', {}, {'provenance_id': self.prov}, 10),
+                ('fixtures', {}, None, 0), ('fixtures', {}, None, 1001),
+            ):
+                with self.subTest(table=table, filters=filters, after=after, size=size):
+                    with self.assertRaises(psycopg.errors.RaiseException):
+                        db.execute('SELECT test262.api_read(1,%s,%s,%s,%s)',
+                                   (table, Jsonb(filters), Jsonb(after) if after is not None else None, size))
+
     def test_client_paged_reads_and_streamed_export(self):
         import hashlib, tempfile
         from psycopg.conninfo import make_conninfo
@@ -429,3 +547,4 @@ class PostgresTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+

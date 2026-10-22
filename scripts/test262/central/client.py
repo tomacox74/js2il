@@ -147,7 +147,7 @@ class Client:
                 if os.getenv('TEST262_PROGRESS') == '1':
                     print('Exporting', table, flush=True)
                 counts[table] = 0
-                for row in self.read(table):
+                for row in self.read(table, page=1000):
                     check_deadline()
                     emit({'table': table, 'row': row})
                     counts[table] += 1

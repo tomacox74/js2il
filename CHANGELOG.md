@@ -10,6 +10,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and distinguish quoted strings in catalogue ingestion, enrichment and exports.
   Keep runner eligibility unchanged and reject conflicting immutable annotations
   rather than silently rewriting earlier evidence.
+- perf(compiler): replace reflection-driven async/await and generator validation
+  with typed child visits while preserving validation order, nesting state,
+  shared-node protection, and malformed-AST handling. Add exhaustive parser-node
+  coverage and same-host Stopwatch compile profiles.
 - fix(test262): retain upstream specification identifiers and descriptive metadata
   in catalogue ingestion and exports. Add source-verified immutable enrichment for
   existing sealed corpora and a reporting view that preserves revision/path/digest
