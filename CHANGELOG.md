@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(test262): preserve YAML null, numeric and boolean specification identifiers
+  and distinguish quoted strings in catalogue ingestion, enrichment and exports.
+  Keep runner eligibility unchanged and reject conflicting immutable annotations
+  rather than silently rewriting earlier evidence.
 - fix(test262): retain upstream specification identifiers and descriptive metadata
   in catalogue ingestion and exports. Add source-verified immutable enrichment for
   existing sealed corpora and a reporting view that preserves revision/path/digest

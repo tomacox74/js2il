@@ -10,6 +10,8 @@ on:
       - 'scripts/test262/catalogBridge.js'
       - 'tests/test262/central/**'
       - 'supabase/**'
+      - 'package.json'
+      - 'package-lock.json'
 permissions:
   contents: read
 jobs:
@@ -37,6 +39,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+      - run: npm ci --ignore-scripts
       - run: python -m pip install -r scripts/test262/central/requirements.txt
       - name: Build fixture runtime and isolation image
         run: |
@@ -59,4 +62,3 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
-

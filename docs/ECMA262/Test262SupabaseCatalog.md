@@ -47,6 +47,19 @@ and the exact frontmatter text, including its original line endings. The fixture
 content SHA-256 identifies the original source bytes; the corpus records the
 Test262 upstream URL and exact revision. No identifier is inferred from a filename.
 
+Run `npm ci --ignore-scripts` from the repository root before local catalogue or
+enrichment commands. Reference extraction uses the lockfile-pinned `yaml` reader
+with YAML 1.2 core scalar semantics: unquoted `null`/`~`, numbers and booleans keep
+their parsed types, while `"null"`, `"19.1"` and `"false"` remain strings. Explicit
+null identifiers remain present in `raw_identifiers`, distinct from an absent
+field. This reader is separate from the existing runner metadata parser and does
+not change execution eligibility, variants, flags or harness selection.
+
+YAML errors, unsupported tags/aliases, non-finite numbers and integers outside the
+lossless JSON number range produce an `unresolved` reference with a diagnostic
+and the original frontmatter, not a manufactured identifier or silent JSON null.
+The exact source text and content digest remain available for interpretation.
+
 The additive migration
 `20261021230000_test262_catalogue_specification_metadata.sql` exposes
 `test262_reporting.v_fixture_specification_references` to `test262_reporter`.
@@ -118,6 +131,27 @@ are unchanged. Repeating identical enrichment is idempotent; an interrupted
 multi-batch operation can be retried, while conflicting extraction requires an
 explicit reviewed migration rather than overwriting the previous annotation.
 Sparse/missing files or mismatched bytes fail explicitly.
+
+#### Compatibility with earlier scalar extraction
+
+The #2336 correction does not rewrite sealed inventory metadata or annotations.
+Both extractors use the same version-1 metadata shape; the schema version alone
+does not establish which extractor produced a record. Freeze and record the
+tooling source revision and canonical metadata digest for any backfill.
+
+Before #2338, compare existing annotations with a fresh, source-verified extraction
+at each original corpus revision. Earlier extraction could store plain YAML
+`null`, numeric or boolean identifiers as strings and report a false `legacy`
+state; identically spelled quoted strings are legitimate and must not be
+blanket-converted. If no annotation exists, corrected enrichment can attach
+metadata to an older inventory without changing its original fields. If an
+incompatible annotation already exists, the immutable API rejects corrected
+replay with `Conflicting immutable replay`; the existing annotation, digest,
+actor/time and historical evidence remain unchanged. Stop the affected backfill,
+retain the conflict and before/after extraction fingerprints, and require an
+explicitly reviewed append-only supersession/migration plan before proceeding.
+No annotation overwrite, deletion, automatic repair or supersession schema is
+introduced by this fix.
 
 New ingestion includes references in the normal inventory identity, so re-ingesting
 the same source with richer metadata creates a new corpus rather than rewriting

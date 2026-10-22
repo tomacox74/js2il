@@ -53,6 +53,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+      - run: npm ci --ignore-scripts
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
@@ -308,4 +309,3 @@ jobs:
               --patch artifacts/test262/central-patch.diff --manifest artifacts/test262/central-patch-validation.json \
               --body artifacts/test262/central-pr-body.md
           fi
-
