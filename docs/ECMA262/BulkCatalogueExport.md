@@ -19,7 +19,7 @@ All tables share the export's original read-only MVCC snapshot. The footer hashe
 
 ## Validation and deployment
 
-Disposable PostgreSQL tests cover all-table scope parity, interleaved foreign records at scale, single scan execution across multiple bounded fetches, trusted-role/epoch/transaction/allowlist denial, a concurrent insert excluded from later tables, and portal cleanup with no completion footer after a deadline. Unit tests cover payload/page bounds, lazy fetching, early close, compatibility and propagated authorization failures. CI also runs the existing indexed reader, write API and worker pilot checks.
+Disposable PostgreSQL tests cover all-table scope parity, interleaved foreign records at scale, bounded total row visits across multiple fetches, trusted-role/epoch/transaction/allowlist denial, a concurrent insert excluded from later tables, and portal cleanup with no completion footer after a deadline. Plans may use a sequential scan or bounded indexed lookups; the test rejects repeated whole-table work rather than prescribing one join strategy. Unit tests cover payload/page bounds, lazy fetching, early close, compatibility and propagated authorization failures. CI also runs the existing indexed reader, write API and worker pilot checks. Successful deployment-verification receipts report `export_transport=bulk_cursor` when the new path is used.
 
 After review/merge, apply only the guarded additive migration, check the installed function/contract bodies and unchanged writer/reader/authority/data fingerprints, then rerun protected production verification with no concurrent backup/preflight. #2358 stays open until that complete receipt passes. Historical corpus expansion remains paused until then.
 

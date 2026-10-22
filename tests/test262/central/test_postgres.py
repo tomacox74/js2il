@@ -245,7 +245,12 @@ class PostgresTests(unittest.TestCase):
                         self.assertNotIn('ORDER BY', plans[0]['Query Text'])
                         scans = [node for node in nodes(plans[0]['Plan']) if node.get('Relation Name') == table]
                         self.assertTrue(scans, plans[0])
-                        self.assertTrue(all(scan['Actual Loops'] == 1 for scan in scans), scans)
+                        # The planner may use one indexed lookup per owned fixture.
+                        # Bound total visits, not loop count: a page-by-page full
+                        # rescan would exceed this linear bound by many multiples.
+                        examined = sum((scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0))
+                                       * scan.get('Actual Loops', 1) for scan in scans)
+                        self.assertLessEqual(examined, 2 * count + 32, scans)
                         self.assertFalse(any(node['Node Type'] in ('Limit', 'WindowAgg', 'Aggregate', 'Sort')
                                              for node in nodes(plans[0]['Plan'])), plans[0])
         finally:
