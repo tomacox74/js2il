@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(test262): preserve YAML null, numeric and boolean specification identifiers
+  and distinguish quoted strings in catalogue ingestion, enrichment and exports.
+  Keep runner eligibility unchanged and reject conflicting immutable annotations
+  rather than silently rewriting earlier evidence.
 - perf(compiler): replace reflection-driven async/await and generator validation
   with typed child visits while preserving validation order, nesting state,
   shared-node protection, and malformed-AST handling. Add exhaustive parser-node

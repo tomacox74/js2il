@@ -1,11 +1,13 @@
 import argparse
 import copy
+import hashlib
+import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts.test262.central.client import bytea, sha
+from scripts.test262.central.client import bytea, canonical, sha
 from scripts.test262.central.inventory import enrich_specification_metadata
 
 
@@ -31,6 +33,20 @@ class Catalogue:
 
 
 class SpecificationMetadataTests(unittest.TestCase):
+    def test_database_numeric_hashes_do_not_change_general_identity_serialization(self):
+        document = {'small': 1e-7, 'large': 1e30, 'quoted': '1e-7',
+                    'nested': [False, None, 0.00001], 'zero': -0.0}
+        expected = ('{"large":' + str(10 ** 30) +
+                    ',"nested":[false,null,0.00001],"quoted":"1e-7","small":0.0000001,"zero":0.0}')
+        self.assertEqual(canonical(document, database_numbers=True), expected)
+        self.assertEqual(sha(document, database_numbers=True), hashlib.sha256(expected.encode()).hexdigest())
+        self.assertEqual(canonical(document), json.dumps(document, sort_keys=True, separators=(',', ':')))
+        unchanged = {'esid': 'sec-example', 'es5id': '19.1', 'values': [None, False, 19.1]}
+        self.assertEqual(canonical(unchanged, database_numbers=True), canonical(unchanged))
+        for value in (float('nan'), float('inf')):
+            with self.assertRaisesRegex(ValueError, 'finite'):
+                canonical({'esid': value}, database_numbers=True)
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)

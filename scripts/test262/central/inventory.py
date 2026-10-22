@@ -63,7 +63,8 @@ def normalize_fixture(row, root=None):
 
 
 def inventory_digest(rows):
-    return hash_bytes(''.join(canonical(row)+'\n' for row in sorted(rows, key=lambda x: x['path'])).encode())
+    return hash_bytes(''.join(canonical(row, database_numbers=True)+'\n'
+                             for row in sorted(rows, key=lambda x: x['path'])).encode())
 
 
 def register(client, repository, upstream, rows, reuse_sealed=False):
@@ -136,7 +137,7 @@ def enrich_specification_metadata(client, args):
                         ('description', 'info', 'author', 'esid', 'es5id', 'es6id', 'specification')}
             annotations.append({'fixture_id': fixture['fixture_id'], 'upstream_revision': revision,
                                 'upstream_path': fixture['upstream_path'], 'content_sha256': fixture['content_sha256'],
-                                'metadata': metadata, 'metadata_sha256': bytea(sha(metadata))})
+                                'metadata': metadata, 'metadata_sha256': bytea(sha(metadata, database_numbers=True))})
         client.put('fixture_specification_metadata', annotations)
         return len(annotations)
 

@@ -271,6 +271,28 @@ class PostgresTests(unittest.TestCase):
                 'legacy': 'es5id: 10.5-1-s\ndescription: Legacy description',
                 'absent': 'description: No reference',
             }
+            scalar_cases = {
+                'modern-null': ('esid: null', {'esid': None}, 'ambiguous'),
+                'modern-number': ('esid: 19.1', {'esid': 19.1}, 'ambiguous'),
+                'modern-boolean': ('esid: false', {'esid': False}, 'ambiguous'),
+                'legacy-null': ('es5id: null', {'es5id': None}, 'ambiguous'),
+                'legacy-number': ('es6id: 19.1', {'es6id': 19.1}, 'ambiguous'),
+                'legacy-boolean': ('es5id: true', {'es5id': True}, 'ambiguous'),
+                'quoted-null': ('es5id: "null"', {'es5id': 'null'}, 'legacy'),
+                'quoted-number': ('es6id: "19.1"', {'es6id': '19.1'}, 'legacy'),
+                'quoted-boolean': ("esid: 'false'", {'esid': 'false'}, 'unresolved'),
+                'scientific-small': ('esid: 1e-7', {'esid': 1e-7}, 'ambiguous'),
+                'small-decimal': ('es5id: 0.00001', {'es5id': 0.00001}, 'ambiguous'),
+                'scientific-large': ('es6id: 1e30', {'es6id': 10 ** 30}, 'ambiguous'),
+            }
+            fixtures.update({name: case[0] for name, case in scalar_cases.items()})
+            fixture_count = len(fixtures)
+            expected_references = {
+                'modern': ({'esid': 'sec-example'}, 'unresolved'),
+                'legacy': ({'es5id': '10.5-1-s'}, 'legacy'),
+                'absent': ({}, 'absent'),
+                **{name: case[1:] for name, case in scalar_cases.items()},
+            }
             for name, frontmatter in fixtures.items():
                 (root / 'test' / (name + '.js')).write_text('/*---\n' + frontmatter + '\nflags: [raw]\n---*/\nvoid 0;\n')
             subprocess.run(['git', 'init', '-q', str(root)], check=True)
@@ -285,14 +307,19 @@ class PostgresTests(unittest.TestCase):
             new_corpus, new_ids = register(client, repository, upstream, copy.deepcopy(rows))
             new_report = client.db.execute("""
                 SELECT upstream_path,reference_state,raw_identifiers,description,metadata_source,
-                       upstream_revision,content_sha256,mapping_status,specification_edition,interpreted_clause
+                       upstream_revision,content_sha256,mapping_status,specification_edition,interpreted_clause,
+                       esid,es5id,es6id
                 FROM test262_reporting.v_fixture_specification_references
                 WHERE repository_id=%s AND corpus_id=%s ORDER BY upstream_path
                 """, (repository, new_corpus)).fetchall()
-            self.assertEqual([r[1] for r in new_report], ['absent', 'legacy', 'unresolved'])
-            self.assertEqual([r[2] for r in new_report], [{}, {'es5id': '10.5-1-s'}, {'esid': 'sec-example'}])
-            self.assertEqual([r[3] for r in new_report], ['No reference', 'Legacy description', 'Modern description'])
+            self.assertEqual(len(new_report), fixture_count)
             for row in new_report:
+                name = Path(row[0]).stem
+                identifiers, state = expected_references[name]
+                self.assertEqual((row[1], row[2]), (state, identifiers))
+                self.assertEqual(row[3], {'absent': 'No reference', 'legacy': 'Legacy description',
+                                         'modern': 'Modern description'}.get(name))
+                self.assertEqual(row[10:], tuple(identifiers.get(key) for key in ('esid', 'es5id', 'es6id')))
                 self.assertEqual((row[4], row[5], row[7], row[8], row[9]),
                                  ('inventory', revision, 'not-attempted', None, None))
                 self.assertEqual(row[6], hashlib.sha256((root / row[0]).read_bytes()).hexdigest())
@@ -329,10 +356,10 @@ class PostgresTests(unittest.TestCase):
                 SELECT reference_state,metadata_source FROM test262_reporting.v_fixture_specification_references
                 WHERE repository_id=%s AND corpus_id=%s
                 """, (repository, old_corpus)).fetchall()
-            self.assertEqual(unavailable, [('unresolved', 'unavailable')] * 3)
+            self.assertEqual(unavailable, [('unresolved', 'unavailable')] * fixture_count)
             args = SimpleNamespace(corpus=old_corpus, root=root)
             for _ in range(2):
-                self.assertEqual(enrich_specification_metadata(client, args)['enriched_fixtures'], 3)
+                self.assertEqual(enrich_specification_metadata(client, args)['enriched_fixtures'], fixture_count)
             after = {table: client.rows(table, **filters) for table, filters in (
                 ('fixtures', {'corpus_id': old_corpus}), ('corpora', {'corpus_id': old_corpus}),
                 ('observations', {'run_id': run}), ('observation_payloads', {'observation_id': observation}),
@@ -348,7 +375,7 @@ class PostgresTests(unittest.TestCase):
                 self.assertEqual((row[3], row[4]), ('enrichment', revision))
                 self.assertEqual(row[5], hashlib.sha256((root / row[0]).read_bytes()).hexdigest())
             annotations = client.rows('fixture_specification_metadata')
-            self.assertEqual(len(annotations), 3)
+            self.assertEqual(len(annotations), fixture_count)
             self.assertEqual({r['actor'] for r in annotations}, {role})
             self.assertEqual(list(client.read('fixture_specification_metadata', page=1)), annotations)
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
@@ -382,7 +409,7 @@ class PostgresTests(unittest.TestCase):
             output = root / 'export.ndjson'
             summary = client.export(output)
             records = [json.loads(line) for line in output.read_text().splitlines()]
-            self.assertEqual(summary['counts']['fixture_specification_metadata'], 3)
+            self.assertEqual(summary['counts']['fixture_specification_metadata'], fixture_count)
             exported = [r['row'] for r in records if r.get('table') == 'fixture_specification_metadata']
             self.assertEqual(sorted(exported, key=lambda r: r['fixture_id']),
                              sorted(annotations, key=lambda r: r['fixture_id']))
@@ -390,8 +417,39 @@ class PostgresTests(unittest.TestCase):
             self.assertEqual(exported_fixtures[new_ids['test/modern.js']]['metadata']['esid'], 'sec-example')
             self.assertEqual(exported_fixtures[new_ids['test/legacy.js']]['metadata']['es5id'], '10.5-1-s')
             self.assertEqual(exported_fixtures[new_ids['test/absent.js']]['metadata']['specification']['reference_state'], 'absent')
+            for name, (identifiers, state) in expected_references.items():
+                metadata = exported_fixtures[new_ids[f'test/{name}.js']]['metadata']
+                self.assertEqual(metadata['specification']['raw_identifiers'], identifiers)
+                self.assertEqual(metadata['specification']['reference_state'], state)
+                enriched = next(r for r in exported if r['fixture_id'] == old_ids[f'test/{name}.js'])
+                self.assertEqual(enriched['metadata']['specification'], metadata['specification'])
+                self.assertEqual(enriched['metadata_sha256'], bytea(sha(enriched['metadata'], database_numbers=True)))
             self.assertEqual(next(r['row'] for r in records if r.get('table') == 'observations'),
                              before['observations'][0])
+
+            # Existing buggy extraction is immutable, not silently replaced by the fixed reader.
+            previous_row = copy.deepcopy(next(r for r in rows if r['path'] == 'test/legacy-number.js'))
+            previous_row['metadata']['es6id'] = '19.1'
+            previous_row['metadata']['specification']['raw_identifiers'] = {'es6id': '19.1'}
+            previous_row['metadata']['specification']['reference_state'] = 'legacy'
+            previous_corpus, previous_ids = register(client, repository, upstream, [previous_row])
+            previous_fixture = previous_ids[previous_row['path']]
+            previous_metadata = {key: previous_row['metadata'][key] for key in (
+                'description', 'info', 'author', 'esid', 'es5id', 'es6id', 'specification')}
+            client.put('fixture_specification_metadata', [{
+                'fixture_id': previous_fixture, 'upstream_revision': revision,
+                'upstream_path': previous_row['path'], 'content_sha256': bytea(previous_row['sha256']),
+                'metadata': previous_metadata, 'metadata_sha256': bytea(sha(previous_metadata)),
+            }])
+            previous_annotation = client.one('fixture_specification_metadata', fixture_id=previous_fixture)
+            previous_inventory = client.rows('fixtures', corpus_id=previous_corpus)
+            with self.assertRaisesRegex(psycopg.errors.RaiseException, 'Conflicting immutable replay'):
+                enrich_specification_metadata(client, SimpleNamespace(corpus=previous_corpus, root=root))
+            self.assertEqual(client.one('fixture_specification_metadata', fixture_id=previous_fixture),
+                             previous_annotation)
+            self.assertEqual(client.rows('fixtures', corpus_id=previous_corpus), previous_inventory)
+            self.assertEqual(client.rows('observations', run_id=run), before['observations'])
+
             staging_corpus, staging_fixture = str(uuid.uuid4()), str(uuid.uuid4())
             client.put('corpora', [{
                 'corpus_id': staging_corpus, 'upstream_url': upstream['cloneUrl'], 'revision': revision,

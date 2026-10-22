@@ -54,19 +54,31 @@ test('catalogue bridge preserves commandless worker execution and explicit run r
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'jroc-bridge-execution-'));
   try {
     fs.writeFileSync(path.join(directory, 'sample.js'), '/*---\nflags: [raw]\n---*/\nvar number = 1;');
-    for (const command of [undefined, 'run']) {
-      const output = path.join(directory, command || 'commandless');
-      const request = {
-        root: directory, output, fixture: 'sample.js', variant: 'non-strict',
-        jroc: cli, timeout: 5, compileTimeout: 30, compilationCoverage: command === 'run',
-        ...(command ? { command } : {}),
-      };
-      const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'catalogBridge.js')], {
-        input: JSON.stringify(request), encoding: 'utf8', stdio: 'pipe',
-      }));
-      assert.equal(result.classification.verdict, 'matched');
-      assert.equal(Object.hasOwn(result, 'compilation_coverage'), command === 'run');
-      assert.equal(fs.existsSync(output), false);
+    const staged = path.join(directory, 'runtime');
+    execFileSync(process.env.PYTHON || 'python3', ['-c', `
+import argparse, sys
+from scripts.test262.central.worker import stage_runtime
+stage_runtime(argparse.Namespace(kind='mvp-composite', jroc=sys.argv[1]), sys.argv[2])
+`, cli, staged], { cwd: repository, stdio: 'pipe' });
+    assert.equal(fs.existsSync(path.join(staged, 'node_modules')), false);
+    for (const [label, bridge, jroc] of [
+      ['checkout', path.join(__dirname, 'catalogBridge.js'), cli],
+      ['staged', path.join(staged, 'scripts/test262/catalogBridge.js'), path.join(staged, path.relative(repository, cli))],
+    ]) {
+      for (const command of [undefined, 'run']) {
+        const output = path.join(directory, label + '-' + (command || 'commandless'));
+        const request = {
+          root: directory, output, fixture: 'sample.js', variant: 'non-strict',
+          jroc, timeout: 5, compileTimeout: 30, compilationCoverage: command === 'run',
+          ...(command ? { command } : {}),
+        };
+        const result = JSON.parse(execFileSync(process.execPath, [bridge], {
+          input: JSON.stringify(request), encoding: 'utf8', stdio: 'pipe',
+        }));
+        assert.equal(result.classification.verdict, 'matched');
+        assert.equal(Object.hasOwn(result, 'compilation_coverage'), command === 'run');
+        assert.equal(fs.existsSync(output), false);
+      }
     }
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });

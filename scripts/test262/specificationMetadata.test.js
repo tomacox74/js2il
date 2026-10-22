@@ -54,6 +54,70 @@ test('reference-free fixture is explicitly absent, never inferred from the filen
     assert.deepEqual(row.metadata.specification.raw_identifiers, {});
     assert.equal(row.metadata.specification.reference_state, 'absent');
   });
+  fixture('', row => {
+    assert.deepEqual(row.metadata.specification.raw_identifiers, {});
+    assert.equal(row.metadata.specification.reference_state, 'absent');
+  });
+});
+
+for (const key of ['esid', 'es5id', 'es6id']) {
+  test(`ingestion preserves YAML scalar types for ${key} without changing eligibility`, () => {
+    for (const [source, value] of [
+      ['null', null], ['Null', null], ['NULL', null], ['~', null], ['', null],
+      ['19.1', 19.1], ['42', 42], ['-17', -17], ['+19', 19],
+      ['1.91e1', 19.1], ['0x13', 19], ['0o23', 19],
+      ['1e-7', 1e-7], ['0.00001', 0.00001], ['1e30', 1e30],
+      ['true', true], ['True', true], ['FALSE', false], ['false', false],
+      ['null # no reference', null], ['19.1 # numeric reference', 19.1],
+      ['false # not an identifier', false],
+    ]) {
+      fixture(`${key}: ${source}`, row => {
+        assert.deepEqual(row.metadata.specification.raw_identifiers, { [key]: value }, source);
+        assert.equal(row.metadata[key], value, source);
+        assert.equal(row.metadata.specification.reference_state, 'ambiguous', source);
+        assert.equal(row.state, 'runnable', source);
+        assert.deepEqual(row.reasons, [], source);
+        assert.deepEqual(row.variants, ['non-strict', 'strict'], source);
+      });
+    }
+  });
+
+  test(`quoted ${key} values remain strings rather than YAML nulls, numbers or booleans`, () => {
+    for (const value of ['null', '~', '19.1', '42', 'true', 'false', 'sec-#example']) {
+      for (const quote of ['"', "'"]) {
+        fixture(`${key}: ${quote}${value}${quote} # identifier`, row => {
+          assert.deepEqual(row.metadata.specification.raw_identifiers, { [key]: value });
+          assert.equal(row.metadata[key], value);
+          assert.equal(row.metadata.specification.reference_state, key === 'esid' ? 'unresolved' : 'legacy');
+          assert.equal(row.state, 'runnable');
+        });
+      }
+    }
+  });
+}
+
+test('YAML reference collections retain their parsed values rather than manufactured identifiers', () => {
+  for (const [source, value] of [
+    ['[null, 19.1, false]', [null, 19.1, false]],
+    ['{clause: 19.1, current: false}', { clause: 19.1, current: false }],
+  ]) {
+    fixture(`es6id: ${source}`, row => {
+      assert.deepEqual(row.metadata.specification.raw_identifiers, { es6id: value });
+      assert.equal(row.metadata.specification.reference_state, 'ambiguous');
+    });
+  }
+});
+
+test('reference parsing diagnostics do not change execution eligibility or invent JSON nulls', () => {
+  for (const source of ['"unterminated', '.nan', '.inf', '9007199254740993']) {
+    fixture(`esid: ${source}`, row => {
+      assert.equal(row.state, 'runnable');
+      assert.deepEqual(row.reasons, []);
+      assert.equal(row.metadata.specification.reference_state, 'unresolved');
+      assert.ok(row.metadata.specification.diagnostic);
+      assert.deepEqual(row.metadata.specification.raw_identifiers, {});
+    });
+  }
 });
 
 test('multiple or malformed identifiers remain raw and explicitly ambiguous', () => {
@@ -85,7 +149,7 @@ test('metadata errors and missing frontmatter are unresolved, not absent', () =>
 });
 
 test('bounded metadata bridge request reads source without executing it', () => {
-  fixture('esid: sec-example', (row, directory) => {
+  fixture('esid: null\r\nes5id: 19.1\r\nes6id: false', (row, directory) => {
     fs.appendFileSync(path.join(directory, 'example.js'), 'throw new Error("must not execute");');
     const rows = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'catalogBridge.js')], {
       input: JSON.stringify({ command: 'metadata', root: directory, paths: ['example.js'] }),
