@@ -1,0 +1,46 @@
+name: Test262 specification deployment verification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test262-specification-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/master'
+    strategy:
+      fail-fast: false
+      matrix:
+        identity: [coordinator, reporter]
+    runs-on: ubuntu-24.04
+    environment: test262-catalogue
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'psycopg[binary]==3.3.3'
+      - name: Verify authenticated reads and coherent export
+        env:
+          DATABASE_URL: ${{ matrix.identity == 'coordinator' && secrets.TEST262_COORDINATOR_DATABASE_URL || secrets.TEST262_REPORTER_DATABASE_URL }}
+          REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_PROGRESS: '1'
+        run: python -m scripts.test262.central.verify_specification_deployment '${{ matrix.identity }}' --output '/tmp/test262-verification-${{ matrix.identity }}.json'
+      - name: Retain sanitized receipt only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test262-specification-verification-${{ matrix.identity }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/test262-verification-${{ matrix.identity }}.json
+          if-no-files-found: error
+          retention-days: 90
