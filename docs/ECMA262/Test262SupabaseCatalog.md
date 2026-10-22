@@ -60,6 +60,11 @@ lossless JSON number range produce an `unresolved` reference with a diagnostic
 and the original frontmatter, not a manufactured identifier or silent JSON null.
 The exact source text and content digest remain available for interpretation.
 
+Inventory and enrichment metadata hashes use PostgreSQL-compatible numeric JSON
+formatting, expanding exponents (for example `1e-7` to `0.0000001`) without changing
+parsed values or quoted numeric strings. General-purpose identity serialization
+remains unchanged; already accepted inventory/annotation hashes are not rewritten.
+
 The additive migration
 `20261021230000_test262_catalogue_specification_metadata.sql` exposes
 `test262_reporting.v_fixture_specification_references` to `test262_reporter`.

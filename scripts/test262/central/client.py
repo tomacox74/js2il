@@ -5,12 +5,14 @@ Only this supervisor uses the DSN. Keep the outbox on durable local storage.
 """
 import hashlib
 import json
+import math
 import os
 import time
 from pathlib import Path
 import sqlite3
 import uuid
 from contextlib import contextmanager
+from decimal import Decimal
 
 EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_specification_metadata',
                  'fixture_variants', 'fixture_dependencies',
@@ -21,12 +23,28 @@ EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_specifica
                  'import_records', 'legacy_control_records', 'reconciliation_state', 'reconciliations', 'run_metrics')
 
 
-def canonical(value):
+def canonical(value, *, database_numbers=False):
+    """Keep legacy identity JSON unless PostgreSQL numeric formatting is requested."""
+    if database_numbers:
+        if isinstance(value, dict):
+            if any(not isinstance(key, str) for key in value):
+                raise TypeError('Database JSON objects require string keys')
+            return '{' + ','.join(canonical(key) + ':' + canonical(item, database_numbers=True)
+                                  for key, item in sorted(value.items())) + '}'
+        if isinstance(value, (list, tuple)):
+            return '[' + ','.join(canonical(item, database_numbers=True) for item in value) + ']'
+        if isinstance(value, float):
+            if not math.isfinite(value):
+                raise ValueError('Database JSON numbers must be finite')
+            number = Decimal(str(value))
+            if number.is_zero():
+                number = number.copy_abs()
+            return format(number, 'f')
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
 
 
-def sha(value):
-    return hashlib.sha256(canonical(value).encode()).hexdigest()
+def sha(value, *, database_numbers=False):
+    return hashlib.sha256(canonical(value, database_numbers=database_numbers).encode()).hexdigest()
 
 
 def identity(*parts):

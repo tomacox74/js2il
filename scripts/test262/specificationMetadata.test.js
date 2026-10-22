@@ -66,6 +66,7 @@ for (const key of ['esid', 'es5id', 'es6id']) {
       ['null', null], ['Null', null], ['NULL', null], ['~', null], ['', null],
       ['19.1', 19.1], ['42', 42], ['-17', -17], ['+19', 19],
       ['1.91e1', 19.1], ['0x13', 19], ['0o23', 19],
+      ['1e-7', 1e-7], ['0.00001', 0.00001], ['1e30', 1e30],
       ['true', true], ['True', true], ['FALSE', false], ['false', false],
       ['null # no reference', null], ['19.1 # numeric reference', 19.1],
       ['false # not an identifier', false],

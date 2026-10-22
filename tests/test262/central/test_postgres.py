@@ -163,6 +163,9 @@ class PostgresTests(unittest.TestCase):
                 'quoted-null': ('es5id: "null"', {'es5id': 'null'}, 'legacy'),
                 'quoted-number': ('es6id: "19.1"', {'es6id': '19.1'}, 'legacy'),
                 'quoted-boolean': ("esid: 'false'", {'esid': 'false'}, 'unresolved'),
+                'scientific-small': ('esid: 1e-7', {'esid': 1e-7}, 'ambiguous'),
+                'small-decimal': ('es5id: 0.00001', {'es5id': 0.00001}, 'ambiguous'),
+                'scientific-large': ('es6id: 1e30', {'es6id': 10 ** 30}, 'ambiguous'),
             }
             fixtures.update({name: case[0] for name, case in scalar_cases.items()})
             fixture_count = len(fixtures)
@@ -302,7 +305,7 @@ class PostgresTests(unittest.TestCase):
                 self.assertEqual(metadata['specification']['reference_state'], state)
                 enriched = next(r for r in exported if r['fixture_id'] == old_ids[f'test/{name}.js'])
                 self.assertEqual(enriched['metadata']['specification'], metadata['specification'])
-                self.assertEqual(enriched['metadata_sha256'], bytea(sha(enriched['metadata'])))
+                self.assertEqual(enriched['metadata_sha256'], bytea(sha(enriched['metadata'], database_numbers=True)))
             self.assertEqual(next(r['row'] for r in records if r.get('table') == 'observations'),
                              before['observations'][0])
 
