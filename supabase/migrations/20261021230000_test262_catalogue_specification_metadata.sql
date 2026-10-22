@@ -142,8 +142,7 @@ BEGIN
   SELECT jsonb_object_agg(k,rows->-1->k) INTO next FROM unnest(keys) k;
  END IF;
  RETURN jsonb_build_object('rows',rows,'next',next);
-END $function$
-
+END $function$;
 
 CREATE VIEW test262_reporting.v_fixture_specification_references WITH (security_barrier=true) AS
 SELECT rc.repository_id,f.corpus_id,f.fixture_id,c.inventory_state,c.upstream_url,c.revision AS upstream_revision,
