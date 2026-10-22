@@ -94,6 +94,7 @@ def coordinator(dsn, settings):
         return {'verified': True, 'project_reference': project_reference(settings),
                 'bounded_annotation_rows': len(result['rows']), 'raw_insert_denied': True,
                 'foreign_repository_read_empty': True, 'export': receipt,
+                'export_transport': client.export_transport,
                 'payload_retained': False}
     finally:
         client.close()

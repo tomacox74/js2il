@@ -111,7 +111,8 @@ class PostgresTests(unittest.TestCase):
             message = notice.message_primary
             if 'plan:\n{' in message:
                 plan = json.loads(message[message.index('{'):])
-                if 'SELECT coalesce(jsonb_agg(r.j ORDER BY r.n)' in plan.get('Query Text', ''):
+                if ('SELECT coalesce(jsonb_agg(r.j ORDER BY r.n)' in plan.get('Query Text', '') or
+                        'SELECT to_jsonb(x) FROM test262.' in plan.get('Query Text', '')):
                     plans.append(plan)
 
         def nodes(plan):
@@ -126,6 +127,7 @@ class PostgresTests(unittest.TestCase):
         self.db.add_notice_handler(capture)
         try:
             with self.db.transaction(force_rollback=True):
+                self.db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ')
                 self.db.execute("SET LOCAL client_min_messages='notice'; SET LOCAL auto_explain.log_level='notice'; SET LOCAL auto_explain.log_format='json'; SET LOCAL auto_explain.log_analyze=on; SET LOCAL auto_explain.log_timing=off; SET LOCAL auto_explain.log_nested_statements=on; SET LOCAL auto_explain.log_min_duration=-1")
                 other, own_corpus, other_corpus = (str(uuid.uuid4()) for _ in range(3))
                 self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,'test/pagination-other')", (other, other))
@@ -218,12 +220,41 @@ class PostgresTests(unittest.TestCase):
                                        ('provenance_fixture_eligibility', {'provenance_id': provenances[2]})):
                     self.assertEqual(self.db.execute('SELECT test262.api_read(1,%s,%s,NULL,64)',
                                                      (table, Jsonb(filters))).fetchone()[0]['rows'], [])
+                # A bulk export keeps a single scan alive across bounded FETCHes.
+                self.db.execute('SET LOCAL transaction_read_only=on')
+                for table, expected_count in (('fixtures', 16394), ('fixture_variants', 16394),
+                                              ('fixture_dependencies', 16384),
+                                              ('provenance_fixture_eligibility', 32768)):
+                    with self.subTest(bulk_table=table):
+                        plans.clear()
+                        self.db.execute('SET LOCAL auto_explain.log_min_duration=0')
+                        portal = self.db.execute('SELECT test262.api_export_open(1,%s)', (table,)).fetchone()[0]
+                        count = 0
+                        with self.db.cursor(name=portal) as cursor:
+                            while batch := cursor.fetchmany(1000):
+                                self.assertLessEqual(len(batch), 1000)
+                                count += len(batch)
+                        self.db.execute('SET LOCAL auto_explain.log_min_duration=-1')
+                        # Earlier tests may have added a small number of owned eligibility rows.
+                        expected = self.db.execute('SELECT count(*) FROM test262."' + table +
+                            '" x WHERE test262.api_scope(%s,to_jsonb(x),%s)', (table, self.repo)).fetchone()[0]
+                        self.assertEqual(count, expected)
+                        self.assertGreaterEqual(count, expected_count)
+                        self.assertEqual(len(plans), 1, plans)
+                        self.assertNotIn('api_scope(', plans[0]['Query Text'])
+                        self.assertNotIn('ORDER BY', plans[0]['Query Text'])
+                        scans = [node for node in nodes(plans[0]['Plan']) if node.get('Relation Name') == table]
+                        self.assertTrue(scans, plans[0])
+                        self.assertTrue(all(scan['Actual Loops'] == 1 for scan in scans), scans)
+                        self.assertFalse(any(node['Node Type'] in ('Limit', 'WindowAgg', 'Aggregate', 'Sort')
+                                             for node in nodes(plans[0]['Plan'])), plans[0])
         finally:
             self.db.remove_notice_handler(capture)
 
     def test_typed_reader_scope_matches_existing_helper_for_every_export_table(self):
         from scripts.test262.central.client import EXPORT_TABLES, sha
         with self.db.transaction(force_rollback=True):
+            self.db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ')
             other, corpus, fixture = (str(uuid.uuid4()) for _ in range(3))
             self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,'test/typed-scope')", (other, other))
             self.db.execute("INSERT INTO test262.api_subjects VALUES(session_user,%s,%s,'coordinator','trusted',true)", (self.repo, self.producer))
@@ -241,6 +272,7 @@ class PostgresTests(unittest.TestCase):
                     SELECT f.fixture_id,c.revision,f.upstream_path,f.content_sha256,%s,sha256(convert_to(test262.canonical_json(%s),'UTF8'))
                     FROM test262.fixtures f JOIN test262.corpora c USING(corpus_id) WHERE fixture_id=%s ON CONFLICT DO NOTHING""",
                     (Jsonb(metadata), Jsonb(metadata), source))
+            expected_tables = {}
             for table in EXPORT_TABLES:
                 with self.subTest(table=table):
                     expected = self.db.execute('SELECT to_jsonb(x) FROM test262."' + table + '" x WHERE test262.api_scope(%s,to_jsonb(x),%s)', (table, self.repo)).fetchall()
@@ -254,6 +286,15 @@ class PostgresTests(unittest.TestCase):
                             break
                     self.assertEqual({sha(row) for row in actual}, {sha(row[0]) for row in expected})
                     self.assertEqual(len(actual), len(expected))
+                    expected_tables[table] = [row[0] for row in expected]
+            self.db.execute('SET LOCAL transaction_read_only=on')
+            for table in EXPORT_TABLES:
+                with self.subTest(bulk_table=table):
+                    portal = self.db.execute('SELECT test262.api_export_open(1,%s)', (table,)).fetchone()[0]
+                    with self.db.cursor(name=portal) as cursor:
+                        actual = [row[0] for row in cursor]
+                    self.assertEqual({sha(row) for row in actual}, {sha(row) for row in expected_tables[table]})
+                    self.assertEqual(len(actual), len(expected_tables[table]))
             for table in ('fixtures', 'fixture_variants', 'fixture_dependencies', 'fixture_specification_metadata'):
                 self.assertEqual(self.db.execute('SELECT test262.api_read(1,%s,%s,NULL,10)',
                                                 (table, Jsonb({'fixture_id': fixture}))).fetchone()[0]['rows'], [])
@@ -273,6 +314,101 @@ class PostgresTests(unittest.TestCase):
                     with self.assertRaises(psycopg.errors.RaiseException):
                         db.execute('SELECT test262.api_read(1,%s,%s,%s,%s)',
                                    (table, Jsonb(filters), Jsonb(after) if after is not None else None, size))
+
+    def test_bulk_export_requires_trusted_coordinator_and_read_only_snapshot(self):
+        function = 'test262.api_export_open(bigint,text)'
+        for role in ('anon', 'authenticated', 'service_role', 'test262_ingest'):
+            self.assertFalse(self.db.execute('SELECT has_function_privilege(%s,%s,\'EXECUTE\')',
+                                            (role, function)).fetchone()[0])
+        for begin in (None, 'BEGIN READ ONLY', 'BEGIN ISOLATION LEVEL REPEATABLE READ'):
+            with self.subTest(transaction=begin), self.worker() as db:
+                if begin:
+                    db.execute(begin)
+                with self.assertRaises(psycopg.errors.InvalidTransactionState):
+                    db.execute("SELECT test262.api_export_open(1,'fixtures')")
+                db.execute('ROLLBACK')
+        for table in (None, 'api_subjects', 'public.perf_results', 'fixtures; DROP SCHEMA test262'):
+            with self.subTest(table=table), self.worker() as db:
+                db.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
+                with self.assertRaises(psycopg.errors.RaiseException):
+                    db.execute('SELECT test262.api_export_open(1,%s)', (table,))
+                db.execute('ROLLBACK')
+        with self.worker() as db:
+            fraction = db.execute('SHOW cursor_tuple_fraction').fetchone()[0]
+            db.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
+            portal = db.execute("SELECT test262.api_export_open(1,'fixtures')").fetchone()[0]
+            self.assertEqual(db.execute('SELECT is_holdable,is_scrollable FROM pg_cursors WHERE name=%s',
+                                        (portal,)).fetchone(), (False, False))
+            self.assertEqual(db.execute('SHOW cursor_tuple_fraction').fetchone()[0], fraction)
+            db.execute('COMMIT')
+            self.assertEqual(db.execute('SELECT count(*) FROM pg_cursors WHERE name=%s', (portal,)).fetchone()[0], 0)
+        with self.worker() as db:
+            db.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
+            with self.assertRaises(psycopg.errors.SerializationFailure):
+                db.execute("SELECT test262.api_export_open(0,'fixtures')")
+            db.execute('ROLLBACK')
+        self.db.execute('CREATE ROLE catalogue_bulk_untrusted LOGIN INHERIT; GRANT test262_coordinator TO catalogue_bulk_untrusted')
+        self.db.execute("INSERT INTO test262.api_subjects VALUES('catalogue_bulk_untrusted',%s,%s,'coordinator','untrusted',true)", (self.repo, self.producer))
+        with psycopg.connect(DSN, autocommit=True) as db:
+            db.execute('SET SESSION AUTHORIZATION catalogue_bulk_untrusted')
+            db.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                db.execute("SELECT test262.api_export_open(1,'fixtures')")
+            db.execute('ROLLBACK')
+
+    def test_bulk_export_snapshot_deadline_and_portal_cleanup(self):
+        from contextlib import closing
+        import tempfile
+        from unittest.mock import patch
+        from scripts.test262.central.client import Client
+        from scripts.test262.central.verify_specification_deployment import verify_export
+        client = Client.__new__(Client)
+        client.db = self.worker()
+        self.addCleanup(client.close)
+        client.db.execute("SET statement_timeout='120s'")
+        client.epoch, client.Jsonb = 1, Jsonb
+        client.contract = client.db.execute('SELECT test262.api_contract()').fetchone()[0]
+        self.assertEqual(client.contract['bulk_export_version'], 1)
+        original = client.export_rows
+        late = str(uuid.uuid4())
+        inserted = []
+
+        def concurrent_insert(table):
+            with closing(original(table)) as rows:
+                for row in rows:
+                    if not inserted:
+                        self.db.execute("""INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms)
+                            VALUES(%s,%s,'run',%s,1,1,1,1000)""", (late, self.repo, late))
+                        inserted.append(True)
+                    yield row
+
+        client.export_rows = concurrent_insert
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / 'snapshot.ndjson'
+            summary = client.export(output, seconds=60)
+            self.assertEqual(verify_export(output, summary), summary)
+            exported = [json.loads(line) for line in output.read_text().splitlines()[1:-1]]
+            self.assertNotIn(late, {r['row']['budget_scope_id'] for r in exported if r['table'] == 'budget_scopes'})
+            self.assertIn(late, {r['budget_scope_id'] for r in client.rows('budget_scopes')})
+            self.assertEqual(client.db.execute("SELECT count(*) FROM pg_cursors WHERE name LIKE 'test262_export_%'").fetchone()[0], 0)
+            clock = [0]
+
+            def expire(table):
+                with closing(original(table)) as rows:
+                    yield next(rows)
+                    clock[0] = 2
+                    yield next(rows)
+
+            client.export_rows = expire
+            output = Path(directory) / 'incomplete.ndjson'
+            with patch('scripts.test262.central.client.EXPORT_TABLES', ('fixtures',)), \
+                 patch('scripts.test262.central.client.time.monotonic', side_effect=lambda: clock[0]):
+                with self.assertRaises(TimeoutError):
+                    client.export(output, seconds=1)
+            self.assertFalse(output.exists())
+            records = [json.loads(line) for line in output.with_name(output.name + '.partial').read_text().splitlines()]
+            self.assertFalse(any('footer' in row for row in records))
+            self.assertEqual(client.db.execute("SELECT count(*) FROM pg_cursors WHERE name LIKE 'test262_export_%'").fetchone()[0], 0)
 
     def test_client_paged_reads_and_streamed_export(self):
         import hashlib, tempfile

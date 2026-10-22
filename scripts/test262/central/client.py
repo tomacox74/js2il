@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 import sqlite3
 import uuid
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from decimal import Decimal
 
 EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_specification_metadata',
@@ -103,6 +103,32 @@ class Client:
     def rows(self, table, **filters):
         return list(self.read(table, filters))
 
+    def export_rows(self, table):
+        """Read a table once, without restarting a keyset query for each page.
+
+        Call inside view(). Bulk export rows have no ordering guarantee. Interactive reads retain
+        their primary-key pagination; both paths expose the same scoped rows.
+        """
+        if (self.contract.get('bulk_export_version') != 1 or
+                self.contract.get('permission') != 'coordinator' or
+                self.contract.get('trust_class') != 'trusted'):
+            self.export_transport = 'keyset_pages'
+            yield from self.read(table, page=1000)
+            return
+        self.export_transport = 'bulk_cursor'
+        name = self.db.execute('SELECT test262.api_export_open(%s,%s)',
+                               (self.epoch, table)).fetchone()[0]
+        # Adopt the non-holdable portal created by the scoped definer function.
+        # The same connection/transaction supplies the export's MVCC snapshot.
+        with self.db.cursor(name=name) as cursor:
+            size = 25 if table == 'observation_payloads' else 1000
+            while True:
+                batch = cursor.fetchmany(size)
+                if not batch:
+                    return
+                for row in batch:
+                    yield row[0]
+
     def one(self, table, **filters):
         rows = list(self.read(table, filters, page=2))
         if len(rows) > 1:
@@ -147,12 +173,13 @@ class Client:
                 if os.getenv('TEST262_PROGRESS') == '1':
                     print('Exporting', table, flush=True)
                 counts[table] = 0
-                for row in self.read(table, page=1000):
-                    check_deadline()
-                    emit({'table': table, 'row': row})
-                    counts[table] += 1
-                    if os.getenv('TEST262_PROGRESS') == '1' and counts[table] % 5000 == 0:
-                        print('Exported', table, counts[table], 'records', flush=True)
+                with closing(self.export_rows(table)) as table_rows:
+                    for row in table_rows:
+                        check_deadline()
+                        emit({'table': table, 'row': row})
+                        counts[table] += 1
+                        if os.getenv('TEST262_PROGRESS') == '1' and counts[table] % 5000 == 0:
+                            print('Exported', table, counts[table], 'records', flush=True)
                 if os.getenv('TEST262_PROGRESS') == '1':
                     print('Exported', table, counts[table], 'records total', flush=True)
             check_deadline()
