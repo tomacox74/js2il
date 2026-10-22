@@ -4,6 +4,7 @@ These design documents describe the JROC compiler pipeline, including callable p
 
 ## Compilation architecture and callable model
 
+- [Typed AST validation traversal and compile profiles](AstValidationTraversalPerformance.md)
 - [Callable architecture baselines](CallableArchitectureBaselines.md)
 - [Captured variables and the scopes ABI](CapturedVariables_ScopesABI.md)
 - [Generated arrow function objects](GeneratedArrowFunctionObjects.md)
