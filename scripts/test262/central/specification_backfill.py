@@ -1,6 +1,7 @@
 """Scoped specification canary. Only sanitized receipts leave the supervisor."""
 import argparse
 from collections import Counter
+from contextlib import closing
 from datetime import datetime, timezone, timedelta
 import hashlib
 import json
@@ -52,7 +53,11 @@ def snapshot(client, corpus):
         token, as_of = client.db.execute('SELECT txid_current_snapshot()::text, transaction_timestamp()').fetchone()
         for table, key in KEYS.items():
             filters = {'corpus_id': corpus} if table in ('corpora', 'fixtures') else {}
-            result[table] = {row[key]: sha(row) for row in client.read(table, filters, page=1000)}
+            print('Fingerprinting', table, flush=True)
+            scan = client.read(table, filters, page=1000) if filters else client.export_rows(table)
+            with closing(scan) as rows:
+                result[table] = {row[key]: sha(row) for row in rows}
+            print('Fingerprinted', table, len(result[table]), 'records', flush=True)
     return {'snapshot_token': token, 'as_of': as_of.isoformat(), 'rows': result}
 
 
@@ -166,20 +171,23 @@ class AnnotationWriter:
 
 def annotations(client, expected):
     result = {}
-    for row in client.read('fixture_specification_metadata', page=1000):
-        if row['fixture_id'] not in expected:
-            continue
-        payload = {key: value for key, value in row.items() if key not in ('actor', 'recorded_at')}
-        if sha(payload, database_numbers=True) != expected[row['fixture_id']] or not row['actor'] or not row['recorded_at']:
-            raise ValueError('Conflicting immutable annotation')
-        result[row['fixture_id']] = sha(row)
+    print('Verifying annotation fingerprints', flush=True)
+    with client.view(), closing(client.export_rows('fixture_specification_metadata')) as rows:
+        for row in rows:
+            if row['fixture_id'] not in expected:
+                continue
+            payload = {key: value for key, value in row.items() if key not in ('actor', 'recorded_at')}
+            if sha(payload, database_numbers=True) != expected[row['fixture_id']] or not row['actor'] or not row['recorded_at']:
+                raise ValueError('Conflicting immutable annotation')
+            result[row['fixture_id']] = sha(row)
+    print('Verified annotation fingerprints', len(result), 'records', flush=True)
     return result
 
 
 def run(client, args, report):
     with client.view():
         expected, plan = prepare(client, args)
-        existing = annotations(client, expected)
+    existing = annotations(client, expected)
     report.update(plan=plan, existing_annotations=len(existing))
     before = snapshot(client, args.corpus)
     report['before'] = {key: before[key] for key in ('snapshot_token', 'as_of')}

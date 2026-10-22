@@ -575,6 +575,28 @@ class PostgresTests(unittest.TestCase):
                 self.assertEqual(row[5], hashlib.sha256((root / row[0]).read_bytes()).hexdigest())
             annotations = client.rows('fixture_specification_metadata')
             self.assertEqual(len(annotations), fixture_count)
+            # Backfill proofs must be identical through bulk cursors and older contracts.
+            from scripts.test262.central.specification_backfill import annotations as verify_annotations, snapshot, KEYS
+            expected = {r['fixture_id']: sha({k: v for k, v in r.items() if k not in ('actor', 'recorded_at')},
+                                            database_numbers=True) for r in annotations}
+            expected_proof = {r['fixture_id']: sha(r) for r in annotations}
+            bulk_proof = verify_annotations(client, expected)
+            self.assertEqual(bulk_proof, expected_proof)
+            self.assertEqual(client.export_transport, 'bulk_cursor')
+            proof = snapshot(client, old_corpus)
+            for table, key in KEYS.items():
+                filters = {'corpus_id': old_corpus} if table in ('corpora', 'fixtures') else {}
+                self.assertEqual(proof['rows'][table], {r[key]: sha(r) for r in client.read(table, filters)})
+            with self.assertRaises(ValueError):
+                verify_annotations(client, dict(expected, **{next(iter(expected)): 'conflict'}))
+            self.assertEqual(client.db.execute("SELECT count(*) FROM pg_cursors WHERE name LIKE 'test262_export_%'").fetchone()[0], 0)
+            version = client.contract.pop('bulk_export_version')
+            try:
+                self.assertEqual(verify_annotations(client, expected), expected_proof)
+                self.assertEqual(snapshot(client, old_corpus)['rows'], proof['rows'])
+                self.assertEqual(client.export_transport, 'keyset_pages')
+            finally:
+                client.contract['bulk_export_version'] = version
             self.assertEqual({r['actor'] for r in annotations}, {role})
             self.assertEqual(list(client.read('fixture_specification_metadata', page=1)), annotations)
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
