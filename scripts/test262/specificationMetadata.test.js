@@ -22,6 +22,30 @@ function fixture(frontmatter, check) {
   }
 }
 
+test('reference extraction normalizes CR-only and mixed line endings without changing evidence bytes', () => {
+  for (const newline of ['\r', '\n', '\r\n']) {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'test262-specification-lines-'));
+    const frontmatter = `${newline}esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject${newline}` +
+      `description: Function line terminators${newline}info: |${newline}  Preserve source bytes.${newline}`;
+    const source = `/*---${frontmatter}---*/\rvoid 0;\n`;
+    try {
+      fs.writeFileSync(path.join(directory, 'example.js'), source);
+      const row = classify(directory, 'example.js', {});
+      assert.equal(row.sha256, crypto.createHash('sha256').update(source).digest('hex'));
+      assert.equal(row.metadata.specification.raw_frontmatter, frontmatter);
+      assert.deepEqual(row.metadata.specification.raw_identifiers, {
+        esid: 'sec-function-definitions-runtime-semantics-instantiatefunctionobject',
+      });
+      assert.equal(row.metadata.specification.diagnostic, undefined);
+      assert.equal(row.state, 'runnable');
+      assert.deepEqual(row.reasons, []);
+      assert.deepEqual(row.variants, ['non-strict', 'strict']);
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  }
+});
+
 test('ingestion preserves modern reference, descriptions and exact source frontmatter', () => {
   fixture('esid: sec-example\r\ndescription: A useful description\r\ninfo: |\r\n  Algorithm details.\r\nauthor: Example', row => {
     assert.equal(row.metadata.esid, 'sec-example');

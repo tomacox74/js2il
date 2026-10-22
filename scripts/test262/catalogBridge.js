@@ -14,7 +14,8 @@ const SPECIFICATION_KEYS = ['esid', 'es5id', 'es6id'];
 function specificationIdentifiers(frontmatter) {
   // Only the supervisor reads references; staged fixture runtimes need no YAML package.
   const { isMap, isScalar, parseDocument } = require('yaml');
-  const document = parseDocument(frontmatter, {
+  // YAML parsing needs normalized newlines; retain original frontmatter/source bytes below.
+  const document = parseDocument(frontmatter.replace(/\r\n?/g, '\n'), {
     version: '1.2', schema: 'core', uniqueKeys: false, intAsBigInt: true,
   });
   const diagnostics = document.errors.concat(document.warnings);
