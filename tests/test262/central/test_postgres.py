@@ -251,8 +251,13 @@ class PostgresTests(unittest.TestCase):
                         examined = sum((scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0))
                                        * scan.get('Actual Loops', 1) for scan in scans)
                         self.assertLessEqual(examined, 2 * count + 32, scans)
-                        self.assertFalse(any(node['Node Type'] in ('Limit', 'WindowAgg', 'Aggregate', 'Sort')
-                                             for node in nodes(plans[0]['Plan'])), plans[0])
+                        # Ownership joins may hash/deduplicate their key set. The
+                        # exported rows themselves must not be sorted/aggregated
+                        # into pages or wrapped in a LIMIT/window operation.
+                        self.assertNotIn(plans[0]['Plan']['Node Type'],
+                                         ('Limit', 'WindowAgg', 'Aggregate', 'Sort'), plans[0])
+                        for fragment in ('jsonb_agg(', 'row_number(', 'OFFSET', 'LIMIT'):
+                            self.assertNotIn(fragment, plans[0]['Query Text'])
         finally:
             self.db.remove_notice_handler(capture)
 
