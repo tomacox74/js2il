@@ -1,0 +1,104 @@
+name: Test262 specification metadata canary
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [preflight, apply]
+        default: preflight
+        description: Read-only preflight or append and verify one corpus
+      corpus:
+        type: choice
+        options:
+          - cf3b4d8e-e508-5b39-94a6-dd455585be9e
+          - 122d7a12-5452-52fc-87ac-3582f7615755
+          - 69508b60-11b8-5541-bcf6-0c2671d59f4b
+          - fe510e3b-b528-5d23-9aaa-9cbd2df7d440
+        description: One reviewed original corpus from issue 2338
+      metadata_digest:
+        required: true
+        type: string
+        description: Reviewed path and corrected metadata SHA-256 manifest
+      backup_run:
+        required: true
+        type: string
+        description: Successful fresh catalogue backup run (first attempt)
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: test262-specification-backfill
+  cancel-in-progress: false
+jobs:
+  canary:
+    if: github.ref == 'refs/heads/master'
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Validate successful master recovery workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BACKUP_RUN: ${{ inputs.backup_run }}
+        run: |
+          python - <<'PY'
+          import json, os, re, urllib.request
+          run = os.environ['BACKUP_RUN']
+          if not re.fullmatch(r'[0-9]+', run):
+              raise SystemExit('Numeric recovery run required')
+          request = urllib.request.Request('https://api.github.com/repos/tomacox74/js2il/actions/runs/' + run,
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          result = json.load(urllib.request.urlopen(request))
+          if (result['path'] != '.github/workflows/test262-central-backup.yml' or
+              result['head_branch'] != 'master' or result['status'] != 'completed' or
+              result['conclusion'] != 'success' or result['run_attempt'] != 1):
+              raise SystemExit('Completed first-attempt master catalogue backup required')
+          PY
+      - uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.backup_run }}
+          name: test262-catalogue-backup-${{ inputs.backup_run }}-1
+          path: /tmp/test262-backfill-recovery
+      - name: Check out original complete Test262 source without execution
+        uses: actions/checkout@v5
+        with:
+          repository: tc39/test262
+          ref: 2b2ecead6e828dd9af13a9ec72065e645724a50f
+          path: artifacts/test262-original
+          persist-credentials: false
+      - name: Source-verified annotation-only canary and replay
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          CORPUS: ${{ inputs.corpus }}
+          MODE: ${{ inputs.mode }}
+          METADATA_DIGEST: ${{ inputs.metadata_digest }}
+          BACKUP_RUN: ${{ inputs.backup_run }}
+        run: |
+          python -m scripts.test262.central.specification_backfill \
+            --corpus "$CORPUS" --root artifacts/test262-original --mode "$MODE" \
+            --metadata-digest "$METADATA_DIGEST" --backup-run "$BACKUP_RUN" \
+            --backup-report /tmp/test262-backfill-recovery/backup-report.json \
+            --output /tmp/test262-specification-canary.json
+      - name: Retain sanitized receipt only
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-specification-canary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/test262-specification-canary.json
+          if-no-files-found: warn
+          retention-days: 90
