@@ -138,7 +138,7 @@ class PostgresTests(unittest.TestCase):
                 # Interleave foreign fixtures so a missing ownership predicate is observable.
                 self.db.execute("""INSERT INTO test262.fixtures(fixture_id,corpus_id,upstream_path,content_sha256,metadata_state)
                     SELECT ('10000000-0000-0000-0000-'||lpad(to_hex(i),12,'0'))::uuid,
-                           CASE WHEN i%2=0 THEN %s::uuid ELSE %s::uuid END,
+                           CASE WHEN mod(i,2)=0 THEN %s::uuid ELSE %s::uuid END,
                            'test/pagination-'||i||'.js',sha256('fixture'::bytea),'valid'
                     FROM generate_series(1,32768) i""", (own_corpus, other_corpus))
                 self.db.execute("UPDATE test262.corpora SET inventory_state='sealed' WHERE corpus_id IN (%s,%s)", (own_corpus, other_corpus))
@@ -191,8 +191,8 @@ class PostgresTests(unittest.TestCase):
                 expected += [(provenances[1], fixture_id(i)) for i in range(2, 121, 2)]
                 self.assertEqual([(row['provenance_id'], row['fixture_id']) for row in result['rows']], expected)
                 # Typed equality filters must also be index conditions, including UUID normalization.
-                result, scans = read('fixtures', {'fixture_id': fixture_id(30000).upper()}, None)
-                self.assertEqual([row['fixture_id'] for row in result['rows']], [fixture_id(30000)])
+                result, scans = read('fixtures', {'fixture_id': fixture_id(30010).upper()}, None)
+                self.assertEqual([row['fixture_id'] for row in result['rows']], [fixture_id(30010)])
                 self.assertTrue(any('fixture_id =' in scan['Index Cond'] for scan in scans), scans)
                 result, _ = read('provenance_fixture_eligibility', {'provenance_id': provenances[1]},
                                  {'provenance_id': provenances[1], 'fixture_id': fixture_id(30000)})
