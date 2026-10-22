@@ -141,13 +141,15 @@ class PostgresTests(unittest.TestCase):
                            CASE WHEN mod(i,2)=0 THEN %s::uuid ELSE %s::uuid END,
                            'test/pagination-'||i||'.js',sha256('fixture'::bytea),'valid'
                     FROM generate_series(1,32768) i""", (own_corpus, other_corpus))
+                self.db.execute("INSERT INTO test262.fixture_variants(fixture_id,variant) SELECT fixture_id,'strict' FROM test262.fixtures WHERE corpus_id IN (%s,%s)", (own_corpus, other_corpus))
+                self.db.execute("INSERT INTO test262.fixture_dependencies(fixture_id,dependency_path,content_sha256,dependency_kind) SELECT fixture_id,'harness/example.js',sha256('dependency'::bytea),'harness' FROM test262.fixtures WHERE corpus_id IN (%s,%s)", (own_corpus, other_corpus))
                 self.db.execute("UPDATE test262.corpora SET inventory_state='sealed' WHERE corpus_id IN (%s,%s)", (own_corpus, other_corpus))
                 provenances = ['20000000-0000-0000-0000-' + format(i, '012x') for i in (1, 2, 3)]
                 for index, provenance in enumerate(provenances):
                     repository, corpus = (self.repo, own_corpus) if index < 2 else (other, other_corpus)
                     self.db.execute("INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256) VALUES(%s,%s,%s,'native',1,sha256(%s::bytea),'{}',sha256('cap'::bytea))", (provenance, repository, corpus, provenance.encode()))
                     self.db.execute("INSERT INTO test262.provenance_fixture_eligibility(repository_id,provenance_id,fixture_id,eligibility) SELECT %s,%s,fixture_id,'runnable' FROM test262.fixtures WHERE corpus_id=%s", (repository, provenance, corpus))
-                for table in ('fixtures', 'provenance_fixture_eligibility'):
+                for table in ('fixtures', 'fixture_variants', 'fixture_dependencies', 'provenance_fixture_eligibility'):
                     self.db.execute('ANALYZE test262.' + table)
 
                 def read(table, filters, after, page=64):
@@ -159,6 +161,7 @@ class PostgresTests(unittest.TestCase):
                     finally:
                         self.db.execute('SET LOCAL auto_explain.log_min_duration=-1')
                     self.assertEqual(len(plans), 1, plans)
+                    self.assertNotIn('api_scope(', plans[0]['Query Text'])
                     scans = [node for node in nodes(plans[0]['Plan'])
                              if node.get('Relation Name') == table and node.get('Index Cond')]
                     self.assertTrue(scans, plans[0])
@@ -173,6 +176,17 @@ class PostgresTests(unittest.TestCase):
                         # Count examined rows rather than impose a flaky wall-clock threshold.
                         self.assertLessEqual(sum(scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0)
                                                  for scan in scans), 256, scans)
+
+                    for table, extra_key, extra_value in (
+                            ('fixture_variants', 'variant', 'strict'),
+                            ('fixture_dependencies', 'dependency_path', 'harness/example.js')):
+                        with self.subTest(table=table, offset=offset):
+                            result, scans = read(table, {}, {'fixture_id': fixture_id(offset), extra_key: extra_value})
+                            self.assertEqual([row['fixture_id'] for row in result['rows']],
+                                             [fixture_id(i) for i in range(offset+2, offset+130, 2)])
+                            self.assertTrue(any('>' in scan['Index Cond'] for scan in scans), scans)
+                            self.assertLessEqual(sum(scan.get('Actual Rows', 0) + scan.get('Rows Removed by Filter', 0)
+                                                     for scan in scans), 256, scans)
 
                     with self.subTest(table='provenance_fixture_eligibility', offset=offset):
                         result, scans = read('provenance_fixture_eligibility', {},
@@ -199,11 +213,50 @@ class PostgresTests(unittest.TestCase):
                 self.assertEqual({row['provenance_id'] for row in result['rows']}, {provenances[1]})
                 # A known foreign fixture/provenance must remain invisible through the same API.
                 for table, filters in (('fixtures', {'fixture_id': fixture_id(30001)}),
+                                       ('fixture_variants', {'fixture_id': fixture_id(30001)}),
+                                       ('fixture_dependencies', {'fixture_id': fixture_id(30001)}),
                                        ('provenance_fixture_eligibility', {'provenance_id': provenances[2]})):
                     self.assertEqual(self.db.execute('SELECT test262.api_read(1,%s,%s,NULL,64)',
                                                      (table, Jsonb(filters))).fetchone()[0]['rows'], [])
         finally:
             self.db.remove_notice_handler(capture)
+
+    def test_typed_reader_scope_matches_existing_helper_for_every_export_table(self):
+        from scripts.test262.central.client import EXPORT_TABLES, sha
+        with self.db.transaction(force_rollback=True):
+            other, corpus, fixture = (str(uuid.uuid4()) for _ in range(3))
+            self.db.execute("INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,'test/typed-scope')", (other, other))
+            self.db.execute("INSERT INTO test262.api_subjects VALUES(session_user,%s,%s,'coordinator','trusted',true)", (self.repo, self.producer))
+            # Shared corpora remain visible through this repository's link.
+            self.db.execute('INSERT INTO test262.repository_corpora VALUES(%s,%s,clock_timestamp())', (other, self.corpus))
+            self.db.execute("INSERT INTO test262.corpora(corpus_id,upstream_url,revision,revision_algorithm,inventory_digest,expected_fixture_count) VALUES(%s,'test',repeat('a',40),'sha1',sha256('scope'::bytea),1)", (corpus,))
+            self.db.execute('INSERT INTO test262.repository_corpora VALUES(%s,%s,clock_timestamp())', (other, corpus))
+            self.db.execute("INSERT INTO test262.fixtures(fixture_id,corpus_id,upstream_path,content_sha256,metadata_state) VALUES(%s,%s,'test/foreign.js',sha256('fixture'::bytea),'valid')", (fixture, corpus))
+            self.db.execute("INSERT INTO test262.fixture_variants(fixture_id,variant) VALUES(%s,'strict')", (fixture,))
+            self.db.execute("INSERT INTO test262.fixture_dependencies(fixture_id,dependency_path,content_sha256,dependency_kind) VALUES(%s,'harness/foreign.js',sha256('dependency'::bytea),'harness')", (fixture,))
+            self.db.execute("UPDATE test262.corpora SET inventory_state='sealed' WHERE corpus_id=%s", (corpus,))
+            metadata = {'specification': {'schema_version': 1, 'raw_identifiers': {}, 'reference_state': 'absent'}}
+            for source in (self.fixtures[0], fixture):
+                self.db.execute("""INSERT INTO test262.fixture_specification_metadata(fixture_id,upstream_revision,upstream_path,content_sha256,metadata,metadata_sha256)
+                    SELECT f.fixture_id,c.revision,f.upstream_path,f.content_sha256,%s,sha256(convert_to(test262.canonical_json(%s),'UTF8'))
+                    FROM test262.fixtures f JOIN test262.corpora c USING(corpus_id) WHERE fixture_id=%s ON CONFLICT DO NOTHING""",
+                    (Jsonb(metadata), Jsonb(metadata), source))
+            for table in EXPORT_TABLES:
+                with self.subTest(table=table):
+                    expected = self.db.execute('SELECT to_jsonb(x) FROM test262."' + table + '" x WHERE test262.api_scope(%s,to_jsonb(x),%s)', (table, self.repo)).fetchall()
+                    actual, after = [], None
+                    while True:
+                        page = self.db.execute('SELECT test262.api_read(1,%s,%s,%s,1000)',
+                                               (table, Jsonb({}), Jsonb(after) if after else None)).fetchone()[0]
+                        actual.extend(page['rows'])
+                        after = page['next']
+                        if not after:
+                            break
+                    self.assertEqual({sha(row) for row in actual}, {sha(row[0]) for row in expected})
+                    self.assertEqual(len(actual), len(expected))
+            for table in ('fixtures', 'fixture_variants', 'fixture_dependencies', 'fixture_specification_metadata'):
+                self.assertEqual(self.db.execute('SELECT test262.api_read(1,%s,%s,NULL,10)',
+                                                (table, Jsonb({'fixture_id': fixture}))).fetchone()[0]['rows'], [])
 
     def test_indexed_reader_keeps_invalid_argument_rejection(self):
         with self.worker() as db:
