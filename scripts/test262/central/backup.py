@@ -39,7 +39,7 @@ def run(command, env=None):
     subprocess.run(command,check=True,env=env)
 
 
-def create_snapshot(args):
+def create_snapshot(args, progress=None):
     import psycopg
     dsn=os.environ['TEST262_BACKUP_DATABASE_URL']
     output=Path(args.output);output.mkdir(parents=True,exist_ok=True)
@@ -48,13 +48,28 @@ def create_snapshot(args):
     # Pin the dump and its verification counts to the SAME exported MVCC snapshot.
     with psycopg.connect(dsn) as db:
         db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
+        # Derived reporting counts can outgrow an interactive query's two minutes.
+        # Keep a finite, transaction-local budget; the backup job also has a 30m limit.
+        db.execute("SET LOCAL statement_timeout='10min'")
+        if progress:
+            progress('snapshot.export')
         token=db.execute('SELECT pg_export_snapshot()').fetchone()[0]
+        if progress:
+            progress('snapshot.dump')
         run(['pg_dump','--snapshot='+token,'--format=custom','--no-owner','--schema=test262','--schema=test262_reporting','--file',str(archive)],env)
         contract=db.execute('SELECT to_jsonb(c) FROM test262.schema_contract c').fetchone()[0]
         names=[r[0] for r in db.execute("SELECT tablename FROM pg_tables WHERE schemaname='test262' ORDER BY tablename")]
-        counts={name:db.execute('SELECT count(*) FROM test262."'+name+'"').fetchone()[0] for name in names}
+        counts={}
+        for name in names:
+            if progress:
+                progress('snapshot.table-count.'+name)
+            counts[name]=db.execute('SELECT count(*) FROM test262."'+name+'"').fetchone()[0]
         views=[r[0] for r in db.execute("SELECT table_name FROM information_schema.views WHERE table_schema='test262_reporting'")]
-        view_counts={name:db.execute('SELECT count(*) FROM test262_reporting."'+name+'"').fetchone()[0] for name in views}
+        view_counts={}
+        for name in views:
+            if progress:
+                progress('snapshot.view-count.'+name)
+            view_counts[name]=db.execute('SELECT count(*) FROM test262_reporting."'+name+'"').fetchone()[0]
     digest=hashlib.sha256(archive.read_bytes()).hexdigest()
     manifest={'sha256':digest,'contract':{k:str(v) if hasattr(v,'isoformat') else v for k,v in contract.items()},'row_counts':counts,'view_counts':view_counts,
               'roles':['test262_ingest','test262_coordinator','test262_reporter'],'contains_performance_data':False}
@@ -70,7 +85,7 @@ def backup(args):
     report={'schema_version':1,'backup_verified':False,'stage':'snapshot','objects':{},
             'contains_performance_data':False}
     try:
-        archive,manifest=create_snapshot(args)
+        archive,manifest=create_snapshot(args, progress=lambda stage: report.update(stage=stage))
         if not args.destination:
             return
         if not args.kms_key:
