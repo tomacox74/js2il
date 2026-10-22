@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): replace reflection-driven async/await and generator validation
+  with typed child visits while preserving validation order, nesting state,
+  shared-node protection, and malformed-AST handling. Add exhaustive parser-node
+  coverage and same-host Stopwatch compile profiles.
 - fix(test262): retain upstream specification identifiers and descriptive metadata
   in catalogue ingestion and exports. Add source-verified immutable enrichment for
   existing sealed corpora and a reporting view that preserves revision/path/digest
