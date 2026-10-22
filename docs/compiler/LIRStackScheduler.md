@@ -100,10 +100,47 @@ Current integration is in:
 
 - `src/Compiler/IL/LIRStackSchedule.cs`
 - `src/Compiler/IL/LIRStackScheduler.cs`
+- `src/Compiler/IL/LIRStackSchedulerAnalysis.cs`
 - `src/Compiler/IL/LIRRematerializationPolicy.cs`
 - `src/Compiler/IL/LIRInstructionInfo.cs`
 - `src/Compiler/IL/LIRToILCompiler.MethodBodyCompilation.cs`
 - `src/Compiler/CompilerOptions.cs`
+
+## Shared per-build analysis
+
+Every optimizing `Build` creates one immutable
+`LIRStackSchedulerAnalysis` over the final normalized instruction list. A
+single instruction traversal computes definition index/count and last-use
+index/count, using canonical `LIRInstructionInfo` metadata. Indexes retain the
+**last** occurrence; single-definition/single-use eligibility still requires
+the corresponding count to be one. Uses count operand occurrences, including
+repeated operands within the same instruction. Unreachable instructions are
+not omitted. Unregistered temp indexes do not contribute to the tables, but
+remain in the ordered operand data for existing defensive behavior.
+
+Ordered instruction operands use one flattened `TempVariable[]` and an offset
+table, exposed as read-only spans. Producer-tree discovery, effect-order
+traversal, numeric-stack pruning, and reordered last-use calculation reuse
+these operands rather than allocating a list or rediscovering metadata at each
+visit. The independent validator deliberately continues to derive its own
+facts from the original LIR.
+
+Strategy-specific state remains separate from immutable method facts:
+
+- Private intermediate plans extend the same per-build residency and ownership
+  buffers. Only the final validated plan escapes; separate builds, including
+  later builds over a modified `MethodBodyIR`, share no writable state.
+- The build context caches region membership by operation-array identity.
+  Reordering produces a different array and invalidates that map.
+- A stage that retains the same operation array also retains its existing
+  regions and effective last uses. A reordered stage rebuilds both, computing
+  liveness in scheduled positions rather than raw instruction indexes.
+- Strict validation and safe fallback are unchanged. Fallback constructs and
+  validates a **fresh** identity plan, never reusing optimized ownership,
+  residency, liveness, or layout buffers.
+
+`Identity` retains its smaller source-order-only analysis path. There is no
+cross-build cache, global mutable analysis state, or buffer pooling.
 
 ## Scheduler modes
 
@@ -828,6 +865,13 @@ and without PDBs, and compares:
 
 Focused regression coverage also includes:
 
+- `LIRStackSchedulerAnalysisTests` for occurrence counts, last definitions/uses,
+  ordered duplicate operands, unreachable instructions, and unregistered temps;
+- all-mode build isolation, multiple-definition loop values, nested argument
+  execution, exceptions/finally, and fresh identity fallback from every
+  optimizing mode;
+- a bounded allocation regression that rejects allocating a full set of temp
+  tables at every cumulative stage;
 - `LIRStackScheduleValidatorTests` for positive, rejection, catch-entry,
   deep-stack, strict, and fallback behavior;
 - `LIRRematerializationPolicyTests`;
@@ -845,6 +889,108 @@ Focused regression coverage also includes:
   PDB, and nested source-mapped exceptions;
 - `ILVerificationTests`, including deep arithmetic and arbitrary-value
   try/catch/finally.
+
+## Shared-analysis performance evidence
+
+The comparison for [issue #2310](https://github.com/tomacox74/js2il/issues/2310)
+uses baseline `011ca4fdbac9dc8567ce7521e2e26230cc70da8d` (after the
+independent AST-validation optimization) and implementation
+`8679c0339c25c3f9f83c4a1c26a2c6cb7306f1ab`. The unchanged workloads are
+`tests/performance/Benchmarks/Scenarios/stopwatch.js` and
+`stopwatch-modern.js`. Both generated assemblies have identical disassembled
+IL before and after. No generator snapshots changed.
+
+Host: Ubuntu 24.04.5, Xeon 6975P-C, 4 physical/8 logical cores, SDK 10.0.113,
+.NET 10.0.13 (`10.0.1326.50504`). Each revision/scenario starts in a separate
+process, and each iteration creates a fresh compiler, compiles the original
+source, loads the artifact into a fresh hosted realm, executes it, and
+disposes it. Source reading, explicit GC, loading, and execution are outside
+the compile-only timer. Runtime binaries are identical between revisions;
+there is no compiled-artifact cache or modified workload.
+
+### Compile-only diagnostics
+
+No PDBs; default runtime settings. Allocation is process-wide
+`GC.GetTotalAllocatedBytes(true)`, a phase diagnostic rather than a
+MemoryDiagnoser claim.
+
+| Variant / window | Before median ms | After median ms | Before bytes | After bytes |
+|---|---:|---:|---:|---:|
+| Classic, iterations 10-29 | 33.073 | 25.777 | 2,549,960 | 2,486,904 |
+| Modern, iterations 10-29 | 31.771 | 24.693 | 2,437,200 | 2,375,024 |
+| Classic, iterations 50-99 | 8.403 | 8.164 | 2,303,504 | 2,242,784 |
+| Modern, iterations 50-99 | 9.299 | 8.250 | 2,322,488 | 2,259,544 |
+| Classic, alternating repeat 1, 50-99 | 9.025 | 8.260 | 2,304,848 | 2,243,456 |
+| Modern, alternating repeat 1, 50-99 | 9.283 | 8.371 | 2,322,296 | 2,260,312 |
+| Classic, alternating repeat 2, 50-99 | 9.231 | 8.334 | 2,304,912 | 2,243,456 |
+| Modern, alternating repeat 2, 50-99 | 9.267 | 8.157 | 2,310,512 | 2,254,376 |
+
+Tiering materially changes this boundary: do not combine early and late
+windows. An exploratory pre-commit classic pair was 8.403 -> 8.821 ms in the
+late window; timings remain noisy, not a universal speedup guarantee. The
+alternating repeats run after/before, then before/after, in separate processes.
+
+### BenchmarkDotNet confirmation
+
+The existing `JavaScriptRuntimeBenchmarks.Jroc_Total` includes fresh
+compile/load/execute, not compile-only or steady-state JavaScript execution.
+Frozen benchmark outputs differ only in `Jroc.Compiler.dll` and its PDB.
+BenchmarkDotNet 0.16.0-preview.2, in-process toolchain, one launch, five warmup
+iterations, twelve requested measurement iterations, invocation/unroll count
+one, default CLR settings:
+
+| Variant | Before mean ms (retained N) | After mean ms (retained N) | Before MemoryDiagnoser bytes/op | After bytes/op |
+|---|---:|---:|---:|---:|
+| Classic | 71.342 (12) | 69.611 (10) | 16,678,504 | 16,615,432 |
+| Modern | 70.968 (12) | 69.948 (12) | 16,700,960 | 16,638,768 |
+
+These short local jobs warn about sub-100-ms iterations and unavailable
+high-priority permissions. Read retained N, original values, confidence
+intervals, host, and memory fields from the attached raw JSON, rather than
+treating twelve requested iterations as twelve retained samples.
+
+```sh
+dotnet <isolated-output>/Benchmarks.dll --all \
+  --filter '*JavaScriptRuntimeBenchmarks.Jroc_Total*stopwatch*' \
+  --inProcess --warmupCount 5 --iterationCount 12 --launchCount 1 \
+  --invocationCount 1 --unrollFactor 1 --artifacts <results>
+```
+
+### Compiler-thread profiles
+
+Matched EventPipe captures use PDB-enabled compilations, verbose runtime
+GC/JIT/loader events, and sampled-thread-time events. Compile begin/end
+markers restrict results to the compiling thread and iterations 10-99
+(90 compilation windows), excluding execution, other threads, and explicit
+GC outside the timed phase.
+
+| Variant | All compile-thread samples before/after | Scheduler Build inclusive | Canonical operand visitor inclusive | Independent validator inclusive |
+|---|---:|---:|---:|---:|
+| Classic | 1,464 / 1,283 | 493 / 231 | 154 / 86 | 121 / 109 |
+| Modern | 1,462 / 1,337 | 474 / 267 | 154 / 94 | 104 / 135 |
+
+The shared analysis constructor accounts for 36 classic / 34 modern inclusive
+samples after the change. Scheduler-planning allocation-tick estimates,
+excluding validator stacks, decline from 14,924,000 to 5,096,480 bytes for
+classic and 12,246,856 to 7,421,360 bytes for modern. Within those estimates,
+`Int32[]` declines from 3,944,200 to 528,936 and 2,874,136 to 1,369,544 bytes;
+scheduled-region arrays also decline. Allocation ticks are sparse sampled
+estimates, **not exact allocated byte counts or additional savings** to add to
+MemoryDiagnoser results.
+
+Inclusive stacks overlap and GC polling remains substantial (541 / 566
+after samples); these are not additive CPU percentages or predicted
+speedups. The enclosing IL-method compilation stack remains at 505 / 544
+samples, including scheduling. Other visible work includes dependency
+injection resolution, runtime type checks, and symbol-table/type inference
+(112 / 133 samples in `SymbolTableBuilder.Build`). Scope-predicate delegates
+are the leading sampled allocation type. Independent validation remains an
+intentional correctness cost; pooling and other compiler optimizations are
+not part of this change.
+
+The fix PR includes the exact phase runner/analyzer sources, binary/workload
+hashes, full compile rows, and raw BenchmarkDotNet statistics and profile
+extracts for reproduction.
 
 ## Current non-goals
 

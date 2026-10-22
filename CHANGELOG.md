@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): share immutable LIR definition/use and ordered operand analysis
+  across stack-scheduler stages; reuse private residency/ownership buffers and
+  unchanged region/liveness layouts while retaining independent validation and
+  fresh identity fallback.
 - perf(compiler): replace reflection-driven async/await and generator validation
   with typed child visits while preserving validation order, nesting state,
   shared-node protection, and malformed-AST handling. Add exhaustive parser-node
