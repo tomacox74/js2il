@@ -12,6 +12,169 @@ namespace Jroc.Tests;
 
 public sealed class LIRStackSchedulerTests
 {
+    public static IEnumerable<object[]> SchedulerModes
+        => Enumerable.Range(1, 7).Select(mode => new object[] { mode });
+
+    [Theory]
+    [MemberData(nameof(SchedulerModes))]
+    public void Build_SeparateCallsAndModes_DoNotShareWritableState(int modeValue)
+    {
+        var body = new MethodBodyIR();
+        var left = AddTemp(body);
+        var right = AddTemp(body);
+        var product = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, left));
+        body.Instructions.Add(new LIRConstNumber(2, right));
+        body.Instructions.Add(new LIRMulNumber(left, right, product));
+        body.Instructions.Add(new LIRReturn(product));
+        var options = new LIRStackSchedulerOptions((LIRStackSchedulerMode)modeValue);
+
+        var first = LIRStackScheduler.Build(body, options);
+        var originalResidencies = first.TempResidencies.ToArray();
+        var originalOwnership = first.OwnedTemps.ToArray();
+        var originalLastUses = first.EffectiveLastUses.ToArray();
+        LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions(LIRStackSchedulerMode.GeneralRegions));
+        var second = LIRStackScheduler.Build(body, options);
+
+        Assert.NotSame(first.TempResidencies, second.TempResidencies);
+        Assert.NotSame(first.OwnedTemps, second.OwnedTemps);
+        Assert.NotSame(first.EffectiveLastUses, second.EffectiveLastUses);
+        Assert.Equal(originalResidencies, first.TempResidencies);
+        Assert.Equal(originalOwnership, first.OwnedTemps);
+        Assert.Equal(originalLastUses, first.EffectiveLastUses);
+        Assert.Equal(first.Mode, second.Mode);
+        Assert.Equal(first.Metrics, second.Metrics);
+        Assert.Equal(first.MaxStackDepth, second.MaxStackDepth);
+        Assert.Equal(first.ValidationFailureReason, second.ValidationFailureReason);
+        Assert.Equal(first.Operations, second.Operations);
+        Assert.Equal(first.Regions, second.Regions);
+        Assert.Equal(first.TempResidencies, second.TempResidencies);
+        Assert.Equal(first.OwnedTemps, second.OwnedTemps);
+        Assert.Equal(first.EffectiveLastUses, second.EffectiveLastUses);
+        Assert.Equal(
+            first.CarriedStackDepthBeforeInstructions,
+            second.CarriedStackDepthBeforeInstructions);
+
+        body.Instructions.Add(new LIRReturn(left));
+        var changed = LIRStackScheduler.Build(body, options);
+        Assert.Equal(4, changed.EffectiveLastUses[left.Index]);
+        Assert.Equal(originalLastUses, first.EffectiveLastUses);
+    }
+
+    [Theory]
+    [MemberData(nameof(SchedulerModes))]
+    public void Build_MultipleDefinitionsAndLoopBackedge_RemainMaterialized(int modeValue)
+    {
+        var body = new MethodBodyIR();
+        var condition = AddTemp(body);
+        var value = AddTemp(body);
+        var sum = AddTemp(body);
+        body.Instructions.Add(new LIRLoadParameter(1, condition));
+        body.Instructions.Add(new LIRLabel(1));
+        body.Instructions.Add(new LIRConstNumber(1, value));
+        body.Instructions.Add(new LIRConstNumber(2, value));
+        body.Instructions.Add(new LIRAddNumber(value, value, sum));
+        body.Instructions.Add(new LIRBranchIfFalse(condition, 2));
+        body.Instructions.Add(new LIRBranch(1));
+        body.Instructions.Add(new LIRLabel(2));
+        body.Instructions.Add(new LIRReturn(sum));
+
+        var schedule = LIRStackScheduler.Build(
+            body,
+            new LIRStackSchedulerOptions((LIRStackSchedulerMode)modeValue));
+
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[value.Index]);
+        Assert.Equal(TempResidency.MaterializedLocal, schedule.TempResidencies[sum.Index]);
+        Assert.False(schedule.OwnedTemps[value.Index]);
+        Assert.False(schedule.OwnedTemps[sum.Index]);
+        Assert.Equal(0, schedule.Metrics.ValidationFallbackCount);
+        Assert.Equal(8, schedule.EffectiveLastUses[sum.Index]);
+    }
+
+    [Theory]
+    [MemberData(nameof(SchedulerModes))]
+    public void Compiler_AllModes_PreserveNestedArgumentsControlFlowAndFinally(int modeValue)
+    {
+        const string source = """
+            "use strict";
+            let events = [];
+            function take(x) { events.push(x); return x; }
+            function nested(a, b) {
+                return Math.max(Math.floor(take(a)) * 2, Math.sqrt(take(b)) + 3);
+            }
+            function flow() {
+                let total = 0;
+                for (let i = 0; i < 4; i++) {
+                    try {
+                        if (i === 2) throw i;
+                        total += nested(i + 0.5, 4);
+                    } catch (e) {
+                        total -= e;
+                    } finally {
+                        total += 0.25;
+                    }
+                }
+                return total;
+            }
+            function shape(a, b) {
+                return { x: [a * 2, b + 3], y: Math.floor(a) + Math.sqrt(b) };
+            }
+            function unreachable(flag) {
+                if (flag) return 7;
+                return 9;
+                take(99);
+            }
+            function* gen(a) { yield a + 1; return a + 2; }
+            async function af(a) { return (await a) + 1; }
+            const actual = flow();
+            if (actual !== 15)
+                throw new Error("numeric/control/EH mismatch: " + actual + "; " + events.join(","));
+            if (events.join(",") !== "0.5,4,1.5,4,3.5,4")
+                throw new Error("argument/effect order mismatch");
+            const result = shape(2, 9);
+            if (result.x[0] !== 4 || result.x[1] !== 12 || result.y !== 5)
+                throw new Error("construction mismatch");
+            if (unreachable(true) !== 7 || unreachable(false) !== 9)
+                throw new Error("unreachable mismatch");
+            if (gen(4).next().value !== 5) throw new Error("generator mismatch");
+            """;
+
+        var artifact = Compile(source, (LIRStackSchedulerMode)modeValue, emitPdb: true);
+        using var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
+        using var exports = Jroc.Runtime.JsEngine.LoadModule(
+            loaded.Assembly,
+            artifact.ModuleIds[0]);
+    }
+
+    [Fact]
+    public void Build_GeneralRegions_DoesNotAllocateTempTablesForEveryStage()
+    {
+        const int tempCount = 4096;
+        var body = new MethodBodyIR();
+        for (var index = 0; index < tempCount; index++)
+        {
+            AddTemp(body);
+        }
+        body.Instructions.Add(new LIRReturnUndefinedImmediate());
+        var identityOptions = new LIRStackSchedulerOptions(LIRStackSchedulerMode.Identity);
+        var generalOptions = new LIRStackSchedulerOptions(LIRStackSchedulerMode.GeneralRegions);
+
+        LIRStackScheduler.Build(body, identityOptions);
+        LIRStackScheduler.Build(body, generalOptions);
+        var start = GC.GetAllocatedBytesForCurrentThread();
+        LIRStackScheduler.Build(body, identityOptions);
+        var identityBytes = GC.GetAllocatedBytesForCurrentThread() - start;
+        start = GC.GetAllocatedBytesForCurrentThread();
+        LIRStackScheduler.Build(body, generalOptions);
+        var generalBytes = GC.GetAllocatedBytesForCurrentThread() - start;
+
+        Assert.True(
+            generalBytes - identityBytes < tempCount * 24L + 32768,
+            $"General scheduler allocated {generalBytes - identityBytes} additional bytes.");
+    }
+
     [Fact]
     public void Identity_EmptyBody_ReturnsEmptyNonOwningPlan()
     {
