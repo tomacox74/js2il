@@ -23,6 +23,17 @@ def parser():
     enrichment.add_argument('--corpus',required=True)
     enrichment.add_argument('--root',required=True)
     f=sub.add_parser('flush'); f.add_argument('--outbox',required=True)
+    f=sub.add_parser('finalize',help='Finalize collection after durable outbox flush')
+    f.add_argument('--context',required=True); f.add_argument('--outbox',required=True)
+    f.add_argument('--run-key',required=True)
+    f.add_argument('--conclusion',choices=['success','failure','cancelled'],required=True)
+    f.add_argument('--flush-verified',action='store_true')
+    r=sub.add_parser('reconcile-runs',help='Inspect exact Actions attempts; dry-run unless --apply')
+    r.add_argument('--repository-name',default='tomacox74/js2il')
+    r.add_argument('--limit',type=int,default=100)
+    r.add_argument('--actions-run-id',type=int)
+    r.add_argument('--actions-run-attempt',type=int)
+    r.add_argument('--apply',action='store_true')
     q=sub.add_parser('prepare')
     q.add_argument('--kind',choices=['mvp-composite','native'],required=True)
     q.add_argument('--repository-name',default='tomacox74/js2il')
@@ -73,6 +84,9 @@ def main(argv=None):
         elif args.command=='flush':
             Outbox(args.outbox,args.repository,args.producer,client.epoch).flush(client)
             result={'flushed':True}
+        elif args.command in ('finalize','reconcile-runs'):
+            from . import lifecycle
+            result=getattr(lifecycle,args.command.replace('-','_'))(client,args)
         elif args.command=='publish':
             from .publication import publish
             result=publish(client,args)
