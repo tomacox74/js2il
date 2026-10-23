@@ -5,7 +5,10 @@ under the [Node compatibility baseline](https://github.com/tomacox74/js2il/issue
 It does **not** publish a compatibility score or claim that JROC implements
 Node 24. The [opt-in differential runner](../../../scripts/differential-test/README.md#node-compatibility-evidence-mode)
 produces separate executable evidence. A broad public-API corpus, package
-workloads and reporting gates remain separate implementation issues.
+workloads and reporting gates remain separate implementation issues. The
+[first public-API slice](BehaviorCorpus.md) adds 19 provenance-backed original
+scenarios and an explicitly bounded upstream discovery inventory; it is not
+a whole-Node score.
 
 ## Artifact contracts and future catalogue integration
 

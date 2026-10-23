@@ -1,0 +1,658 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "nodejs-compatibility",
+  "artifactKind": "scenario-manifest",
+  "scopeId": "node24-public-api-v1",
+  "corpusId": "node-public-api-v1",
+  "referenceProfileSha256": "b20fa3b8e8015542b08797a9d2160b2d1267c772605f3b80afccb8bf7f2a3414",
+  "corpusMetadata": "corpus.json",
+  "cases": [
+    {
+      "id": "node:scenario/public-api/path/posix",
+      "targets": [
+        "node:api/path/method/path.join",
+        "node:api/path/method/path.normalize",
+        "node:api/path/method/path.relative",
+        "node:api/path/method/path.isAbsolute"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "path-posix.js",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "path-posix.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/path/win32",
+      "targets": [
+        "node:api/path/method/path.join",
+        "node:api/path/method/path.normalize",
+        "node:api/path/method/path.relative",
+        "node:api/path/method/path.isAbsolute"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "path-win32.js",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "path-win32.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/path/shape-and-boundaries",
+      "targets": [
+        "node:module/path",
+        "node:api/path/method/path.parse",
+        "node:api/path/method/path.format",
+        "node:api/path/method/path.basename",
+        "node:api/path/method/path.extname"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "path-shape.js",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "path-shape.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/path/invalid-inputs",
+      "targets": [
+        "node:api/path/method/path.join",
+        "node:api/path/method/path.basename",
+        "node:api/path/method/path.parse",
+        "node:api/path/method/path.relative"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "path-errors.js",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "path-errors.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/buffer/encodings",
+      "targets": [
+        "node:api/buffer/class/Buffer/static-method/from",
+        "node:api/buffer/class/Buffer/static-method/byteLength"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "buffer-encoding.js",
+      "files": [
+        "buffer-encoding.js",
+        "corpus.json",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        },
+        {
+          "path": "effect.bin",
+          "format": "bytes"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/buffer/aliasing-and-boundaries",
+      "targets": [
+        "node:api/buffer/class/Buffer/static-method/alloc",
+        "node:api/buffer/class/Buffer/method/subarray",
+        "node:api/buffer/class/Buffer/method/writeUInt32LE",
+        "node:api/buffer/class/Buffer/method/writeUInt16BE",
+        "node:api/buffer/class/Buffer/method/readUInt32LE",
+        "node:api/buffer/class/Buffer/method/readUInt16BE"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "buffer-boundaries.js",
+      "files": [
+        "buffer-boundaries.js",
+        "corpus.json",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/buffer/invalid-inputs",
+      "targets": [
+        "node:api/buffer/class/Buffer/static-method/from",
+        "node:api/buffer/class/Buffer/static-method/alloc"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "buffer-errors.js",
+      "files": [
+        "buffer-errors.js",
+        "corpus.json",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/buffer/export-shape",
+      "targets": [
+        "node:module/buffer",
+        "node:api/buffer/class/Buffer/static-method/isBuffer",
+        "node:api/buffer/class/Buffer/method/toJSON"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "buffer-shape.js",
+      "files": [
+        "buffer-shape.js",
+        "corpus.json",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/events/synchronous-order",
+      "targets": [
+        "node:api/events/class/EventEmitter/method/on",
+        "node:api/events/class/EventEmitter/method/prependListener",
+        "node:api/events/class/EventEmitter/method/emit"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "events-order.js",
+      "files": [
+        "corpus.json",
+        "events-order.js",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        },
+        {
+          "path": "order.json",
+          "format": "event-order",
+          "order": [
+            [
+              "before",
+              "prepended"
+            ],
+            [
+              "prepended",
+              "normal-9"
+            ],
+            [
+              "normal-9",
+              "after"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/events/once-and-removal",
+      "targets": [
+        "node:api/events/class/EventEmitter/method/once",
+        "node:api/events/class/EventEmitter/method/on",
+        "node:api/events/class/EventEmitter/method/emit",
+        "node:api/events/class/EventEmitter/method/removeListener",
+        "node:api/events/class/EventEmitter/method/listenerCount",
+        "node:api/events/class/EventEmitter/method/eventNames"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "events-once-remove.js",
+      "files": [
+        "corpus.json",
+        "events-once-remove.js",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/events/error-semantics",
+      "targets": [
+        "node:api/events/class/EventEmitter/method/emit",
+        "node:api/events/class/EventEmitter/method/on",
+        "node:api/events/class/EventEmitter/method/once",
+        "node:api/events/class/EventEmitter/method/removeListener"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "events-errors.js",
+      "files": [
+        "corpus.json",
+        "events-errors.js",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/events/export-shape",
+      "targets": [
+        "node:module/events",
+        "node:api/events/class/EventEmitter/method/on",
+        "node:api/events/class/EventEmitter/method/listeners",
+        "node:api/events/class/EventEmitter/method/listenerCount",
+        "node:api/events/class/EventEmitter/method/once",
+        "node:api/events/class/EventEmitter/method/off"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "events-shape.js",
+      "files": [
+        "corpus.json",
+        "events-shape.js",
+        "harness.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/commonjs-relative-and-cache",
+      "targets": [
+        "node:behavior/loader/commonjs-relative",
+        "node:behavior/loader/commonjs-cache"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "cjs-cache.js",
+      "files": [
+        "cjs-cache.js",
+        "corpus.json",
+        "harness.js",
+        "modules/cached.js"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/esm-relative-and-package-type",
+      "targets": [
+        "node:behavior/loader/esm-relative",
+        "node:behavior/loader/package-type"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "esm-relative.mjs",
+      "files": [
+        "corpus.json",
+        "esm-relative.mjs",
+        "harness.js",
+        "modules/typed/package.json",
+        "modules/typed/value.js",
+        "modules/value.mjs"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/exports-require",
+      "targets": [
+        "node:behavior/loader/package-exports-conditions"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "packages/consumer/require.cjs",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "packages/consumer/node_modules/conditional/fallback.cjs",
+        "packages/consumer/node_modules/conditional/feature.cjs",
+        "packages/consumer/node_modules/conditional/import.mjs",
+        "packages/consumer/node_modules/conditional/package.json",
+        "packages/consumer/node_modules/conditional/private.cjs",
+        "packages/consumer/node_modules/conditional/require.cjs",
+        "packages/consumer/package.json",
+        "packages/consumer/require.cjs"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/exports-import",
+      "targets": [
+        "node:behavior/loader/package-exports-conditions"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "packages/consumer/import.mjs",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "packages/consumer/import.mjs",
+        "packages/consumer/node_modules/conditional/fallback.cjs",
+        "packages/consumer/node_modules/conditional/feature.cjs",
+        "packages/consumer/node_modules/conditional/import.mjs",
+        "packages/consumer/node_modules/conditional/package.json",
+        "packages/consumer/node_modules/conditional/private.cjs",
+        "packages/consumer/node_modules/conditional/require.cjs",
+        "packages/consumer/package.json"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/package-imports",
+      "targets": [
+        "node:behavior/loader/package-imports"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "packages/consumer/imports.cjs",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "packages/consumer/imports.cjs",
+        "packages/consumer/local.cjs",
+        "packages/consumer/package.json"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/transitive-dependency",
+      "targets": [
+        "node:behavior/loader/transitive-dependency"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "packages/consumer/transitive.cjs",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "packages/consumer/node_modules/nested/index.js",
+        "packages/consumer/node_modules/nested/package.json",
+        "packages/consumer/node_modules/outer/index.js",
+        "packages/consumer/node_modules/outer/node_modules/nested/index.js",
+        "packages/consumer/node_modules/outer/node_modules/nested/package.json",
+        "packages/consumer/node_modules/outer/package.json",
+        "packages/consumer/package.json",
+        "packages/consumer/transitive.cjs"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "node:scenario/public-api/loader/resolution-errors",
+      "targets": [
+        "node:behavior/loader/unresolved-request",
+        "node:behavior/loader/package-exports-conditions"
+      ],
+      "applicability": {
+        "state": "applicable",
+        "reason": "Reviewed for the pinned Linux x64 profile; deterministic local public-API behavior, no external services."
+      },
+      "entry": "packages/consumer/missing.cjs",
+      "files": [
+        "corpus.json",
+        "harness.js",
+        "packages/consumer/missing.cjs",
+        "packages/consumer/node_modules/conditional/fallback.cjs",
+        "packages/consumer/node_modules/conditional/feature.cjs",
+        "packages/consumer/node_modules/conditional/import.mjs",
+        "packages/consumer/node_modules/conditional/package.json",
+        "packages/consumer/node_modules/conditional/private.cjs",
+        "packages/consumer/node_modules/conditional/require.cjs",
+        "packages/consumer/package.json"
+      ],
+      "expectedExitCode": 0,
+      "expectedStdout": "",
+      "expectedStderr": "",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Small deterministic local fixture with startup/JIT allowance; not a performance measurement.",
+      "normalization": "exact",
+      "observables": [
+        {
+          "path": "result.json",
+          "format": "json"
+        }
+      ]
+    }
+  ]
+}

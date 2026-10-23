@@ -127,6 +127,12 @@ dotnet /tmp/out/loop-for.dll
 
 ## Node compatibility evidence mode
 
+The [first public-API behavior corpus](../../docs/nodejs/compatibility/BehaviorCorpus.md)
+is available with `npm run diff:test:node:public-api`. It retains original
+assertions, upstream discovery/triage provenance and fixture/dependency hashes
+through optional `corpusMetadata`, verified both before execution and during
+offline readback. The default command below remains runner validation only.
+
 Issue [#2373](https://github.com/tomacox74/js2il/issues/2373) adds an opt-in mode
 to this entry point, reusing compiler discovery and invocation from the legacy
 corpus/canary runners. It exercises the public JavaScript CLI compilation path,

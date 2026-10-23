@@ -6,6 +6,13 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tooling(node): add a provenance-backed first public-API corpus with 19 original
+  path, buffer, events and CommonJS/ESM scenarios, 32 pinned upstream discovery
+  leads, explicit applicability/eligibility triage and offline-verified retained
+  first-slice reports. Preserve known product gaps, raw diagnostic bytes and
+  independent fixture/target/attempt identities without claiming whole-Node
+  compatibility or introducing catalogue infrastructure.
+
 - tooling(node): extend the differential harness with opt-in pinned-reference,
   public-CLI execution evidence, isolated bounded processes, typed observable
   comparisons and immutable offline bundles. Preserve paired observations and
