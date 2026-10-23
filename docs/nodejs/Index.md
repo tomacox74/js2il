@@ -2,9 +2,14 @@
 
 # Node.js Support Coverage
 
-**Target Node.js Version:** `22.x LTS`
+**Legacy support-document target:** `22.x LTS`
 
-**Generated:** `2026-09-18T19:18:33Z`
+**Compatibility measurement reference:** Node.js `24.22.1`.
+See [measurement scope and evidence rules](compatibility/README.md).
+Support labels below and generated contract rosters are not measured behavioral pass rates.
+Existing contract documentation pins remain separate; this reference does not expand runtime support claims.
+
+**Generated:** `2026-10-23T16:41:18Z`
 
 ## Summary
 

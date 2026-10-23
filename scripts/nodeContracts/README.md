@@ -1,5 +1,11 @@
 # Node contract generation
 
+These contracts describe declarations, not behavioral compatibility results.
+Their individual Node documentation pins remain independent of the
+[Node compatibility measurement reference](../../docs/nodejs/compatibility/README.md).
+That baseline inventories missing APIs too and separates generated stubs,
+configured implementations and actual JavaScript execution evidence.
+
 Node module contracts are generated manually from the pinned official Node.js
 documentation. Generated contracts are not checked on every CI run because the
 inputs are intentionally stable.
