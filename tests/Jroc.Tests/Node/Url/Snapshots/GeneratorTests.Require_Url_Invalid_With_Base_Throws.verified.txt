@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 305 (0x131)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_Invalid_With_Base_Throws/Scope,
@@ -179,97 +179,95 @@
 			IL_0034: stloc.s 7
 			IL_0036: ldloc.s 7
 			IL_0038: ldstr "threw:"
-			IL_003d: ldc.i4.0
-			IL_003e: box [System.Runtime]System.Boolean
-			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0048: pop
-			IL_0049: leave IL_012f
+			IL_003d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0047: pop
+			IL_0048: leave IL_012d
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_004e: stloc.2
-			IL_004f: ldloc.2
-			IL_0050: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0055: dup
-			IL_0056: brtrue IL_006b
+			IL_004d: stloc.2
+			IL_004e: ldloc.2
+			IL_004f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0054: dup
+			IL_0055: brtrue IL_006a
 
-			IL_005b: pop
-			IL_005c: ldloc.2
-			IL_005d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0062: dup
-			IL_0063: brtrue IL_0076
+			IL_005a: pop
+			IL_005b: ldloc.2
+			IL_005c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0061: dup
+			IL_0062: brtrue IL_0075
 
-			IL_0068: pop
-			IL_0069: rethrow
+			IL_0067: pop
+			IL_0068: rethrow
 
-			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0070: stloc.3
-			IL_0071: br IL_0077
+			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_006f: stloc.3
+			IL_0070: br IL_0076
 
-			IL_0076: stloc.3
+			IL_0075: stloc.3
 
-			IL_0077: ldloc.3
-			IL_0078: stloc.s 4
-			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007f: stloc.s 7
-			IL_0081: ldloc.s 7
-			IL_0083: ldstr "threw:"
-			IL_0088: ldc.i4.1
-			IL_0089: box [System.Runtime]System.Boolean
-			IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0093: pop
-			IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0099: stloc.s 7
-			IL_009b: volatile.
-			IL_009d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-			IL_00a2: brfalse IL_00b8
+			IL_0076: ldloc.3
+			IL_0077: stloc.s 4
+			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007e: stloc.s 7
+			IL_0080: ldloc.s 7
+			IL_0082: ldstr "threw:"
+			IL_0087: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0091: pop
+			IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0097: stloc.s 7
+			IL_0099: volatile.
+			IL_009b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_00a0: brfalse IL_00b6
 
-			IL_00a7: ldloc.s 4
-			IL_00a9: ldstr "name"
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00b3: br IL_00ce
+			IL_00a5: ldloc.s 4
+			IL_00a7: ldstr "name"
+			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00b1: br IL_00cc
 
-			IL_00b8: ldloc.s 4
-			IL_00ba: ldstr "name"
-			IL_00bf: ldstr "Require_Url_Invalid_With_Base_Throws:Modules.Require_Url_Invalid_With_Base_Throws:__js_module_init__:40"
-			IL_00c4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00b6: ldloc.s 4
+			IL_00b8: ldstr "name"
+			IL_00bd: ldstr "Require_Url_Invalid_With_Base_Throws:Modules.Require_Url_Invalid_With_Base_Throws:__js_module_init__:40"
+			IL_00c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
+			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00ce: stloc.s 6
-			IL_00d0: ldloc.s 7
-			IL_00d2: ldstr "name:"
-			IL_00d7: ldloc.s 6
-			IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00de: pop
-			IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00e4: stloc.s 7
-			IL_00e6: volatile.
-			IL_00e8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_00ed: brfalse IL_0103
+			IL_00cc: stloc.s 6
+			IL_00ce: ldloc.s 7
+			IL_00d0: ldstr "name:"
+			IL_00d5: ldloc.s 6
+			IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00dc: pop
+			IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00e2: stloc.s 7
+			IL_00e4: volatile.
+			IL_00e6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_00eb: brfalse IL_0101
 
-			IL_00f2: ldloc.s 4
-			IL_00f4: ldstr "message"
-			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00fe: br IL_0119
+			IL_00f0: ldloc.s 4
+			IL_00f2: ldstr "message"
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00fc: br IL_0117
 
-			IL_0103: ldloc.s 4
-			IL_0105: ldstr "message"
-			IL_010a: ldstr "Require_Url_Invalid_With_Base_Throws:Modules.Require_Url_Invalid_With_Base_Throws:__js_module_init__:46"
-			IL_010f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0101: ldloc.s 4
+			IL_0103: ldstr "message"
+			IL_0108: ldstr "Require_Url_Invalid_With_Base_Throws:Modules.Require_Url_Invalid_With_Base_Throws:__js_module_init__:46"
+			IL_010d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0119: stloc.s 6
-			IL_011b: ldloc.s 7
-			IL_011d: ldstr "message:"
-			IL_0122: ldloc.s 6
-			IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0129: pop
-			IL_012a: leave IL_012f
+			IL_0117: stloc.s 6
+			IL_0119: ldloc.s 7
+			IL_011b: ldstr "message:"
+			IL_0120: ldloc.s 6
+			IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0127: pop
+			IL_0128: leave IL_012d
 		} // end handler
 
-		IL_012f: ldnull
-		IL_0130: stloc.s 5
-		IL_0132: ret
+		IL_012d: ldnull
+		IL_012e: stloc.s 5
+		IL_0130: ret
 	} // end of method Require_Url_Invalid_With_Base_Throws::__js_module_init__
 
 } // end of class Modules.Require_Url_Invalid_With_Base_Throws

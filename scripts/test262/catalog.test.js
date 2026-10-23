@@ -529,9 +529,12 @@ test('full tracked inventory includes excluded areas and refuses missing sparse 
   const directory = fs.mkdtempSync(path.join(artifacts, 'inventory-'));
   const git = (...args) => execFileSync('git', ['-C', directory, ...args], { encoding: 'utf8' }).trim();
   try {
-    for (const area of ['built-ins', 'annexB', 'intl402']) {
+    for (const [area, reference] of [
+      ['built-ins', 'esid: null'], ['annexB', 'es5id: 19.1'], ['intl402', 'es6id: false'],
+    ]) {
       fs.mkdirSync(path.join(directory, 'test', area), { recursive: true });
-      fs.writeFileSync(path.join(directory, 'test', area, 'example.js'), '/*---\ndescription: inventory\n---*/');
+      fs.writeFileSync(path.join(directory, 'test', area, 'example.js'),
+        `/*---\ndescription: inventory\n${reference}\n---*/`);
     }
     git('init', '--quiet');
     git('add', 'test');
@@ -541,6 +544,9 @@ test('full tracked inventory includes excluded areas and refuses missing sparse 
     const rows = inventory(directory, pin);
     assert.equal(rows.length, 3);
     assert.equal(rows.find(r => r.path.includes('annexB')).state, 'blocked');
+    assert.deepEqual(rows.map(r => r.metadata.specification.raw_identifiers),
+      [{ es5id: 19.1 }, { esid: null }, { es6id: false }]);
+    assert.ok(rows.every(r => r.metadata.specification.reference_state === 'ambiguous'));
     assert.throws(() => inventory(directory, { ...pin, upstream: { commit: 'wrong' } }), /pinned/);
     fs.unlinkSync(path.join(directory, 'test/intl402/example.js'));
     assert.throws(() => inventory(directory, pin), /ENOENT/);

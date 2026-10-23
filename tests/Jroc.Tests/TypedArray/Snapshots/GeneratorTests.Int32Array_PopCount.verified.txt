@@ -306,6 +306,20 @@
 			IL_0035: ret
 		} // end of method BitArray::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method BitArray::.ctor
+
 		.method public hidebysig 
 			instance float64 testBitTrue (
 				object index
@@ -705,6 +719,20 @@
 			IL_0090: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 			IL_0095: stfld class Modules.Int32Array_PopCount/BitArray Modules.Int32Array_PopCount/Counter::bitArray
 			IL_009a: ret
+		} // end of method Counter::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method Counter::.ctor
 
 		.method public hidebysig 
@@ -1502,7 +1530,7 @@
 					IL_0605: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 					IL_060a: stloc.s 19
 					IL_060c: ldloc.s 19
-					IL_060e: box [System.Runtime]System.Boolean
+					IL_060e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 					IL_0613: stloc.s 24
 					IL_0615: ldloc.s 22
 					IL_0617: ldloc.s 24

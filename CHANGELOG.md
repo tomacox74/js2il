@@ -10,6 +10,201 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   expressions, extending callsite-driven typed signatures beyond declarations
   and arrows while preserving generic fallback for escapes, mixed callsites,
   and unresolved recursion.
+- fix(test262): preserve YAML null, numeric and boolean specification identifiers
+  and distinguish quoted strings in catalogue ingestion, enrichment and exports.
+  Keep runner eligibility unchanged and reject conflicting immutable annotations
+  rather than silently rewriting earlier evidence.
+- perf(compiler): replace reflection-driven async/await and generator validation
+  with typed child visits while preserving validation order, nesting state,
+  shared-node protection, and malformed-AST handling. Add exhaustive parser-node
+  coverage and same-host Stopwatch compile profiles.
+- fix(test262): retain upstream specification identifiers and descriptive metadata
+  in catalogue ingestion and exports. Add source-verified immutable enrichment for
+  existing sealed corpora and a reporting view that preserves revision/path/digest
+  provenance without interpreting legacy references as current-edition clauses.
+- test262: complete the pinned variable and with statement areas with 148
+  exact upstream fixtures: 116 verified cases and 32 explicit direct/indirect
+  eval skips. Revalidate all 327 supported cases across 453 native variants;
+  all 359 applicable cases now have a documented outcome.
+- fix(compiler): preserve captured outer variables referenced in with
+  expressions and bodies, box the environment once, and keep undefined,
+  NaN, and Infinity dynamically shadowable in active and captured with scopes.
+- fix(runtime): preserve the separate HasBinding, GetBindingValue, and
+  SetMutableBinding steps for with environments, including Proxy trap order,
+  strict-mode reads after unscopables deletes a binding, and sloppy var
+  initializer writes. Preserve the symbol-valued unscopables key in Proxy
+  traps on first use, without depending on earlier Symbol property access.
+  Keep existing runtime helper overloads for compatibility.
+- test262: register 339 more exact pinned class-definition fixtures: 265
+  verified cases across all 505 required native variants and 74 explicit
+  eval skips. Cover computed names, method restrictions, fields, subclass
+  initialization, and class grammar. Separate private-brand, inheritance,
+  decorator, and metadata-parser gaps remain deferred.
+- fix(compiler): keep static-block var bindings inside their own block,
+  including declarations nested in ordinary blocks. Accept new.target in
+  class static blocks and lower it to undefined, including through lexical
+  arrows, without changing ordinary nested function behavior.
+- test262: verify 400 more pinned async class-method and element cases
+  across all 790 required native variants. Cover private/static async
+  methods, async-generator delegation and rejection, default parameters,
+  lexical arguments/new.target, restricted caller/arguments properties,
+  and class-element names, separators, and private-member forms. All
+  cases pass without product or harness changes; none requires eval.
+- test262: verify 400 more pinned class-generator method cases across all
+  790 required native variants: 266 parameter-destructuring cases and 134
+  async-generator method cases. Cover private/static methods, defaults,
+  rest and nested patterns, iterator cleanup, promise rejection, delegated
+  iteration, and restricted caller/arguments properties. All cases pass
+  without product or harness changes; none requires eval.
+- test262: verify 352 more pinned class-declaration method cases across all
+  704 required native variants: 350 async-generator method parameter
+  destructuring cases and both computed-accessor function-name cases.
+  Cover defaults, rest, nested patterns, iterator cleanup, static methods,
+  and private methods. No selected case requires eval.
+- fix(runtime): assign specification-compliant names to computed class
+  getters and setters, including static accessors and Symbol keys.
+  Preserve the get/set prefix and trailing space for undescribed Symbols,
+  and bracket described Symbol names, using the shared accessor-name helper.
+- test262: port 339 exact pinned class-declaration element fixtures: 309
+  verified cases across all 618 required native variants, plus 30 explicit
+  eval skips. Cover private/public fields, private methods/accessors,
+  computed names, initialization, and valid class-element syntax.
+- fix(compiler): lower private field and accessor assignment targets in
+  destructuring and for-in/for-of loop heads. Resolve receivers before
+  property reads and rest copying, but defer private-brand checks until
+  storing the extracted value. Preserve getter side effects, setter
+  dispatch, readonly-member errors, and existing iterator cleanup.
+  Separate class-definition, private-brand lifecycle, computed-name private
+  scope, and indirect-super initialization gaps remain outside this batch.
+- test262: verify 2 additional pinned fixtures from native batch `35ae23bc-1df9-5e1d-acb7-1f40b6d77cf3`.
+- test262: complete the pinned core built-in RegExp inventory with 301 exact
+  upstream fixtures: 294 verified cases across all 588 required native
+  variants, plus seven explicit direct-eval skips. The core area now has
+  1,872 verified cases and seven known unsupported cases out of 1,879;
+  separately tracked Annex B RegExp cases are unchanged.
+- fix(regexp): support the remaining binary properties, all seven Unicode
+  string properties, and nested v-mode union/intersection/subtraction and
+  string disjunctions using independently checksum-pinned Unicode 17 UCD
+  and emoji data. Preserve JavaScript character-class escapes, word
+  boundaries, scoped i/m/s modifiers, exact anchors, and mode-specific folding.
+  Validate constructor patterns with the JavaScript parser, preserve
+  constructor coercion/identity and escaped capture names, reset captures
+  across every quantified alternative, reject optional empty iterations,
+  and lower large quantifier bounds without the CLR integer syntax limit.
+  Keep repetition-helper captures out of JavaScript results and replacements.
+  Add native string-property harness helpers and the standard print binding.
+- fix(compiler): traverse each canonical AST child once during symbol-table
+  construction instead of visiting both reflected properties and ChildNodes.
+  This removes exponential compilation of long concatenation chains exposed
+  by three RegExp execution fixtures without increasing execution timeouts.
+- test262: verify 200 more pinned built-in RegExp cases: the remaining 150
+  generated Script_Extensions cases, all 38 generated General_Category cases,
+  and twelve binary-property cases. All 400 required native variants pass;
+  the selected cases do not require eval. Replace incomplete CLR category
+  handling with independently checksum-pinned Unicode 17 ranges and exact
+  aliases, and support ASCII, ASCII_Hex_Digit, Alphabetic, Any, Assigned,
+  Bidi_Control, Bidi_Mirrored, Case_Ignorable, Cased,
+  Changes_When_Casefolded, Changes_When_Casemapped, and Changes_When_Lowercased.
+  Preserve complete-code-point matching, lone surrogates, scoped ignoreCase,
+  and distinct u/v case-folding complement order for these properties.
+  Remaining properties and v-set operations are covered by the final batch above.
+- fix(perf): make the missing SharpTS hosting abstraction dependency available
+  to BenchmarkDotNet's generated child executables as well as both benchmark
+  hosts, fixing all eleven SharpTS Dromaeo/Kraken release benchmark failures.
+  Disable unused native interop build generation and add child-process smoke
+  coverage for source, published-package, and previous-host configurations.
+  Pass package-selection properties through the environment so generated
+  benchmark children use the requested current or previous published release.
+- test262: verify 200 additional pinned built-in RegExp cases: 175 Unicode
+  Script and 25 Script_Extensions property-escape cases, with all 400 required
+  native variants passing and no eval-dependent cases in the selected batch.
+  Generate Unicode 17 script ranges, exact aliases, extension overrides, and
+  case-folding deltas from the independently checksum-pinned Unicode database.
+  Preserve astral characters and lone surrogates, distinguish u/v complement
+  ordering under ignoreCase, and honor scoped i modifiers. Add native
+  buildString/testPropertyEscapes helpers without rewriting upstream assertions.
+  Prioritize dense, disjoint code-point intervals so full Unknown-script checks
+  stay within the normal execution budget without raising test timeouts.
+  Weakly retain cold CLR regex instances so Unicode-wide matching does not pin
+  input-sized backtracking buffers in the process-wide compilation cache.
+  Remaining Unicode properties and v-set operations are covered by the later batches above.
+
+## v0.12.33 - 2026-10-17
+
+- test262: complete pinned identifiers and static-import coverage with 233
+  newly verified exact fixtures: 116 identifier syntax negatives and 117
+  import cases, with no eval-related skips. All 395 cases across both areas
+  pass their 668 required native variants. Support static JSON/text/immutable
+  byte imports and typed re-exports, preserving resource bytes and distinct
+  request identities. Correct deferred evaluation, asynchronous dependency
+  ordering, readiness checks, cached failures, and live star re-exports.
+  Preserve computed class field keys for exotic superclass returns, reject
+  namespace field definitions/private additions, and keep private-brand checks
+  false after failed namespace initialization. Extend native deep equality,
+  phase-checked resolution negatives, and binary/extensionless fixture support.
+- test262: add 16 exact pinned expression fixtures: ten verified passing and
+  six explicit eval-related skips. Preserve direct tail calls through nullish
+  coalescing and final comma operands at the full upstream recursion depth,
+  and cover seven additional template-literal syntax errors. General dynamic
+  and tagged-template proper tail calls remain unsupported.
+- test262: add 200 exact pinned language-expression fixtures: 147 verified
+  passing and 53 explicit eval skips. Fix super reference ordering, compound
+  and logical writes, updates and dynamic superclass construction; preserve
+  tagged-template and with-bound call receivers, cooked/raw template values,
+  frozen template descriptors and call-site identity. Correct import.meta
+  identity and null prototypes, method new.target, parenthesized assignment
+  name inference, and dynamic function-constructor grammar rejection. Separate
+  CLR storage initialization from JavaScript super() while preserving
+  inherited fields and verifiable constructor IL. Retain escaped super-call
+  arrow contexts and built-in constructor invocation state; preserve native
+  intrinsic prototype fallback and SuppressedError subclass storage.
+- test262: verify 21 additional pinned fixtures from native batch `9b9d1107-5ce4-5b29-a78d-e2fe23f33aff`.
+- test262: complete pinned dynamic-import coverage with 629 newly added exact
+  fixtures and 301 existing parse-negative cases moved to canonical paths.
+  All 940 non-eval cases pass 1,776 required native variants; explicitly skip
+  the remaining eval-dependent case. Fix import options and coercion,
+  asynchronous loading and cached failures, module namespace descriptors,
+  default export names and escaped class metadata, JSON/text imports, and
+  deferred evaluation with asynchronous dependencies. Add the in-memory
+  `AdditionalModulePaths` option for ahead-of-time computed import targets.
+- test262: complete pinned yield-expression coverage with 36 exact upstream
+  fixtures; all 63 cases pass all 123 required native variants, with no
+  eval-dependent cases in this area. Preserve delegated iterator receivers,
+  argument counts and next values, forward return/throw with null-method and
+  missing-method semantics, validate iterator results, and route operand and
+  protocol errors plus delegated return completions through catch/finally.
+- fix(ci): skip Test262 central validation and publication when native screening
+  produces no patch, avoiding a missing validation artifact failure for empty batches.
+- perf(compiler): reuse immutable boxed boolean and null primitives for
+  object-valued constants, captured writes, calls, and resumable spills.
+  Preserve typed boolean operations, null/undefined distinctions, and fresh
+  JavaScript wrapper objects. Read mutable variable slots dynamically and load
+  shared constant boxes directly where stack scheduling permits; reduce Stopwatch
+  execution allocation by about 6 MB per invocation without changing either
+  workload (#2308).
+- perf(runtime): bulk-fill empty-RegExp split results directly in their final
+  dense storage, setting array length once instead of growing per character.
+  Preserve cached character strings, Unicode surrogate pairs, limits, and
+  observable species/exec fallbacks (#746).
+- perf(runtime): adaptively promote cached RegExp patterns after 64 dynamic or
+  literal constructions, with at most 256 cached/in-flight compiled tiers.
+  Preserve independent instance state, permanently retain the interpreted tier
+  after promotion failure, and release compiled cache references on eviction.
+  Cold patterns and runtimes without dynamic code stay interpreted (#2151).
+- perf(runtime): recognize intrinsic RegExp species in guarded split fast paths,
+  enumerate bounds for non-Unicode separators without captures, and build empty
+  splits directly in pre-sized storage with cached character strings. Return the
+  original input for no-match regexp replacements after observable work (#746).
+
+## v0.12.32 - 2026-10-15
+
+- perf(runtime): replace reflective dynamic Math dispatch with fixed-arity,
+  receiver-independent built-ins; preserve member selection before argument
+  evaluation, JavaScript coercion and mutable globals. Skip compiled static-field
+  scans for runtime-owned types and correct oscillator profiling inputs (#2301).
+- fix(runtime): initialize the realm's intrinsic RegExp constructor on first
+  access so split and matchAll work in fresh hosted realms, including both
+  unchanged Dromaeo regexp workloads with unmodified host globals (#2299).
 
 ## v0.12.31 - 2026-10-15
 

@@ -19,8 +19,8 @@
  *   node scripts/profileBenchmarkScenario.js ai-astar
  *   node scripts/profileBenchmarkScenario.js dromaeo-3d-cube --iterations 3
  *
- * Windows-only (PerfView). Requires the dotnet SDK; installs dotnet-trace
- * as a global tool if it is missing.
+ * Use --no-open on non-Windows hosts. Requires the dotnet SDK; installs
+ * dotnet-trace as a global tool if it is missing.
  */
 
 const childProcess = require("node:child_process");
@@ -37,13 +37,14 @@ const perfViewExe = path.join(workRoot, "PerfView.exe");
 const perfViewUrl = "https://github.com/microsoft/perfview/releases/latest/download/PerfView.exe";
 
 function printUsage() {
-  console.log("Usage: node scripts/profileBenchmarkScenario.js <scenario-name> [--iterations N] [--no-open] [--no-inline]");
+  console.log("Usage: node scripts/profileBenchmarkScenario.js <scenario-name> [--iterations N] [--no-open] [--no-inline] [--output-dir PATH]");
   console.log("");
   console.log("Options:");
   console.log("  --iterations N   Number of timed iterations (default 2).");
   console.log("  --no-open        Skip opening the trace in PerfView.");
   console.log("  --no-inline      Run with DOTNET_JitNoInline=1 so every runtime helper");
   console.log("                   appears as a real frame in the trace (timings will skew).");
+  console.log("  --output-dir PATH  Retain the runner, compiled assembly/PDB and trace here.");
   console.log("");
   console.log("Examples:");
   console.log("  node scripts/profileBenchmarkScenario.js ai-astar");
@@ -93,7 +94,7 @@ function normalizeScenarioName(input) {
 function resolveScenario(name) {
   const krackenScript = path.join(krackenDir, `${name}.js`);
   if (fs.existsSync(krackenScript)) {
-    const dataScript = path.join(krackenDir, `${name}-data.js`);
+    const dataScript = path.join(krackenDir, name === "audio-oscillator" ? "audio-dft-data.js" : `${name}-data.js`);
     const parts = [];
     if (fs.existsSync(dataScript)) parts.push(fs.readFileSync(dataScript, "utf8"));
     parts.push(`var __jrocKrackenWorkload = null;
@@ -140,6 +141,7 @@ const runnerCsproj = `<Project Sdk="Microsoft.NET.Sdk">
 `;
 
 const runnerProgram = `using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Reflection;
 using Jroc;
 using Jroc.Runtime;
@@ -157,7 +159,8 @@ Directory.CreateDirectory(outDir);
 var compileWatch = Stopwatch.StartNew();
 var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(Path.GetFullPath(scriptPath))
 {
-    EmitPdb = true
+    EmitPdb = true,
+    AssumeUnmodifiedHostGlobals = true
 });
 var dllPath = Path.Combine(outDir, artifact.AssemblyName + ".dll");
 File.WriteAllBytes(dllPath, artifact.PeBytes);
@@ -177,23 +180,39 @@ if (mode == "calltest")
     dynamic d = exports;
     for (int i = 0; i < iterations; i++)
     {
+        var allocatedBefore = GC.GetTotalAllocatedBytes(precise: true);
+        BenchmarkProfile.Log.Begin(i);
         var sw = Stopwatch.StartNew();
         var result = d.runBenchmark();
         sw.Stop();
-        Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s ({result})");
+        BenchmarkProfile.Log.End(i);
+        var allocated = GC.GetTotalAllocatedBytes(precise: true) - allocatedBefore;
+        Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s, {allocated} allocated bytes ({result})");
     }
 }
 else
 {
     for (int i = 0; i < iterations; i++)
     {
+        var allocatedBefore = GC.GetTotalAllocatedBytes(precise: true);
+        BenchmarkProfile.Log.Begin(i);
         var sw = Stopwatch.StartNew();
         using (var exports = (IDisposable)JsEngine.LoadModule(assembly, moduleId))
         {
         }
         sw.Stop();
-        Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s");
+        BenchmarkProfile.Log.End(i);
+        var allocated = GC.GetTotalAllocatedBytes(precise: true) - allocatedBefore;
+        Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s, {allocated} allocated bytes");
     }
+}
+
+[EventSource(Name = "JrocBenchmarkProfile")]
+sealed class BenchmarkProfile : EventSource
+{
+    public static readonly BenchmarkProfile Log = new();
+    [Event(1)] public void Begin(int iteration) => WriteEvent(1, iteration);
+    [Event(2)] public void End(int iteration) => WriteEvent(2, iteration);
 }
 `;
 
@@ -234,15 +253,11 @@ async function main() {
     process.exit(argv[0] ? 0 : 1);
   }
 
-  if (process.platform !== "win32") {
-    console.error("This script is Windows-only (PerfView).");
-    process.exit(1);
-  }
-
   const scenarioName = normalizeScenarioName(argv[0]);
   let iterations = 2;
   let open = true;
   let noInline = false;
+  let outputDir = null;
   for (let i = 1; i < argv.length; i++) {
     if (argv[i] === "--iterations" && argv[i + 1]) {
       iterations = Number.parseInt(argv[++i], 10);
@@ -250,6 +265,8 @@ async function main() {
       open = false;
     } else if (argv[i] === "--no-inline") {
       noInline = true;
+    } else if (argv[i] === "--output-dir" && argv[i + 1]) {
+      outputDir = path.resolve(argv[++i]);
     } else {
       console.error(`Unknown option: ${argv[i]}`);
       printUsage();
@@ -262,6 +279,10 @@ async function main() {
     process.exit(1);
   }
 
+  if (open && process.platform !== "win32") {
+    throw new Error("Opening PerfView requires Windows; use --no-open to collect a trace on this host.");
+  }
+
   const scenario = resolveScenario(scenarioName);
   if (!scenario) {
     console.error(`Scenario '${scenarioName}' not found.`);
@@ -269,7 +290,7 @@ async function main() {
     process.exit(1);
   }
 
-  const workDir = path.join(workRoot, scenarioName);
+  const workDir = outputDir ?? path.join(workRoot, scenarioName);
   const runnerDir = path.join(workDir, "runner");
   fs.mkdirSync(runnerDir, { recursive: true });
 
@@ -291,7 +312,7 @@ async function main() {
 
   ensureDotnetTrace();
 
-  const runnerExe = path.join(runnerDir, "bin", "Release", "net10.0", "runner.exe");
+  const runnerDll = path.join(runnerDir, "bin", "Release", "net10.0", "runner.dll");
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
   const tracePath = path.join(workDir, `${scenarioName}-${timestamp}.nettrace`);
 
@@ -301,8 +322,10 @@ async function main() {
   const traceStatus = run("dotnet-trace", [
     "collect",
     "-o", tracePath,
+    "--show-child-io",
+    "--providers", "Microsoft-DotNETCore-SampleProfiler:0x0:5,Microsoft-Windows-DotNETRuntime:0x1:5,JrocBenchmarkProfile:0xFFFFFFFFFFFFFFFF:5",
     "--",
-    runnerExe, composedScript, scenario.mode, String(iterations),
+    "dotnet", runnerDll, composedScript, scenario.mode, String(iterations),
   ], traceEnv ? { env: traceEnv } : undefined);
   if (traceStatus !== 0 || !fs.existsSync(tracePath)) {
     throw new Error("Trace collection failed.");
@@ -316,7 +339,11 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.message ?? error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.message ?? error);
+    process.exit(1);
+  });
+}
+
+module.exports = { resolveScenario, runnerProgram };

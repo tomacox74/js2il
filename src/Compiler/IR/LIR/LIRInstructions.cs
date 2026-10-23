@@ -191,10 +191,10 @@ public record LIRCallRequire(
 
 /// <summary>
 /// Calls the runtime dynamic import function to load a module and return a Promise.
-/// The module specifier must be a string (validated during AST validation).
-/// Emits: call JavaScriptRuntime.Modules.ESM.DynamicImport(object moduleIdOrPath, object currentModuleId)
+/// The runtime coerces the evaluated specifier and validates optional import attributes.
 /// </summary>
-public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentModuleId, TempVariable Result) : LIRInstruction;
+public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentModuleId, TempVariable Result,
+    TempVariable? Options = null, string Phase = "None") : LIRInstruction;
 
 /// <summary>
 /// Calls a member method on a receiver via runtime dispatch.
@@ -451,7 +451,8 @@ public record LIRCreateBoundArrowFunction(
     bool IsAsync,
     bool RequiresLexicalSuperConstructorContext,
     TempVariable Result,
-    TempVariable? LexicalThis = null) : LIRInstruction;
+    TempVariable? LexicalThis = null,
+    TempVariable? HomeObject = null) : LIRInstruction;
 
 /// <summary>
 /// Creates a JS callable value for a FunctionExpression.

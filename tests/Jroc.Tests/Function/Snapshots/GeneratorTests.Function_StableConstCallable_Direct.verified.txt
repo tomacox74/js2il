@@ -1221,7 +1221,7 @@
 			IL_0004: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0009: stloc.1
 			IL_000a: ldloc.1
-			IL_000b: box [System.Runtime]System.Boolean
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0010: ret
 		} // end of method FunctionExpression_readsNewTarget::__js_call__
 
@@ -1559,7 +1559,7 @@
 			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_001c: stloc.1
 			IL_001d: ldloc.1
-			IL_001e: box [System.Runtime]System.Boolean
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0023: ret
 		} // end of method readsDirectThis::__js_call__
 
@@ -1721,7 +1721,7 @@
 			IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0012: stloc.0
 			IL_0013: ldloc.0
-			IL_0014: box [System.Runtime]System.Boolean
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0019: ret
 		} // end of method readsStrictDirectThis::__js_call__
 
@@ -2229,7 +2229,7 @@
 				IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0017: stloc.2
 				IL_0018: ldloc.2
-				IL_0019: box [System.Runtime]System.Boolean
+				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 				IL_001e: ret
 			} // end of method ArrowFunction_L31C18::__js_call__
 
@@ -2951,6 +2951,20 @@
 				IL_000c: ret
 			} // end of method ReadsOwnThis::.ctor
 
+			.method family hidebysig specialname rtspecialname 
+				instance void .ctor (
+					bool ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: ret
+			} // end of method ReadsOwnThis::.ctor
+
 			.method public hidebysig 
 				instance object read () cil managed 
 			{
@@ -2977,7 +2991,7 @@
 				IL_0021: ldarg.0
 				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
 				IL_0027: ldstr "value"
-				IL_002c: ldstr "Function_StableConstCallable_Direct:<TwoPhaseDummy_M22>:read:3"
+				IL_002c: ldstr "Function_StableConstCallable_Direct:<TwoPhaseDummy_M23>:read:3"
 				IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
 				IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -3571,14 +3585,14 @@
 		IL_02bc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_02c1: stloc.s 20
 		IL_02c3: ldloc.s 20
-		IL_02c5: box [System.Runtime]System.Boolean
+		IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_02ca: stloc.s 21
 		IL_02cc: ldloc.s 4
 		IL_02ce: ldloc.s 4
 		IL_02d0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_02d5: stloc.s 20
 		IL_02d7: ldloc.s 20
-		IL_02d9: box [System.Runtime]System.Boolean
+		IL_02d9: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_02de: stloc.s 22
 		IL_02e0: volatile.
 		IL_02e2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19

@@ -1,6 +1,6 @@
 /*---
 description: Native C# test262 harness helpers are available as host globals
-includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js, iteratorZipUtils.js]
+includes: [propertyHelper.js, testTypedArray.js, testAtomics.js, tcoHelper.js, decimalToHexString.js, nans.js, promiseHelper.js, compareIterator.js, regExpUtils.js, detachArrayBuffer.js, proxyTrapsHelper.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js, byteConversionValues.js, deepEqual.js, resizableArrayBufferUtils.js, temporalHelpers.js, dateConstants.js, iteratorZipUtils.js, fnGlobalObject.js]
 ---*/
 
 assert(true, 'assert should be callable');
@@ -10,6 +10,31 @@ assert.strictEqual('abc', 'abc', 'strictEqual should alias sameValue');
 assert.notStrictEqual('abc', 'def', 'notStrictEqual should alias notSameValue');
 assert.compareArray([1, 2, 3], [1, 2, 3], 'compareArray should compare indexed elements');
 assert.deepEqual([[1, 2], [3, undefined]], [[1, 2], [3, undefined]], 'deepEqual should compare nested arrays');
+assert.deepEqual({nested: {value: 1}}, {nested: {value: 1}});
+assert.deepEqual({zero: -0, nan: NaN}, {zero: 0, nan: NaN});
+assert.sameValue(assert.deepEqual._compare({value: 1}, {value: 2}), false);
+assert.sameValue(assert.deepEqual._compare([1], {0: 1, length: 1}), false);
+const deepEqualCycle1 = {};
+const deepEqualCycle2 = {};
+deepEqualCycle1.self = deepEqualCycle1;
+deepEqualCycle2.self = deepEqualCycle2;
+assert.deepEqual(deepEqualCycle1, deepEqualCycle2);
+assert.deepEqual(new Set([1, 2]), new Set([1, 2]));
+assert.sameValue(assert.deepEqual._compare(new Set([1, 2]), new Set([2, 1])), false);
+assert.deepEqual(new Number(1), 1);
+assert.sameValue(assert.deepEqual._compare.name, 'deepEqual');
+assert.sameValue(assert.deepEqual._compare.length, 2);
+const deepEqualOriginalSymbol = globalThis.Symbol;
+const deepEqualOriginalBigInt = globalThis.BigInt;
+globalThis.Symbol = undefined;
+globalThis.BigInt = undefined;
+assert.sameValue(assert.deepEqual._compare({}, 1), false);
+globalThis.Symbol = deepEqualOriginalSymbol;
+globalThis.BigInt = deepEqualOriginalBigInt;
+assert.sameValue(fnGlobalObject.name, 'fnGlobalObject');
+assert.sameValue(fnGlobalObject.length, 0);
+assert.sameValue(fnGlobalObject(), globalThis);
+assert.sameValue(fnGlobalObject(), fnGlobalObject());
 
 $262.evalScript('var nativeScriptVar = 1; function nativeScriptFunction() { return nativeScriptVar; }');
 assert.sameValue(nativeScriptFunction(), 1);
@@ -63,6 +88,154 @@ assert.compareIterator({
         return { value: expectedMatch, done: false };
     }
 }, [matchValidator(['a'], 0, 'a')], 'RegExp helper validators should be available');
+
+assert.sameValue(buildString.name, 'buildString');
+assert.sameValue(buildString.length, 1);
+assert.sameValue(testPropertyEscapes.name, 'testPropertyEscapes');
+assert.sameValue(testPropertyEscapes.length, 3);
+assert.sameValue(testPropertyOfStrings.name, 'testPropertyOfStrings');
+assert.sameValue(testPropertyOfStrings.length, 1);
+assert.sameValue(testExtendedCharacterClass, testPropertyOfStrings);
+testPropertyOfStrings({
+    regExp: /^(?:ab|\u{1F600})+$/u,
+    expression: 'native string-property helper',
+    matchStrings: ['ab', '\u{1F600}'],
+    nonMatchStrings: ['a', 'b']
+});
+var nativeStringPropertyRejected = false;
+try {
+    testExtendedCharacterClass({
+        regExp: {test: function() { return false; }},
+        expression: 'must preserve assertions',
+        matchStrings: ['a']
+    });
+} catch (error) {
+    nativeStringPropertyRejected = error.message.includes('should match a');
+}
+assert.sameValue(nativeStringPropertyRejected, true);
+var nativeStringPropertyClosed = false;
+var nativeStringPropertyFailure;
+try {
+    testPropertyOfStrings({
+        regExp: {test: function() { return false; }},
+        expression: 'close the fallback iterator',
+        matchStrings: {
+            join: function() { return 'a'; },
+            [Symbol.iterator]: function() {
+                return {
+                    next: function() { return {value: 'a', done: false}; },
+                    return: function() {
+                        nativeStringPropertyClosed = true;
+                        return {done: true};
+                    }
+                };
+            }
+        }
+    });
+} catch (error) {
+    nativeStringPropertyFailure = error;
+}
+assert.sameValue(nativeStringPropertyClosed, true);
+assert.sameValue(nativeStringPropertyFailure.message.includes('U+000061'), true);
+assert.sameValue(buildString({
+    loneCodePoints: [0x61, 0x1F600, 0xD800],
+    ranges: [[0x30, 0x32], [0x10FFFF, 0x10FFFF]]
+}), 'a\u{1F600}\uD800012\u{10FFFF}');
+assert.sameValue(buildString({loneCodePoints: null, ranges: [[2, 1]]}), '');
+assert.throws(RangeError, function() {
+    buildString({loneCodePoints: [0x110000], ranges: []});
+});
+var regExpBuildOrder = [];
+var regExpLonePoints = {length: 2};
+Object.defineProperty(regExpLonePoints, '0', {get: function() {
+    regExpBuildOrder.push('get0');
+    return {valueOf: function() { regExpBuildOrder.push('value0'); return 65; }};
+}});
+Object.defineProperty(regExpLonePoints, '1', {get: function() {
+    regExpBuildOrder.push('get1');
+    return {valueOf: function() { regExpBuildOrder.push('value1'); return 66; }};
+}});
+assert.sameValue(buildString({
+    get loneCodePoints() { regExpBuildOrder.push('loneCodePoints'); return regExpLonePoints; },
+    get ranges() { regExpBuildOrder.push('ranges'); return []; }
+}), 'AB');
+assert.compareArray(regExpBuildOrder, ['loneCodePoints', 'ranges', 'get0', 'get1', 'value0', 'value1']);
+assert.sameValue(buildString({
+    loneCodePoints: [],
+    ranges: [[{valueOf: function() { return 0; }}, 10000]]
+}).length, 10001);
+var regExpHelperCalls = [];
+var regExpHelperProbe = {
+    test: function(input) {
+        assert.sameValue(this, regExpHelperProbe);
+        regExpHelperCalls.push(input);
+        return input.length === 1;
+    }
+};
+testPropertyEscapes(regExpHelperProbe, 'abc', {
+    toString: function() { regExpHelperCalls.push('message'); return 'probe'; }
+});
+assert.compareArray(regExpHelperCalls, ['abc', 'a', 'message', 'b', 'message', 'c', 'message']);
+var regExpHelperSymbols = [];
+testPropertyEscapes({
+    test: function(input) {
+        if (input === 'a\u{1F600}\uD800') return false;
+        regExpHelperSymbols.push(input);
+        return true;
+    }
+}, 'a\u{1F600}\uD800', 'code points');
+assert.compareArray(regExpHelperSymbols, ['a', '\u{1F600}', '\uD800']);
+var regExpRawOrder = [];
+assert.sameValue(buildString({
+    loneCodePoints: [],
+    ranges: {0: [65, 65], length: 1n}
+}), 'A');
+var regExpRawSymbol = {
+    codePointAt: function(index) {
+        assert.sameValue(this, regExpRawSymbol);
+        assert.sameValue(index, 0);
+        regExpRawOrder.push('codePointAt');
+        return {toString: function(radix) {
+            assert.sameValue(radix, 16);
+            regExpRawOrder.push('hex');
+            return '41';
+        }};
+    },
+    toString: function() { regExpRawOrder.push('symbol'); return 'A'; }
+};
+var regExpRawSymbols = [regExpRawSymbol];
+testPropertyEscapes({test: function(input) {
+    if (input === regExpRawSymbols) return false;
+    assert.sameValue(input, regExpRawSymbol);
+    regExpRawOrder.push('test');
+    return true;
+}}, regExpRawSymbols, {
+    toString: function() { regExpRawOrder.push('expression'); return 'raw'; }
+});
+assert.compareArray(regExpRawOrder, ['codePointAt', 'hex', 'test', 'expression', 'symbol']);
+assert.throws(TypeError, function() {
+    testPropertyEscapes({test: function() { return false; }}, [''], 'empty symbol');
+});
+var regExpHelperClosed = 0;
+var regExpHelperIterable = {
+    [Symbol.iterator]: function() {
+        return {
+            next: function() { return {value: '!', done: false}; },
+            return: function() {
+                regExpHelperClosed++;
+                throw new Test262Error('Iterator close must preserve the original assertion');
+            }
+        };
+    }
+};
+var regExpHelperFailure;
+try {
+    testPropertyEscapes({test: function() { return false; }}, regExpHelperIterable, 'failure');
+} catch (error) {
+    regExpHelperFailure = error;
+}
+assert(regExpHelperFailure.message.includes('should match U+000021'));
+assert.sameValue(regExpHelperClosed, 1);
 
 var value = {};
 Object.defineProperty(value, 'answer', {

@@ -33,6 +33,51 @@ namespace Jroc.Tests
         }
 
         [Fact]
+        public void Build_WithStatement_CapturesItsObjectAndBodyReferences()
+        {
+            var ast = _parser.ParseJavaScript("""
+                function outer() {
+                    var environment = {}, value = 42;
+                    function inner() { with (environment) { return value; } }
+                }
+                """, "test.js");
+            var table = BuildSymbolTable(ast, "test.js");
+            var outer = Assert.Single(table.Root.Children);
+            var inner = Assert.Single(outer.Children, scope => scope.Kind == ScopeKind.Function);
+
+            Assert.True(outer.Bindings["environment"].IsCaptured);
+            Assert.True(outer.Bindings["value"].IsCaptured);
+            Assert.True(inner.ReferencesParentScopeVariables);
+        }
+
+        [Fact]
+        public void Build_ClassStaticBlocks_KeepVarBindingsInTheirOwnScope()
+        {
+            var ast = _parser.ParseJavaScript("""
+                class C {
+                    static { var first; { var nested; } }
+                    static { var second; }
+                }
+                """, "test.js");
+            var table = BuildSymbolTable(ast, "test.js");
+            var declaration = Assert.IsType<ClassDeclaration>(Assert.Single(ast.Body));
+            var classScope = table.FindScopeByAstNode(declaration)!;
+            var blocks = declaration.Body.Body.OfType<StaticBlock>().ToArray();
+            var first = table.FindScopeByAstNode(blocks[0])!;
+            var second = table.FindScopeByAstNode(blocks[1])!;
+
+            Assert.True(first.IsVarHoistingScope);
+            Assert.True(second.IsVarHoistingScope);
+            Assert.Contains("first", first.Bindings.Keys);
+            Assert.Contains("nested", first.Bindings.Keys);
+            Assert.Contains("second", second.Bindings.Keys);
+            Assert.DoesNotContain("first", classScope.Bindings.Keys);
+            Assert.DoesNotContain("nested", classScope.Bindings.Keys);
+            Assert.DoesNotContain("second", classScope.Bindings.Keys);
+            Assert.DoesNotContain("first", second.Bindings.Keys);
+        }
+
+        [Fact]
         public void Build_SimpleVariableDeclaration_CreatesGlobalScopeWithBinding()
         {
             // Arrange

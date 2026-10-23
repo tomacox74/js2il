@@ -283,31 +283,31 @@
     {
       "clause": "10.4.6",
       "title": "Module Namespace Exotic Objects",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects"
     },
     {
       "clause": "10.4.6.1",
       "title": "[[GetPrototypeOf]] ( )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getprototypeof"
     },
     {
       "clause": "10.4.6.2",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-setprototypeof-v"
     },
     {
       "clause": "10.4.6.3",
       "title": "[[IsExtensible]] ( )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-isextensible"
     },
     {
       "clause": "10.4.6.4",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-preventextensions"
     },
     {
@@ -319,7 +319,7 @@
     {
       "clause": "10.4.6.6",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc"
     },
     {
@@ -337,13 +337,13 @@
     {
       "clause": "10.4.6.9",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-set-p-v-receiver"
     },
     {
       "clause": "10.4.6.10",
       "title": "[[Delete]] ( P )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p"
     },
     {
@@ -537,14 +537,17 @@
       },
       {
         "clause": "10.4.6",
-        "feature": "Namespace import interop objects with live getter properties",
+        "feature": "Compiled ESM module namespace exotic objects",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects",
         "testScripts": [
           "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
-          "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
+          "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js",
+          "tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/import/import-defer/deferred-namespace-object/IdentifiersImportCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs"
         ],
-        "notes": "JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec."
+        "notes": "Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Static deferred namespaces have separate identities and a Deferred Module tag; symbol-like operations and writes do not evaluate them, while other string-key operations excluding then do. Evaluation requires ready asynchronous dependencies and caches thrown values. Public field definitions honor namespace exotic rejection; private additions fail and do not establish a private brand. CommonJS retains its synthetic namespace projection; general host module-record hooks remain unsupported."
       },
       {
         "clause": "10.4.7",

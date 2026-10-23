@@ -79,7 +79,7 @@
     {
       "clause": "15.7.12",
       "title": "Runtime Semantics: EvaluateClassStaticBlockBody",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody"
     },
     {
@@ -114,6 +114,130 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7.12",
+        "feature": "Class static-block scope and class-definition coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/definition/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/ClassDefinitionConformanceExecutionTests.cs",
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/ValidatorTests.cs",
+          "tests/Jroc.Tests/HIRClassStaticBlockTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/static-init-expr-new-target.js",
+          "test/language/statements/class/static-init-scope-var-close.js"
+        ],
+        "notes": "The class-definition follow-up registers 339 exact pinned fixtures: 265 verified passing cases across all 505 required native variants and 74 known unsupported eval cases. Coverage includes computed names, method restrictions, fields, subclass initialization, and class grammar. Each static block is its own var-hoisting boundary, including nested ordinary blocks; bindings do not leak into sibling static blocks. new.target is valid and evaluates to undefined in a static block and its lexical arrows, while ordinary nested functions retain their own new.target. Structural compiler guards cover scope ownership, validation, and callable boundaries. Private-brand lifecycle, inheritance, decorators, other static-block super/arguments cases, and two local metadata-parser gaps remain deferred. Results are branch-local native validation, not central trusted acceptance; this is not complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
+        "feature": "Async class methods and class-element grammar",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/forbidden-ext/b1/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method/forbidden-ext/b2/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/forbidden-ext/b1/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-method-static/forbidden-ext/b2/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-gen-private-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-gen-private-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-private-method/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/async-private-method-static/ClassAsyncElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/private-methods/ClassAsyncElementsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/async-method/dflt-params-abrupt.js",
+          "test/language/statements/class/elements/after-same-line-static-async-gen-computed-symbol-names.js",
+          "test/language/statements/class/elements/async-gen-private-method/yield-star-sync-throw.js",
+          "test/language/statements/class/elements/async-private-method-static/returns-async-arrow-returns-arguments-from-parent-function.js",
+          "test/language/statements/class/elements/private-methods/prod-private-async-generator.js"
+        ],
+        "notes": "Async class methods and elements have 400 additional verified passing Test262 results across all 790 required native variants. Coverage includes private/static async methods, async-generator delegation and promise rejection, default parameters, lexical arguments/new.target, restricted caller/arguments properties, and class-element names, separators, and private-member forms. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. Broader private-brand lifecycle and class-definition edge cases remain limited; this is not complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
+        "feature": "Class generator method parameters and async delegation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/forbidden-ext/b1/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method/forbidden-ext/b2/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/forbidden-ext/b1/ClassGeneratorMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/async-gen-method-static/forbidden-ext/b2/ClassGeneratorMethodsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/dstr/gen-meth-ary-init-iter-get-err.js",
+          "test/language/statements/class/dstr/async-private-gen-meth-static-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/async-gen-method/yield-promise-reject-next-catch.js",
+          "test/language/statements/class/async-gen-method-static/yield-star-async-return.js",
+          "test/language/statements/class/async-gen-method-static/forbidden-ext/b1/cls-decl-async-gen-meth-static-forbidden-ext-direct-access-prop-caller.js"
+        ],
+        "notes": "Class-generator methods have 400 additional verified passing Test262 results across all 790 required native variants: 266 method parameter-destructuring cases and 134 async-generator method cases. Coverage includes private/static methods, defaults, rest and nested array/object patterns, iterator cleanup, promise rejection, delegated iteration, and restricted caller/arguments properties. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. This is not complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
+        "feature": "Class method async-generator parameters and computed accessor names",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/dstr/ClassMethodsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/definition/ClassMethodsExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/definition/fn-name-accessor-get.js",
+          "test/language/statements/class/definition/fn-name-accessor-set.js",
+          "test/language/statements/class/dstr/async-gen-meth-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-gen-meth-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-gen-meth-static-dflt-ary-init-iter-close.js",
+          "test/language/statements/class/dstr/async-private-gen-meth-ary-init-iter-close.js"
+        ],
+        "notes": "Class-declaration methods have 352 additional verified passing Test262 results across all 704 required native variants: 350 async-generator method parameter-destructuring cases and both computed-accessor name cases. Parameter coverage includes defaults, rest, nested array/object patterns, iterator cleanup, static methods, and private methods. Computed class getters and setters receive specification-compliant names for string and Symbol keys, preserving the get/set prefix and trailing space for undescribed Symbols and bracketing described Symbol names on both instance and static accessors. The shared accessor-name helper preserves existing explicit metadata. No selected case requires eval. Results are branch-local native validation, not central trusted acceptance, and do not claim complete class-declaration conformance."
+      },
+      {
+        "clause": "15.7.13",
+        "feature": "Class-declaration elements and private assignment targets",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/evaluation-error/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/private-methods/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/syntax/valid/ClassElementsExecutionTests.cs",
+          "tests/Jroc.Tests/HIRPrivateAssignmentTargetTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/elements/privatefieldset-evaluation-order-2.js",
+          "test/language/statements/class/elements/privatefieldset-evaluation-order-3.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-6.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-7.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-8.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-9.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-10.js",
+          "test/language/statements/class/elements/privatefieldset-typeerror-11.js"
+        ],
+        "notes": "Class-declaration elements have 309 additional verified passing Test262 results across all 618 required native variants and 30 known unsupported eval cases. Private field and accessor targets in destructuring and for-in/for-of loop heads use lexically resolved private metadata. Receiver evaluation precedes property access and rest copying; private-brand checks occur when storing, after getter side effects and defaults. Setter dispatch and readonly-member TypeErrors share ordinary private-assignment lowering. Existing iterator cleanup is retained. Coverage also includes private/public fields, computed names, private methods/accessors, initialization, and valid syntax. Class-definition details, private-brand lifecycle, private access in computed names, and indirect-super field initialization remain limited; this is not complete class-declaration conformance. Results are branch-local native validation, not central trusted acceptance."
+      },
+      {
+        "clause": "15.7.10",
+        "feature": "Class fields on module namespace superclass returns",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs"
+        ],
+        "notes": "When super() returns a module namespace object, computed field names retain their defining constructor's captured keys. Public fields use the namespace's exotic property-definition behavior rather than bypassing it through CLR storage. Private field addition throws TypeError, and a failed initialization does not establish a private brand. The pinned deferred-namespace class-field evaluation-trigger cases pass; other exotic subclass edge cases remain limited."
+      },
+      {
         "clause": "15.7.14",
         "feature": "Class-expression Test262 coverage and evaluation identity",
         "status": "Supported with Limitations",
@@ -129,7 +253,7 @@
           "test/language/expressions/class/elements/static-field-init-this-inside-arrow-function.js",
           "test/language/expressions/class/elements/optional-chaining-private-getter.js"
         ],
-        "notes": "All 4,059 unique standalone class-expression tests at the pinned revision have documented outcomes: 3,955 verified passing and 104 known unsupported eval cases. The final batch adds 87 verified cases and 61 eval exclusions. Repeated class evaluations preserve distinct constructor/private-brand identity and per-constructor computed field keys. Computed keys are coerced once during class evaluation before static fields/blocks, then reused during construction. Static initialization preserves field descriptors, anonymous function names and lexical arrow receivers. Optional private chains short-circuit before private receiver checks. Static blocks discover their nested declarations, async parameter failures reject promises, and class methods omit forbidden own caller/arguments properties. Statically discoverable Function-constructor sources are guarded against source or constructor replacement and execute in their owning realm; general runtime code generation and eval remain unsupported. Simple super-property assignments preserve the reference before evaluating the right-hand side; compound/logical super assignments remain explicitly unsupported. Proposal decorators and auto-accessors have the separate limitations below."
+        "notes": "All 4,059 unique standalone class-expression tests at the pinned revision have documented outcomes: 3,955 verified passing and 104 known unsupported eval cases. The final class batch adds 87 verified cases and 61 eval exclusions. Repeated class evaluations preserve distinct constructor/private-brand identity and per-constructor computed field keys. Computed keys are coerced once during class evaluation before static fields/blocks, then reused during construction. Static initialization preserves field descriptors, anonymous function names and lexical arrow receivers. Optional private chains short-circuit before private receiver checks. Static blocks discover their nested declarations, async parameter failures reject promises, and class methods omit forbidden own caller/arguments properties. Statically discoverable Function-constructor sources are guarded against source or constructor replacement and execute in their owning realm; general runtime code generation and eval remain unsupported. Super-property reads, simple/compound/logical assignments, and updates now preserve their defining home objects, actual receivers, and specification ordering. Proposal decorators and auto-accessors have the separate limitations below."
       },
       {
         "clause": "15.7.14",
@@ -196,7 +320,7 @@
           "test/language/statements/class/subclass/builtin-objects/Object/constructor-returns-non-object.js",
           "test/built-ins/Function/internals/Construct/derived-this-uninitialized.js"
         ],
-        "notes": "The native harness verifies 30 previously failing pinned constructor cases. Derived constructors require an initialized this binding on undefined completion, even when the constructed value is discarded; explicit object returns bypass this resolution, while other primitive returns throw TypeError after the body and iterator cleanup have completed. Captured scopes are available before super(), including arrows and null heritage. Dynamic class-valued super constructors use class construction rather than ordinary function invocation. Other exotic subclass and class-field initialization edge cases remain limited."
+        "notes": "The native harness verifies 30 previously failing pinned constructor cases. Derived constructors require an initialized this binding on undefined completion, even when the constructed value is discarded; explicit object returns bypass this resolution, while other primitive returns throw TypeError after the body and iterator cleanup have completed. Captured scopes are available before super(), including arrows and null heritage. Dynamic class-valued super constructors preserve the executing constructor and original new.target; compatible generated base constructors initialize the existing receiver so inherited fields and backing storage remain attached to the same instance. Protected CLR-only constructors separately initialize base storage without executing JavaScript constructor bodies or initializing the derived this binding. Escaped super-call arrows preserve their defining constructor and original new.target, and still execute superclass side effects before a repeated-super ReferenceError. Built-in super calls establish their own callee and realm context. Other exotic subclass and class-field initialization edge cases remain limited."
       },
       {
         "clause": "15.7.13",
@@ -932,13 +1056,13 @@
       {
         "clause": "15.7.11",
         "feature": "Class static blocks (static { ... })",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation",
         "testScripts": [
           "tests/Jroc.Tests/ValidatorTests.cs",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
         ],
-        "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization."
+        "notes": "Static blocks execute during each class evaluation in declaration order relative to static field initialization, rather than through CLR .cctor execution. Each block owns its var bindings, and new.target is undefined. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization. Some super and nested arguments cases remain limited."
       },
       {
         "clause": "15.7.1",

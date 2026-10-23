@@ -127,6 +127,13 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        return EmitReturnCompletion(returnTempVar);
+    }
+
+    private bool EmitReturnCompletion(TempVariable returnTempVar)
+    {
+        var lirInstructions = _methodBodyIR.Instructions;
+
         // Async try/finally lowering: a return inside a protected region must flow through finally.
         if (_isAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true
@@ -249,6 +256,14 @@ public sealed partial class HIRToLIRLowerer
             case HIRBinaryExpression { Operator: Acornima.Operator.LogicalOr } logicalOr:
                 return TryLowerTailPositionLogicalOrReturn(logicalOr);
 
+            // Keep inferred typed returns on their existing ABI-specific lowering path.
+            case HIRBinaryExpression { Operator: Acornima.Operator.NullishCoalescing } nullish
+                when _scope?.StableReturnClrType == null:
+                return TryLowerTailPositionNullishReturn(nullish);
+
+            case HIRSequenceExpression sequence when _scope?.StableReturnClrType == null:
+                return TryLowerTailPositionSequenceReturn(sequence);
+
             case HIRCallExpression callExpr:
                 return TryLowerTailCallFunctionReturn(callExpr);
 
@@ -345,6 +360,44 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return EmitReturnTemp(valueTemp);
+    }
+
+    private bool TryLowerTailPositionNullishReturn(HIRBinaryExpression expression)
+    {
+        if (!TryLowerExpression(expression.Left, out var left))
+        {
+            return false;
+        }
+
+        var boxedLeft = EnsureObject(left);
+        var nonNullishLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(EmitIsNullish(boxedLeft), nonNullishLabel));
+        if (!TryLowerReturnExpressionOrTailReturn(expression.Right))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(nonNullishLabel));
+        ClearNumericRefinementsAtLabel();
+        return EmitReturnTemp(boxedLeft);
+    }
+
+    private bool TryLowerTailPositionSequenceReturn(HIRSequenceExpression sequence)
+    {
+        if (sequence.Expressions.Count == 0)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < sequence.Expressions.Count - 1; index++)
+        {
+            if (!TryLowerExpressionDiscardResult(sequence.Expressions[index]))
+            {
+                return false;
+            }
+        }
+
+        return TryLowerReturnExpressionOrTailReturn(sequence.Expressions[^1]);
     }
 
     private bool TryLowerTailCallFunctionReturn(HIRCallExpression callExpr)

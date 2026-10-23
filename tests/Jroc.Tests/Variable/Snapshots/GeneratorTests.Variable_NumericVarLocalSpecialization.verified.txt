@@ -512,7 +512,7 @@
 			IL_0021: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0026: stloc.s 4
 			IL_0028: ldloc.s 4
-			IL_002a: box [System.Runtime]System.Boolean
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_002f: stloc.s 5
 			IL_0031: ldloc.1
 			IL_0032: ldloc.s 5
@@ -2015,7 +2015,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 69 (0x45)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -2026,38 +2026,37 @@
 				[5] object
 			)
 
-			IL_0000: ldc.i4.0
-			IL_0001: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0006: stloc.0
-			IL_0007: ldnull
-			IL_0008: stloc.1
-			IL_0009: ldloc.0
-			IL_000a: call bool [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::IsNullish(object)
-			IL_000f: stloc.2
-			IL_0010: ldloc.2
-			IL_0011: brtrue IL_0043
+			IL_0000: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0005: stloc.0
+			IL_0006: ldnull
+			IL_0007: stloc.1
+			IL_0008: ldloc.0
+			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::IsNullish(object)
+			IL_000e: stloc.2
+			IL_000f: ldloc.2
+			IL_0010: brtrue IL_0042
 
-			IL_0016: ldc.r8 1
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: stloc.3
-			IL_0025: ldloc.3
-			IL_0026: stloc.1
-			IL_0027: ldc.i4.1
-			IL_0028: newarr [System.Runtime]System.Object
-			IL_002d: dup
-			IL_002e: ldc.i4.0
-			IL_002f: ldloc.1
-			IL_0030: stelem.ref
-			IL_0031: stloc.s 4
-			IL_0033: ldloc.0
-			IL_0034: ldnull
-			IL_0035: ldloc.s 4
-			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
-			IL_003c: stloc.s 5
-			IL_003e: br IL_0043
+			IL_0015: ldc.r8 1
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: stloc.1
+			IL_0026: ldc.i4.1
+			IL_0027: newarr [System.Runtime]System.Object
+			IL_002c: dup
+			IL_002d: ldc.i4.0
+			IL_002e: ldloc.1
+			IL_002f: stelem.ref
+			IL_0030: stloc.s 4
+			IL_0032: ldloc.0
+			IL_0033: ldnull
+			IL_0034: ldloc.s 4
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+			IL_003b: stloc.s 5
+			IL_003d: br IL_0042
 
-			IL_0043: ldloc.1
-			IL_0044: ret
+			IL_0042: ldloc.1
+			IL_0043: ret
 		} // end of method optionalWrite::__js_call__
 
 	} // end of class optionalWrite

@@ -172,7 +172,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 84 (0x54)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -200,20 +200,19 @@
 			IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0031: stloc.0
 			IL_0032: ldarg.1
-			IL_0033: ldc.i4.0
-			IL_0034: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::NotEqual(object, object)
-			IL_003e: stloc.2
-			IL_003f: ldloc.2
-			IL_0040: box [System.Runtime]System.Boolean
-			IL_0045: stloc.3
-			IL_0046: ldloc.0
-			IL_0047: ldstr "module loaded:"
-			IL_004c: ldloc.3
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0033: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::NotEqual(object, object)
+			IL_003d: stloc.2
+			IL_003e: ldloc.2
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0044: stloc.3
+			IL_0045: ldloc.0
+			IL_0046: ldstr "module loaded:"
+			IL_004b: ldloc.3
+			IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0051: pop
+			IL_0052: ldnull
+			IL_0053: ret
 		} // end of method ArrowFunction_L7C26::__js_call__
 
 	} // end of class ArrowFunction_L7C26
@@ -366,7 +365,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 249 (0xf9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_BasicImport/Scope,
@@ -389,87 +388,89 @@
 		IL_0018: pop
 		IL_0019: ldstr "node:path"
 		IL_001e: ldstr "Import_BasicImport"
-		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.DynamicImport::Import(object, object)
-		IL_0028: stloc.2
-		IL_0029: ldloc.2
-		IL_002a: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
-		IL_002f: stloc.2
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: stloc.3
-		IL_003b: newobj instance void Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject::.ctor()
-		IL_0040: ldc.i4.1
-		IL_0041: conv.r8
-		IL_0042: ldstr ""
-		IL_0047: ldc.i4.0
-		IL_0048: ldc.i4.0
-		IL_0049: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_004e: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject>(!!0)
-		IL_0053: stloc.s 4
-		IL_0055: ldloc.2
-		IL_0056: ldstr "then"
-		IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
-		IL_0060: brtrue IL_0074
+		IL_0023: ldnull
+		IL_0024: ldstr "None"
+		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.DynamicImport::Import(object, object, object, string)
+		IL_002e: stloc.2
+		IL_002f: ldloc.2
+		IL_0030: call !!0 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible<class [JavaScriptRuntime]JavaScriptRuntime.Promise>(!!0)
+		IL_0035: stloc.2
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.0
+		IL_003f: stelem.ref
+		IL_0040: stloc.3
+		IL_0041: newobj instance void Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject::.ctor()
+		IL_0046: ldc.i4.1
+		IL_0047: conv.r8
+		IL_0048: ldstr ""
+		IL_004d: ldc.i4.0
+		IL_004e: ldc.i4.0
+		IL_004f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0054: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_BasicImport/ArrowFunction_L7C26/FunctionObject>(!!0)
+		IL_0059: stloc.s 4
+		IL_005b: ldloc.2
+		IL_005c: ldstr "then"
+		IL_0061: call bool [JavaScriptRuntime]JavaScriptRuntime.Promise::HasMemberOverride(object, string)
+		IL_0066: brtrue IL_007a
 
-		IL_0065: ldloc.2
-		IL_0066: ldloc.s 4
-		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
-		IL_006d: stloc.s 5
-		IL_006f: br IL_008c
+		IL_006b: ldloc.2
+		IL_006c: ldloc.s 4
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Promise::then(object)
+		IL_0073: stloc.s 5
+		IL_0075: br IL_0092
 
-		IL_0074: ldloc.2
-		IL_0075: ldstr "then"
-		IL_007a: ldc.i4.1
-		IL_007b: newarr [System.Runtime]System.Object
-		IL_0080: dup
-		IL_0081: ldc.i4.0
-		IL_0082: ldloc.s 4
-		IL_0084: stelem.ref
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-		IL_008a: stloc.s 5
+		IL_007a: ldloc.2
+		IL_007b: ldstr "then"
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldloc.s 4
+		IL_008a: stelem.ref
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+		IL_0090: stloc.s 5
 
-		IL_008c: ldloc.s 5
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0093: stloc.s 5
-		IL_0095: ldc.i4.1
-		IL_0096: newarr [System.Runtime]System.Object
-		IL_009b: dup
-		IL_009c: ldc.i4.0
-		IL_009d: ldloc.0
-		IL_009e: stelem.ref
-		IL_009f: stloc.3
-		IL_00a0: newobj instance void Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject::.ctor()
-		IL_00a5: ldc.i4.1
-		IL_00a6: conv.r8
-		IL_00a7: ldstr ""
-		IL_00ac: ldc.i4.0
-		IL_00ad: ldc.i4.0
-		IL_00ae: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_00b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject>(!!0)
-		IL_00b8: stloc.s 6
-		IL_00ba: volatile.
-		IL_00bc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00c1: brfalse IL_00d9
+		IL_0092: ldloc.s 5
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0099: stloc.s 5
+		IL_009b: ldc.i4.1
+		IL_009c: newarr [System.Runtime]System.Object
+		IL_00a1: dup
+		IL_00a2: ldc.i4.0
+		IL_00a3: ldloc.0
+		IL_00a4: stelem.ref
+		IL_00a5: stloc.3
+		IL_00a6: newobj instance void Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject::.ctor()
+		IL_00ab: ldc.i4.1
+		IL_00ac: conv.r8
+		IL_00ad: ldstr ""
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldc.i4.0
+		IL_00b4: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00b9: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_BasicImport/ArrowFunction_L11C10/FunctionObject>(!!0)
+		IL_00be: stloc.s 6
+		IL_00c0: volatile.
+		IL_00c2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00c7: brfalse IL_00df
 
-		IL_00c6: ldloc.s 5
-		IL_00c8: ldstr "catch"
-		IL_00cd: ldloc.s 6
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_00d4: br IL_00f1
+		IL_00cc: ldloc.s 5
+		IL_00ce: ldstr "catch"
+		IL_00d3: ldloc.s 6
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_00da: br IL_00f7
 
-		IL_00d9: ldloc.s 5
-		IL_00db: ldstr "catch"
-		IL_00e0: ldloc.s 6
-		IL_00e2: ldstr "Import_BasicImport:Modules.Import_BasicImport:__js_module_init__:18"
-		IL_00e7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_00df: ldloc.s 5
+		IL_00e1: ldstr "catch"
+		IL_00e6: ldloc.s 6
+		IL_00e8: ldstr "Import_BasicImport:Modules.Import_BasicImport:__js_module_init__:18"
+		IL_00ed: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_00f1: pop
-		IL_00f2: ret
+		IL_00f7: pop
+		IL_00f8: ret
 	} // end of method Import_BasicImport::__js_module_init__
 
 } // end of class Modules.Import_BasicImport

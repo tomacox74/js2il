@@ -712,14 +712,22 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallImport callImport:
                 {
-                    // Emit: JavaScriptRuntime.Modules.ESM.DynamicImport(specifier, currentModuleId)
                     EmitLoadTemp(callImport.ModuleSpecifier, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callImport.CurrentModuleId, ilEncoder, allocation, methodDescriptor);
+                    if (callImport.Options is { } options)
+                    {
+                        EmitLoadTemp(options, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+                    ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(callImport.Phase));
                     
                     var importRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Modules.ESM.DynamicImport),
                         nameof(JavaScriptRuntime.Modules.ESM.DynamicImport.Import),
-                        new[] { typeof(object), typeof(object) });
+                        new[] { typeof(object), typeof(object), typeof(object), typeof(string) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(importRef);
 
@@ -914,8 +922,7 @@ internal sealed partial class LIRToILCompiler
                             && clrType == typeof(object)
                             && GetTempStorage(callUserClass.Result) is { Kind: ValueStorageKind.UnboxedValue, ClrType: Type resultClrType })
                         {
-                            ilEncoder.OpCode(ILOpCode.Box);
-                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(resultClrType));
+                            EmitBoxValue(resultClrType, ilEncoder);
                         }
 
                         EmitStoreTemp(callUserClass.Result, ilEncoder, allocation);
@@ -1726,8 +1733,7 @@ internal sealed partial class LIRToILCompiler
         }
         else if (returnClrType == typeof(bool))
         {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.BooleanType);
+            EmitBoxValue(returnClrType, ilEncoder);
         }
     }
 

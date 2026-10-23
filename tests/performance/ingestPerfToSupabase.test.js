@@ -29,6 +29,15 @@ test('keeps existing Jint phase distinctions', () => {
     assert.equal(normalizeRuntime('Jint execute (prepared)'), 'jint-execute-prepared');
 });
 
+test('records SharpTS execution identity and the pinned hosting package version', () => {
+    const csproj = fs.readFileSync(path.join(__dirname, 'Benchmarks', 'Benchmarks.csproj'), 'utf8');
+    const version = csproj.match(/<PackageReference Include="SharpTS.Hosting" Version="([^"]+)"/)[1];
+    assert.equal(normalizeRuntime('sharpts-execute'), 'sharpts-execute');
+    assert.equal(normalizeRuntime('SharpTs_ExecuteOnly'), 'sharpts-execute');
+    assert.equal(normalizeRuntime('RunSharpTsTest'), 'sharpts-execute');
+    assert.equal(resolveRuntimeVersion('sharpts-execute', { sharpts: version }), version);
+});
+
 test('keeps previous Jroc results distinct from current Jroc results', () => {
     assert.equal(normalizeRuntime('JrocPrevious (compile+execute)'), 'jroc-previous-total');
     assert.equal(normalizeRuntime('jroc-previous-execute'), 'jroc-previous-execute');

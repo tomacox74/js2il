@@ -272,6 +272,20 @@
 				IL_0015: ret
 			} // end of method Base::.ctor
 
+			.method family hidebysig specialname rtspecialname 
+				instance void .ctor (
+					bool ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: ret
+			} // end of method Base::.ctor
+
 			.method public hidebysig 
 				instance float64 m () cil managed 
 			{
@@ -498,23 +512,52 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 23 (0x17)
+				// Code size: 59 (0x3b)
 				.maxstack 8
 				.locals init (
-					[0] object[]
+					[0] class [System.Runtime]System.Type,
+					[1] object,
+					[2] object[]
 				)
 
 				IL_0000: ldarg.0
-				IL_0001: ldarg.1
-				IL_0002: call instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Base::.ctor(object[])
-				IL_0007: ldarg.0
-				IL_0008: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
-				IL_000d: ldarg.1
-				IL_000e: stloc.0
-				IL_000f: ldarg.0
-				IL_0010: ldloc.0
-				IL_0011: stfld object[] Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::_scopes
-				IL_0016: ret
+				IL_0001: ldc.i4.0
+				IL_0002: call instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::.ctor(bool)
+				IL_0007: ldtoken Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
+				IL_000c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_0011: ldtoken Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
+				IL_0016: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+				IL_001b: stloc.0
+				IL_001c: ldloc.0
+				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+				IL_0022: stloc.1
+				IL_0023: call object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentArguments()
+				IL_0028: stloc.2
+				IL_0029: ldarg.0
+				IL_002a: ldloc.1
+				IL_002b: ldloc.2
+				IL_002c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+				IL_0031: ldarg.1
+				IL_0032: stloc.2
+				IL_0033: ldarg.0
+				IL_0034: ldloc.2
+				IL_0035: stfld object[] Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::_scopes
+				IL_003a: ret
+			} // end of method Derived::.ctor
+
+			.method family hidebysig specialname rtspecialname 
+				instance void .ctor (
+					bool ''
+				) cil managed 
+			{
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldc.i4.0
+				IL_0002: call instance void Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Base::.ctor(bool)
+				IL_0007: ret
 			} // end of method Derived::.ctor
 
 			.method public hidebysig 
@@ -524,18 +567,37 @@
 					01 00 00 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 14 (0xe)
+				// Code size: 50 (0x32)
 				.maxstack 8
 				.locals init (
-					[0] float64
+					[0] object,
+					[1] object,
+					[2] string,
+					[3] object[]
 				)
 
-				IL_0000: ldarg.0
-				IL_0001: call instance float64 Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Base::m()
-				IL_0006: stloc.0
-				IL_0007: ldloc.0
-				IL_0008: box [System.Runtime]System.Double
-				IL_000d: ret
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperPropertyReceiver()
+				IL_0005: stloc.0
+				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperPropertyBase()
+				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0010: stloc.1
+				IL_0011: ldstr "m"
+				IL_0016: stloc.2
+				IL_0017: ldloc.1
+				IL_0018: ldloc.0
+				IL_0019: ldloc.2
+				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetSuperProperty(object, object, object)
+				IL_001f: stloc.1
+				IL_0020: ldc.i4.0
+				IL_0021: newarr [System.Runtime]System.Object
+				IL_0026: stloc.3
+				IL_0027: ldloc.1
+				IL_0028: ldloc.0
+				IL_0029: ldloc.3
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CallWithThis(object, object, object[])
+				IL_002f: stloc.0
+				IL_0030: ldloc.0
+				IL_0031: ret
 			} // end of method Derived::n
 
 		} // end of class Derived
@@ -681,7 +743,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 536 (0x218)
+			// Code size: 543 (0x21f)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Scope,
@@ -874,28 +936,26 @@
 			IL_01d9: stloc.s 5
 			IL_01db: ldloc.s 5
 			IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01e2: stloc.s 5
-			IL_01e4: ldloc.s 5
-			IL_01e6: isinst Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived
-			IL_01eb: dup
-			IL_01ec: brfalse IL_01fd
+			IL_01e2: volatile.
+			IL_01e4: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_01e9: brfalse IL_01fd
 
-			IL_01f1: callvirt instance object Modules.Classes_Inheritance_SuperCapturedScopeVar/outer/Derived::n()
-			IL_01f6: stloc.s 5
-			IL_01f8: br IL_020c
+			IL_01ee: ldstr "n"
+			IL_01f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_01f8: br IL_0211
 
-			IL_01fd: pop
-			IL_01fe: ldloc.s 5
-			IL_0200: ldstr "n"
-			IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_020a: stloc.s 5
+			IL_01fd: ldstr "n"
+			IL_0202: ldstr "Classes_Inheritance_SuperCapturedScopeVar:<TwoPhaseDummy_M4>:__js_call__:35"
+			IL_0207: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_020c: ldloc.s 8
-			IL_020e: ldloc.s 5
-			IL_0210: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0215: pop
-			IL_0216: ldnull
-			IL_0217: ret
+			IL_0211: stloc.s 5
+			IL_0213: ldloc.s 8
+			IL_0215: ldloc.s 5
+			IL_0217: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_021c: pop
+			IL_021d: ldnull
+			IL_021e: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -1006,6 +1066,7 @@
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_11
 	.field assembly static int32 __jroc_dynamicLookup_12
+	.field assembly static int32 __jroc_dynamicLookup_13
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

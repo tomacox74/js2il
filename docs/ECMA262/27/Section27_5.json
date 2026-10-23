@@ -137,9 +137,16 @@
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js",
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-array.js",
           "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js",
-          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-string.js"
+          "tests/Jroc.Test262.Tests/language/expressions/yield/JavaScript/star-string.js",
+          "tests/Jroc.Test262.Tests/language/expressions/yield/YieldCompletionExecutionTests.cs"
         ],
-        "notes": "Checked-in test262 generator ports now cover plain yield sequencing, yielded resumption values (including omitted/explicit next values and primitive operands), yielded parent-scope captures, yield inside try/catch, yield* array/string delegation, and yield* delegation to custom [Symbol.iterator] iterables in addition to the existing project-level generator regressions."
+        "test262Paths": [
+          "test/language/expressions/yield/rhs-unresolvable.js",
+          "test/language/expressions/yield/star-rhs-iter-nrml-next-invoke.js",
+          "test/language/expressions/yield/star-rhs-iter-rtrn-res-value-final.js",
+          "test/language/expressions/yield/star-rhs-iter-thrw-violation-rtrn-invoke.js"
+        ],
+        "notes": "All 63 pinned yield-expression cases pass all 123 required native variants on the development branch. Coverage includes sequencing and captures, operand errors, custom delegation receivers and next values, return/throw forwarding, null or absent methods, iterator-result getter failures, cleanup on missing throw, and delegated return unwinding through finally. Iterator records cache next while looking up return/throw when each abrupt resumption occurs; non-final synchronous results retain their identity and lazy value access."
       },
       {
         "clause": "27.5.1.1",

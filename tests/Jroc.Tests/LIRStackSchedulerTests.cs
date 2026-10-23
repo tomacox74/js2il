@@ -1658,7 +1658,7 @@ public sealed class LIRStackSchedulerTests
             "ldarg.1",
             "ldarg.2",
             "clt",
-            "box");
+            "BoxedPrimitive::Box(bool)");
         AssertMethodHasNoIntermediateSpills(
             il,
             "branch",

@@ -344,6 +344,20 @@
 			IL_004d: ret
 		} // end of method Example::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Example::.ctor
+
 	} // end of class Example
 
 	.class nested public auto ansi beforefieldinit Scope
@@ -571,7 +585,7 @@
 		IL_01fa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_01ff: stloc.s 10
 		IL_0201: ldloc.s 10
-		IL_0203: box [System.Runtime]System.Boolean
+		IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_0208: stloc.s 11
 		IL_020a: ldloc.s 8
 		IL_020c: ldloc.s 11

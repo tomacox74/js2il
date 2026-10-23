@@ -4,7 +4,7 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-10-21T21:07:39Z
 
 JROC models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.
 
@@ -28,13 +28,13 @@ JROC models lexical/function/global environments through compiler-managed scope 
 | 9.1.1.1.8 | HasThisBinding ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-declarative-environment-records-hasthisbinding) |
 | 9.1.1.1.9 | HasSuperBinding ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-declarative-environment-records-hassuperbinding) |
 | 9.1.1.1.10 | WithBaseObject ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-declarative-environment-records-withbaseobject) |
-| 9.1.1.2 | Object Environment Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records) |
-| 9.1.1.2.1 | HasBinding ( N ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-hasbinding-n) |
+| 9.1.1.2 | Object Environment Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records) |
+| 9.1.1.2.1 | HasBinding ( N ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-hasbinding-n) |
 | 9.1.1.2.2 | CreateMutableBinding ( N , D ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-createmutablebinding-n-d) |
 | 9.1.1.2.3 | CreateImmutableBinding ( N , S ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-createimmutablebinding-n-s) |
 | 9.1.1.2.4 | InitializeBinding ( N , V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-initializebinding-n-v) |
-| 9.1.1.2.5 | SetMutableBinding ( N , V , S ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-setmutablebinding-n-v-s) |
-| 9.1.1.2.6 | GetBindingValue ( N , S ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-getbindingvalue-n-s) |
+| 9.1.1.2.5 | SetMutableBinding ( N , V , S ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-setmutablebinding-n-v-s) |
+| 9.1.1.2.6 | GetBindingValue ( N , S ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-getbindingvalue-n-s) |
 | 9.1.1.2.7 | DeleteBinding ( N ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-deletebinding-n) |
 | 9.1.1.2.8 | HasThisBinding ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-hasthisbinding) |
 | 9.1.1.2.9 | HasSuperBinding ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object-environment-records-hassuperbinding) |
@@ -79,47 +79,46 @@ JROC models lexical/function/global environments through compiler-managed scope 
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 9.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-declarative-environment-records))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Declarative Environment Records for lexical bindings | Supported with Limitations | [`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`Variable_TemporalDeadZoneAccess.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) | Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Declarative Environment Records for lexical bindings | Supported with Limitations | [`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`Variable_TemporalDeadZoneAccess.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) |  | Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated. |
 
 ### 9.1.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-object-environment-records))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Object Environment Records (with-based environments) | Not Yet Supported | `tests/Jroc.Tests/ValidatorTests.cs` | with statement/object environment semantics are intentionally rejected in validation. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Object Environment Records (with-based environments) | Supported with Limitations | `tests/Jroc.Tests/ValidatorTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/with/VariableWithCompletionExecutionTests.cs` | `test/language/statements/with/get-binding-value-idref-with-proxy-env.js`<br>`test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopables-strict-mode.js`<br>`test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js`<br>`test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js` | Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Proxy traps receive the symbol-valued unscopables key on first use, independently of earlier Symbol property access. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results. |
 
 ### 9.1.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-environment-records))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Function Environment Records (this/super/new.target plumbing) | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | RuntimeServices and lowering carry this/new.target/super behavior for supported forms, with subset coverage of exotic function cases. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function Environment Records (this/super/new.target plumbing) | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) |  | RuntimeServices and lowering carry this/new.target/super behavior for supported forms, with subset coverage of exotic function cases. |
 
 ### 9.1.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-global-environment-records))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Global Environment Records (script/CommonJS global bindings) | Supported with Limitations | [`CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js)<br>`tests/Jroc.Tests/ValidatorTests.cs` | Global bindings are modeled in JROC global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Global Environment Records (script/CommonJS global bindings) | Supported with Limitations | [`CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js)<br>`tests/Jroc.Tests/ValidatorTests.cs` |  | Global bindings are modeled in JROC global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete. |
 
 ### 9.1.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-module-environment-records))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Module Environment Records | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_RequireEsmModule.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_RequireEsmModule.js) | Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Module Environment Records | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_RequireEsmModule.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_RequireEsmModule.js) |  | Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete. |
 
 ### 9.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-getidentifierreference))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| GetIdentifierReference over nested scope chains | Supported with Limitations | `tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>[`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js) | Identifier resolution is implemented through symbol table + scope chain planning/lowering for supported syntax. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| GetIdentifierReference over nested scope chains | Supported with Limitations | `tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>[`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  | Identifier resolution is implemented through symbol table + scope chain planning/lowering for supported syntax. |
 
 ### 9.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-newdeclarativeenvironment))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| NewDeclarativeEnvironment behavior in block/function scopes | Supported with Limitations | `tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js) | Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required. |
-
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| NewDeclarativeEnvironment behavior in block/function scopes | Supported with Limitations | `tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js) |  | Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required. |

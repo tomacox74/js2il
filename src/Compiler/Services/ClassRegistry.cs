@@ -30,11 +30,23 @@ namespace Jroc.Services
         // and validate instead of rebuilding duplicate member references.
         // MinParamCount = required params (no defaults), MaxParamCount = all params (including defaults)
         private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, bool HasScopesParam, int MinParamCount, int MaxParamCount)> _constructors = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, (MethodDefinitionHandle Constructor, EntityHandle BaseType, Type? IntrinsicBaseType)> _storageConstructors = new(StringComparer.Ordinal);
+
         // Track instance methods: className -> methodName -> (MethodDef, Signature, ReturnClrType, ReturnTypeHandle, HasScopesParam, MinParams, MaxParams, ParameterClrTypes)
         // NOTE: Min/MaxParamCount are JS parameter counts (do NOT include scopes), kept for call-site validation/padding.
         private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount, IReadOnlyList<Type?> ParameterClrTypes)>> _methods = new(StringComparer.Ordinal);
         private readonly Dictionary<string, HashSet<string>> _generatorMethods =
             new(StringComparer.Ordinal);
+        private readonly HashSet<MethodDefinitionHandle> _methodsRequiringSuperContext = new();
+
+        public void RegisterStorageConstructor(string className, MethodDefinitionHandle constructor, EntityHandle baseType, Type? intrinsicBaseType)
+            => _storageConstructors.Add(className, (constructor, baseType, intrinsicBaseType));
+
+        public (MethodDefinitionHandle Constructor, EntityHandle BaseType, Type? IntrinsicBaseType) GetStorageConstructor(string className)
+            => _storageConstructors[className];
+
+        public void RequireMethodSuperContext(MethodDefinitionHandle method)
+            => _methodsRequiringSuperContext.Add(method);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -483,6 +495,10 @@ namespace Jroc.Services
                 if (!methods.TryGetValue(methodName, out var info))
                 {
                     continue;
+                }
+                if (_methodsRequiringSuperContext.Contains(info.Method))
+                {
+                    return false;
                 }
 
                 // Only consider methods that can accept this call-site arity.

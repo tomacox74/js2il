@@ -30,18 +30,18 @@ Notes:
 
 ## Test262 Conformance Status
 
-For the current development branch following [JROC v0.12.30](https://github.com/tomacox74/js2il/releases/tag/v0.12.30), Test262 provides the following conformance evidence:
+For the current development branch following [JROC v0.12.33](https://github.com/tomacox74/js2il/releases/tag/v0.12.33), Test262 provides the following conformance evidence:
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 36,373 | **75.39%** |
-| Explicitly excluded due to known unsupported behavior | 271 | 0.56% |
-| Not yet verified | 11,601 | 24.05% |
-| **Total applicable ECMA-262 tests** | **48,245** | **100.00%** |
+| Verified passing | 39,838 | **82.58%** |
+| Explicitly excluded due to known unsupported behavior | 474 | 0.98% |
+| Not yet verified | 7,929 | 16.44% |
+| **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.
 
-`Verified passing` means the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse or runtime phase. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
+`Verified passing` means the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse, resolution, or runtime phase. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
 
 The applicable corpus is taken from the [pinned Test262 revision](https://github.com/tc39/test262/tree/2b2ecead6e828dd9af13a9ec72065e645724a50f/test) and includes the ECMA-262 `annexB`, `built-ins`, and `language` test areas. ECMA-402 internationalization tests, staging proposals, Test262 harness self-tests, and `_FIXTURE.js` support files are outside this ECMA-262 conformance measure. Percentages are file-based; strict and non-strict execution variants are not counted separately.
 

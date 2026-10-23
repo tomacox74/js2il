@@ -514,7 +514,7 @@
 			IL_000b: ldarg.2
 			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::ceil(float64)
 			IL_0011: clt
-			IL_0013: box [System.Runtime]System.Boolean
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0018: ret
 		} // end of method compareCall::__js_call__
 
@@ -3931,6 +3931,20 @@
 			IL_0018: ret
 		} // end of method Counter::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Counter::.ctor
+
 		.method public hidebysig 
 			instance class Modules.Function_SchedulerCallResults/Counter 'add' (
 				object 'value'
@@ -3960,7 +3974,7 @@
 			IL_0021: ldarg.0
 			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
 			IL_0027: ldstr "value"
-			IL_002c: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M21>:add:3"
+			IL_002c: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M22>:add:3"
 			IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_34
 			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -4100,7 +4114,7 @@
 			IL_0021: ldarg.0
 			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
 			IL_0027: ldstr "value"
-			IL_002c: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M25>:next:3"
+			IL_002c: ldstr "Function_SchedulerCallResults:<TwoPhaseDummy_M26>:next:3"
 			IL_0031: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_35
 			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 

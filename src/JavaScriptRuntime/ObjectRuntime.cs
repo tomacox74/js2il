@@ -231,14 +231,14 @@ namespace JavaScriptRuntime
 
         public static object? GetSuperProperty(string propertyName)
         {
-            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
-            if (homeObject is null or JsNull)
-            {
-                throw new TypeError("Super object is unavailable");
-            }
-            var prototype = PrototypeChain.GetPrototypeOrNull(homeObject)
-                ?? throw new TypeError("Super object has no prototype");
             var receiver = RuntimeServices.GetCurrentLexicalSuperPropertyReceiver();
+            return GetSuperProperty(GetSuperPropertyBase(), receiver, propertyName);
+        }
+
+        public static object? GetSuperProperty(object prototypeValue, object? receiver, object? propertyKey)
+        {
+            var prototype = RequireObjectCoercible(prototypeValue);
+            var propertyName = ToPropertyKeyString(propertyKey);
 
             if (TryGetOwnPropertyValue(prototype, propertyName, receiver!, out var value)
                 || TryGetInheritedPropertyValue(prototype, propertyName, receiver!, out value))
@@ -258,18 +258,22 @@ namespace JavaScriptRuntime
 
         public static object GetSuperPropertyBase()
         {
-            var homeObject = RuntimeServices.GetCurrentLexicalSuperReceiver();
+            var homeObject = RuntimeServices.GetCurrentSuperPropertyHomeObject();
             if (homeObject is null or JsNull)
             {
                 throw new TypeError("Super object is unavailable");
             }
             return PrototypeChain.GetPrototypeOrNull(homeObject)
-                ?? throw new TypeError("Super object has no prototype");
+                ?? JsNull.Null;
         }
 
         public static object? SetSuperProperty(object prototype, object? receiver, string propertyName, object? value)
+            => SetSuperProperty(prototype, receiver, propertyName, value, strict: true);
+
+        public static object? SetSuperProperty(object prototype, object? receiver, object? propertyName, object? value, bool strict)
         {
-            if (!ReflectSet(prototype, propertyName, value, receiver))
+            RequireObjectCoercible(prototype);
+            if (!ReflectSet(prototype, propertyName!, value, receiver) && strict)
             {
                 throw new TypeError($"Cannot assign to super property '{propertyName}'");
             }
@@ -359,6 +363,16 @@ namespace JavaScriptRuntime
         {
             var key = ToPropertyKeyString(prop);
             ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
+            if (target is IExoticJsObject)
+            {
+                var descriptor = new JsObject();
+                descriptor.SetValue("value", value);
+                descriptor.SetBoolean("writable", true);
+                descriptor.SetBoolean("enumerable", true);
+                descriptor.SetBoolean("configurable", true);
+                defineProperty(target, key, descriptor);
+                return value!;
+            }
             if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
                 || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
                 && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
@@ -375,10 +389,20 @@ namespace JavaScriptRuntime
                 enumerable: true);
         }
 
+        public static object EnsureCanAddPrivateElement(object target)
+        {
+            if (target is Modules.ESM.ModuleNamespace)
+                throw new TypeError("Cannot add a private element to a module namespace object");
+            return target;
+        }
+
         public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
         {
             var key = ToPropertyKeyString(prop);
             EnsureClassElementCanBeDefined(target, key);
+            var propertyKey = ToExternalPropertyKey(key);
+            Function.SetAccessorNameIfAnonymous(getter, propertyKey, "get");
+            Function.SetAccessorNameIfAnonymous(setter, propertyKey, "set");
             return DefineAccessorProperty(target, key, getter, setter, enumerable: false, createDictionarySlot: false);
         }
 
@@ -551,12 +575,15 @@ namespace JavaScriptRuntime
         {
             if (withHasBinding)
             {
-                SetProperty(withObject, name, assignedValue, throwOnError: true);
+                RuntimeServices.SetWithBindingValue(withObject, name, assignedValue, strict: false);
                 return fallbackBindingValue;
             }
 
             return assignedValue;
         }
+
+        public static object ToObject(object? value)
+            => Construct(RequireObjectCoercible(value));
 
         public static object RequireObjectCoercible(object? value)
             => RequireObjectCoercible<object?>(value)!;

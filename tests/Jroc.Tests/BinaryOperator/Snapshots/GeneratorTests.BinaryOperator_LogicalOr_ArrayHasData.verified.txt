@@ -223,7 +223,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 136 (0x88)
+			// Code size: 134 (0x86)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -240,7 +240,7 @@
 			IL_0007: ceq
 			IL_0009: stloc.0
 			IL_000a: ldloc.0
-			IL_000b: box [System.Runtime]System.Boolean
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0010: stloc.1
 			IL_0011: ldloc.1
 			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
@@ -270,7 +270,7 @@
 			IL_0057: ceq
 			IL_0059: stloc.0
 			IL_005a: ldloc.0
-			IL_005b: box [System.Runtime]System.Boolean
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_0060: stloc.3
 			IL_0061: ldloc.3
 			IL_0062: stloc.s 5
@@ -283,15 +283,13 @@
 			IL_006e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0073: stloc.0
 			IL_0074: ldloc.0
-			IL_0075: brfalse IL_0081
+			IL_0075: brfalse IL_0080
 
-			IL_007a: ldc.i4.0
-			IL_007b: box [System.Runtime]System.Boolean
-			IL_0080: ret
+			IL_007a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
+			IL_007f: ret
 
-			IL_0081: ldc.i4.1
-			IL_0082: box [System.Runtime]System.Boolean
-			IL_0087: ret
+			IL_0080: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0085: ret
 		} // end of method arrayHasData::__js_call__
 
 	} // end of class arrayHasData

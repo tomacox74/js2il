@@ -157,7 +157,7 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InDerivedClass = currentContext.InDerivedClass,
-                    AllowsNewTarget = false,
+                    AllowsNewTarget = true,
                     AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
@@ -273,10 +273,9 @@ public class JavaScriptAstValidator : IAstValidator
                     {
                         if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                         {
-                            // new.target is only valid in functions/constructors
                             if (!currentContext.AllowsNewTarget)
                             {
-                                result.Errors.Add($"new.target is only valid inside functions or constructors (line {node.Location.Start.Line})");
+                                result.Errors.Add($"new.target is only valid inside functions, constructors, or class static blocks (line {node.Location.Start.Line})");
                                 result.IsValid = false;
                             }
                         }
@@ -348,11 +347,6 @@ public class JavaScriptAstValidator : IAstValidator
                 case NodeType.CallExpression:
                     // Detect require(...) patterns and spread in call arguments
                     ValidateCallExpression(node, result);
-                    break;
-
-                case NodeType.ImportExpression:
-                    // Dynamic import() calls
-                    ValidateImportExpression(node, result);
                     break;
 
                 case NodeType.FunctionDeclaration:
@@ -1474,6 +1468,8 @@ public class JavaScriptAstValidator : IAstValidator
         var functionDepth = 0;
         var finallyDepth = 0; // Track if we're inside a finally block
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
+        Action<Node?> visitChild = null!;
+        visitChild = WalkForAsyncAwait;
 
         void WalkForAsyncAwait(Node? node)
         {
@@ -1540,34 +1536,7 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             }
 
-            // Walk children
-            var type = node.GetType();
-            foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                if (!prop.CanRead) continue;
-                if (prop.GetIndexParameters().Length != 0) continue;
-
-                object? value;
-                try { value = prop.GetValue(node); }
-                catch { continue; }
-
-                if (value is null || value is string) continue;
-
-                if (value is Node childNode)
-                {
-                    WalkForAsyncAwait(childNode);
-                }
-                else if (value is IEnumerable enumerable)
-                {
-                    foreach (var item in enumerable)
-                    {
-                        if (item is Node itemNode)
-                        {
-                            WalkForAsyncAwait(itemNode);
-                        }
-                    }
-                }
-            }
+            AstChildVisitor.Visit(node, visitChild);
 
             // Track exiting async functions
             if (isAsyncFunction)
@@ -1587,6 +1556,8 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var generatorFunctionDepth = 0;
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
+        Action<Node?> visitChild = null!;
+        visitChild = WalkForGenerators;
 
         void WalkForGenerators(Node? node)
         {
@@ -1615,34 +1586,7 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             }
 
-            // Walk children (reflection-based, consistent with ValidateAsyncAwait)
-            var type = node.GetType();
-            foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                if (!prop.CanRead) continue;
-                if (prop.GetIndexParameters().Length != 0) continue;
-
-                object? value;
-                try { value = prop.GetValue(node); }
-                catch { continue; }
-
-                if (value is null || value is string) continue;
-
-                if (value is Node childNode)
-                {
-                    WalkForGenerators(childNode);
-                }
-                else if (value is IEnumerable enumerable)
-                {
-                    foreach (var item in enumerable)
-                    {
-                        if (item is Node itemNode)
-                        {
-                            WalkForGenerators(itemNode);
-                        }
-                    }
-                }
-            }
+            AstChildVisitor.Visit(node, visitChild);
 
             if (isGeneratorFunction)
             {
@@ -1801,22 +1745,6 @@ public class JavaScriptAstValidator : IAstValidator
                     AddUnsupportedError(result, "Dynamic require() with non-literal argument is not supported", node);
                     result.IsValid = false;
                 }
-            }
-        }
-    }
-
-    private void ValidateImportExpression(Node node, ValidationResult result)
-    {
-        if (node is ImportExpression importExpr)
-        {
-            // Reject import options (second parameter)
-            var hasNonNullOptions = importExpr.Options != null
-                && (importExpr.Options is not Literal optionsLiteral || optionsLiteral.Value != null);
-
-            if (hasNonNullOptions)
-            {
-                AddUnsupportedError(result, "Import options (second parameter to import()) are not yet supported", node);
-                result.IsValid = false;
             }
         }
     }

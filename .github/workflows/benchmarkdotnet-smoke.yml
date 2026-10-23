@@ -1,0 +1,97 @@
+name: BenchmarkDotNet Smoke
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'tests/performance/Benchmarks/**'
+      - '.github/workflows/benchmarkdotnet-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: SharpTS child process (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: source
+            project: Benchmarks.csproj
+            published: false
+          - name: published
+            project: Benchmarks.csproj
+            published: true
+          - name: previous-host
+            project: Benchmarks.Previous.csproj
+            published: true
+    env:
+      UsePublishedJrocPackages: ${{ matrix.published }}
+    defaults:
+      run:
+        working-directory: tests/performance/Benchmarks
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Select released packages for dependency smoke tests
+        if: matrix.published
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)"
+          version="${tag#v}"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "JrocPackageVersion=$version" >> "$GITHUB_ENV"
+          node ../../../scripts/waitForNuGetPackageVersions.js \
+            --version "$version" --package Jroc.Core --package Jroc.Runtime \
+            --timeout-seconds 300 --poll-seconds 15
+      - name: Build benchmark host
+        run: dotnet build "${{ matrix.project }}" -c Release
+      - name: Exercise every enabled SharpTS Dromaeo child
+        run: |
+          dotnet run --project "${{ matrix.project }}" -c Release --no-build -- \
+            --dromaeo --filter '*SharpTs*' --job Dry --exporters json \
+            --artifacts "$PWD/BenchmarkDotNet.Artifacts/smoke-dromaeo"
+      - name: Exercise the SharpTS Kraken child
+        run: |
+          dotnet run --project "${{ matrix.project }}" -c Release --no-build -- \
+            --kracken --scenario json-parse-financial --filter '*SharpTs*' \
+            --job Dry --exporters json \
+            --artifacts "$PWD/BenchmarkDotNet.Artifacts/smoke-kracken"
+      - name: Verify all eleven child measurements were produced
+        run: |
+          node <<'JS'
+          const assert = require("node:assert/strict");
+          const fs = require("node:fs");
+          for (const [suite, type, count] of [
+            ["dromaeo", "DromaeoExecutionBenchmarks", 10],
+            ["kracken", "KrackenExecutionBenchmarks", 1],
+          ]) {
+            const file = `BenchmarkDotNet.Artifacts/smoke-${suite}/results/Benchmarks.${type}-report-full-compressed.json`;
+            const { Benchmarks: rows } = JSON.parse(fs.readFileSync(file, "utf8"));
+            assert.equal(rows.length, count, `${suite}: missing child measurements`);
+            assert(rows.every(row => row.Method.includes("SharpTs")
+              && row.Statistics?.N > 0 && Number.isFinite(row.Statistics.Mean)
+              && row.Statistics.Mean > 0), `${suite}: failed child measurement`);
+          }
+          JS
+      - name: Upload smoke reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmarkdotnet-smoke-${{ matrix.name }}
+          path: tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/smoke-*
+          if-no-files-found: warn

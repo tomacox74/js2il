@@ -112,10 +112,11 @@ sealed record MethodDescriptor
 
     /// <summary>
     /// True if this constructor belongs to a derived class (i.e., the class has an extends clause).
-    /// When true, the IL emitter must NOT prepend System.Object::.ctor(); the base constructor
-    /// should be invoked via an explicit or synthesized <c>super(...)</c> call.
+    /// CLR storage initialization is separate from the JavaScript <c>super(...)</c> call.
     /// </summary>
     public bool IsDerivedConstructor { get; set; } = false;
+
+    public MethodDefinitionHandle StorageConstructor { get; set; }
 }
 
 /// <summary>
@@ -550,6 +551,13 @@ internal sealed class JsMethodCompiler
             IsDerivedConstructor = callableKind == ScopesCallableKind.Constructor && isDerivedConstructor,
             EmitCallableScopeAbiAttribute = emitCallableScopeAbiAttribute && callableKind != ScopesCallableKind.ClassStaticInitializer
         };
+        if (methodDescriptor.IsConstructor)
+        {
+            var ownerScope = scope.Kind == ScopeKind.Class ? scope : scope.Parent
+                ?? throw new InvalidOperationException("A class constructor has no declaring class.");
+            methodDescriptor.StorageConstructor = _serviceProvider.GetRequiredService<ClassRegistry>()
+                .GetStorageConstructor(ScopeNaming.GetRegistryClassName(ownerScope)).Constructor;
+        }
 
         // Allow class instance methods that `return this` to have a class-typed IL signature.
         // This enables fluent call chains without boxing back to object.

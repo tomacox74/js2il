@@ -329,12 +329,11 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 7 (0x7)
+			// Code size: 6 (0x6)
 			.maxstack 8
 
-			IL_0000: ldc.i4.1
-			IL_0001: box [System.Runtime]System.Boolean
-			IL_0006: ret
+			IL_0000: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::True
+			IL_0005: ret
 		} // end of method returnBoolean::__js_call__
 
 	} // end of class returnBoolean
@@ -482,7 +481,7 @@
 			IL_0002: ceq
 			IL_0004: stloc.0
 			IL_0005: ldloc.0
-			IL_0006: box [System.Runtime]System.Boolean
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_000b: ret
 		} // end of method negate::__js_call__
 

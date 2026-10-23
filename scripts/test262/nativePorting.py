@@ -1310,7 +1310,7 @@ def fixture_dependencies(upstream: Path, relative: str) -> list[str]:
         for match in pattern.finditer(text):
             specifier = match.group("specifier")
             dependency = (Path(current).parent / specifier).as_posix()
-            if not Path(dependency).suffix:
+            if not (upstream / dependency).is_file() and not Path(dependency).suffix:
                 dependency += ".js"
             resolved = upstream / dependency
             if dependency in seen or not resolved.is_file():
@@ -1319,7 +1319,8 @@ def fixture_dependencies(upstream: Path, relative: str) -> list[str]:
                 raise ValueError(f"Fixture dependency escapes pinned root: {specifier}")
             seen.add(dependency)
             result.append(dependency)
-            pending.append(dependency)
+            if resolved.suffix in (".js", ".mjs", ".cjs"):
+                pending.append(dependency)
     return sorted(result)
 
 
@@ -1918,4 +1919,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

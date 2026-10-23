@@ -64,15 +64,22 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerCurrentModulePath(out TempVariable currentModulePathTemp)
     {
+        var root = GetRootScope(_scope);
+        if (!string.IsNullOrWhiteSpace(root?.ModulePath))
+        {
+            currentModulePathTemp = EmitConstString(root.ModulePath);
+            return true;
+        }
+
         var filenameBinding = TryResolveBinding(_scope, "__filename");
         if (filenameBinding != null
+            && filenameBinding.Kind != BindingKind.Global
             && TryLowerExpression(new HIRVariableExpression(new Symbol(filenameBinding)), out currentModulePathTemp))
         {
             currentModulePathTemp = EnsureObject(currentModulePathTemp);
             return true;
         }
 
-        var root = GetRootScope(_scope);
         currentModulePathTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstUndefined(currentModulePathTemp));
         DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -83,10 +90,20 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        // Lower the module specifier (validated to be a string literal)
         if (!TryLowerExpression(importExpr.Specifier, out var specifierTemp))
         {
             return false;
+        }
+
+        specifierTemp = EnsureObject(specifierTemp);
+        TempVariable? optionsTemp = null;
+        if (importExpr.Options != null)
+        {
+            if (!TryLowerExpression(importExpr.Options, out var loweredOptions))
+            {
+                return false;
+            }
+            optionsTemp = EnsureObject(loweredOptions);
         }
 
         if (!TryLowerCurrentModuleId(out var currentModuleIdTemp))
@@ -95,7 +112,8 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Emit the import call
-        _methodBodyIR.Instructions.Add(new LIRCallImport(specifierTemp, currentModuleIdTemp, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRCallImport(specifierTemp, currentModuleIdTemp, resultTempVar,
+            optionsTemp, importExpr.Phase));
         
         DefineTempStorage(
             resultTempVar,

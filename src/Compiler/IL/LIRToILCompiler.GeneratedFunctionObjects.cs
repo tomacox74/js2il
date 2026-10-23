@@ -28,7 +28,7 @@ internal sealed partial class LIRToILCompiler
             metadata,
             createArrow.ScopesArray,
             isArrow: true,
-            homeObject: null,
+            homeObject: createArrow.HomeObject,
             privateBrand: null,
             ilEncoder,
             allocation,
@@ -180,11 +180,14 @@ internal sealed partial class LIRToILCompiler
                 && state.Kind == GeneratedFunctionStateKind.HomeObject)
             {
                 ilEncoder.LoadArgument(0);
+                ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.CaptureLexicalSuperConstructorContext),
+                    [typeof(object)]));
                 continue;
             }
             if (lexicalThis.HasValue
-                && state.Kind is GeneratedFunctionStateKind.LexicalThis
-                    or GeneratedFunctionStateKind.HomeObject)
+                && state.Kind == GeneratedFunctionStateKind.LexicalThis)
             {
                 EmitLoadTemp(lexicalThis.Value, ilEncoder, allocation, methodDescriptor);
                 continue;

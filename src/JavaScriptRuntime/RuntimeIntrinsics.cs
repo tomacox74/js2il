@@ -494,6 +494,7 @@ internal sealed class RuntimeIntrinsics
     internal object? GetConstructorPrototype(Type type)
         => type == typeof(JavaScriptRuntime.Array) ? ArrayPrototype
             : type == typeof(JavaScriptRuntime.AggregateError) ? AggregateErrorPrototype
+            : type == typeof(JavaScriptRuntime.SuppressedError) ? SuppressedErrorPrototype
             : type == typeof(JavaScriptRuntime.Error) ? ErrorPrototype
             : type == typeof(JavaScriptRuntime.EvalError) ? EvalErrorPrototype
             : type == typeof(JavaScriptRuntime.RangeError) ? RangeErrorPrototype

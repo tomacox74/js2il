@@ -126,7 +126,7 @@ namespace Jroc.Services
                 .DiscoverAll()
                 .Reverse()
                 .Distinct()
-                .Count());
+                .Sum(callable => callable.Kind == CallableKind.ClassConstructor ? 2 : 1));
             var totalModuleEntryMethods = modules._modules.Values.Sum(m => m.SymbolTable!.Root.IsAsync ? 2 : 1);
 
             var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
@@ -243,7 +243,9 @@ namespace Jroc.Services
                 var coordinator = _serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
 
                 // Count callables for this module (deterministic; used for global MethodDef row assignment).
-                var callableCount = new CallableDiscovery(symbolTable).DiscoverAll().Distinct().Count();
+                var discoveredCallables = new CallableDiscovery(symbolTable).DiscoverAll().Distinct().ToArray();
+                var callableCount = discoveredCallables.Length
+                    + discoveredCallables.Count(callable => callable.Kind == CallableKind.ClassConstructor);
 
                 // Phase 1 (per module): allocate future MethodDef row ids for all callables.
                 // IMPORTANT: do this before declaring any owner TypeDefs so we can keep TypeDef.MethodList monotonic.
@@ -527,10 +529,11 @@ namespace Jroc.Services
             ilEncoder.LoadArgument(4);
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(asyncBodyHandle);
+            ilEncoder.LoadArgument(2);
             var awaitTopLevelRef = _memberReferenceRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.Promise),
-                nameof(JavaScriptRuntime.Promise.AwaitTopLevel),
-                parameterTypes: new[] { typeof(object) });
+                nameof(JavaScriptRuntime.Promise.AwaitModule),
+                parameterTypes: new[] { typeof(object), typeof(object) });
             ilEncoder.OpCode(ILOpCode.Call);
             ilEncoder.Token(awaitTopLevelRef);
             ilEncoder.OpCode(ILOpCode.Ret);
@@ -635,6 +638,22 @@ namespace Jroc.Services
             var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
             var typeMapCtorRef = _bclReferences.JsCompiledModuleTypeAttribute_Ctor_Ref;
             var entryModuleCtorRef = _bclReferences.JsCompiledEntryModuleAttribute_Ctor_Ref;
+            var needsImportMetadata = false;
+            var walker = new Jroc.Utilities.AstWalker();
+            foreach (var module in modules._modules.Values)
+            {
+                walker.Visit(module.Ast, node =>
+                {
+                    if (node is Acornima.Ast.ImportExpression import
+                        && (import.Phase != Acornima.Ast.ImportPhase.None || import.Options != null))
+                        needsImportMetadata = true;
+                    if (node is Acornima.Ast.ImportDeclaration declaration
+                        && (declaration.Phase != Acornima.Ast.ImportPhase.None || declaration.Attributes.Count > 0)
+                        || node is Acornima.Ast.ExportNamedDeclaration { Attributes.Count: > 0 }
+                        || node is Acornima.Ast.ExportAllDeclaration { Attributes.Count: > 0 })
+                        needsImportMetadata = true;
+                });
+            }
 
             if (!modules._modules.Values.Contains(modules.rootModule))
             {
@@ -662,6 +681,53 @@ namespace Jroc.Services
                     ? module.ClrTypeName!
                     : module.Name;
                 var typeName = $"{effectiveNamespace}.{effectiveTypeName}";
+
+                if (needsImportMetadata)
+                {
+                    var infoConstructor = _memberReferenceRegistry.GetOrAddConstructor(
+                        typeof(Jroc.Runtime.JsCompiledEsModuleAttribute),
+                        [typeof(string), typeof(bool), typeof(string[]), typeof(string[]), typeof(string), typeof(string),
+                            typeof(string), typeof(string), typeof(string), typeof(string[]), typeof(bool)]);
+                    var info = new BlobBuilder();
+                    info.WriteUInt16(1);
+                    WriteSerString(info, canonicalModuleId);
+                    info.WriteBoolean(module.SymbolTable?.Root.IsAsync == true);
+                    var dependencies = module.ModuleRecord!.RequestedModules
+                        .Select(request => modules._modules[request.ResolvedPath].ModuleId).ToArray();
+                    info.WriteInt32(dependencies.Length);
+                    foreach (var dependency in dependencies)
+                        WriteSerString(info, dependency);
+                    var exportNames = module.ModuleRecord.ResolvedExports.Keys.Order(StringComparer.Ordinal).ToArray();
+                    info.WriteInt32(exportNames.Length);
+                    foreach (var name in exportNames)
+                        WriteSerString(info, name);
+                    if (module.JsonSource is { } jsonSource)
+                        WriteSerString(info, jsonSource);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.DeferredSyntaxError is { } linkError)
+                        WriteSerString(info, linkError);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.DeferredResolutionError is { } resolutionError)
+                        WriteSerString(info, resolutionError);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.TextSource is { } textSource)
+                        WriteSerString(info, textSource);
+                    else
+                        info.WriteByte(0xff);
+                    if (module.BytesSource is { } bytesSource)
+                        WriteSerString(info, bytesSource);
+                    else
+                        info.WriteByte(0xff);
+                    info.WriteInt32(dependencies.Length);
+                    foreach (var request in module.ModuleRecord.RequestedModules)
+                        WriteSerString(info, request.ImportType is { } importType ? "Type:" + importType : request.Phase);
+                    info.WriteBoolean(module.UsesNativeStaticEsm);
+                    info.WriteUInt16(0);
+                    _metadataBuilder.AddCustomAttribute(_assemblyDefinition, infoConstructor, _metadataBuilder.GetOrAddBlob(info));
+                }
 
                 foreach (var publishedId in idsToPublish)
                 {

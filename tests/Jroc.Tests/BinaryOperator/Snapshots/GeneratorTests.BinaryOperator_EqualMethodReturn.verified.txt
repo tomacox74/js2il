@@ -247,6 +247,20 @@
 			IL_000c: ret
 		} // end of method TestClass::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method TestClass::.ctor
+
 		.method public hidebysig 
 			instance float64 getValue () cil managed 
 		{
@@ -376,7 +390,7 @@
 		IL_00b1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
 		IL_00b6: stloc.s 12
 		IL_00b8: ldloc.s 12
-		IL_00ba: box [System.Runtime]System.Boolean
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_00bf: stloc.s 13
 		IL_00c1: ldloc.s 9
 		IL_00c3: ldstr "methodResult == literalValue:"
@@ -395,7 +409,7 @@
 		IL_00e6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
 		IL_00eb: stloc.s 12
 		IL_00ed: ldloc.s 12
-		IL_00ef: box [System.Runtime]System.Boolean
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_00f4: stloc.s 13
 		IL_00f6: ldloc.s 9
 		IL_00f8: ldstr "literalValue == methodResult:"
@@ -414,7 +428,7 @@
 		IL_011b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_0120: stloc.s 12
 		IL_0122: ldloc.s 12
-		IL_0124: box [System.Runtime]System.Boolean
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_0129: stloc.s 13
 		IL_012b: ldloc.s 9
 		IL_012d: ldstr "methodResult === literalValue:"

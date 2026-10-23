@@ -482,8 +482,32 @@ internal sealed partial class LIRToILCompiler
         }
         else if (fieldClrType == typeof(bool))
         {
+            EmitBoxValue(fieldClrType, ilEncoder);
+        }
+    }
+
+    private void EmitLoadBoxedPrimitive(string fieldName, InstructionEncoder ilEncoder)
+    {
+        ilEncoder.OpCode(ILOpCode.Ldsfld);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.BoxedPrimitive), fieldName));
+    }
+
+    private void EmitBoxValue(Type clrType, InstructionEncoder ilEncoder)
+    {
+        if (clrType == typeof(JavaScriptRuntime.JsNull))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+            EmitLoadBoxedPrimitive(nameof(JavaScriptRuntime.BoxedPrimitive.Null), ilEncoder);
+        }
+        else if (clrType == typeof(bool))
+        {
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(_bclReferences.BoxedPrimitive_Box_Boolean_Ref);
+        }
+        else
+        {
             ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.BooleanType);
+            ilEncoder.Token(GetBoxingTypeToken(clrType));
         }
     }
 
@@ -826,9 +850,17 @@ internal sealed partial class LIRToILCompiler
         {
             return typeof(JavaScriptRuntime.AsyncGeneratorDelegation);
         }
+        if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.GeneratorDelegation), StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.GeneratorDelegation);
+        }
         if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.RuntimeServices), StringComparison.Ordinal))
         {
             return typeof(JavaScriptRuntime.RuntimeServices);
+        }
+        if (string.Equals(intrinsicName, nameof(JavaScriptRuntime.CallableOperations), StringComparison.Ordinal))
+        {
+            return typeof(JavaScriptRuntime.CallableOperations);
         }
 
         return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null

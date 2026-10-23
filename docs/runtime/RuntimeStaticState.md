@@ -62,9 +62,10 @@ oversized keys must remain collectible, as covered by `JSONShapeStorageTests`.
 | `ObjectRuntime._integrityStates` | Process identity metadata | Target objects are weak keys |
 | `PropertyDescriptorStore._defaultRuntimeStore` | CLR thread | Context-less descriptor fallback only |
 | `PropertyDescriptorStore._intrinsicInitializationDepth` | CLR thread | Reentrant intrinsic bootstrap state |
-| `RegExp.CompiledPatternCache` | Process metadata | Immutable, source-derived `Regex` compilation artifacts keyed by pattern plus compilation-affecting flags; bounded by entry count and source characters, holds no realm or JavaScript state |
+| `RegExp.CompiledPatternCache` | Process metadata | Source-derived pattern artifacts and per-entry atomic construction/promotion state, keyed by pattern plus compilation-affecting flags; bounded to 1,024 entries and 4 MiB of source characters. Cold interpreted Regex instances are weakly held because CLR runners retain input-sized backtracking buffers; live JavaScript wrappers own them strongly, and collected cold instances are reconstructed from immutable prepared patterns. Hot compiled instances remain under the separate 256-entry promotion budget. Holds no realm or JavaScript state |
 | `RegExp.CompiledPatternCacheInsertionOrder` | Process metadata | FIFO keys for incremental cache eviction; bounded with the compiled-pattern cache |
-| `RegExp.LiteralTemplates` | Process metadata | Weak-keyed immutable literal metadata; source strings are weak keys and templates hold no realm or JavaScript object state |
+| `RegExp.CompiledRegexBudget` | Process metadata | At most 256 compiled-tier entries, including in-flight compilations; construction 64 attempts promotion once per entry. Full/failed entries stay interpreted. Eviction drops the cached compiled reference and releases its reservation exactly once; in-flight eviction releases only after compilation finishes. Existing JS RegExp objects may retain their selected Regex until those objects die; this cap bounds cache retention, not live application objects or exact executable bytes. Dynamic-code-disabled runtimes stay interpreted |
+| `RegExp.LiteralTemplates` | Process metadata | Weak-keyed literal metadata and shared cache-entry reference; source strings are weak keys. Repeated evaluations count toward promotion. Retired entries remain interpreted even if a template outlives outer-cache eviction, preventing templates from retaining unaccounted compiled code. No realm or JavaScript object state |
 | `RuntimeExecutionContext.Ambient` | Async flow | The sole ambient realm/agent pointer |
 | `RuntimeIntrinsics._blockedThreads` | Process coordination | Transient wait graph; entries are removed when waits end |
 | `RuntimeServices._classInstancePrivateBrands` | Process identity metadata | Instance objects are weak keys; their private class-evaluation brands live only with those instances |
@@ -103,6 +104,9 @@ generated type/assembly, and an explicitly captured realm/agent/cluster graph.
 
 The remaining readonly statics fall into these audited groups:
 
+- `BoxedPrimitive.True`, `False`, and `Null` retain only immutable boxed CLR
+  boolean/JsNull values for the process lifetime. They are not mutable JavaScript
+  wrappers and must never retain realm descriptors, prototypes, or services.
 - Built-in delegates in `GlobalThis`, `ObjectRuntime`, intrinsic types, and
   Node adapters are immutable CLR call targets. Realm-visible
   `JsFunctionObject` wrappers are materialized by `RuntimeIntrinsics`.

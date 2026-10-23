@@ -264,7 +264,7 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 198 (0xc6)
+			// Code size: 197 (0xc5)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -296,70 +296,69 @@
 			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 			IL_003e: ldloc.s 5
 			IL_0040: stloc.0
-			IL_0041: ldc.i4.0
-			IL_0042: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0047: stloc.s 6
-			IL_0049: ldloc.s 6
-			IL_004b: stloc.0
+			IL_0041: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+			IL_0046: stloc.s 6
+			IL_0048: ldloc.s 6
+			IL_004a: stloc.0
 			.try
 			{
-				IL_004c: nop
-				IL_004d: ldloc.0
-				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0053: stloc.s 4
-				IL_0055: ldloc.s 4
-				IL_0057: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
-				IL_005c: dup
-				IL_005d: brfalse IL_006d
+				IL_004b: nop
+				IL_004c: ldloc.0
+				IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0052: stloc.s 4
+				IL_0054: ldloc.s 4
+				IL_0056: isinst Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box
+				IL_005b: dup
+				IL_005c: brfalse IL_006c
 
-				IL_0062: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
-				IL_0067: pop
-				IL_0068: br IL_007b
+				IL_0061: callvirt instance float64 Modules.Classes_ClassLocal_ReassignedClass_FallsBack/Box::read()
+				IL_0066: pop
+				IL_0067: br IL_007a
 
-				IL_006d: pop
-				IL_006e: ldloc.s 4
-				IL_0070: ldstr "read"
-				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-				IL_007a: pop
+				IL_006c: pop
+				IL_006d: ldloc.s 4
+				IL_006f: ldstr "read"
+				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+				IL_0079: pop
 
-				IL_007b: leave IL_00c2
+				IL_007a: leave IL_00c1
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0080: stloc.1
-				IL_0081: ldloc.1
-				IL_0082: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0087: dup
-				IL_0088: brtrue IL_009d
+				IL_007f: stloc.1
+				IL_0080: ldloc.1
+				IL_0081: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0086: dup
+				IL_0087: brtrue IL_009c
 
-				IL_008d: pop
-				IL_008e: ldloc.1
-				IL_008f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0094: dup
-				IL_0095: brtrue IL_00a8
+				IL_008c: pop
+				IL_008d: ldloc.1
+				IL_008e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0093: dup
+				IL_0094: brtrue IL_00a7
 
-				IL_009a: pop
-				IL_009b: rethrow
+				IL_0099: pop
+				IL_009a: rethrow
 
-				IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_00a2: stloc.2
-				IL_00a3: br IL_00a9
+				IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_00a1: stloc.2
+				IL_00a2: br IL_00a8
 
-				IL_00a8: stloc.2
+				IL_00a7: stloc.2
 
-				IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00ae: stloc.s 7
-				IL_00b0: ldloc.s 7
-				IL_00b2: ldstr "caught"
-				IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00bc: pop
-				IL_00bd: leave IL_00c2
+				IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00ad: stloc.s 7
+				IL_00af: ldloc.s 7
+				IL_00b1: ldstr "caught"
+				IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00bb: pop
+				IL_00bc: leave IL_00c1
 			} // end handler
 
-			IL_00c2: ldnull
-			IL_00c3: stloc.3
-			IL_00c4: ldloc.3
-			IL_00c5: ret
+			IL_00c1: ldnull
+			IL_00c2: stloc.3
+			IL_00c3: ldloc.3
+			IL_00c4: ret
 		} // end of method test::__js_call__
 
 	} // end of class test
@@ -537,6 +536,20 @@
 			IL_0006: ldarg.0
 			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
 			IL_000c: ret
+		} // end of method Box::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method Box::.ctor
 
 		.method public hidebysig 

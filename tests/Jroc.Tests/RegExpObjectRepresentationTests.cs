@@ -5,6 +5,66 @@ namespace Jroc.Tests;
 
 public sealed class RegExpObjectRepresentationTests
 {
+    [Theory]
+    [InlineData("Script=Hrkt")]
+    [InlineData("sc=Katakana_Or_Hiragana")]
+    [InlineData("Script_Extensions=Hrkt")]
+    [InlineData("scx=Katakana_Or_Hiragana")]
+    public void UnicodeScriptProperties_RejectCompositeIsoScriptAliases(string property)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        foreach (var flags in new[] { "u", "v" })
+        {
+            Assert.Throws<JavaScriptRuntime.SyntaxError>(
+                () => new JavaScriptRuntime.RegExp($"\\p{{{property}}}", flags));
+        }
+    }
+
+    [Theory]
+    [InlineData("iu", "Script=Greek", "\u03B9", true)]
+    [InlineData("iv", "Script=Greek", "\u03B9", false)]
+    [InlineData("iu", "Script=Greek", "\u03BC", true)]
+    [InlineData("iv", "Script=Greek", "\u03BC", false)]
+    [InlineData("iu", "Script_Extensions=Greek", "\u03B9", false)]
+    [InlineData("iv", "Script_Extensions=Greek", "\u03B9", false)]
+    [InlineData("iu", "Script_Extensions=Greek", "\u03BC", true)]
+    [InlineData("iv", "Script_Extensions=Greek", "\u03BC", false)]
+    [InlineData("iu", "ASCII", "K", true)]
+    [InlineData("iv", "ASCII", "K", false)]
+    [InlineData("iu", "Lowercase_Letter", "a", true)]
+    [InlineData("iv", "Lowercase_Letter", "a", false)]
+    [InlineData("iu", "General_Category=Uppercase_Letter", "A", true)]
+    [InlineData("iv", "General_Category=Uppercase_Letter", "A", false)]
+    [InlineData("iu", "gc=Ll", "\U00010400", true)]
+    [InlineData("iv", "gc=Ll", "\U00010400", false)]
+    [InlineData("iu", "Changes_When_Casefolded", "a", true)]
+    [InlineData("iv", "Changes_When_Casefolded", "a", false)]
+    public void UnicodePropertyComplements_RespectModeSpecificCaseFolding(
+        string flags, string property, string input, bool expected)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp($"^\\P{{{property}}}$", flags).test(input));
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp($"^[\\P{{{property}}}]$", flags).test(input));
+    }
+
+    [Theory]
+    [InlineData("u", "^(?i:\\p{Script=Greek})$", "\u0345", true)]
+    [InlineData("u", "^(?i:\\P{Script=Greek})$", "\u03B9", true)]
+    [InlineData("v", "^(?i:\\P{Script=Greek})$", "\u03B9", false)]
+    [InlineData("iu", "^(?-i:\\p{Script=Greek})$", "\u0345", false)]
+    [InlineData("iv", "^(?-i:\\P{Script=Greek})$", "\u0345", true)]
+    [InlineData("u", "^(?i:\\p{sc=Greek})\\p{sc=Greek}$", "\u0345\u0345", false)]
+    [InlineData("iu", "^(?-i:\\p{sc=Greek})\\p{sc=Greek}$", "\u03B9\u0345", true)]
+    public void UnicodeScriptProperties_RespectScopedCaseFolding(
+        string flags, string pattern, string input, bool expected)
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).Enter();
+        Assert.Equal(expected, new JavaScriptRuntime.RegExp(pattern, flags).test(input));
+    }
+
     [Fact]
     public void RegExpWrappers_UseInlineJsObjectStorage()
     {
@@ -107,6 +167,29 @@ public sealed class RegExpObjectRepresentationTests
                 """, null));
 
         Assert.Equal($"a:ab{Environment.NewLine}", result.Output);
+    }
+
+    [Fact]
+    public void RepetitionProgressCaptures_AreInternalToTheRegexEngine()
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            "regexp-internal-repetition-captures",
+            "RegExp.InternalCaptures",
+            static _ => ("""
+                const re = /(?<__jrocProgress1>a?)*/d;
+                const match = re.exec('a');
+                console.log(match.length, match.indices.length, Object.keys(match.groups).join(','));
+                console.log(match[1], match.indices[1].join(','));
+                console.log('a'.replace(re, '$1/$2/$<__jrocProgress1>'));
+                console.log('a'.replace(re, function() {
+                    return arguments.length + ':' + arguments[1] + ':' + arguments[2] + ':' + arguments[4].__jrocProgress1;
+                }));
+                const behind = /(?<=(a?){0,2})b/d.exec('ab');
+                console.log(behind.length, behind[1], behind.indices[1].join(','));
+                """, null));
+
+        Assert.Equal(string.Join(Environment.NewLine,
+            "2 2 __jrocProgress1", "a 0,1", "a/$2/a", "5:a:0:a", "2 a 0,1", ""), result.Output);
     }
 
     private static (string Script, string? SourcePath) GetDescriptorIsolationScript(string testName)

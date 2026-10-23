@@ -124,7 +124,7 @@ class ExportDeadlineTests(unittest.TestCase):
         client.db = MagicMock()
         client.db.execute.return_value.fetchone.return_value = ('snapshot-token', datetime.now(timezone.utc))
         client.view = lambda: nullcontext()
-        client.read = lambda table: rows()
+        client.read = lambda table, page=500: rows()
         return client
 
     def test_completed_export_has_matching_footer_and_no_payload_in_progress(self):

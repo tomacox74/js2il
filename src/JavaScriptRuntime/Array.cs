@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace JavaScriptRuntime
 {
@@ -2462,7 +2463,7 @@ namespace JavaScriptRuntime
         {
         }
 
-        private Array(bool initializeIntrinsicSurface)
+        protected Array(bool initializeIntrinsicSurface)
         {
             _logicalLength = 0;
             _virtualLength = 0;
@@ -2483,6 +2484,18 @@ namespace JavaScriptRuntime
             _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
+
+        // Fill every returned slot before exposing the fresh array; do not resize it while using the span.
+        internal static Array CreateWithDenseLength(int length, out Span<object?> elements)
+        {
+            var result = new Array(length);
+            result.EnsureObjectStorage(length);
+            CollectionsMarshal.SetCount(result._items!, length);
+            result.SynchronizeDenseLengthAfterGrowth();
+            elements = CollectionsMarshal.AsSpan(result._items);
+            return result;
+        }
+
         public Array(System.Collections.IEnumerable collection)
         {
             ArgumentNullException.ThrowIfNull(collection);

@@ -12,7 +12,10 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerDestructuringPattern(HIRPattern pattern, TempVariable sourceValue, DestructuringWriteMode writeMode, string? sourceNameForError)
         => TryLowerDestructuringPattern(pattern, sourceValue, writeMode, sourceNameForError, preparedTarget: null);
 
-    private sealed record PreparedDestructuringTarget(TempVariable Object, TempVariable Key);
+    private sealed record PreparedDestructuringTarget(
+        TempVariable Object,
+        TempVariable Key,
+        HIRPrivateTargetPattern? PrivateTarget = null);
     private readonly record struct ActiveWithBindingProbe(
         TempVariable WithObject,
         TempVariable Name,
@@ -53,15 +56,7 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(
             new LIRBranchIfFalse(activeProbe.HasBinding, lexicalLabel));
 
-        var withValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-            new[] { activeProbe.WithObject, activeProbe.Name },
-            withValue));
-        DefineTempStorage(
-            withValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var withValue = EmitGetWithBindingValue(activeProbe.WithObject, activeProbe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(withValue), result));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
@@ -89,29 +84,14 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(
             new LIRBranchIfFalse(probe.HasBinding, globalLabel));
 
-        var withValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            nameof(JavaScriptRuntime.ObjectRuntime),
-            nameof(JavaScriptRuntime.ObjectRuntime.GetProperty),
-            new[] { probe.WithObject, probe.Name },
-            withValue));
-        DefineTempStorage(
-            withValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var withValue = EmitGetWithBindingValue(probe.WithObject, probe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(withValue), result));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
 
         _methodBodyIR.Instructions.Add(new LIRLabel(globalLabel));
         ClearNumericRefinementsAtLabel();
-        var fallbackValue = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-            nameof(JavaScriptRuntime.RuntimeServices.ResolveWithBindingOrGlobal),
-            new[] { EnsureObject(probe.Name) },
-            fallbackValue));
-        DefineTempStorage(
-            fallbackValue,
-            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var fallbackValue = EmitResolveBoundWithGlobalValue(probe.Name);
         _methodBodyIR.Instructions.Add(
             new LIRCopyTemp(EnsureObject(fallbackValue), result));
 
@@ -163,6 +143,21 @@ public sealed partial class HIRToLIRLowerer
                     default:
                         return false;
                 }
+
+            case HIRPrivateTargetPattern privateTarget:
+                if (writeMode != DestructuringWriteMode.Assignment)
+                {
+                    return false;
+                }
+
+                if (preparedTarget == null
+                    && !TryPrepareDestructuringAssignmentTarget(privateTarget, writeMode, out preparedTarget))
+                {
+                    return false;
+                }
+
+                return preparedTarget != null
+                    && TryStorePreparedDestructuringTarget(preparedTarget, sourceValue);
 
             case HIRPropertyTargetPattern propertyTarget:
                 if (writeMode != DestructuringWriteMode.Assignment)
@@ -325,6 +320,11 @@ public sealed partial class HIRToLIRLowerer
 
                     if (obj.Rest != null)
                     {
+                        if (!TryPrepareDestructuringAssignmentTarget(obj.Rest.Target, writeMode, out var preparedRestTarget))
+                        {
+                            return false;
+                        }
+
                         var excludedArray = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRBuildArray(excludedKeyTemps, excludedArray));
                         DefineTempStorage(excludedArray, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
@@ -337,7 +337,7 @@ public sealed partial class HIRToLIRLowerer
                             Result: restObj));
                         DefineTempStorage(restObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, writeMode, "rest"))
+                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, writeMode, "rest", preparedRestTarget))
                         {
                             return false;
                         }
@@ -405,6 +405,18 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (pattern is HIRPrivateTargetPattern privateTarget)
+        {
+            if (!TryLowerExpression(privateTarget.Receiver, out var receiver))
+            {
+                return false;
+            }
+
+            // Resolve the receiver now; check its private brand only when storing the value.
+            preparedTarget = new PreparedDestructuringTarget(EnsureObject(receiver), default, privateTarget);
+            return true;
+        }
+
         if (pattern is HIRPropertyTargetPattern propertyTarget)
         {
             if (!TryLowerExpression(propertyTarget.Object, out var objectTemp))
@@ -441,6 +453,31 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryStorePreparedDestructuringTarget(PreparedDestructuringTarget target, TempVariable valueToStore)
     {
+        if (target.PrivateTarget is { } privateTarget)
+        {
+            if (privateTarget.FieldName != null)
+            {
+                _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
+                    privateTarget.RegistryClassName,
+                    privateTarget.FieldName,
+                    target.Object,
+                    valueToStore));
+                return true;
+            }
+
+            if (privateTarget.SetterMethodName != null)
+            {
+                return TryLowerPrivateAccessorStore(
+                    privateTarget.RegistryClassName,
+                    privateTarget.SetterMethodName,
+                    target.Object,
+                    valueToStore);
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Private member was defined without a setter"));
+            return true;
+        }
+
         var keyStorage = GetTempStorage(target.Key);
         var valueStorage = GetTempStorage(valueToStore);
         var canUseNumericSetItem = keyStorage.Kind == ValueStorageKind.UnboxedValue && keyStorage.ClrType == typeof(double);

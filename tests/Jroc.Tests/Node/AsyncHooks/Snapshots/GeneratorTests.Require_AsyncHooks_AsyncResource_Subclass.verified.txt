@@ -266,7 +266,7 @@
 			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0028: stloc.2
 			IL_0029: ldloc.2
-			IL_002a: box [System.Runtime]System.Boolean
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 			IL_002f: stloc.3
 			IL_0030: ldloc.0
 			IL_0031: ldstr "derived receiver:"
@@ -542,41 +542,61 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 68 (0x44)
+			// Code size: 89 (0x59)
 			.maxstack 8
 			.locals init (
 				[0] object[],
-				[1] object
+				[1] class [System.Runtime]System.Type,
+				[2] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: stloc.0
-			IL_0002: ldarg.0
-			IL_0003: ldloc.0
-			IL_0004: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::_scopes
-			IL_0009: ldarg.1
-			IL_000a: ldc.i4.0
-			IL_000b: ldelem.ref
-			IL_000c: castclass Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope
-			IL_0011: ldfld object Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope::AsyncResource
-			IL_0016: stloc.1
-			IL_0017: ldarg.0
-			IL_0018: ldloc.1
-			IL_0019: ldc.i4.1
-			IL_001a: newarr [System.Runtime]System.Object
-			IL_001f: dup
-			IL_0020: ldc.i4.0
-			IL_0021: ldstr "UNDICI_REQUEST"
-			IL_0026: stelem.ref
-			IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0036: ldstr "callback"
-			IL_003b: ldarg.2
-			IL_003c: ldc.i4.1
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0042: pop
-			IL_0043: ret
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: call instance void Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::.ctor(bool)
+			IL_0007: ldarg.1
+			IL_0008: stloc.0
+			IL_0009: ldarg.0
+			IL_000a: ldloc.0
+			IL_000b: stfld object[] Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::_scopes
+			IL_0010: ldtoken Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
+			IL_0015: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001a: ldtoken Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
+			IL_001f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_002b: stloc.2
+			IL_002c: ldarg.0
+			IL_002d: ldloc.2
+			IL_002e: ldc.i4.1
+			IL_002f: newarr [System.Runtime]System.Object
+			IL_0034: dup
+			IL_0035: ldc.i4.0
+			IL_0036: ldstr "UNDICI_REQUEST"
+			IL_003b: stelem.ref
+			IL_003c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_004b: ldstr "callback"
+			IL_0050: ldarg.2
+			IL_0051: ldc.i4.1
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0057: pop
+			IL_0058: ret
+		} // end of method UndiciStyleHandler::.ctor
+
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
 		} // end of method UndiciStyleHandler::.ctor
 
 		.method public hidebysig 
@@ -613,7 +633,7 @@
 			IL_002d: ldarg.0
 			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveGeneratedClassMethodThis(object)
 			IL_0033: ldstr "callback"
-			IL_0038: ldstr "Require_AsyncHooks_AsyncResource_Subclass:<TwoPhaseDummy_M6>:deliver:5"
+			IL_0038: ldstr "Require_AsyncHooks_AsyncResource_Subclass:<TwoPhaseDummy_M7>:deliver:5"
 			IL_003d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
 			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
@@ -677,7 +697,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 703 (0x2bf)
+		// Code size: 701 (0x2bd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_AsyncHooks_AsyncResource_Subclass/Scope,
@@ -873,7 +893,7 @@
 		IL_01dd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
 		IL_01e2: stloc.s 11
 		IL_01e4: ldloc.s 11
-		IL_01e6: box [System.Runtime]System.Boolean
+		IL_01e6: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_01eb: stloc.s 12
 		IL_01ed: ldloc.s 10
 		IL_01ef: ldstr "derived:"
@@ -895,7 +915,7 @@
 		IL_021f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
 		IL_0224: stloc.s 11
 		IL_0226: ldloc.s 11
-		IL_0228: box [System.Runtime]System.Boolean
+		IL_0228: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_022d: stloc.s 12
 		IL_022f: ldloc.s 10
 		IL_0231: ldstr "base:"
@@ -919,30 +939,28 @@
 		IL_0277: ldloc.s 7
 		IL_0279: isinst Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler
 		IL_027e: dup
-		IL_027f: brfalse IL_0298
+		IL_027f: brfalse IL_0297
 
-		IL_0284: ldc.i4.0
-		IL_0285: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_028a: ldloc.s 13
-		IL_028c: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
-		IL_0291: stloc.s 7
-		IL_0293: br IL_02af
+		IL_0284: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0289: ldloc.s 13
+		IL_028b: callvirt instance object Modules.Require_AsyncHooks_AsyncResource_Subclass/UndiciStyleHandler::deliver(object, object)
+		IL_0290: stloc.s 7
+		IL_0292: br IL_02ad
 
-		IL_0298: pop
-		IL_0299: ldloc.s 7
-		IL_029b: ldstr "deliver"
-		IL_02a0: ldc.i4.0
-		IL_02a1: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_02a6: ldloc.s 13
-		IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-		IL_02ad: stloc.s 7
+		IL_0297: pop
+		IL_0298: ldloc.s 7
+		IL_029a: ldstr "deliver"
+		IL_029f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_02a4: ldloc.s 13
+		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+		IL_02ab: stloc.s 7
 
-		IL_02af: ldloc.s 10
-		IL_02b1: ldstr "status:"
-		IL_02b6: ldloc.s 7
-		IL_02b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02bd: pop
-		IL_02be: ret
+		IL_02ad: ldloc.s 10
+		IL_02af: ldstr "status:"
+		IL_02b4: ldloc.s 7
+		IL_02b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02bb: pop
+		IL_02bc: ret
 	} // end of method Require_AsyncHooks_AsyncResource_Subclass::__js_module_init__
 
 } // end of class Modules.Require_AsyncHooks_AsyncResource_Subclass

@@ -68,6 +68,8 @@ function normalizeRuntime(raw) {
     const text = String(raw ?? '').toLowerCase();
     if (text.includes('clearscript')) return 'clearscript';
     if (text.includes('node')) return 'node';
+    if (text.includes('sharpts') && (text.includes('execute') || text.includes('runsharptstest'))) return 'sharpts-execute';
+    if (text.includes('sharpts')) return 'sharpts';
     if (text.includes('yantra') && text.includes('execute')) return 'yantrajs-execute';
     if (text.includes('yantra')) return 'yantrajs';
     if (text.includes('jint') && text.includes('prepared')) return 'jint-execute-prepared';
@@ -260,6 +262,7 @@ function buildRuntimeVersionContext() {
         node: nodeVersion,
         jint: benchmarkPackages.Jint ?? null,
         okojo: benchmarkPackages.Okojo ?? null,
+        sharpts: benchmarkPackages['SharpTS.Hosting'] ?? null,
         yantrajs: benchmarkPackages['YantraJS.Core'] ?? null,
         clearscript: benchmarkPackages['Microsoft.ClearScript.V8'] ?? null,
         jroc: jrocVersion,
@@ -280,6 +283,9 @@ function resolveRuntimeVersion(normalizedRuntime, runtimeVersions) {
     }
     if (normalizedRuntime.startsWith('okojo')) {
         return runtimeVersions.okojo ?? null;
+    }
+    if (normalizedRuntime.startsWith('sharpts')) {
+        return runtimeVersions.sharpts ?? null;
     }
     if (normalizedRuntime.startsWith('yantrajs')) {
         return runtimeVersions.yantrajs ?? null;

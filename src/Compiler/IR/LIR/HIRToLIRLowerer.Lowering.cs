@@ -28,6 +28,17 @@ public sealed partial class HIRToLIRLowerer
                     {
                         return false;
                     }
+                    if (storeInstanceField.IsPrivateField && storeInstanceField.FieldName != "_scopes")
+                    {
+                        if (!TryLowerExpression(new HIRThisExpression(), out var receiverTemp))
+                            return false;
+                        var checkedReceiver = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.EnsureCanAddPrivateElement),
+                            [EnsureObject(receiverTemp)], checkedReceiver));
+                        DefineTempStorage(checkedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
 
                     // Only force object boxing when the declared field type is unknown/object.
                     // For stable typed fields (double/bool/string), keep the value in its preferred form.
@@ -99,7 +110,13 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    var withObjectValue = EnsureObject(withObject);
+                    var withObjectValue = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        nameof(JavaScriptRuntime.ObjectRuntime.ToObject),
+                        [EnsureObject(withObject)],
+                        withObjectValue));
+                    DefineTempStorage(withObjectValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (GetTempVariableSlot(withObjectValue) < 0)
                     {
                         SetTempVariableSlot(withObjectValue, CreateAnonymousVariableSlot(

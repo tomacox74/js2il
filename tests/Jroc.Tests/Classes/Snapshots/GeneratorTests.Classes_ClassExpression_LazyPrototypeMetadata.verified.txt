@@ -246,6 +246,20 @@
 			IL_000c: ret
 		} // end of method ClassExpression_L1C17::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method ClassExpression_L1C17::.ctor
+
 		.method public hidebysig 
 			instance object greet () cil managed 
 		{
@@ -437,7 +451,7 @@
 		IL_0175: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_017a: stloc.s 10
 		IL_017c: ldloc.s 10
-		IL_017e: box [System.Runtime]System.Boolean
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
 		IL_0183: stloc.s 11
 		IL_0185: ldloc.s 9
 		IL_0187: ldloc.s 11

@@ -23,6 +23,43 @@ namespace JavaScriptRuntime
             GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "PI", JavaScriptRuntime.Math.PI);
             GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "SQRT1_2", JavaScriptRuntime.Math.SQRT1_2);
             GlobalThis.DefineIntrinsicConstantDataProperty(namespaceValue, "SQRT2", JavaScriptRuntime.Math.SQRT2);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "abs", (BuiltinFunction1)(static (_, x) => abs(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "acos", (BuiltinFunction1)(static (_, x) => acos(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "acosh", (BuiltinFunction1)(static (_, x) => acosh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "asin", (BuiltinFunction1)(static (_, x) => asin(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "asinh", (BuiltinFunction1)(static (_, x) => asinh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "atan", (BuiltinFunction1)(static (_, x) => atan(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "atanh", (BuiltinFunction1)(static (_, x) => atanh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "atan2", (BuiltinFunction2)(static (_, y, x) => atan2(y, x)), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "cbrt", (BuiltinFunction1)(static (_, x) => cbrt(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "ceil", (BuiltinFunction1)(static (_, x) => ceil(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "clz32", (BuiltinFunction1)(static (_, x) => clz32(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "cos", (BuiltinFunction1)(static (_, x) => cos(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "cosh", (BuiltinFunction1)(static (_, x) => cosh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "exp", (BuiltinFunction1)(static (_, x) => exp(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "expm1", (BuiltinFunction1)(static (_, x) => expm1(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "floor", (BuiltinFunction1)(static (_, x) => floor(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "fround", (BuiltinFunction1)(static (_, x) => fround(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "f16round", (BuiltinFunction1)(static (_, x) => f16round(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "hypot", (BuiltinFunctionVariadic)(static (object? _, in JsCallArguments arguments) => hypot(arguments.ToArray())), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "imul", (BuiltinFunction2)(static (_, x, y) => imul(x, y)), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "log", (BuiltinFunction1)(static (_, x) => log(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "log1p", (BuiltinFunction1)(static (_, x) => log1p(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "log2", (BuiltinFunction1)(static (_, x) => log2(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "log10", (BuiltinFunction1)(static (_, x) => log10(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "max", (BuiltinFunctionVariadic)(static (object? _, in JsCallArguments arguments) => max(arguments.ToArray())), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "min", (BuiltinFunctionVariadic)(static (object? _, in JsCallArguments arguments) => min(arguments.ToArray())), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "pow", (BuiltinFunction2)(static (_, x, y) => pow(x, y)), 2d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "random", (BuiltinFunction0)(static _ => random()), 0d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "round", (BuiltinFunction1)(static (_, x) => round(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sign", (BuiltinFunction1)(static (_, x) => sign(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sin", (BuiltinFunction1)(static (_, x) => sin(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sinh", (BuiltinFunction1)(static (_, x) => sinh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sqrt", (BuiltinFunction1)(static (_, x) => sqrt(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "sumPrecise", (BuiltinFunction1)(static (_, items) => sumPrecise(items)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "tan", (BuiltinFunction1)(static (_, x) => tan(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "tanh", (BuiltinFunction1)(static (_, x) => tanh(x)), 1d);
+            GlobalThis.DefineBuiltinFunctionProperty(namespaceValue, "trunc", (BuiltinFunction1)(static (_, x) => trunc(x)), 1d);
         }
 
         // 20.2.1 Value Properties of the Math Object

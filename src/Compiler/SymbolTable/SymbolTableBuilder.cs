@@ -345,6 +345,7 @@ namespace Jroc.SymbolTables
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
             {
                 ModuleId = module.ModuleId,
+                ModulePath = module.Path,
                 UsesScriptSemantics = module.UsesScriptSemantics
             };
 
@@ -427,17 +428,22 @@ namespace Jroc.SymbolTables
             globalScope.EsModuleLink = plan;
 
             // 1. Imports: one hidden source binding per distinct specifier, plus per-specifier local bindings.
-            var sourceBindingBySpecifier = new Dictionary<string, BindingInfo>(StringComparer.Ordinal);
+            var sourceBindingBySpecifier = new Dictionary<(string Specifier, string Phase, string? Type), BindingInfo>();
 
-            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode)
+            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode, string? importType = null)
             {
-                if (sourceBindingBySpecifier.TryGetValue(specifier, out var existing))
+                var phase = ModuleRequestSyntax.GetPhase(declarationNode);
+                importType ??= ModuleRequestSyntax.GetImportType(declarationNode);
+                var key = (specifier, phase, importType);
+                if (sourceBindingBySpecifier.TryGetValue(key, out var existing))
                 {
                     return existing;
                 }
 
                 var sourceBinding = new BindingInfo(
-                    EsModuleNames.SourceBindingName(specifier),
+                    phase == "None" && importType is null
+                        ? EsModuleNames.SourceBindingName(specifier)
+                        : $"*esm-{phase}-{importType}-src:{specifier}",
                     BindingKind.Const,
                     globalScope,
                     declarationNode)
@@ -448,8 +454,14 @@ namespace Jroc.SymbolTables
                     HasWrite = true
                 };
                 globalScope.Bindings[sourceBinding.Name] = sourceBinding;
-                sourceBindingBySpecifier[specifier] = sourceBinding;
-                plan.Requires.Add(new EsModuleSourceRequire { Specifier = specifier, SourceBinding = sourceBinding });
+                sourceBindingBySpecifier[key] = sourceBinding;
+                plan.Requires.Add(new EsModuleSourceRequire
+                {
+                    Specifier = specifier,
+                    SourceBinding = sourceBinding,
+                    Phase = phase,
+                    ImportType = importType
+                });
                 return sourceBinding;
             }
 
@@ -597,7 +609,7 @@ namespace Jroc.SymbolTables
                     continue;
                 }
 
-                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast);
+                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast, indirectExport.ImportType);
                 if (indirectExport.Kind == ModuleExportKind.Namespace)
                 {
                     plan.NamespaceReexports.Add(new EsModuleNamespaceReexport
@@ -626,7 +638,7 @@ namespace Jroc.SymbolTables
                     continue;
                 }
 
-                var sourceBinding = GetOrCreateSourceBinding(starExport.ModuleRequest!, module.Ast);
+                var sourceBinding = GetOrCreateSourceBinding(starExport.ModuleRequest!, module.Ast, starExport.ImportType);
                 plan.StarReexports.Add(new EsModuleStarReexport { SourceBinding = sourceBinding });
             }
         }
@@ -935,6 +947,10 @@ namespace Jroc.SymbolTables
                            ContainsFreeVariable(forIn.Right, localVariables) ||
                            ContainsFreeVariable(forIn.Body, localVariables);
                 }
+
+                case WithStatement withStatement:
+                    return ContainsFreeVariable(withStatement.Object, localVariables) ||
+                           ContainsFreeVariable(withStatement.Body, localVariables);
 
                 case WhileStatement ws:
                     return ContainsFreeVariable(ws.Test, localVariables) ||
@@ -1924,7 +1940,10 @@ namespace Jroc.SymbolTables
                         $"StaticBlock_L{staticBlock.Location.Start.Line}C{staticBlock.Location.Start.Column}",
                         ScopeKind.Block,
                         currentScope,
-                        staticBlock);
+                        staticBlock)
+                    {
+                        IsVarHoistingScope = true
+                    };
                     foreach (var statement in staticBlock.Body)
                     {
                         BuildScopeRecursive(globalScope, statement, staticBlockScope);
@@ -2790,6 +2809,11 @@ namespace Jroc.SymbolTables
                     break;
                 }
 
+                case WithStatement withStatement:
+                    CollectFreeVariables(withStatement.Object, localVariables, targetVariables, result);
+                    CollectFreeVariables(withStatement.Body, localVariables, targetVariables, result);
+                    break;
+
                 case WhileStatement ws:
                     CollectFreeVariables(ws.Test, localVariables, targetVariables, result);
                     CollectFreeVariables(ws.Body, localVariables, targetVariables, result);
@@ -3181,25 +3205,11 @@ namespace Jroc.SymbolTables
 
         private void ProcessChildNodes(Scope globalScope, Node node, Scope currentScope)
         {
-            // Use reflection to get all node properties and recursively process them
-            var properties = node.GetType().GetProperties();
-            foreach (var prop in properties)
+            foreach (var child in node.ChildNodes)
             {
-                var value = prop.GetValue(node);
-                if (value is Node childNode)
+                if (child is not null)
                 {
-                    BuildScopeRecursive(globalScope, childNode, currentScope);
-                }
-                else if (value is System.Collections.IEnumerable enumerable && 
-                         !(value is string))
-                {
-                    foreach (var item in enumerable)
-                    {
-                        if (item is Node childNodeInList)
-                        {
-                            BuildScopeRecursive(globalScope, childNodeInList, currentScope);
-                        }
-                    }
+                    BuildScopeRecursive(globalScope, child, currentScope);
                 }
             }
         }

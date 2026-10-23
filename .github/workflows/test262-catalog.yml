@@ -42,6 +42,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+      - run: npm ci --ignore-scripts
       - name: Validate bounded inputs
         env:
           LIMIT: ${{ inputs.limit || 100 }}

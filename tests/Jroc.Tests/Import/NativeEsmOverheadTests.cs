@@ -131,6 +131,20 @@ namespace Jroc.Tests.Import
             Assert.Contains("x1: 2", result.Output);
         }
 
+        [Theory]
+        [InlineData("Import_TypedReexports", "ImportSource", "7 true bytes,text true")]
+        [InlineData("Import_AsyncReexports", "RegisterStarReexports", "2 2 3 increment,own,value")]
+        public void NativeStaticEsm_SpecialRequestsPreserveReexportExecution(
+            string testName, string intrinsic, string expectedOutput)
+        {
+            var compiled = CompileImportFixture(testName);
+            var il = AssemblyToText.ConvertToText(compiled.Artifact.PeBytes, compiled.Artifact.AssemblyName);
+            Assert.Contains("EsModuleLinker::" + intrinsic, il);
+            Assert.DoesNotContain("__jroc_esm", il);
+            var result = InMemoryTestCompiler.ExecuteArtifact(compiled.Artifact, compiled.TestFilePath, testName);
+            Assert.Contains(expectedOutput, result.Output);
+        }
+
         [Fact]
         public void ForIn_DoesNotTreatCommonJsEsModuleFlagAsNamespaceMarker()
         {

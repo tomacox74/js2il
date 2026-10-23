@@ -45,6 +45,11 @@ public abstract class DiskExecutionTestsBase
     {
         var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
         var preparedScript = Test262SharedAssertHarness.PrepareEntryScript(script);
+        if (Test262SharedAssertHarness.IsResolutionSyntaxError(script))
+        {
+            Test262CompilationAssertions.AssertResolutionSyntaxError(testName, script, sourcePath);
+            return Task.CompletedTask;
+        }
         Exception? failure = null;
 
         var previousMetricsEnabled = IRPipelineMetrics.Enabled;

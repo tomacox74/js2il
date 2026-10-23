@@ -676,6 +676,20 @@
 			IL_0017: ret
 		} // end of method Widget::.ctor
 
+		.method family hidebysig specialname rtspecialname 
+			instance void .ctor (
+				bool ''
+			) cil managed 
+		{
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Widget::.ctor
+
 		.method public hidebysig 
 			instance object describe () cil managed 
 		{
@@ -726,14 +740,16 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 215 (0xd7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_DefaultNamedClass_Lib/Scope,
 			[1] object,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] class Modules.Import_DefaultNamedClass_Lib/Widget/Scope_ctor/FunctionObject
+			[4] class Modules.Import_DefaultNamedClass_Lib/Widget/Scope_ctor/FunctionObject,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Import_DefaultNamedClass_Lib/Scope::.ctor()
@@ -768,13 +784,47 @@
 		IL_004d: castclass Modules.Import_DefaultNamedClass_Lib/Widget/Scope_ctor/FunctionObject
 		IL_0052: stloc.s 4
 		IL_0054: ldloc.s 4
-		IL_0056: stloc.1
-		IL_0057: ldstr "Import_DefaultNamedClass_Lib"
-		IL_005c: ldstr "default"
-		IL_0061: ldloc.1
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
-		IL_0067: pop
-		IL_0068: ret
+		IL_0056: ldstr "Widget"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_0060: stloc.s 5
+		IL_0062: volatile.
+		IL_0064: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0069: brfalse IL_007f
+
+		IL_006e: ldloc.s 5
+		IL_0070: ldstr "prototype"
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_007a: br IL_0095
+
+		IL_007f: ldloc.s 5
+		IL_0081: ldstr "prototype"
+		IL_0086: ldstr "Import_DefaultNamedClass_Lib:Modules.Import_DefaultNamedClass_Lib:__js_module_init__:15"
+		IL_008b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+
+		IL_0095: stloc.s 6
+		IL_0097: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_009c: stloc.2
+		IL_009d: ldloc.s 6
+		IL_009f: ldstr "describe"
+		IL_00a4: newobj instance void Modules.Import_DefaultNamedClass_Lib/Widget/Scope_describe/FunctionObject::.ctor()
+		IL_00a9: ldc.i4.0
+		IL_00aa: conv.r8
+		IL_00ab: ldstr "describe"
+		IL_00b0: ldc.i4.1
+		IL_00b1: ldc.i4.0
+		IL_00b2: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Import_DefaultNamedClass_Lib/Widget/Scope_describe/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_00b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype<class Modules.Import_DefaultNamedClass_Lib/Widget/Scope_describe/FunctionObject>(!!0)
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassElementDataProperty(object, object, object)
+		IL_00c1: pop
+		IL_00c2: ldloc.s 5
+		IL_00c4: stloc.1
+		IL_00c5: ldstr "Import_DefaultNamedClass_Lib"
+		IL_00ca: ldstr "default"
+		IL_00cf: ldloc.1
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::SetLocalExport(string, string, object)
+		IL_00d5: pop
+		IL_00d6: ret
 	} // end of method Import_DefaultNamedClass_Lib::__js_module_init__
 
 } // end of class Modules.Import_DefaultNamedClass_Lib
@@ -805,6 +855,7 @@
 {
 	// Fields
 	.field assembly static int32 __jroc_dynamicLookup_4
+	.field assembly static int32 __jroc_dynamicLookup_5
 
 } // end of class Jroc.Generated.DynamicLookupSites
 

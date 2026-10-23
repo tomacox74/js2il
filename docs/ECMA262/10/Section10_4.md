@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-07T23:14:10Z
+> Last generated (UTC): 2026-10-17T05:03:58Z
 
 JROC implements spec-defined exotic-object behavior for the features it currently supports. Arrays provide dedicated index and length internal operations over dense and sparse storage; bound functions, typed arrays, and namespace imports retain the limitations documented below.
 
@@ -61,17 +61,17 @@ JROC implements spec-defined exotic-object behavior for the features it currentl
 | 10.4.5.17 | TypedArrayGetElement ( O , index ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarraygetelement) |
 | 10.4.5.18 | TypedArraySetElement ( O , index , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-typedarraysetelement) |
 | 10.4.5.19 | IsArrayBufferViewOutOfBounds ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-isarraybufferviewoutofbounds) |
-| 10.4.6 | Module Namespace Exotic Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects) |
-| 10.4.6.1 | [[GetPrototypeOf]] ( ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getprototypeof) |
-| 10.4.6.2 | [[SetPrototypeOf]] ( V ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-setprototypeof-v) |
-| 10.4.6.3 | [[IsExtensible]] ( ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-isextensible) |
-| 10.4.6.4 | [[PreventExtensions]] ( ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-preventextensions) |
+| 10.4.6 | Module Namespace Exotic Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects) |
+| 10.4.6.1 | [[GetPrototypeOf]] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getprototypeof) |
+| 10.4.6.2 | [[SetPrototypeOf]] ( V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-setprototypeof-v) |
+| 10.4.6.3 | [[IsExtensible]] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-isextensible) |
+| 10.4.6.4 | [[PreventExtensions]] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-preventextensions) |
 | 10.4.6.5 | [[GetOwnProperty]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getownproperty-p) |
-| 10.4.6.6 | [[DefineOwnProperty]] ( P , Desc ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc) |
+| 10.4.6.6 | [[DefineOwnProperty]] ( P , Desc ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc) |
 | 10.4.6.7 | [[HasProperty]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-hasproperty-p) |
 | 10.4.6.8 | [[Get]] ( P , Receiver ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-get-p-receiver) |
-| 10.4.6.9 | [[Set]] ( P , V , Receiver ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-set-p-v-receiver) |
-| 10.4.6.10 | [[Delete]] ( P ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p) |
+| 10.4.6.9 | [[Set]] ( P , V , Receiver ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-set-p-v-receiver) |
+| 10.4.6.10 | [[Delete]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p) |
 | 10.4.6.11 | [[OwnPropertyKeys]] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-ownpropertykeys) |
 | 10.4.6.12 | ModuleNamespaceCreate ( module , exports ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-modulenamespacecreate) |
 | 10.4.7 | Immutable Prototype Exotic Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects) |
@@ -116,7 +116,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Namespace import interop objects with live getter properties | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) |  | JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec. |
+| Compiled ESM module namespace exotic objects | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js)<br>`tests/Jroc.Test262.Tests/language/expressions/dynamic-import/namespace/DynamicImportCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/import/import-defer/deferred-namespace-object/IdentifiersImportCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/import/import-defer/evaluation-triggers/IdentifiersImportCompletionExecutionTests.cs` |  | Compiled ESM namespace imports and dynamic imports return cached exotic objects with a null prototype, nonextensibility, sorted UTF-16 export keys, live writable/enumerable/non-configurable data descriptors, compatible no-op definitions, rejected writes/deletions of exports, and a fixed Module toStringTag. All 67 pinned dynamic-import namespace cases pass. Static deferred namespaces have separate identities and a Deferred Module tag; symbol-like operations and writes do not evaluate them, while other string-key operations excluding then do. Evaluation requires ready asynchronous dependencies and caches thrown values. Public field definitions honor namespace exotic rejection; private additions fail and do not establish a private brand. CommonJS retains its synthetic namespace projection; general host module-record hooks remain unsupported. |
 
 ### 10.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects))
 

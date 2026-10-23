@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Linq;
 using Jroc.Runtime;
 using JavaScriptRuntime.Modules.Shared;
 
 namespace JavaScriptRuntime.Modules.CommonJS
 {
-    internal sealed class Require
+    internal sealed partial class Require
     {
         private readonly RuntimeModuleState _state;
 
@@ -197,7 +198,9 @@ namespace JavaScriptRuntime.Modules.CommonJS
 
             var moduleIdKey = NormalizeModuleIdKey(key);
             var map = GetCompiledModuleTypeMap();
-            if (TryResolveFromMap(map, moduleIdKey, out _, out _))
+            if (TryResolveFromMap(map, moduleIdKey, out _, out _)
+                || TryResolveFromMap(map, moduleIdKey + ".json", out _, out _)
+                || TryResolveFromMap(map, moduleIdKey + "/index.json", out _, out _))
             {
                 return true;
             }
@@ -205,6 +208,74 @@ namespace JavaScriptRuntime.Modules.CommonJS
             var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
             return _localModulesAssembly.GetType($"Modules.{legacyModuleId}") != null
                 || _localModulesAssembly.GetType($"Scripts.{legacyModuleId}") != null;
+        }
+
+        internal object ImportWithPhase(string currentModuleId, string specifier, string phase, string? type)
+        {
+            var resolved = ResolveLocalSpecifier(currentModuleId, specifier);
+            if (!TryResolveCompiledModule(resolved, out var canonicalId, out _))
+                throw new ReferenceError($"Cannot find local module '{specifier}' in the compiled assembly.");
+            var information = GetEsModuleInformation();
+            information.TryGetValue(canonicalId, out var info);
+            if (info?.LinkError is { } error && type is not ("text" or "bytes"))
+                throw new SyntaxError(error);
+            if (info?.ResolutionError is { } resolutionError && type is not ("text" or "bytes"))
+                throw new ReferenceError(resolutionError);
+            if (phase == "Source")
+                throw new SyntaxError("JavaScript modules do not provide a source-phase representation");
+            if (type is not null)
+            {
+                if (info is null || type switch
+                    {
+                        "json" => info.JsonSource is null,
+                        "text" => info.TextSource is null && info.JsonSource is null,
+                        "bytes" => info.BytesSource is null,
+                        _ => true
+                    })
+                    throw new TypeError($"Unsupported import type '{type}' for module '{specifier}'");
+                var key = (canonicalId, type);
+                if (!_state.TypedNamespaces.TryGetValue(key, out var typedNamespace))
+                {
+                    var exports = new JsObject();
+                    exports.SetValue("default", type switch
+                    {
+                        "text" => info.TextSource ?? info.JsonSource,
+                        "bytes" => new Uint8Array(ArrayBuffer.FromImmutableBytes(Convert.FromBase64String(info.BytesSource!))),
+                        _ => RequireModule(canonicalId)
+                    });
+                    typedNamespace = new ESM.ModuleNamespace(exports);
+                    _state.TypedNamespaces.Add(key, typedNamespace);
+                }
+                return typedNamespace;
+            }
+            if (info is null)
+                throw new TypeError($"Deferred import metadata is unavailable for compiled module '{canonicalId}'");
+
+            var pending = new List<Promise>();
+            foreach (var dependency in GetAsynchronousDependencies(canonicalId))
+            {
+                RequireForEvaluation(dependency);
+                if (_modules.TryGetValue("compiled:" + dependency, out var dependencyModule)
+                    && dependencyModule.EvaluationPromise is { } evaluation)
+                    pending.Add(evaluation);
+            }
+            foreach (var evaluation in pending)
+                Promise.AwaitTopLevel(evaluation);
+            if (!_state.DeferredNamespaces.TryGetValue(canonicalId, out var deferredNamespace))
+            {
+                deferredNamespace = new ESM.ModuleNamespace(info.ExportNames, () =>
+                {
+                    var cacheKey = "compiled:" + canonicalId;
+                    if (!IsReadyForSynchronousEvaluation(canonicalId, new HashSet<string>(StringComparer.Ordinal)))
+                        throw new TypeError($"Module '{canonicalId}' is not ready for synchronous evaluation");
+                    var exports = RequireModule(canonicalId);
+                    if (_modules.TryGetValue(cacheKey, out var module))
+                        Promise.AwaitTopLevel(module.EvaluationPromise);
+                    return EsModuleInterop.ToDynamicImportResult(exports);
+                });
+                _state.DeferredNamespaces.Add(canonicalId, deferredNamespace);
+            }
+            return deferredNamespace;
         }
 
         /// <summary>
@@ -215,13 +286,19 @@ namespace JavaScriptRuntime.Modules.CommonJS
             if (_localModulesAssembly == null)
                 throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
 
-            if (!TryResolveCompiledModule(key, out var canonicalId, out var typeName))
+            if (!TryResolveCompiledModule(key, out var canonicalId, out var typeName)
+                && !TryResolveCompiledModule(key + ".json", out canonicalId, out typeName)
+                && !TryResolveCompiledModule(key + "/index.json", out canonicalId, out typeName))
             {
                 var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
                 throw new ReferenceError($"Cannot find local module type 'Modules.{legacyModuleId}' (or legacy 'Scripts.{legacyModuleId}') in assembly");
             }
 
-            return RequireCompiledModule(canonicalId, typeName, requestKey: key);
+            var exports = RequireCompiledModule(canonicalId, typeName, requestKey: key);
+            if (_modules.TryGetValue("compiled:" + canonicalId, out var module)
+                && !module.IsSchedulingEvaluation && !module.IsExecutingBody)
+                Promise.AwaitTopLevel(module.EvaluationPromise);
+            return exports;
         }
 
         private bool TryResolveCompiledModule(string key, out string canonicalId, out string typeName)
@@ -277,6 +354,8 @@ namespace JavaScriptRuntime.Modules.CommonJS
 
                 if (_modules.TryGetValue(cacheKey, out var existingModule))
                 {
+                    if (existingModule.EvaluationError is { } evaluationError)
+                        ExceptionDispatchInfo.Throw(evaluationError);
                     var parentModuleForCache = parentModuleOverride ?? _currentParentModule;
                     if (parentModuleForCache != null
                         && !asMain
@@ -355,7 +434,17 @@ namespace JavaScriptRuntime.Modules.CommonJS
                 {
                     ModuleContext.SetModuleContext(dirName, moduleFilename);
                 }
-                moduleDelegate(module.exports, moduleRequire, module, moduleFilename, dirName);
+                if (!TryExecuteNativeModule(module,
+                    () => moduleDelegate(module.exports, moduleRequire, module, moduleFilename, dirName)))
+                    moduleDelegate(module.exports, moduleRequire, module, moduleFilename, dirName);
+                if (asMain)
+                    Promise.AwaitTopLevel(module.EvaluationPromise);
+            }
+            catch (Exception exception) when (exception is not ScriptProcessExitException)
+            {
+                if (ESM.EsModuleLinker.HasModuleRecord(module.exports))
+                    module.EvaluationError = exception;
+                throw;
             }
             finally
             {
@@ -364,7 +453,8 @@ namespace JavaScriptRuntime.Modules.CommonJS
                     ModuleContext.SetModuleContext(previousDir, previousFile);
                 }
                 _currentParentModule = parentModule;
-                module.MarkLoaded();
+                if (module.EvaluationError is null && module.EvaluationPromise is null)
+                    module.MarkLoaded();
             }
 
             _instances[cacheKey] = module.exports!;

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-15T08:15:20Z
+> Last generated (UTC): 2026-10-17T03:27:32Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -127,4 +127,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Object literal __proto__ prototype mutation | Supported with Limitations | [`__proto__-duplicate-computed.js`](../../../tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/__proto__-duplicate-computed.js)<br>[`__proto__-poisoned-object-prototype.js`](../../../tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/__proto__-poisoned-object-prototype.js)<br>[`__proto__-value-non-object.js`](../../../tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-non-object.js)<br>[`__proto__-value-null.js`](../../../tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-null.js)<br>[`__proto__-value-obj.js`](../../../tests/Jroc.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-obj.js) | suite `pr`<br>suite `nightly`<br>`test/language/expressions/object/__proto__-duplicate-computed.js`<br>`test/language/expressions/object/__proto__-poisoned-object-prototype.js`<br>`test/language/expressions/object/__proto__-value-non-object.js`<br>`test/language/expressions/object/__proto__-value-null.js`<br>`test/language/expressions/object/__proto__-value-obj.js` | Non-computed object-literal __proto__ definitions update the new object's prototype for object/null values, ignore primitive values, and do not invoke poisoned Object.prototype.__proto__ accessors. Computed __proto__ remains a data property. |
+
+### 13.2.8.4 ([tc39.es](https://tc39.es/ecma262/#sec-gettemplateobject))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Template escape processing and frozen template objects | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/template-literal/ExpressionsCompletion200ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/template-literal/ExpressionsRemainderExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/tagged-template/ExpressionsCompletion200ExecutionTests.cs` |  | Untagged invalid hexadecimal, octal, and Unicode escapes are rejected, including missing hexadecimal digits, out-of-range Unicode escapes, and escaped line separators. All 57 pinned template-literal cases are accounted for: 56 verified passing and one unsupported eval-dependent case. Tagged invalid escapes produce undefined cooked entries without changing raw text; valid empty cooked strings remain empty. Cooked/raw arrays and their raw descriptor are immutable. Eval-dependent template identity cases remain unsupported, and the existing long-lived-host cache remains bounded. |
 

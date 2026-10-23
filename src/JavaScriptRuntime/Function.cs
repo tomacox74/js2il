@@ -783,7 +783,9 @@ public static class Function
             return false;
         }
 
-        internal static (string[] ParameterNames, string Body) PrepareDynamicFunctionSource(object?[] args)
+        internal static (string[] ParameterNames, string Body) PrepareDynamicFunctionSource(
+            object?[] args,
+            string functionKind = "function")
         {
             var sources = args.Select(DotNet2JSConversions.ToString).ToArray();
             foreach (var source in sources)
@@ -796,11 +798,43 @@ public static class Function
                 }
             }
 
+            var parameters = sources.Length <= 1
+                ? string.Empty
+                : string.Join(",", sources.Take(sources.Length - 1));
+            var body = sources.Length == 0 ? string.Empty : sources[^1];
+            ValidateSource(parameters, string.Empty);
+            ValidateSource(string.Empty, body);
+            ValidateSource(parameters, body);
+
             var parameterNames = sources.Length <= 1
                 ? System.Array.Empty<string>()
-                : string.Join(",", sources.Take(sources.Length - 1))
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            return (parameterNames, sources.Length == 0 ? string.Empty : sources[^1]);
+                : parameters.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return (parameterNames, body);
+
+            void ValidateSource(string parameterSource, string bodySource)
+            {
+                try
+                {
+                    var parser = new Acornima.Parser(new Acornima.ParserOptions
+                    {
+                        EcmaVersion = Acornima.EcmaVersion.Latest
+                    });
+                    var script = parser.ParseScript(
+                        $"({functionKind} anonymous(\n{parameterSource}\n) {{\n{bodySource}\n}})");
+                    if (script.Body.Count != 1
+                        || script.Body[0] is not Acornima.Ast.ExpressionStatement
+                        {
+                            Expression: Acornima.Ast.FunctionExpression
+                        })
+                    {
+                        throw new SyntaxError("Invalid dynamic function source.");
+                    }
+                }
+                catch (Acornima.ParseErrorException ex)
+                {
+                    throw new SyntaxError(ex.Message);
+                }
+            }
         }
 
         public static object? SetInferredNameIfAnonymous(object? functionValue, object? propertyKey)
@@ -1169,7 +1203,14 @@ public static class Function
 
             var callArgs = args ?? System.Array.Empty<object?>();
 
-            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            using var realmScope = RuntimeServices.EnterFunctionRealm(constructor);
+            var callArguments = JsCallArguments.FromArray(callArgs);
+            var invocationState = RuntimeServices.PushInvocationFrame(
+                constructor.InvocationRequirements,
+                receiver,
+                callArguments,
+                constructor,
+                newTarget);
             try
             {
                 var result = Closure.InvokeBuiltinDelegate(
@@ -1191,7 +1232,7 @@ public static class Function
             }
             finally
             {
-                RuntimeServices.SetCurrentThis(previousThis);
+                RuntimeServices.RestoreInvocationFrame(invocationState);
             }
         }
 

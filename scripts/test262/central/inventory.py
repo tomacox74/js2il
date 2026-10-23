@@ -63,7 +63,8 @@ def normalize_fixture(row, root=None):
 
 
 def inventory_digest(rows):
-    return hash_bytes(''.join(canonical(row)+'\n' for row in sorted(rows, key=lambda x: x['path'])).encode())
+    return hash_bytes(''.join(canonical(row, database_numbers=True)+'\n'
+                             for row in sorted(rows, key=lambda x: x['path'])).encode())
 
 
 def register(client, repository, upstream, rows, reuse_sealed=False):
@@ -105,6 +106,51 @@ def register(client, repository, upstream, rows, reuse_sealed=False):
     return corpus, fixtures
 
 
+def enrich_specification_metadata(client, args):
+    """Append source-verified annotations without changing sealed inventory/evidence."""
+    from scripts.test262 import catalog
+
+    corpus = client.one('corpora', corpus_id=args.corpus)
+    if not corpus:
+        raise ValueError('Unknown or inaccessible corpus')
+    if corpus['inventory_state'] != 'sealed':
+        raise ValueError('Specification metadata enrichment requires a sealed corpus')
+    root = Path(args.root).resolve()
+    revision = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+    if revision != corpus['revision']:
+        raise ValueError('Enrichment checkout revision differs from the original corpus revision')
+    if subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=no'], text=True).strip():
+        raise ValueError('Enrichment requires a clean upstream checkout')
+    count = 0
+    pending = []
+
+    def upload(fixtures):
+        rows = catalog.bridge({'command': 'metadata', 'root': str(root),
+                               'paths': [f['upstream_path'] for f in fixtures]})
+        if len(rows) != len(fixtures):
+            raise ValueError('Incomplete enrichment metadata response')
+        annotations = []
+        for fixture, row in zip(fixtures, rows):
+            if row['path'] != fixture['upstream_path'] or bytea(row['sha256']) != fixture['content_sha256']:
+                raise ValueError('Enrichment fixture path/content differs from original inventory: ' + fixture['upstream_path'])
+            metadata = {key: row['metadata'][key] for key in
+                        ('description', 'info', 'author', 'esid', 'es5id', 'es6id', 'specification')}
+            annotations.append({'fixture_id': fixture['fixture_id'], 'upstream_revision': revision,
+                                'upstream_path': fixture['upstream_path'], 'content_sha256': fixture['content_sha256'],
+                                'metadata': metadata, 'metadata_sha256': bytea(sha(metadata, database_numbers=True))})
+        client.put('fixture_specification_metadata', annotations)
+        return len(annotations)
+
+    for fixture in client.read('fixtures', {'corpus_id': args.corpus}):
+        pending.append(fixture)
+        if len(pending) == 250:
+            count += upload(pending)
+            pending = []
+    if pending:
+        count += upload(pending)
+    return {'corpus': args.corpus, 'revision': revision, 'enriched_fixtures': count}
+
+
 def registrations(client, repository, source_revision, corpus_rows):
     import sys
     sys.path.insert(0, str(REPO / 'scripts/test262'))
@@ -128,4 +174,3 @@ def registrations(client, repository, source_revision, corpus_rows):
     client.put('registrations', [dict(r, snapshot_id=snapshot) for r in records])
     client.call('transition', 'registration_snapshots', {'snapshot_id': snapshot}, 0, {'state': 'sealed'})
     return snapshot
-

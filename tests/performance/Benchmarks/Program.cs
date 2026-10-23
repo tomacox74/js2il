@@ -14,11 +14,20 @@ if (programArgs.Length > 0 && programArgs[0] == "--validate")
     // Run validation tests for runtime adapters
     ValidationTest.RunValidation();
 }
+else if (programArgs.Length > 0 && programArgs[0] == "--validate-sharpts")
+{
+    SharpTsValidation.Run();
+}
 else
 {
     if (programArgs.Length > 0 && programArgs[0] == "--callable-arity-analysis")
     {
         Environment.ExitCode = CallableArityAnalysis.Run();
+    }
+    else if (programArgs.Length > 0 && programArgs[0] == "--regexp-construction")
+    {
+        var summary = BenchmarkRunner.Run<RegExpConstructionBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
     }
     else if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
     {
@@ -124,6 +133,11 @@ else
         SetExitCodeFromSummaries([summary]);
     }
 #if SOURCE_JROC_PROJECTS
+    else if (programArgs.Length > 0 && programArgs[0] == "--regexp-tiering")
+    {
+        var summary = BenchmarkRunner.Run<RegExpTieringBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
+    }
     else if (programArgs.Length > 0 && programArgs[0] == "--array-length-validation")
     {
         var summaries = BenchmarkSwitcher.FromTypes(
@@ -209,7 +223,9 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
+Console.WriteLine("  dotnet run -c Release -- --regexp-construction # Compare cold and reused RegExp construction");
 #if SOURCE_JROC_PROJECTS
+Console.WriteLine("  dotnet run -c Release -- --regexp-tiering # Compare interpreted and adaptive RegExp break-even");
 Console.WriteLine("  dotnet run -c Release -- --shape-storage # Run JsShape storage microbenchmarks");
 Console.WriteLine("  dotnet run -c Release -- --array-length-validation --filter '*' # Compare Array length validators");
 #endif
@@ -240,6 +256,7 @@ Console.WriteLine("  dotnet run -c Release -- --prime-mask-blocks # Compare orig
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
+Console.WriteLine("  dotnet run -c Release -- --validate-sharpts # Validate SharpTS lifecycle and supported workloads");
 
 static void SetExitCodeFromSummaries(IEnumerable<Summary> summaries)
 {

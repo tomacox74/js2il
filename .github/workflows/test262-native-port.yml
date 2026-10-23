@@ -108,6 +108,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+      - run: npm ci --ignore-scripts
 
       - name: Validate bounded inputs
         env:
@@ -611,4 +612,3 @@ jobs:
           path: artifacts/test262/native.sqlite
           if-no-files-found: error
           retention-days: 90
-

@@ -705,6 +705,10 @@ namespace JavaScriptRuntime
 
         private static List<string> GetOrderedOwnKeysIncludingSymbols(object obj)
         {
+            if (obj is Modules.ESM.ModuleNamespace moduleNamespace)
+            {
+                return moduleNamespace.GetOwnPropertyKeys().ToList();
+            }
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
                 var target = proxy.GetTarget("ownKeys");
@@ -2572,6 +2576,13 @@ namespace JavaScriptRuntime
         }
 
         internal static object? ConstructValue(object constructor, object[]? args, object? newTarget)
+            => ConstructValue(constructor, args, newTarget, constructionReceiver: null);
+
+        internal static object? ConstructValue(
+            object constructor,
+            object[]? args,
+            object? newTarget,
+            object? constructionReceiver)
         {
             // In JavaScript, `new` on null/undefined throws a TypeError (not a host exception).
             // Libraries often probe for constructor availability inside try/catch (e.g., turndown).
@@ -2616,6 +2627,7 @@ namespace JavaScriptRuntime
                     ? RuntimeIntrinsics.GetFunctionRealm(newTarget)
                     : RuntimeIntrinsics.Current;
                 var previousThis = RuntimeServices.GetCurrentThis();
+                var previousCallee = RuntimeServices.SetCurrentCallee(prototypeOwner ?? type);
                 RuntimeServices.PushCurrentArguments(callArgs);
                 var previousNewTarget = RuntimeServices.SetCurrentNewTarget(
                     newTarget ?? prototypeOwner ?? type);
@@ -2629,7 +2641,9 @@ namespace JavaScriptRuntime
                     if (instance is not null && instance is not JsNull)
                     {
                         var defaultPrototype = constructionRealm.GetConstructorPrototype(type)
-                            ?? GetProperty(prototypeOwner ?? type, "prototype");
+                            ?? (prototypeOwner is null
+                                ? GetProperty(type, "prototype")
+                                : constructionRealm.ObjectPrototype);
                         var newTargetPrototype = GetProperty(newTarget ?? prototypeOwner ?? type, "prototype");
                         PrototypeChain.SetPrototype(
                             instance,
@@ -2664,63 +2678,15 @@ namespace JavaScriptRuntime
                 {
                     try
                     {
-                        return CompleteClassConstruction(
-                            Activator.CreateInstance(type, callArgs));
+                        if (constructionReceiver is not null)
+                        {
+                            return InvokeCompatibleConstructor();
+                        }
+                        return CompleteClassConstruction(Activator.CreateInstance(type, callArgs));
                     }
                     catch (MissingMethodException)
                     {
-                        // JS semantics allow missing arguments; treat them as null/undefined.
-                        // Reflection activation does not pad arguments, so fall back to selecting a
-                        // public instance ctor and padding missing args with null.
-                        var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-
-                        foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
-                        {
-                            var parameters = ctor.GetParameters();
-                            var hasHiddenScopesParameter = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-                            var jsParameters = hasHiddenScopesParameter ? parameters.Skip(1).ToArray() : parameters;
-                            if (!IsViableConstructorCall(jsParameters, callArgs))
-                            {
-                                continue;
-                            }
-
-                            var invokeArgs = new object?[parameters.Length];
-                            if (hasHiddenScopesParameter)
-                            {
-                                invokeArgs[0] = scopes;
-                            }
-
-                            for (int i = 0; i < jsParameters.Length; i++)
-                            {
-                                var invokeIndex = hasHiddenScopesParameter ? i + 1 : i;
-                                if (i < callArgs.Length)
-                                {
-                                    _ = TryCoerceConstructorArg(callArgs[i], jsParameters[i].ParameterType, out var coerced);
-                                    invokeArgs[invokeIndex] = coerced;
-                                }
-                                else
-                                {
-                                    invokeArgs[invokeIndex] = null;
-                                }
-                            }
-
-                            try
-                            {
-                                return CompleteClassConstruction(
-                                    ctor.Invoke(invokeArgs));
-                            }
-                            catch (TargetInvocationException tie) when (tie.InnerException != null)
-                            {
-                                throw tie.InnerException;
-                            }
-                        }
-
-                        if (type.BaseType == typeof(JavaScriptRuntime.Array))
-                        {
-                            return AttachClassPrototype(JavaScriptRuntime.Array.Construct(callArgs));
-                        }
-
-                        throw;
+                        return InvokeCompatibleConstructor();
                     }
                     catch (TargetInvocationException tie) when (tie.InnerException != null)
                     {
@@ -2734,8 +2700,67 @@ namespace JavaScriptRuntime
                         RuntimeServices.PopDerivedConstructorThisBinding();
                     }
                     RuntimeServices.SetCurrentThis(previousThis);
+                    RuntimeServices.SetCurrentCallee(previousCallee);
                     RuntimeServices.SetCurrentNewTarget(previousNewTarget);
                     RuntimeServices.PopCurrentArguments();
+                }
+
+                object? InvokeCompatibleConstructor()
+                {
+                    // Reflection activation does not pad missing JavaScript arguments.
+                    var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+
+                    foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
+                    {
+                        var parameters = ctor.GetParameters();
+                        var hasHiddenScopesParameter = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
+                        var jsParameters = hasHiddenScopesParameter ? parameters.Skip(1).ToArray() : parameters;
+                        if (!IsViableConstructorCall(jsParameters, callArgs))
+                        {
+                            continue;
+                        }
+
+                        var invokeArgs = new object?[parameters.Length];
+                        if (hasHiddenScopesParameter)
+                        {
+                            invokeArgs[0] = scopes;
+                        }
+
+                        for (int i = 0; i < jsParameters.Length; i++)
+                        {
+                            var invokeIndex = hasHiddenScopesParameter ? i + 1 : i;
+                            if (i < callArgs.Length)
+                            {
+                                _ = TryCoerceConstructorArg(callArgs[i], jsParameters[i].ParameterType, out var coerced);
+                                invokeArgs[invokeIndex] = coerced;
+                            }
+                            else
+                            {
+                                invokeArgs[invokeIndex] = null;
+                            }
+                        }
+
+                        try
+                        {
+                            if (constructionReceiver is not null)
+                            {
+                                ctor.Invoke(constructionReceiver, BindingFlags.Default, null, invokeArgs, null);
+                                return CompleteClassConstruction(constructionReceiver);
+                            }
+                            return CompleteClassConstruction(ctor.Invoke(invokeArgs));
+                        }
+                        catch (TargetInvocationException tie) when (tie.InnerException != null)
+                        {
+                            throw tie.InnerException;
+                        }
+                    }
+
+                    if (type.BaseType == typeof(JavaScriptRuntime.Array))
+                    {
+                        return AttachClassPrototype(JavaScriptRuntime.Array.Construct(callArgs));
+                    }
+
+                    throw new MissingMethodException($"No compatible constructor was found on {type.FullName}.");
                 }
             }
 
@@ -3614,11 +3639,23 @@ namespace JavaScriptRuntime
                 JsFunctionObject { IsConstructor: true } constructor => constructor.GetType().DeclaringType,
                 _ => null
             };
-            field = ownerType?.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                .Where(candidate => string.Equals(candidate.Name, name, StringComparison.Ordinal))
-                .MaxBy(candidate => candidate.MetadataToken)!;
+            field = null!;
+            if (ownerType == null
+                || ownerType.Assembly == typeof(ObjectRuntime).Assembly
+                || !ownerType.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false))
+            {
+                return false;
+            }
+
+            foreach (var candidate in ownerType.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+            {
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal)
+                    && (field == null || candidate.MetadataToken > field.MetadataToken))
+                {
+                    field = candidate;
+                }
+            }
             return field != null
-                && ownerType!.Assembly.IsDefined(typeof(Jroc.Runtime.JsCompiledModuleAttribute), inherit: false)
                 && field.IsDefined(typeof(Jroc.Runtime.JsCompiledClassFieldAttribute), inherit: false);
         }
 
@@ -6329,6 +6366,10 @@ namespace JavaScriptRuntime
         /// </summary>
         private static bool ReflectSetOrdinary(object target, string key, object? value, object? receiver)
         {
+            if (target is Modules.ESM.ModuleNamespace)
+            {
+                return false;
+            }
             if (target is Proxy proxy)
             {
                 var proxyTarget = proxy.GetTarget("set");
@@ -6789,6 +6830,12 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (obj is Modules.ESM.ModuleNamespace)
+            {
+                if (throwOnError)
+                    throw new TypeError($"Cannot assign to module namespace property '{name}'");
+                return value;
+            }
             if (obj is JavaScriptRuntime.Symbol)
             {
                 if (throwOnError)
@@ -7514,7 +7561,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var unscopables = GetProperty(obj!, Symbol.unscopables.DebugId);
+            var unscopables = GetItem(obj!, Symbol.unscopables);
             return TypeUtilities.IsPrimitive(unscopables)
                 || !TypeUtilities.ToBoolean(GetProperty(unscopables!, name));
         }
@@ -7535,6 +7582,14 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool HasPropertyForArrayLike(object? key, object target)
             => HasProperty(target, ToPropertyKeyString(key));
+
+        public static object? ResolvePrivateBrandTarget(object? value)
+        {
+            var target = RequirePrivateBrandTarget(value);
+            return target is Modules.ESM.ModuleNamespace
+                ? null
+                : RuntimeServices.ResolveGeneratedClassStorageReceiver(target);
+        }
 
         public static object RequirePrivateBrandTarget(object? value)
         {

@@ -373,9 +373,8 @@ public static class HIRBuilder
                         return baseCtorFunc.Params.Count;
                     }
 
-                    // Default derived constructors forward every received argument to super(...).
-                    // For statically known user classes, retain the direct fixed-arity constructor path.
-                    // Dynamic and intrinsic bases use a rest parameter so the complete argument list is preserved.
+                    // Retain the declared CLR signature; the default super call forwards the
+                    // complete JavaScript invocation arguments independently of that signature.
                     var parameterPatterns = new List<HIRPattern>();
                     var superArgs = new List<HIRExpression>();
                     HIRExpression? superClassExpression = null;
@@ -429,7 +428,10 @@ public static class HIRBuilder
                     if (emitImplicitSuperCall)
                     {
                         ctorStatements.Add(new HIRExpressionStatement(
-                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())));
+                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())
+                            {
+                                IsDefaultDerivedConstructorCall = true
+                            }));
                     }
 
                     // Store scopes array to this._scopes if constructor has scopes parameter.
@@ -1108,6 +1110,7 @@ partial class HIRMethodBuilder
     readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
     readonly JavaScriptParser _parser = new();
     string? _staticThisRegistryClassName;
+    int _activeWithDepth;
 
     public HIRMethodBuilder(
         Scope scope,
@@ -2266,7 +2269,9 @@ partial class HIRMethodBuilder
     {
         if (classDeclaration.Id is not Identifier classIdentifier
             || string.IsNullOrWhiteSpace(classIdentifier.Name)
-            || classDeclaration.SuperClass != null)
+            || classDeclaration.SuperClass != null
+            || _rootScope.Bindings.TryGetValue(classIdentifier.Name, out var classBinding)
+                && classBinding.EsModuleExports is { Count: > 0 })
         {
             return false;
         }
@@ -2942,13 +2947,21 @@ partial class HIRMethodBuilder
                         return false;
                     }
 
-                    if (!TryParseNestedStatement(withStmt.Body, out var withBody))
+                    _activeWithDepth++;
+                    try
                     {
-                        return false;
-                    }
+                        if (!TryParseNestedStatement(withStmt.Body, out var withBody))
+                        {
+                            return false;
+                        }
 
-                    hirStatement = new HIRWithStatement(withObjectExpr!, withBody!);
-                    return true;
+                        hirStatement = new HIRWithStatement(withObjectExpr!, withBody!);
+                        return true;
+                    }
+                    finally
+                    {
+                        _activeWithDepth--;
+                    }
                 }
 
             case ReturnStatement returnStmt:
@@ -3622,7 +3635,7 @@ partial class HIRMethodBuilder
             return false;
         }
 
-        hirStatement = new HIRVariableDeclaration(symbol, initExpr!);
+        hirStatement = new HIRVariableDeclaration(symbol, initExpr!) { InferredName = "default" };
         return true;
     }
 
@@ -3758,6 +3771,25 @@ partial class HIRMethodBuilder
                     }
 
                     pattern = new HIRIndexTargetPattern(targetObjectExpr!, targetIndexExpr!);
+                    return true;
+                }
+
+                if (memberExpr.Property is PrivateIdentifier privateTargetId)
+                {
+                    if (!TryGetPrivateMemberClassDefinition(privateTargetId.Name, out var privateOwner, out _))
+                    {
+                        return false;
+                    }
+
+                    var isAccessorOrMethod = TryResolvePrivateAccessorOrMethod(
+                        privateTargetId, out _, out _, out var setterName, out _, out _);
+                    pattern = new HIRPrivateTargetPattern
+                    {
+                        Receiver = targetObjectExpr!,
+                        RegistryClassName = GetRegistryClassName(privateOwner),
+                        FieldName = isAccessorOrMethod ? null : privateTargetId.Name,
+                        SetterMethodName = setterName
+                    };
                     return true;
                 }
 
@@ -3981,6 +4013,19 @@ partial class HIRMethodBuilder
                 // Handle MetaProperty forms used by jroc.
                 if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                 {
+                    for (var scopeCursor = _currentScope; scopeCursor != null; scopeCursor = scopeCursor.Parent)
+                    {
+                        if (scopeCursor.AstNode is StaticBlock)
+                        {
+                            hirExpr = new HIRLiteralExpression(JavascriptType.Undefined, null);
+                            return true;
+                        }
+                        if (scopeCursor.Kind == ScopeKind.Function
+                            && scopeCursor.AstNode is not ArrowFunctionExpression)
+                        {
+                            break;
+                        }
+                    }
                     hirExpr = new HIRNewTargetExpression();
                     return true;
                 }
@@ -3997,16 +4042,10 @@ partial class HIRMethodBuilder
                     static string GetQuasiText(TemplateElement te)
                     {
                         var val = te.Value;
-                        // Prefer cooked when available; fall back to raw.
-                        var cooked = val.Cooked;
-                        if (!string.IsNullOrEmpty(cooked))
-                        {
-                            return cooked!;
-                        }
-                        return val.Raw ?? string.Empty;
+                        return val.Cooked ?? string.Empty;
                     }
 
-                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    var quasis = new List<string?>(templateLiteral.Quasis.Count);
                     foreach (var quasi in templateLiteral.Quasis)
                     {
                         quasis.Add(GetQuasiText(quasi));
@@ -4037,14 +4076,14 @@ partial class HIRMethodBuilder
                     // Parse the template literal with raw strings
                     var templateLiteral = taggedTemplate.Quasi;
                     
-                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    var quasis = new List<string?>(templateLiteral.Quasis.Count);
                     var rawQuasis = new List<string>(templateLiteral.Quasis.Count);
                     
                     foreach (var quasi in templateLiteral.Quasis)
                     {
                         var val = quasi.Value;
                         // Cooked strings (with escape sequences processed)
-                        quasis.Add(val.Cooked ?? val.Raw ?? string.Empty);
+                        quasis.Add(val.Cooked);
                         // Raw strings (escape sequences not processed)
                         rawQuasis.Add(val.Raw ?? string.Empty);
                     }
@@ -4060,7 +4099,7 @@ partial class HIRMethodBuilder
                     }
 
                     var template = new HIRTemplateLiteralExpression(quasis, expressions, rawQuasis);
-                    var location = SourceLocation.FromNode(taggedTemplate);
+                    var location = SourceLocation.FromNode(taggedTemplate.Quasi);
                     hirExpr = new HIRTaggedTemplateExpression(tagExpr!, template, location);
                     return true;
                 }
@@ -4224,13 +4263,19 @@ partial class HIRMethodBuilder
                 return true;
 
             case ImportExpression importExpr:
-                // Dynamic import() - validated to have string literal specifier
                 if (!TryParseExpression(importExpr.Source, out var specifierExpr) || specifierExpr == null)
                 {
                     return false;
                 }
                 
-                hirExpr = new HIRImportExpression(specifierExpr);
+                HIRExpression? importOptions = null;
+                if (importExpr.Options != null
+                    && !TryParseExpression(importExpr.Options, out importOptions))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRImportExpression(specifierExpr, importOptions, importExpr.Phase.ToString());
                 return true;
 
             case NewExpression newExpr:
@@ -4408,7 +4453,9 @@ partial class HIRMethodBuilder
                 }
 
                 // Synthetic global binding: prefer known global constants when not shadowed.
-                if (KnownGlobalConstants.TryGetValue(identifierExpr.Name, out var constant))
+                if (_activeWithDepth == 0
+                    && !_rootScope.MayUseBoundWithObject
+                    && KnownGlobalConstants.TryGetValue(identifierExpr.Name, out var constant))
                 {
                     hirExpr = new HIRLiteralExpression(constant.Kind, constant.Value);
                     return true;
@@ -4434,7 +4481,10 @@ partial class HIRMethodBuilder
                         return true;
                     }
 
-                    hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
+                    hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!)
+                    {
+                        InferName = assignExpr.Start == assignTargetId.Start
+                    };
                     return true;
                 }
 

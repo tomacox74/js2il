@@ -557,7 +557,6 @@ namespace JavaScriptRuntime
 
         private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -706,7 +705,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs0(object target, object[] scopes)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -725,7 +723,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs1(object target, object[] scopes, object? a0)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -744,7 +741,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs2(object target, object[] scopes, object? a0, object? a1)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -767,7 +763,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -791,7 +786,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs4(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)
@@ -816,7 +810,6 @@ namespace JavaScriptRuntime
 
         public static object InvokeWithArgs5(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3, object? a4)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             if (target is JsFunctionObject or global::JavaScriptRuntime.Proxy)

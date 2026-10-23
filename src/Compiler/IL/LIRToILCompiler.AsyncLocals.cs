@@ -93,8 +93,7 @@ internal sealed partial class LIRToILCompiler
             // Box unboxed values for object[] storage.
             if (storage.Kind == ValueStorageKind.UnboxedValue)
             {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(GetBoxingTypeToken(storage.ClrType ?? typeof(object)));
+                EmitBoxValue(storage.ClrType ?? typeof(object), ilEncoder);
             }
 
             ilEncoder.OpCode(ILOpCode.Stelem_ref);
@@ -111,8 +110,7 @@ internal sealed partial class LIRToILCompiler
 
             if (storage.Kind == ValueStorageKind.UnboxedValue)
             {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(GetBoxingTypeToken(storage.ClrType ?? typeof(object)));
+                EmitBoxValue(storage.ClrType ?? typeof(object), ilEncoder);
             }
 
             ilEncoder.OpCode(ILOpCode.Stelem_ref);

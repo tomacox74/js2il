@@ -24,6 +24,7 @@ public class DromaeoExecutionBenchmarks : ExecutionBenchmarksBase
     private Prepared<Script> _jintPreparedScript = default!;
     private JsRuntime? _okojoPreparedRuntime;
     private JsScript _okojoPreparedScript = null!;
+    private SharpTsCompiledScript? _sharpTsScript;
     private AssemblyLoadContext? _compiledLoadContext;
     private Assembly? _compiledAssembly;
     private string? _compiledModuleId;
@@ -102,6 +103,20 @@ public class DromaeoExecutionBenchmarks : ExecutionBenchmarksBase
         }
     }
 
+    [GlobalSetup(Target = nameof(SharpTs_ExecuteOnly))]
+    public void SetupSharpTs()
+    {
+        var scenario = LoadScenario();
+        _sharpTsScript = new SharpTsCompiledScript(scenario.Content, $"{scenario.ScriptName}.js");
+    }
+
+    [GlobalCleanup(Target = nameof(SharpTs_ExecuteOnly))]
+    public void CleanupSharpTs()
+    {
+        _sharpTsScript?.Dispose();
+        _sharpTsScript = null;
+    }
+
     [GlobalCleanup(Target = nameof(Jroc_ExecuteOnly))]
     public void CleanupJroc()
     {
@@ -170,6 +185,12 @@ public class DromaeoExecutionBenchmarks : ExecutionBenchmarksBase
         var runtime = _okojoPreparedRuntime
             ?? throw new InvalidOperationException($"No prepared Okojo runtime is available for scenario '{ScriptName}'.");
         runtime.MainRealm.Execute(_okojoPreparedScript);
+    }
+
+    [Benchmark(Description = "sharpts-execute")]
+    public void SharpTs_ExecuteOnly()
+    {
+        _sharpTsScript!.Execute();
     }
 
     private BenchmarkScenario LoadScenario()

@@ -88,17 +88,27 @@ internal sealed partial class LIRToILCompiler
             labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
         }
 
-        // For constructors, emit base System.Object::.ctor() call before any body instructions.
-        // Derived constructors (class extends ...) must call the base constructor via `super(...)`.
-        if (methodDescriptor.IsConstructor && !methodDescriptor.IsDerivedConstructor)
+        // CLR initialization is separate from the JavaScript derived-this binding.
+        if (methodDescriptor.IsConstructor)
         {
             ilEncoder.OpCode(ILOpCode.Ldarg_0);
-            ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
-            ilEncoder.LoadArgument(0);
-            ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.RuntimeServices),
-                nameof(JavaScriptRuntime.RuntimeServices.InitializeConstructedClassPrototype),
-                parameterTypes: new[] { typeof(object) }));
+            if (methodDescriptor.IsDerivedConstructor)
+            {
+                ilEncoder.LoadConstantI4(0);
+                ilEncoder.Call(methodDescriptor.StorageConstructor);
+            }
+            else
+            {
+                ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
+            }
+            if (!methodDescriptor.IsDerivedConstructor)
+            {
+                ilEncoder.LoadArgument(0);
+                ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.InitializeConstructedClassPrototype),
+                    parameterTypes: new[] { typeof(object) }));
+            }
         }
 
         // Opt-in prototype chain support: enable runtime behavior only when the compiler detected

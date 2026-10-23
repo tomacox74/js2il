@@ -30,6 +30,7 @@ Common request options:
 | `EntryFilePath` | Required source identity, diagnostic path, and dependency-resolution context. |
 | `SourceText` | Source supplied at runtime. If omitted, read the entry file. |
 | `FileSystem` | Supply a file-system abstraction for source/dependency resolution. |
+| `AdditionalModulePaths` | Bundle additional module files as possible computed `import()` targets without making them executable entries. Also available on multi-entry requests. |
 | `AssemblyName` | Assembly identity and artifact basename; defaults to the entry filename without its extension. |
 | `RootModuleIdOverride` | Override the root module's logical ID. |
 | `ParseAsModule` | Parse the entry with the Module goal, including sources without import/export syntax. Defaults to `false`; `.mjs` files use the Module goal unless `ParseAsScript` is selected. |
@@ -44,6 +45,15 @@ When `SourceText` is present, it overlays the entry file at `EntryFilePath`;
 other dependencies are resolved from the supplied file system or the default
 file system. In-memory output does not mean all source dependencies are
 automatically available in memory.
+
+JROC is an ahead-of-time compiler: a computed `import(specifier)` can load only
+targets bundled in the compiled assembly. Literal imports discover their
+dependencies automatically. For computed targets, provide their paths through
+`AdditionalModulePaths`; source is read through `FileSystem` when supplied.
+Bundling does not evaluate these modules, add them to `EntryModules`, or run
+them before the selected entry. Parse, resolution, and link failures in
+dynamic-only targets reject their import promises when requested; the same
+failures in an entry's static dependency graph still fail compilation.
 
 The default entry mode retains Node/CommonJS wrapper behavior. With
 `ParseAsScript`, top-level `var` and function declarations use global-object
@@ -69,6 +79,15 @@ do not by themselves expose the global object, so they preserve the
 branch-free path when the host contract and other source analysis allow it.
 Passing the object to a callback, storing an alias, or writing its
 properties still prevents that optimization.
+
+Ordinary fixed-name receiver-property access, such as `this.bufferSize`, does
+not by itself expose the receiver. Storing `this` in an alias can expose the
+global object from an ordinary function and disables original-binding
+assumptions across the assembly, even when that function is not executed.
+Dynamic Math calls still resolve the current global/member before evaluating
+arguments, then invoke the selected built-in through fixed-arity,
+receiver-independent adapters rather than reflective CLR overload selection.
+This does not change the option's default or weaken its host contract.
 
 ## Compile and evaluate
 
@@ -233,4 +252,6 @@ exist on disk. `JrocCompiledAssemblyArtifact.Materialize(...)` can create
 the required artifacts; the load overload accepts
 `Jroc.Runtime.JsModuleLoadOptions` with an explicit `CompiledAssemblyPath`.
 The host must arrange that path and keep the materialized files available.
+Materialization includes `JavaScriptRuntime.dll` and its Acornima parser
+dependency, which validates dynamic function-constructor grammar at runtime.
 Pure source-text loading does not infer or create a child-process launch path.

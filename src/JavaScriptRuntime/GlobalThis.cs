@@ -994,6 +994,7 @@ namespace JavaScriptRuntime
         {
             var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
                 : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)
+                : ReferenceEquals(target, _suppressedErrorConstructorValue) ? typeof(JavaScriptRuntime.SuppressedError)
                 : ReferenceEquals(target, _errorConstructorValue) ? typeof(JavaScriptRuntime.Error)
                 : ReferenceEquals(target, _evalErrorConstructorValue) ? typeof(JavaScriptRuntime.EvalError)
                 : ReferenceEquals(target, _rangeErrorConstructorValue) ? typeof(JavaScriptRuntime.RangeError)
@@ -1198,7 +1199,15 @@ namespace JavaScriptRuntime
 
         public static Type Reflect => typeof(JavaScriptRuntime.Reflect);
 
-        public static Delegate RegExp => _regExpConstructorValue;
+        public static Delegate RegExp
+        {
+            get
+            {
+                // Internal species construction can reach this before globalThis is read.
+                _ = BootstrappedIntrinsics();
+                return _regExpConstructorValue;
+            }
+        }
 
         /// <summary>
         /// ECMAScript global Error constructor value (placeholder).

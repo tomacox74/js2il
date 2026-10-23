@@ -6,6 +6,7 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 - **Jint** - .NET JavaScript interpreter
 - **Okojo** - fully managed .NET JavaScript runtime
 - **YantraJS** - .NET JavaScript runtime
+- **SharpTS** - TypeScript/JavaScript-to-IL compiler, measured in Dromaeo and Kraken execution suites
 - **jroc** - JavaScript-to-IL AOT compiler
 - **JrocPrevious** - previous published JROC patch release, measured by CI on the same runner as the current release
 
@@ -18,6 +19,64 @@ This suite provides:
 3. **Structured scenario catalog** - Organized, reusable benchmark scenarios
 4. **Machine-readable outputs** - JSON and structured reports for historical trend analysis
 5. **Licensing compliance** - Tracked provenance for all benchmark scripts
+
+## SharpTS execution benchmarks
+
+SharpTS 1.0.12 runs all ten Dromaeo scenarios and Kraken's
+`json-parse-financial` scenario by default. Both suites report `sharpts-execute`;
+Supabase ingestion records the pinned `SharpTS.Hosting` version.
+
+Compilation, assembly loading, and delegate binding happen in `GlobalSetup`.
+Dromaeo invokes the compiled script body on every operation, reinitializing its
+top-level state. Kraken initializes its data and registers its workload once in
+setup, then invokes the prepared `runBenchmark` delegate for each operation.
+Neither timed method launches a process or reparses source. Cleanup releases the
+delegates and unloads the collectible assembly context.
+
+The adapter passes the original JavaScript source unchanged to SharpTS's lenient
+CommonJS checker using a virtual `.cjs` filename, then emits a single script with
+`ILCompiler.Compile`. This avoids TypeScript-only diagnostics for dynamic JS and
+the module initializer's run-once guard, which would make repeated Dromaeo
+measurements skip the workload. The caller's synchronization context is restored
+after each script entry-point invocation.
+
+SharpTS 1.0.12 emits invalid IL for `audio-dft`, `audio-oscillator`,
+`audio-beat-detection`, and `ai-astar`. Those SharpTS/scenario combinations are
+excluded by default and remain available with `--comprehensive` for upstream
+compatibility investigations. The source fixtures are unchanged.
+
+`SharpTS.Hosting` 1.0.12 omits its required `SharpTS.Hosting.Abstractions.dll`.
+The scoped `Directory.Build.targets` downloads the matching official `SharpTS`
+tool package and references that assembly in both benchmark hosts and
+BenchmarkDotNet's generated child projects. Referencing it only in the host is
+insufficient: each child needs the DLL in its own output and `.deps.json`.
+The targets also disable the hosting package's unused native .NET interop build
+generation; these benchmarks use its JavaScript compiler API directly. No global
+tool install or extra workflow setup is required. A direct
+`System.Security.Cryptography.Pkcs` reference overrides the hosting package's
+vulnerable transitive 8.0.1 dependency.
+
+Published-package runs pass `UsePublishedJrocPackages` and `JrocPackageVersion`
+through the environment so generated child builds inherit the same selection.
+The previous-release step overrides these with its own pinned package version.
+
+The `BenchmarkDotNet Smoke` PR workflow exercises all eleven enabled SharpTS
+cases in real child processes for source, published-package, and previous-host
+project configurations. Both package-backed configurations use the latest
+released coordinated packages as a dependency baseline, not as a previous-release
+performance comparison. These `Dry` runs check build/loading/execution, not
+statistical performance, and do not ingest results into Supabase.
+
+```bash
+# Check lifecycle correctness and execute every enabled SharpTS scenario twice.
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- --validate-sharpts
+
+# Run only the SharpTS counters (use --job Dry for a smoke run).
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --dromaeo --filter '*SharpTs*'
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --kracken --filter '*SharpTs*'
+```
 
 ## Project Structure
 
@@ -43,6 +102,42 @@ Benchmarks/
 ```
 
 ## Benchmark Scenarios
+
+### Adaptive RegExp compilation
+
+```bash
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --regexp-construction --filter '*'
+dotnet run -c Release --project tests/performance/Benchmarks/Benchmarks.csproj -- \
+  --regexp-tiering --filter '*'
+```
+
+`RegExpConstructionBenchmarks` measures actual cold unique-pattern construction
+and hot dynamic/literal materialization, normalized per construction. Unique
+patterns exceed the bounded cache, exercising FIFO eviction as well as parsing.
+
+The source-only `RegExpTieringBenchmarks` compares interpreted matching,
+experimental third-construction promotion, and the production 64-construction
+policy at 1, 2, 3, 10, and 1,000 constructions. Each invocation starts a fresh
+entry and performs one match per construction, including promotion and first-match
+JIT costs but excluding initial JavaScript translation and interpreted parsing.
+The ASCII and ANSI cases scan approximately 4,096 code units. Emoji is a synthetic
+128-alternative Unicode case, not the npm `emoji-regex` implementation.
+
+Compilation can cost substantially more than a short-lived pattern's entire
+workload. The conservative threshold avoids promotion for the 3/10-construction
+cases while retaining scan-heavy benefits at 1,000 constructions. It is a reuse
+heuristic, not a universal break-even guarantee: the already-fast synthetic emoji
+case can remain slower even at 1,000 constructions. Use the unchanged end-to-end
+regexp scenario and pinned npm `string-width` workload as separate evidence;
+do not attribute Math/adapter or split-storage improvements to this tier.
+
+The runtime caps cached/in-flight compiled entries at 256, independently of the
+1,024-entry/4-MiB source cache. Existing JS instances may retain their selected
+Regex; cache eviction drops its compiled reference even when a weak literal
+template survives. A constructed-once regexp never promotes solely by matching.
+Expected promotion failures emit a `System.Diagnostics.Trace` warning and are
+not retried; unsupported dynamic-code runtimes remain interpreted.
 
 ### Int32Array backing-storage microbenchmark
 
@@ -629,6 +724,7 @@ dotnet run -c Release -- --exporters html,json,markdown
 - **Jint prepare**: Script preparation/parsing phase via `Engine.PrepareScript`
 - **Jint execute (prepared)**: Execution phase using a previously prepared script
 - **Okojo execute**: Execution phase using setup-prepared Okojo bytecode
+- **SharpTS execute**: Execution of setup-compiled IL in the Dromaeo and Kraken suites
 
 ### Interpreting Ratios
 
