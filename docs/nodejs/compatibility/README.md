@@ -3,8 +3,9 @@
 This directory defines the measurement foundation for [#2376](https://github.com/tomacox74/js2il/issues/2376),
 under the [Node compatibility baseline](https://github.com/tomacox74/js2il/issues/2372).
 It does **not** publish a compatibility score or claim that JROC implements
-Node 24. The differential runner, executable corpus, package workloads and
-reporting gates are separate implementation issues.
+Node 24. The [opt-in differential runner](../../../scripts/differential-test/README.md#node-compatibility-evidence-mode)
+produces separate executable evidence. A broad public-API corpus, package
+workloads and reporting gates remain separate implementation issues.
 
 ## Artifact contracts and future catalogue integration
 
@@ -27,6 +28,13 @@ validateArtifact(inventory, 'api-inventory');
 validateArtifact(environment, 'reference-environment');
 ```
 
+The runner adds `scenario-manifest`, `execution-result` and `execution-bundle`
+kinds in [`execution.schema.json`](../../../scripts/nodeCompatibility/execution.schema.json),
+validated through the same API. Its offline bundle reader additionally verifies
+referenced bytes, provenance, complete attempt history and comparisons; schema
+validation alone is not bundle verification. These execution artifacts remain
+separate from inventory/reference snapshots and do not change their digests.
+
 Run `npm ci --ignore-scripts` first to install the lockfile-pinned tooling
 dependencies, including the JSON Schema validator. Schema validation establishes
 artifact shape; the shared validator additionally checks identity/link/digest
@@ -34,8 +42,8 @@ invariants. `validateEnvironment` in `checkReference.js` adds the pinned baselin
 and runtime-policy checks. None of these checks independently authenticates a
 producer or establishes trusted catalogue acceptance.
 
-These are offline measurement inputs, not executable results or a publication
-protocol. `referenceEnvironmentEligible: true` means only that the local checker
+Inventory/reference artifacts are offline measurement inputs, not executable
+results or a publication protocol. `referenceEnvironmentEligible: true` means only that the local checker
 accepted the declared environment and clean worktree. It does not mean cases
 ran, behavior passed, CI validated that SHA, or the catalogue accepted the evidence.
 Node component-version values are retained verbatim, including empty strings
@@ -101,8 +109,10 @@ snapshot this work started from, **not** the revision measured in later runs.
 executable corpus. There is deliberately no `corpusRevision` in these artifacts:
 `executableBehaviorCases` is zero. The executable corpus identity and execution
 result contract belong to the runner/corpus work, not this environment envelope.
-Future execution envelopes must additionally identify actual fixtures, runner,
-compiled artifact, effective runtime/options and package installation inputs.
+Execution bundles additionally identify actual fixtures, runner, compiled
+artifacts and effective runtime/options. Their `provenance.corpusRevision`
+identifies executable manifest/fixture bytes, not these pending registrations.
+Package workloads must additionally capture their installation inputs.
 
 ### Digest boundaries (version 1)
 

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "nodejs-compatibility",
+  "artifactKind": "scenario-manifest",
+  "scopeId": "node24-public-api-v1",
+  "corpusId": "node-runner-validation-v1",
+  "referenceProfileSha256": "b20fa3b8e8015542b08797a9d2160b2d1267c772605f3b80afccb8bf7f2a3414",
+  "cases": [
+    {
+      "id": "node:scenario/runner/observable-smoke",
+      "targets": ["node:module/fs", "node:module/buffer"],
+      "applicability": { "state": "applicable", "reason": "Reviewed Linux x64 local runner validation; not a public-API conformance corpus." },
+      "entry": "observable-smoke.js",
+      "files": ["observable-smoke.js"],
+      "expectedExitCode": 0,
+      "expectedStdout": "runner smoke\n",
+      "expectedStderr": "controlled stderr\n",
+      "timeoutMs": 10000,
+      "compileTimeoutMs": 60000,
+      "timeoutRationale": "Tiny local deterministic fixture; allow host/JIT startup, but require bounded completion.",
+      "normalization": "exact",
+      "observables": [
+        { "path": "values.json", "format": "json" },
+        { "path": "effect.bin", "format": "bytes" },
+        { "path": "events.json", "format": "event-order", "order": [["begin", "ready"], ["ready", "done"]] }
+      ]
+    }
+  ]
+}

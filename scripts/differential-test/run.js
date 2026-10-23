@@ -111,10 +111,9 @@ function findJroc(override) {
  * Compile a JS file with JROC.
  * Returns { success: boolean, dllPath: string|null, stderr: string, durationMs: number }
  */
-function compileWithJroc(jsFile, outDir, jroc, timeoutMs) {
-    const baseName = path.basename(jsFile, '.js');
+function createCompileInvocation(jsFile, outDir, jroc) {
+    const baseName = path.basename(jsFile, path.extname(jsFile));
     const compileOutDir = path.join(outDir, baseName);
-    fs.mkdirSync(compileOutDir, { recursive: true });
 
     let cmd, args;
     if (jroc.type === 'dll') {
@@ -129,6 +128,13 @@ function compileWithJroc(jsFile, outDir, jroc, timeoutMs) {
         args = ['run', '--project', jroc.path, '--', jsFile, '-o', compileOutDir];
     }
 
+    return { command: cmd, args, outputDirectory: compileOutDir, dllPath: path.join(compileOutDir, baseName + '.dll') };
+}
+
+function compileWithJroc(jsFile, outDir, jroc, timeoutMs) {
+    const invocation = createCompileInvocation(jsFile, outDir, jroc);
+    fs.mkdirSync(invocation.outputDirectory, { recursive: true });
+    const { command: cmd, args, dllPath } = invocation;
     const t0 = Date.now();
     const result = spawnSync(cmd, args, {
         encoding:  'utf8',
@@ -145,7 +151,6 @@ function compileWithJroc(jsFile, outDir, jroc, timeoutMs) {
         return { success: false, dllPath: null, stderr, durationMs };
     }
 
-    const dllPath = path.join(compileOutDir, baseName + '.dll');
     if (!fs.existsSync(dllPath)) {
         return { success: false, dllPath: null, stderr: 'DLL not found after compilation', durationMs };
     }
@@ -431,6 +436,7 @@ async function main() {
 
 module.exports = {
     compileWithJroc,
+    createCompileInvocation,
     extractJsError,
     findJroc,
     normaliseOutput,
@@ -442,8 +448,11 @@ module.exports = {
 };
 
 if (require.main === module) {
-    main().catch(err => {
-        console.error('Harness error:', err);
+    const execute = process.argv.includes('--node-compatibility')
+        ? () => require('./compatibility').main(process.argv.slice(2).filter(arg => arg !== '--node-compatibility'))
+        : main;
+    execute().catch(err => {
+        console.error('Harness error:', process.argv.includes('--node-compatibility') ? err.message : err);
         process.exitCode = 1;
     });
 }

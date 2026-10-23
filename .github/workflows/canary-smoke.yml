@@ -54,6 +54,9 @@ jobs:
           dotnet restore
           npm ci
 
+      - name: Validate Node compatibility evidence tooling
+        run: npm run test:node-compatibility
+
       - name: Run PR canary suite against packed tool
         run: |
           npm run diff:test:canary:packed -- \
