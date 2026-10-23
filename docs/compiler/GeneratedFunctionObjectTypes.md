@@ -40,6 +40,15 @@ an uncertain parameter does not prevent independent safe positions from being
 specialized. Recursive cycles without sufficient external type evidence also
 remain generic.
 
+Ordinary function expressions must also have an auditable expression use:
+initialization of a simple local binding whose references are checked, or an
+immediate call whose arguments are recorded. Expressions stored directly in
+properties or arrays, returned from another function, passed as callbacks, or
+used in assignments, defaults, or composite expressions remain generic.
+Recursive self-calls alone cannot establish closed-world evidence for these
+escaping expression values. Class methods retain their separate receiver/use
+analysis.
+
 Strict mode alone does not require a function object. A closed-world ordinary
 function expression remains direct-only when neither its body nor its nested
 arrows observe `this`, `arguments`, or `new.target`; typed callsites then pass

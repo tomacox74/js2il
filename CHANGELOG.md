@@ -11,7 +11,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and arrows while preserving generic fallback for escapes, mixed callsites,
   and unresolved recursion. Keep strict ordinary function expressions
   direct-only when their invocation context is unobservable, avoiding function
-  object construction and argument boxing at typed callsites.
+  object construction and argument boxing at typed callsites. Audit expression
+  value escapes as well as binding references so numeric self-calls cannot
+  incorrectly specialize returned, stored, or callback function expressions.
 - fix(test262): preserve YAML null, numeric and boolean specification identifiers
   and distinguish quoted strings in catalogue ingestion, enrichment and exports.
   Keep runner eligibility unchanged and reject conflicting immutable annotations

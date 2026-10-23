@@ -1566,6 +1566,52 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_ImmediateCallInfersNumbers()
+    {
+        var symbolTable = BuildSymbolTable("""
+            (function target(value) {
+                if (value === 0) return target(1);
+                return value;
+            })(2);
+            """);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.AstNode is FunctionExpression { Id.Name: "target" });
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterType(functionScope!, 0, "value", typeof(double));
+    }
+
+    [Theory]
+    [InlineData("const holder = { target: FUNCTION }; holder.target('text');")]
+    [InlineData("function factory() { return FUNCTION; } factory()('text');")]
+    [InlineData("function invoke(callback) { return callback('text'); } invoke(FUNCTION);")]
+    [InlineData("const targets = [FUNCTION]; targets[0]('text');")]
+    [InlineData("let target; target = FUNCTION; target('text');")]
+    [InlineData("const target = true ? FUNCTION : null; target('text');")]
+    [InlineData("const target = (0, FUNCTION); target('text');")]
+    [InlineData("function invoke(target = FUNCTION) { return target('text'); } invoke();")]
+    [InlineData("class Holder { target = FUNCTION; } new Holder().target('text');")]
+    [InlineData("(new FUNCTION('text'));")]
+    [InlineData("const { target = FUNCTION } = {}; target('text');")]
+    [InlineData("var target = FUNCTION; var target; target('text');")]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_ValueEscapeKeepsObjectParameters(string source)
+    {
+        source = source.Replace("FUNCTION", """
+            function inner(value) {
+                if (value === 0) return inner(1);
+                return value;
+            }
+            """, StringComparison.Ordinal);
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.AstNode is FunctionExpression { Id.Name: "inner" });
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_StableParameters_RecursiveFunctionExpressionFallsBackConservatively()
     {
         var source = @"
