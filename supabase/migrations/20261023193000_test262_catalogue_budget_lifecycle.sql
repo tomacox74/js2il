@@ -106,6 +106,12 @@ BEGIN
     WHERE br.budget_scope_id=id AND br.state='reserved' AND wl.released_at IS NULL AND wl.expires_at>clock_timestamp()) THEN
   RETURN plan||jsonb_build_object('disposition','live-reservations');
  END IF;
+ IF EXISTS(SELECT 1 FROM test262.work_items x JOIN test262.budget_work_items bw USING(work_item_id)
+    WHERE bw.budget_scope_id=id AND x.state='leased' AND NOT EXISTS(
+      SELECT 1 FROM test262.budget_reservations br WHERE br.budget_scope_id=id AND
+       br.work_item_id=x.work_item_id AND br.lease_generation=x.lease_generation AND br.state='reserved')) THEN
+  RETURN plan||jsonb_build_object('disposition','awaiting-shared-work-settlement');
+ END IF;
  IF EXISTS(SELECT 1 FROM test262.budget_reservations br JOIN test262.work_leases wl USING(work_item_id,lease_generation)
     JOIN test262.runs x ON x.run_id=wl.run_id WHERE br.budget_scope_id=id AND
     (x.producer_id<>s.producer_id OR x.trust_class<>'trusted' OR x.external_run_key !~ ('^'||b.external_key||':[1-9][0-9]*$'))) THEN

@@ -124,6 +124,37 @@ class PostgresTests(unittest.TestCase):
         for role in ('anon','authenticated','service_role','test262_ingest','test262_reporter'):
             self.assertFalse(self.db.execute("SELECT has_function_privilege(%s,'test262.api_finish_budget(bigint,uuid,boolean)','EXECUTE')",(role,)).fetchone()[0])
 
+    def test_budget_shared_expired_work_waits_for_its_reservation_owner(self):
+        run,budget,provenance,key=self.budget_fixture()
+        other,other_budget=str(uuid.uuid4()),str(uuid.uuid4())
+        other_key='actions:'+str(uuid.uuid4().int)
+        self.db.execute("INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms) VALUES(%s,%s,'run',%s,10,10,5,5000)",(other_budget,self.repo,other_key))
+        self.db.execute('INSERT INTO test262.budget_work_items SELECT repository_id,%s,work_item_id FROM test262.budget_work_items WHERE budget_scope_id=%s',(other_budget,budget))
+        with self.worker() as db:
+            self.end_budget_run(db,run,key)
+            db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb(dict(run_id=other,provenance_id=provenance,external_run_key=other_key+':1',source_revision='c'*40,run_kind='native')),))
+            claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(other,other_budget)).fetchone()[0]
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['disposition'],'live-reservations')
+            self.db.execute("UPDATE test262.work_items SET lease_expires_at=clock_timestamp()-interval '1 second' WHERE work_item_id=%s",(claim['work_item_id'],))
+            self.db.execute("UPDATE test262.work_leases SET claimed_at=clock_timestamp()-interval '1 minute',expires_at=clock_timestamp()-interval '1 second' WHERE work_item_id=%s",(claim['work_item_id'],))
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['disposition'],'awaiting-shared-work-settlement')
+            self.assertEqual(self.db.execute('SELECT reserved_attempts,charged_attempts FROM test262.budget_scopes WHERE budget_scope_id=%s',(other_budget,)).fetchone(),(1,0))
+            self.end_budget_run(db,other,other_key,state='failed')
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(other_budget,)).fetchone()[0]['result']['charged_ms'],1000)
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['state'],'interrupted')
+
+    def test_budget_concurrent_finalizers_commit_one_terminal_receipt(self):
+        run,budget,_,key=self.budget_fixture(count=0)
+        with self.worker() as db:
+            self.end_budget_run(db,run,key)
+        def finish(_):
+            with self.worker() as db:
+                return db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results=list(pool.map(finish,range(2)))
+        self.assertEqual(sorted(r['disposition'] for r in results),['terminal','unchanged'])
+        self.assertEqual(results[0]['result'],results[1]['result'])
+
     @classmethod
     def setUpClass(cls):
         cls.db=psycopg.connect(DSN,autocommit=True)
