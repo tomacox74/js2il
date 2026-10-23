@@ -132,6 +132,7 @@ jobs:
           retention-days: 90
           overwrite: true
       - name: Flush durable recovery outbox
+        id: recovery_flush
         if: always()
         timeout-minutes: 5
         env:
@@ -145,6 +146,27 @@ jobs:
           if [ -f artifacts/test262/central-outbox.sqlite ]; then
             timeout --signal=TERM --kill-after=15s 240s \
               python -m scripts.test262.central.cli flush --outbox artifacts/test262/central-outbox.sqlite
+          fi
+      - name: Finalize catalogue collection lifecycle
+        if: always()
+        timeout-minutes: 5
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          COLLECTION_CONCLUSION: ${{ job.status }}
+          FLUSH_OUTCOME: ${{ steps.recovery_flush.outcome }}
+        run: |
+          if [ -f artifacts/test262/central-context.json ]; then
+            FLUSH_ARGS=()
+            if [ "$FLUSH_OUTCOME" = success ]; then FLUSH_ARGS+=(--flush-verified); fi
+            python -m scripts.test262.central.cli finalize \
+              --context artifacts/test262/central-context.json \
+              --outbox artifacts/test262/central-outbox.sqlite \
+              --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" \
+              --conclusion "$COLLECTION_CONCLUSION" "${FLUSH_ARGS[@]}" \
+              > artifacts/test262/central-lifecycle.json
           fi
       - name: Aggregate retained compiler reports without database credentials
         if: ${{ always() && inputs.compilation_coverage }}

@@ -1,0 +1,74 @@
+name: Test262 collection lifecycle reconciliation
+on:
+  workflow_run:
+    workflows: ['Test262 central catalogue']
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply terminal states (otherwise inspect only)
+        type: boolean
+        default: false
+      actions_run_id:
+        description: Optional exact Actions run ID
+        type: string
+        default: ''
+      actions_run_attempt:
+        description: Optional exact attempt with run ID
+        type: string
+        default: ''
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: test262-collection-lifecycle
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    if: >-
+      vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' &&
+      github.ref == 'refs/heads/master' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.head_repository.full_name == github.repository &&
+        github.event.workflow_run.head_branch == 'master'))
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      # Always reviewed master, never a triggering run's code/artifacts. No fixture execution.
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Inspect or reconcile exact collection attempts
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY_NAME: ${{ github.repository }}
+          APPLY: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+          ACTIONS_RUN_ID: ${{ github.event.workflow_run.id || inputs.actions_run_id }}
+          ACTIONS_ATTEMPT: ${{ github.event.workflow_run.run_attempt || inputs.actions_run_attempt }}
+        run: |
+          mkdir -p artifacts/test262
+          ARGS=()
+          if [ "$APPLY" = true ]; then ARGS+=(--apply); fi
+          if [ -n "$ACTIONS_RUN_ID" ]; then ARGS+=(--actions-run-id "$ACTIONS_RUN_ID"); fi
+          if [ -n "$ACTIONS_ATTEMPT" ]; then ARGS+=(--actions-run-attempt "$ACTIONS_ATTEMPT"); fi
+          python -m scripts.test262.central.cli reconcile-runs \
+            --repository-name "$REPOSITORY_NAME" --limit 100 "${ARGS[@]}" \
+            > artifacts/test262/collection-lifecycle.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test262-collection-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/collection-lifecycle.json
+          if-no-files-found: warn
+          retention-days: 90

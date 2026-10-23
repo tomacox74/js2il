@@ -849,3 +849,63 @@ drill demonstrates the tool path and restored data/security behavior. It does no
 verify production backup-role permissions, KMS encryption, independent object retention,
 Object Lock, original historical archive preservation, or a restore of an off-project
 production backup. Those remain separate operational acceptance before cutover.
+
+## Collection run lifecycle and Actions reconciliation (#2332)
+
+A terminal **collection batch** is not full-suite completion, conformance, native
+acceptance or publication success. A bounded batch can be `complete` with failing
+JavaScript tests and unexecuted required variants. Run/budget/publication states
+are separate; this path does not settle reservations or rewrite publication records.
+
+Deploy reviewed migration
+`20261023170000_test262_catalogue_run_lifecycle.sql` before enabling the new
+finalization/reconciliation code in production. It adds a scoped, epoch-fenced
+`api_finish_run` endpoint and terminal-state guard, without rewriting existing rows,
+changing authority or granting raw-table/public access. A missing endpoint is a
+failure, not permission to fall back to raw SQL or fabricate a terminal receipt.
+Existing reporter views/exported run rows expose terminal state and `ended_at`;
+`runs.environment_diagnostics.collection_lifecycle` and audit events retain the
+sanitized identity, reason and flush proof.
+
+The supervisor finalizes after the always-run durable recovery flush. It replays
+any unacknowledged outbox observations/completions before recording `complete`.
+Failure/cancellation records the known batch termination, while missing flush proof
+on an otherwise successful job gives `incomplete`. Pending recovery artifacts and
+late evidence remain preserved; finalization neither releases live leases nor
+rejects late observation replay. A screening metric receipt is required for
+`complete`. The first terminal timestamp/proof is immutable, and a lost finalization
+response can be replayed without changing it.
+
+`test262-run-lifecycle.yml` reconciles after a central Actions workflow completes,
+including cancellation/timeouts which prevented its finalizer. It runs reviewed
+master code with the existing protected coordinator environment, downloads no
+artifacts and executes no fixtures. The exact run/attempt, repository, master
+branch, workflow path, compiler SHA and completed `supervise` job must agree.
+Only the collection job's timestamp/conclusion is used; downstream validation or
+publication results cannot rewrite collection state. A successful Actions job
+without successful preparation and durable-flush steps is not complete evidence.
+Missing, deleted, active, unsupported or ambiguous history is reported explicitly
+and left unchanged. Imported/legacy runs and another producer's runs are untouched;
+no historical timestamp is inferred from an import or observation time.
+
+For existing stale records, first manually run **Test262 collection lifecycle
+reconciliation** on master with `apply=false`. Review its sanitized report, then
+use `apply=true` to apply only proven terminal states. Optional `actions_run_id`
+and `actions_run_attempt` select a precise retry identity. Each invocation inspects
+at most 100 owner-scoped running records with a ten-minute processing bound and
+30-second REST request timeouts; it does not claim exhaustive reconciliation when
+bounded. Unresolved records can occupy a bounded scan; use exact IDs/attempts for
+later records instead of deleting or force-closing ambiguous ones.
+
+Equivalent trusted-supervisor commands (credentials configured out of band):
+
+```bash
+python -m scripts.test262.central.cli reconcile-runs --limit 100
+python -m scripts.test262.central.cli reconcile-runs \
+  --actions-run-id 39878208600 --actions-run-attempt 1 --apply
+```
+
+These commands never publish a PR, enroll a writer, change authority, replay a
+legacy import or close a shared budget. Retain finalization and reconciliation
+reports with the existing recovery/retention policy. Live migration and historical
+repair are operational steps after PR review, not implied by disposable test success.

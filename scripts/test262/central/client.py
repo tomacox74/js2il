@@ -74,7 +74,7 @@ class Client:
 
     def call(self, operation, *args):
         arities = {'put': 2, 'start_run': 1, 'ingest': 2, 'claim': 4,
-                   'renew': 3, 'complete': 3, 'transition': 4, 'reconcile': 4, 'metric': 6}
+                   'renew': 3, 'complete': 3, 'finish_run': 4, 'transition': 4, 'reconcile': 4, 'metric': 6}
         if operation not in arities or len(args) != arities[operation]:
             raise ValueError('Unsupported API operation')
         values = [self.epoch] + [self.Jsonb(x) if isinstance(x, (dict, list)) else x for x in args]

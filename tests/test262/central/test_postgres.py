@@ -766,6 +766,63 @@ class PostgresTests(unittest.TestCase):
             self.db.execute("UPDATE test262.schema_contract SET deployment_state='active'")
 
 
+
+    def test_collection_lifecycle_owner_epoch_replay_and_immutable_terminal_state(self):
+        run = str(uuid.uuid4())
+        external = 'actions:123456:2'
+        evidence = {'source':'github-actions','external_run_key':external,'source_revision':'b'*40,
+                    'reason':'collection-finished','flush_verified':True}
+        with self.worker() as db:
+            db.execute('SELECT test262.api_start_run(1,%s)', (Jsonb({'run_id':run,'provenance_id':self.prov,
+                       'external_run_key':external,'source_revision':'b'*40,'run_kind':'native'}),))
+            end = self.db.execute('SELECT clock_timestamp()').fetchone()[0]
+            # Successful Actions status alone cannot establish durable screening completion.
+            with self.assertRaises(psycopg.errors.RaiseException):
+                db.execute('SELECT test262.api_finish_run(1,%s,%s,%s,%s)',(run,'complete',end,Jsonb(evidence)))
+            db.execute("SELECT test262.api_metric(1,%s,'screening',1,10,0,0)",(run,))
+            for epoch, proof in [(0,evidence),(1,dict(evidence,external_run_key='actions:123456:1')),
+                                 (1,dict(evidence,flush_verified=False))]:
+                with self.assertRaises(psycopg.Error):
+                    db.execute('SELECT test262.api_finish_run(%s,%s,%s,%s,%s)',(epoch,run,'complete',end,Jsonb(proof)))
+            stored=db.execute('SELECT test262.api_finish_run(1,%s,%s,%s,%s)',(run,'complete',end,Jsonb(evidence))).fetchone()[0]
+            self.assertEqual(stored['state'],'complete')
+            replay=db.execute("SELECT test262.api_finish_run(1,%s,'complete',clock_timestamp(),%s)",(run,Jsonb(evidence))).fetchone()[0]
+            self.assertEqual(replay,stored)
+            with self.assertRaises(psycopg.errors.SerializationFailure):
+                db.execute('SELECT test262.api_finish_run(1,%s,%s,%s,%s)',(run,'failed',end,Jsonb(dict(evidence,reason='job-failed'))))
+            # The old generic transition endpoint cannot bypass first-terminal-state fencing.
+            with self.assertRaises(psycopg.errors.SerializationFailure):
+                db.execute('SELECT test262.api_transition(1,%s,%s,0,%s)',('runs',Jsonb({'run_id':run}),Jsonb({'state':'running'})))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM test262.audit_events WHERE action='finish-run' AND details->>'run_id'=%s",(run,)).fetchone()[0],1)
+        for role in ('anon','authenticated','service_role','test262_ingest','test262_reporter'):
+            self.assertFalse(self.db.execute("SELECT has_function_privilege(%s,'test262.api_finish_run(bigint,uuid,text,timestamptz,jsonb)','EXECUTE')",(role,)).fetchone()[0])
+
+    def test_collection_lifecycle_preserves_legacy_and_foreign_producer_runs(self):
+        for kind,trust,producer in [('import','legacy',self.producer),('native','trusted',str(uuid.uuid4()))]:
+            with self.db.transaction(force_rollback=True):
+                if producer != self.producer:
+                    self.db.execute("INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'local','other','other')",(producer,self.repo))
+                run=str(uuid.uuid4())
+                self.db.execute("INSERT INTO test262.runs(run_id,repository_id,producer_id,provenance_id,external_run_key,source_revision,run_kind,trust_class,state) VALUES(%s,%s,%s,%s,%s,repeat('b',40),%s,%s,'running')",(run,self.repo,producer,self.prov,run,kind,trust))
+                # Separate connection sees only committed rows; use the operator session's
+                # authenticated identity inside this rollback-only fixture transaction.
+                self.db.execute('SET LOCAL SESSION AUTHORIZATION catalogue_test_worker')
+                with self.db.transaction():
+                    with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                        with self.db.transaction():
+                            self.db.execute("SELECT test262.api_finish_run(1,%s,'failed',clock_timestamp(),%s)",(run,Jsonb({'source':'github-actions','external_run_key':run,'source_revision':'b'*40,'reason':'job-failed','flush_verified':False})))
+                self.db.execute('RESET SESSION AUTHORIZATION')
+                self.assertEqual(self.db.execute('SELECT state,ended_at FROM test262.runs WHERE run_id=%s',(run,)).fetchone(),('running',None))
+
+    def test_collection_lifecycle_failed_cancelled_and_incomplete_states(self):
+        for state,reason in [('failed','job-failed'),('cancelled','job-cancelled'),('incomplete','job-interrupted')]:
+            with self.worker() as db:
+                run=str(uuid.uuid4())
+                db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb({'run_id':run,'provenance_id':self.prov,'external_run_key':run,'source_revision':'b'*40,'run_kind':'mvp'}),))
+                result=db.execute('SELECT test262.api_finish_run(1,%s,%s,clock_timestamp(),%s)',(run,state,Jsonb({'source':'github-actions','external_run_key':run,'source_revision':'b'*40,'reason':reason,'flush_verified':False}))).fetchone()[0]
+                self.assertEqual(result['state'],state)
+                self.assertIsNotNone(result['ended_at'])
+
+
 if __name__=='__main__':
     unittest.main()
-
