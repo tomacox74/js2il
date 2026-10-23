@@ -88,8 +88,7 @@ def recover_reservation(client,repository_name,publication):
 
 def reconcile_publication(client,repository_name,publication):
     if not publication['pr_number'] or not publication.get('expected_head'):
-        recover_reservation(client,repository_name,publication)
-        return
+        return recover_reservation(client,repository_name,publication)
     pr=gh('api',f'repos/{repository_name}/pulls/{publication["pr_number"]}')
     patch=None
     if ((pr.get('head',{}).get('repo') or {}).get('full_name')!=repository_name or
@@ -103,15 +102,13 @@ def reconcile_publication(client,repository_name,publication):
     elif pr['state']=='closed':
         patch={'state':'closed-deferred','closure_reason':'GitHub confirms closure without merge'}
     if patch:
-        client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],patch)
-        return
+        return client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],patch)
     head=pr['head']['sha']
     remote=subprocess.run(['git','ls-remote','--heads','origin',publication['branch_name']],
                           cwd=REPO,capture_output=True,text=True,check=True,timeout=30).stdout.strip()
     if not remote or remote.split()[0]!=head:
-        client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],
-                    {'state':'ownership-lost','closure_reason':'Open publication branch deleted or changed'})
-        return
+        return client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],
+                           {'state':'ownership-lost','closure_reason':'Open publication branch deleted or changed'})
     checks=gh('api','--paginate','--slurp',f'repos/{repository_name}/commits/{head}/check-runs?per_page=100')
     rows=[]
     for page in checks:
@@ -123,6 +120,7 @@ def reconcile_publication(client,repository_name,publication):
             rows.append({'publication_id':publication['publication_id'],'check_identity':'check:'+check['app']['slug']+':'+check['name'],
                          'external_run_key':str(check['id'])+':'+str(check['completed_at']),'head_revision':head,'conclusion':normalized})
     client.put('publication_checks',rows)
+    return {'state':publication['state'],'checks':len(rows)}
 
 class ReconciliationClient:
     """Capture the existing reconciler's intended writes; suppress them in dry runs."""
@@ -167,9 +165,11 @@ def reconcile_publications(client,repository_name,current=None,*,limit=100,pr_nu
             batch=client.one('native_batches',batch_id=publication['batch_id'])
             item['provenance_id']=batch.get('provenance_id') if batch else None
             item['target_revision']=publication_base(client,publication)
-            reconcile_publication(scoped,repository_name,publication)
+            outcome=reconcile_publication(scoped,repository_name,publication)
             item.update(disposition='reconciled' if apply else 'planned',
-                        transitions=scoped.transitions,checks=scoped.checks)
+                        transitions=scoped.transitions,checks=scoped.checks,outcome=outcome)
+            if outcome.get('recovery') or outcome.get('state') in ('blocked','ownership-lost'):
+                item['disposition']=outcome.get('recovery') or outcome['state']
             if apply:
                 item['after']=client.one('publications',publication_id=publication['publication_id'])
         except (subprocess.SubprocessError,OSError,ValueError,KeyError,TypeError):

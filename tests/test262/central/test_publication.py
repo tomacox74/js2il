@@ -152,6 +152,9 @@ class PublicationRecoveryTests(unittest.TestCase):
         result=pub.recover_reservation(self.client,'test/repo',self.client.publication)
         self.assertEqual(result['state'],'reserved')
         self.assertEqual(self.client.transitions,[])
+        report=pub.reconcile_publications(self.client,'test/repo',apply=False)
+        self.assertEqual(report['publications'][0]['disposition'],'resume-original-batch')
+        self.assertEqual(self.client.transitions,[])
 
     def test_merged_and_closed_prs_recovered_after_branch_deletion(self):
         head=self.seed_pushed_reservation(); branch=self.client.publication['branch_name']
