@@ -53,6 +53,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+          check-latest: true
       - run: npm ci --ignore-scripts
       - uses: actions/setup-python@v6
         with:
@@ -62,7 +63,7 @@ jobs:
         run: |
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
           dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
-          docker build -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
+          docker build --pull -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
@@ -214,6 +215,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+          check-latest: true
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
@@ -274,7 +276,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app
         with:
           app-id: ${{ vars.TEST262_PORTING_APP_ID }}

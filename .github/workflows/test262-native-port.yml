@@ -108,6 +108,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          check-latest: true
       - run: npm ci --ignore-scripts
 
       - name: Validate bounded inputs
@@ -498,7 +499,7 @@ jobs:
     steps:
       - name: Create scoped publication GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.TEST262_PORTING_APP_ID }}
           private-key: ${{ secrets.TEST262_PORTING_APP_PRIVATE_KEY }}
