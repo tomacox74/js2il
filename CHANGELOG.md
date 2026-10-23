@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tooling(node): extend the differential harness with opt-in pinned-reference,
+  public-CLI execution evidence, isolated bounded processes, typed observable
+  comparisons and immutable offline bundles. Preserve paired observations and
+  retries, distinguish product/reference/harness failures and record source,
+  profile, policy and binary provenance without claiming trusted catalogue
+  acceptance or a whole-Node compatibility score.
 - tooling(node): define a pinned Node 24.22.1 compatibility measurement scope
   with a public API inventory, separate contract/implementation/behavior evidence,
   explicit outcome and denominator policies, and a strict reference-environment

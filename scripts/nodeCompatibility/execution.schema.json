@@ -1,0 +1,176 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:jroc:nodejs-compatibility:execution:v1",
+  "oneOf": [
+    { "$ref": "#/definitions/manifest" },
+    { "$ref": "#/definitions/result" },
+    { "$ref": "#/definitions/bundle" }
+  ],
+  "definitions": {
+    "text": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/text" },
+    "sha256": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/sha256" },
+    "revision": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/revision" },
+    "sourceRevision": { "anyOf": [{ "$ref": "#/definitions/revision" }, { "type": "null" }] },
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[^\\u0000]+$" },
+    "id": { "type": "string", "pattern": "^node:scenario/.+" },
+    "uuid": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes"],
+      "properties": { "path": { "$ref": "#/definitions/path" }, "sha256": { "$ref": "#/definitions/sha256" }, "bytes": { "type": "integer", "minimum": 0, "maximum": 134217728 } }
+    },
+    "outcome": {
+      "enum": ["pass", "mismatch", "compile-failure", "unsupported", "not-run", "execution-timeout", "reference-failure", "infrastructure-failure", "flaky", "inconclusive"]
+    },
+    "observable": {
+      "type": "object", "additionalProperties": false, "required": ["path", "format"],
+      "properties": {
+        "path": { "$ref": "#/definitions/path" },
+        "format": { "enum": ["bytes", "json", "event-order"] },
+        "order": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/definitions/text" } }
+        }
+      },
+      "if": { "properties": { "format": { "const": "event-order" } } },
+      "then": { "required": ["order"] },
+      "else": { "not": { "required": ["order"] } }
+    },
+    "scenario": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "targets", "applicability", "entry", "files", "expectedExitCode", "timeoutMs", "compileTimeoutMs", "timeoutRationale", "normalization", "observables"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "targets": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^node:(api|module|behavior|workflow)/.+" } },
+        "applicability": {
+          "type": "object", "additionalProperties": false, "required": ["state", "reason"],
+          "properties": { "state": { "enum": ["applicable", "unknown", "excluded"] }, "reason": { "$ref": "#/definitions/text" } }
+        },
+        "entry": { "$ref": "#/definitions/path" },
+        "files": { "type": "array", "minItems": 1, "maxItems": 128, "uniqueItems": true, "items": { "$ref": "#/definitions/path" } },
+        "expectedExitCode": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "expectedStdout": { "type": "string" },
+        "expectedStderr": { "type": "string" },
+        "timeoutMs": { "type": "integer", "minimum": 10, "maximum": 120000 },
+        "compileTimeoutMs": { "type": "integer", "minimum": 100, "maximum": 300000 },
+        "timeoutRationale": { "$ref": "#/definitions/text" },
+        "normalization": { "enum": ["exact", "crlf-to-lf"] },
+        "observables": { "type": "array", "maxItems": 16, "items": { "$ref": "#/definitions/observable" } }
+      }
+    },
+    "manifest": {
+      "type": "object", "additionalProperties": false, "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "corpusId", "referenceProfileSha256", "cases"],
+      "properties": {
+        "schemaVersion": { "const": 1 }, "suiteId": { "const": "nodejs-compatibility" }, "artifactKind": { "const": "scenario-manifest" },
+        "scopeId": { "$ref": "#/definitions/text" }, "corpusId": { "$ref": "#/definitions/text" },
+        "referenceProfileSha256": { "$ref": "#/definitions/sha256" },
+        "cases": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/definitions/scenario" } }
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false, "required": ["id", "scenario", "limits", "environmentPolicy"],
+      "properties": {
+        "id": { "const": "node-observables-v1" },
+        "scenario": { "$ref": "#/definitions/scenario" },
+        "environmentPolicy": { "const": "isolated-linux-allowlist-v1" },
+        "limits": {
+          "type": "object", "additionalProperties": false, "required": ["outputBytes", "workspaceBytes", "workspaceFiles", "observableBytes", "bundleBytes"],
+          "properties": {
+            "outputBytes": { "const": 1048576 }, "workspaceBytes": { "const": 67108864 },
+            "workspaceFiles": { "const": 256 }, "observableBytes": { "const": 1048576 }, "bundleBytes": { "const": 134217728 }
+          }
+        }
+      }
+    },
+    "process": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "exitCode", "signal", "error", "startedAt", "finishedAt", "durationMs", "command", "args", "cwd", "environment", "stdout", "stderr"],
+      "properties": {
+        "state": { "enum": ["completed", "timeout", "output-limit", "resource-limit", "spawn-error", "cleanup-error"] },
+        "exitCode": { "type": ["integer", "null"] }, "signal": { "type": ["string", "null"] }, "error": { "type": ["string", "null"] },
+        "startedAt": { "type": "string", "format": "date-time" }, "finishedAt": { "type": "string", "format": "date-time" },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "command": { "$ref": "#/definitions/text" }, "args": { "type": "array", "items": { "type": "string" } },
+        "cwd": { "$ref": "#/definitions/text" },
+        "environment": {
+          "type": "object", "additionalProperties": false,
+          "required": ["PATH", "HOME", "DOTNET_CLI_HOME", "TMPDIR", "TMP", "TEMP", "LANG", "LC_ALL", "TZ", "DOTNET_NOLOGO", "DOTNET_CLI_TELEMETRY_OPTOUT", "DOTNET_SKIP_FIRST_TIME_EXPERIENCE", "DOTNET_EnableDiagnostics"],
+          "properties": {
+            "PATH": { "$ref": "#/definitions/text" }, "HOME": { "$ref": "#/definitions/text" },
+            "DOTNET_CLI_HOME": { "$ref": "#/definitions/text" }, "TMPDIR": { "$ref": "#/definitions/text" },
+            "TMP": { "$ref": "#/definitions/text" }, "TEMP": { "$ref": "#/definitions/text" },
+            "LANG": { "const": "C.UTF-8" }, "LC_ALL": { "const": "C.UTF-8" }, "TZ": { "const": "UTC" },
+            "DOTNET_NOLOGO": { "const": "1" }, "DOTNET_CLI_TELEMETRY_OPTOUT": { "const": "1" },
+            "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": { "const": "1" }, "DOTNET_EnableDiagnostics": { "const": "0" }
+          }
+        },
+        "stdout": { "$ref": "#/definitions/file" }, "stderr": { "$ref": "#/definitions/file" }
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["checkoutRevision", "worktreeDirty", "runnerRevision", "runnerFiles", "corpusId", "corpusRevision", "corpusRevisionAlgorithm", "corpusSourceRevision", "corpusManifest", "corpusFiles", "environment", "inventory", "referenceProfileSha256", "targetInventorySha256", "implementationEvidenceSha256", "nodeExecutable", "dotnetExecutable", "compilerSha256", "compilerSourceRevision", "compilerFiles", "trustClass"],
+      "properties": {
+        "checkoutRevision": { "$ref": "#/definitions/revision" }, "worktreeDirty": { "type": "boolean" },
+        "runnerRevision": { "$ref": "#/definitions/sourceRevision" },
+        "runnerFiles": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/file" } },
+        "corpusId": { "$ref": "#/definitions/text" }, "corpusRevision": { "$ref": "#/definitions/sha256" },
+        "corpusRevisionAlgorithm": { "const": "sha256" }, "corpusSourceRevision": { "$ref": "#/definitions/sourceRevision" },
+        "corpusManifest": { "$ref": "#/definitions/file" },
+        "corpusFiles": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/file" } },
+        "environment": { "$ref": "#/definitions/file" }, "inventory": { "$ref": "#/definitions/file" },
+        "referenceProfileSha256": { "$ref": "#/definitions/sha256" },
+        "targetInventorySha256": { "$ref": "#/definitions/sha256" }, "implementationEvidenceSha256": { "$ref": "#/definitions/sha256" },
+        "nodeExecutable": { "$ref": "#/definitions/text" }, "dotnetExecutable": { "$ref": "#/definitions/text" },
+        "compilerSha256": { "$ref": "#/definitions/sha256" }, "compilerSourceRevision": { "type": "null" },
+        "compilerFiles": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/file" } },
+        "trustClass": { "const": "local-unverified" }
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false, "required": ["path", "format", "artifact", "error"],
+      "properties": {
+        "path": { "$ref": "#/definitions/path" }, "format": { "enum": ["bytes", "json", "event-order"] },
+        "artifact": { "anyOf": [{ "$ref": "#/definitions/file" }, { "type": "null" }] }, "error": { "type": ["string", "null"] }
+      }
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "runId", "attemptId", "attemptNumber", "scenarioId", "targets", "phase", "outcome", "detail", "policy", "policySha256", "provenance", "reference", "compilation", "execution", "referenceObservables", "jrocObservables", "compiledArtifacts", "coverageReport"],
+      "properties": {
+        "schemaVersion": { "const": 1 }, "suiteId": { "const": "nodejs-compatibility" }, "artifactKind": { "const": "execution-result" },
+        "scopeId": { "$ref": "#/definitions/text" }, "runId": { "$ref": "#/definitions/uuid" }, "attemptId": { "$ref": "#/definitions/uuid" },
+        "attemptNumber": { "type": "integer", "minimum": 1, "maximum": 5 }, "scenarioId": { "$ref": "#/definitions/id" },
+        "targets": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/text" } },
+        "phase": { "enum": ["reference", "compile", "execution", "comparison", "infrastructure"] },
+        "outcome": { "$ref": "#/definitions/outcome" }, "detail": { "type": "string" },
+        "policy": { "$ref": "#/definitions/policy" }, "policySha256": { "$ref": "#/definitions/sha256" },
+        "provenance": { "$ref": "#/definitions/provenance" },
+        "reference": { "anyOf": [{ "$ref": "#/definitions/process" }, { "type": "null" }] },
+        "compilation": { "anyOf": [{ "$ref": "#/definitions/process" }, { "type": "null" }] },
+        "execution": { "anyOf": [{ "$ref": "#/definitions/process" }, { "type": "null" }] },
+        "referenceObservables": { "type": "array", "items": { "$ref": "#/definitions/observation" } },
+        "jrocObservables": { "type": "array", "items": { "$ref": "#/definitions/observation" } },
+        "compiledArtifacts": { "type": "array", "items": { "$ref": "#/definitions/file" } },
+        "coverageReport": { "anyOf": [{ "$ref": "#/definitions/file" }, { "type": "null" }] }
+      }
+    },
+    "bundle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "runId", "startedAt", "finishedAt", "attemptsPerCase", "provenance", "results", "cases", "files"],
+      "properties": {
+        "schemaVersion": { "const": 1 }, "suiteId": { "const": "nodejs-compatibility" }, "artifactKind": { "const": "execution-bundle" },
+        "scopeId": { "$ref": "#/definitions/text" }, "runId": { "$ref": "#/definitions/uuid" },
+        "startedAt": { "type": "string", "format": "date-time" }, "finishedAt": { "type": "string", "format": "date-time" },
+        "attemptsPerCase": { "type": "integer", "minimum": 1, "maximum": 5 }, "provenance": { "$ref": "#/definitions/provenance" },
+        "results": { "type": "array", "minItems": 1, "maxItems": 500, "items": { "$ref": "#/definitions/file" } },
+        "cases": {
+          "type": "array", "minItems": 1, "items": {
+            "type": "object", "additionalProperties": false, "required": ["id", "outcome"],
+            "properties": { "id": { "$ref": "#/definitions/id" }, "outcome": { "$ref": "#/definitions/outcome" } }
+          }
+        },
+        "files": { "type": "array", "minItems": 1, "maxItems": 4096, "items": { "$ref": "#/definitions/file" } }
+      }
+    }
+  }
+}

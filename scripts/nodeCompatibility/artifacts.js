@@ -3,6 +3,7 @@
 const crypto = require('node:crypto');
 const Ajv = require('ajv');
 const schema = require('./artifact.schema.json');
+const executionSchema = require('./execution.schema.json');
 
 const ajv = new Ajv({ allErrors: true });
 ajv.addFormat('date-time', value => {
@@ -10,9 +11,13 @@ ajv.addFormat('date-time', value => {
   return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
 });
 ajv.addSchema(schema);
+ajv.addSchema(executionSchema);
 const validators = {
   'api-inventory': ajv.compile({ $ref: `${schema.$id}#/definitions/inventory` }),
-  'reference-environment': ajv.compile({ $ref: `${schema.$id}#/definitions/environment` })
+  'reference-environment': ajv.compile({ $ref: `${schema.$id}#/definitions/environment` }),
+  'scenario-manifest': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/manifest` }),
+  'execution-result': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/result` }),
+  'execution-bundle': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/bundle` })
 };
 
 function sha256(bytes) {
@@ -77,7 +82,7 @@ function validateArtifact(artifact, kind) {
     for (const [key, expected] of Object.entries(inventoryDigests(artifact))) {
       if (artifact[key] !== expected) throw new Error(`Inventory ${key} mismatch.`);
     }
-  } else {
+  } else if (kind === 'reference-environment') {
     assertUnique(artifact.lockfiles, 'path', 'lockfile');
     if (artifact.referenceEnvironmentEligible !== !artifact.worktreeDirty) {
       throw new Error('Reference environment eligibility contradicts working-tree provenance.');
@@ -85,6 +90,58 @@ function validateArtifact(artifact, kind) {
     if (artifact.nodeVersions.node !== artifact.nodeVersion) {
       throw new Error('Node component version contradicts reference environment version.');
     }
+  } else if (kind === 'scenario-manifest') {
+    assertUnique(artifact.cases, 'id', 'scenario');
+    for (const scenario of artifact.cases) {
+      if (!scenario.files.includes(scenario.entry)) throw new Error(`Entry is absent from files for ${scenario.id}.`);
+      assertUnique(scenario.observables, 'path', 'observable');
+      for (const observable of scenario.observables) {
+        if (scenario.files.includes(observable.path)) throw new Error('An observable cannot overwrite an input file.');
+        if (observable.order?.some(([before, after]) => before === after)) throw new Error('An event cannot precede itself.');
+      }
+    }
+  } else if (kind === 'execution-result') {
+    if (artifact.policySha256 !== hashJson(artifact.policy)) throw new Error('Comparison policy digest mismatch.');
+    if (artifact.scenarioId !== artifact.policy.scenario.id
+      || hashJson(artifact.targets) !== hashJson(artifact.policy.scenario.targets)) {
+      throw new Error('Result scenario identity contradicts comparison policy.');
+    }
+    if (artifact.policy.scenario.applicability.state !== 'applicable'
+      && !['not-run', 'infrastructure-failure'].includes(artifact.outcome)) {
+      throw new Error('Unknown/excluded applicability cannot establish a product outcome.');
+    }
+    if (artifact.policy.scenario.applicability.state !== 'applicable'
+      && [artifact.reference, artifact.compilation, artifact.execution].some(observation => observation !== null)) {
+      throw new Error('Unknown/excluded scenarios must not execute fixture processes.');
+    }
+    if (['pass', 'mismatch', 'compile-failure', 'unsupported', 'execution-timeout'].includes(artifact.outcome)
+      && (!artifact.reference || artifact.reference.state !== 'completed'
+        || artifact.reference.exitCode !== artifact.policy.scenario.expectedExitCode)) {
+      throw new Error('Product outcome requires a completed valid reference.');
+    }
+    if (artifact.outcome === 'pass'
+      && (!artifact.compilation || artifact.compilation.state !== 'completed' || artifact.compilation.exitCode !== 0
+        || !artifact.execution || artifact.execution.state !== 'completed'
+        || artifact.execution.exitCode !== artifact.reference.exitCode || !artifact.compiledArtifacts.length || !artifact.coverageReport)) {
+      throw new Error('Pass requires successful compilation and completed paired execution.');
+    }
+    if (['pass', 'mismatch', 'compile-failure', 'unsupported', 'execution-timeout'].includes(artifact.outcome)) {
+      const expected = artifact.policy.scenario.observables;
+      if (artifact.referenceObservables.length !== expected.length
+        || artifact.referenceObservables.some((item, index) => item.error || !item.artifact
+          || item.path !== expected[index].path || item.format !== expected[index].format)) {
+        throw new Error('Product outcome requires complete valid reference observables.');
+      }
+      if (artifact.outcome === 'pass' && (artifact.jrocObservables.length !== expected.length
+        || artifact.jrocObservables.some((item, index) => item.error || !item.artifact
+          || item.path !== expected[index].path || item.format !== expected[index].format))) {
+        throw new Error('Pass requires complete paired observables.');
+      }
+    }
+  } else if (kind === 'execution-bundle') {
+    assertUnique(artifact.files, 'path', 'bundle artifact');
+    assertUnique(artifact.results, 'path', 'result');
+    assertUnique(artifact.cases, 'id', 'scenario');
   }
 }
 
