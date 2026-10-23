@@ -253,6 +253,15 @@ def run(args):
             report['queue_drills']={}
             run_drills(client,workargs,corpus,list(ids.values()),revision,report['queue_drills'])
             report['complete']=True
+        if args.scheduled_recovery:
+            from .pilot_scheduled_recovery import run_drill
+            report['complete']=False
+            report['stage']='scheduled-native-recovery'
+            recovery_args=SimpleNamespace(**vars(workargs),host=args.host)
+            fixture=next(r for r in selected if r['path']=='test/built-ins/Math/abs/length.js')
+            report['scheduled_recovery']={}
+            run_drill(client,dsn,recovery_args,fixture,revision,output/'scheduled-recovery',report['scheduled_recovery'])
+            report['complete']=True
         if args.restore_drill:
             from .pilot_restore import run_restore_drill
             report['complete']=False
@@ -282,6 +291,8 @@ if __name__=='__main__':
     p.add_argument('--queue-drills',action='store_true')
     p.add_argument('--process-kill',action='store_true')
     p.add_argument('--restore-drill',action='store_true')
+    p.add_argument('--scheduled-recovery',action='store_true')
+    p.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
     try:
         run(p.parse_args())
     except Exception as error:

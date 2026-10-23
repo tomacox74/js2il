@@ -17,6 +17,7 @@ class Coordinator:
         self.fixtures = fixtures or {}
         self.tables = {}
         self.calls = []
+        self.cursor = None
 
     def view(self):
         return nullcontext()
@@ -25,6 +26,9 @@ class Coordinator:
         self.tables.setdefault(table, []).extend(rows)
 
     def read(self, table, filters=None):
+        if table == 'work_items':
+            return [r for r in self.tables.get(table, []) if not filters or
+                    all(r.get(k)==v for k,v in filters.items())]
         if table == 'runs':
             return [{'run_id': 'run', 'trust_class': 'trusted'}]
         if table == 'observations':
@@ -42,6 +46,8 @@ class Coordinator:
         return self.tables.get(table, [])
 
     def one(self, table, **key):
+        if table == 'reconciliation_state':
+            return self.cursor
         if table == 'fixtures':
             return dict(self.fixtures[key['fixture_id']], fixture_id=key['fixture_id'])
         if table == 'budget_scopes':
@@ -60,7 +66,7 @@ class Coordinator:
 
 
 class NativeScopeTests(unittest.TestCase):
-    def prepare(self, kind='native', area=''):
+    def prepare(self, kind='native', area='', existing=(), candidate_limit=200, cursor=0):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         repo = Path(directory.name)
@@ -75,16 +81,22 @@ class NativeScopeTests(unittest.TestCase):
             fixture = root / path
             fixture.parent.mkdir(parents=True, exist_ok=True)
             fixture.write_text('assert.sameValue(1, 1);')
-            inventory.append({'path': path, 'sha256': 'a' * 64, 'variants': ['strict'],
+            inventory.append({'path': path, 'sha256': 'a' * 64,
+                              'variants': ['non-strict','strict'] if path==paths[0] else ['strict'],
                               'metadata': {}, 'state': 'runnable', 'reasons': []})
         pin = repo / 'tests/test262/test262.pin.json'
         pin.parent.mkdir(parents=True)
         pin.write_text(json.dumps({'upstream': {'commit': 'pin'}}))
         client = Coordinator()
+        client.tables['work_items']=[dict({'provenance_id':'provenance','fixture_id':ids[path],'variant':variant,'state':state},**extra)
+                                    for path,variant,state,extra in existing]
+        if cursor:
+            client.cursor={'fallback_cursor':cursor,'version':4,'last_reconciled_revision':'revision'}
         client.tables['registrations'] = [{'upstream_path': paths[5]}]
         args = cli.parser().parse_args(['--repository', 'repo', '--producer', 'producer',
             'prepare', '--kind', kind, '--root', str(root), '--revision', 'revision',
             '--run-key', 'run', '--budget-key', 'budget', '--area', area,
+            '--candidate-limit',str(candidate_limit),'--accepted-limit',str(min(100,candidate_limit)),
             '--output', str(repo / 'context.json')])
 
         def git(*arguments):
@@ -132,6 +144,45 @@ class NativeScopeTests(unittest.TestCase):
         expected = {ids[path] for path in ids if not path.endswith('_support.js')}
         self.assertEqual(set(result['candidate_ids']), expected)
         self.assertEqual({w['fixture_id'] for w in queued}, expected)
+
+    def test_same_provenance_partial_fixture_precedes_discovery_without_moving_cursor(self):
+        path='test/built-ins/Array/new.js'
+        result,client,queued,ids=self.prepare(existing=[(path,'non-strict','completed',{}),
+                                                       (path,'strict','pending',{})],candidate_limit=1,cursor=17)
+        self.assertEqual(result['candidate_ids'],[ids[path]])
+        self.assertEqual([(w['fixture_id'],w['variant']) for w in queued],[(ids[path],'strict')])
+        self.assertEqual(result['recovery'],dict(resumed_fixtures=1,discovery_fixtures=0,queued_variants=1,
+                                               reused_terminal_variants=1,cursor_before=17,cursor_after=17))
+        reconcile=next(a for op,a in client.calls if op=='reconcile')
+        self.assertEqual(reconcile[2],17)
+
+    def test_live_leased_backlog_keeps_identity_and_terminal_variants_are_not_enrolled(self):
+        path='test/built-ins/Array/new.js'
+        result,client,queued,ids=self.prepare(existing=[(path,'non-strict','completed',{}),
+                                                       (path,'strict','leased',{})],candidate_limit=1)
+        self.assertEqual([w['variant'] for w in queued],['strict'])
+        self.assertEqual(result['recovery']['resumed_fixtures'],1)
+        self.assertEqual(len(client.tables['budget_work_items']),1)
+
+    def test_backlog_preserves_a_bounded_discovery_share(self):
+        path='test/built-ins/Array/new.js'
+        result,_,queued,ids=self.prepare(existing=[(path,'non-strict','completed',{}),
+                                                  (path,'strict','pending',{})],candidate_limit=2,cursor=17)
+        self.assertEqual(set(result['candidate_ids']),{ids[path],ids['test/language/new.js']})
+        self.assertEqual(result['recovery']['resumed_fixtures'],1)
+        self.assertEqual(result['recovery']['discovery_fixtures'],1)
+        self.assertEqual(result['recovery']['cursor_after'],18)
+
+    def test_exhausted_per_item_retries_stay_deferred_and_foreign_provenance_is_not_reused(self):
+        path='test/built-ins/Array/new.js'
+        for terminal in ('deferred','cancelled','completed'):
+            result,_,queued,ids=self.prepare(existing=[(path,'non-strict','completed',{}),
+                                                       (path,'strict',terminal,{})])
+            self.assertNotIn(ids[path],{w['fixture_id'] for w in queued})
+        result,_,queued,ids=self.prepare(existing=[(path,'non-strict','completed',{'provenance_id':'foreign'}),
+                                                  (path,'strict','completed',{'provenance_id':'foreign'})])
+        self.assertEqual({w['variant'] for w in queued if w['fixture_id']==ids[path]},{'non-strict','strict'})
+        self.assertEqual(result['recovery']['reused_terminal_variants'],0)
 
     def seal(self, fixtures):
         with tempfile.TemporaryDirectory() as directory:

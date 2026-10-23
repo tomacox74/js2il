@@ -138,6 +138,11 @@ def refresh(client, args):
 
 def prepare(client, args):
     prepared=prepare_inventory(client,args)
+    return prepare_from_inventory(client,args,prepared)
+
+
+def prepare_from_inventory(client, args, prepared):
+    """Plan against one verified inventory; also used by the bounded disposable drill."""
     source,corpus,ids,snapshot,pid,doc,normalized,eligibility=(prepared[k] for k in
         ('source','corpus','ids','snapshot','pid','doc','normalized','eligibility'))
     run = start_run(client,args,pid,args.run_key,source,'mvp' if args.kind=='mvp-composite' else 'native')
@@ -148,12 +153,23 @@ def prepare(client, args):
     registered={r['upstream_path'] for r in client.read('registrations',{'snapshot_id':snapshot})}
     eligible={e['fixture_id'] for e in eligibility if e['eligibility']=='runnable'}
     choices=[r for r in normalized if ids[r['path']] in eligible and (args.kind!='native' or r['path'] not in registered) and (not args.area or r['path'].startswith('test/'+args.area+'/'))]
-    terminal={(w['fixture_id'],w['variant']) for w in client.read('work_items',{'provenance_id':pid}) if w['state'] in ('completed','deferred','cancelled')}
+    previous=list(client.read('work_items',{'provenance_id':pid}))
+    terminal={(w['fixture_id'],w['variant']) for w in previous if w['state'] in ('completed','deferred','cancelled')}
+    unfinished={w['fixture_id'] for w in previous if w['state'] in ('pending','leased')}
     reconciliation=client.one('reconciliation_state',pipeline='native',channel='master') if args.kind=='native' else None
     choices=[r for r in choices if any((ids[r['path']],v['variant']) not in terminal for v in r['variants'])]
     # Preserve component-sensitive retry hints and a bounded rotating discovery share.
     balanced=[r for r,_ in catalog.area_balanced([(dict(r,path=r['path']),None) for r in choices])]
+    resumed=[]
     if args.kind=='native':
+        # A rotating discovery cursor must not strand variants from an exhausted
+        # allocation. Recovery uses the same provenance/work IDs, never a reset.
+        backlog=[r for r in balanced if ids[r['path']] in unfinished]
+        balanced=[r for r in balanced if ids[r['path']] not in unfinished]
+        discovery_slots=(min(len(balanced),max(1,args.candidate_limit//5))
+                         if backlog and args.candidate_limit>1 else 0)
+        resumed=backlog[:args.candidate_limit-discovery_slots]
+        available=args.candidate_limit-len(resumed)
         cur_hint=reconciliation or {}
         prior=cur_hint.get('last_reconciled_revision') or source
         if prior!=source and subprocess.run(['git','-C',str(REPO),'merge-base','--is-ancestor',prior,source],capture_output=True).returncode:
@@ -175,16 +191,19 @@ def prepare(client, args):
         cursor=cur_hint.get('fallback_cursor',0)
         if fallback:
             offset=cursor%len(fallback); fallback=fallback[offset:]+fallback[:offset]
-        reserve=max(1,args.candidate_limit//5)
-        choices=retries[:args.candidate_limit-reserve]+fallback[:max(reserve,args.candidate_limit-len(retries[:args.candidate_limit-reserve]))]
-        if len(choices)<args.candidate_limit:
-            choices+=retries[args.candidate_limit-reserve:args.candidate_limit-reserve+(args.candidate_limit-len(choices))]
+        reserve=min(available,max(1,args.candidate_limit//5))
+        choices=retries[:available-reserve]+fallback[:max(reserve,available-len(retries[:available-reserve]))]
+        if len(choices)<available:
+            choices+=retries[available-reserve:available-reserve+(available-len(choices))]
+        choices=resumed+choices
     else:
         choices=balanced[:args.candidate_limit]
     work_rows=[{'work_item_id':identity(args.repository,pid,ids[r['path']],v['variant'],0),'repository_id':args.repository,
                'provenance_id':pid,'fixture_id':ids[r['path']],'variant':v['variant'],'retry_generation':0,
                'coherent_area':nativePorting.coherent_area(r['path']),'priority':0,'attempt_limit':3,
-               'selection_reason':{'reason':'fresh provenance discovery'}} for r in choices for v in r['variants']]
+               'selection_reason':{'reason':'fresh provenance discovery'}} for r in choices for v in r['variants']
+               if (ids[r['path']],v['variant']) not in terminal]
+    discovery_count=len(choices)-len(resumed)
     validation=None
     if args.kind=='native':
         proof=github_validation(args.repository_name,source)
@@ -214,8 +233,8 @@ def prepare(client, args):
         client.put('reconciliations',[{'reconciliation_id':rec,'repository_id':args.repository,'pipeline':'native','channel':'master',
                                        'validation_id':validation,'base_revision':base,'attribution':'validated-range',
                                        'components':nativePorting.classify_changed_components(git('diff','--name-only',base,source).splitlines()),
-                                       'plan_sha256':bytea(sha({'work':work_rows,'next_cursor':cur['fallback_cursor']+len(choices)})),'expected_cursor_version':cur['version']}])
-        client.call('reconcile',rec,cur['version'],cur['fallback_cursor']+len(choices),work_rows)
+                                       'plan_sha256':bytea(sha({'work':work_rows,'next_cursor':cur['fallback_cursor']+discovery_count})),'expected_cursor_version':cur['version']}])
+        client.call('reconcile',rec,cur['version'],cur['fallback_cursor']+discovery_count,work_rows)
     else:
         client.put('work_items',work_rows)
     client.put('budget_work_items',[{'repository_id':args.repository,'budget_scope_id':budget,'work_item_id':w['work_item_id']} for w in work_rows])
@@ -223,6 +242,11 @@ def prepare(client, args):
             'kind':args.kind,'revision':source,'registration_snapshot':snapshot,'validation':validation,
             'corpus':corpus,'candidate_ids':[ids[r['path']] for r in choices],'cap_ms':args.cap_ms,'identity':doc}
     result['compilation_coverage'] = getattr(args, 'compilation_coverage', False)
+    result['recovery']={'resumed_fixtures':len(resumed),'discovery_fixtures':discovery_count,
+                        'queued_variants':len(work_rows),
+                        'reused_terminal_variants':sum((ids[r['path']],v['variant']) in terminal for r in choices for v in r['variants']),
+                        'cursor_before':cur['fallback_cursor'] if args.kind=='native' else None,
+                        'cursor_after':cur['fallback_cursor']+discovery_count if args.kind=='native' else None}
     Path(args.output).parent.mkdir(parents=True,exist_ok=True)
     Path(args.output).write_text(canonical(result)+'\n')
     return {key:value for key,value in result.items() if key!='identity'}

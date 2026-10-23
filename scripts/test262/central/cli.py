@@ -66,6 +66,7 @@ def parser():
     w=sub.add_parser('work'); w.add_argument('--context',required=True); w.add_argument('--root',required=True)
     w.add_argument('--outbox',required=True); w.add_argument('--image',default='test262-fixture:local')
     w.add_argument('--limit',type=int,default=100); w.add_argument('--seconds',type=int,default=600)
+    w.add_argument('--output',help='Retain the bounded worker stop/budget receipt')
     w.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll')
     w.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
     s=sub.add_parser('seal'); s.add_argument('--context',required=True); s.add_argument('--batch-key',required=True); s.add_argument('--output',required=True)
@@ -124,6 +125,9 @@ def main(argv=None):
                 if args.repository!=context['repository'] or args.producer!=context['producer']:
                     raise ValueError('Context belongs to another supervisor')
                 result=work(client,args)
+                if args.output:
+                    Path(args.output).parent.mkdir(parents=True,exist_ok=True)
+                    Path(args.output).write_text(canonical(result)+'\n')
             else:
                 result=getattr(commands,args.command)(client,args)
         print(canonical(result))

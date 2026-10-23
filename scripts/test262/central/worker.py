@@ -99,7 +99,11 @@ def work_staged(client, args):
         raise ValueError('Execution cap must cover compile/runtime and 30s startup grace')
     while count<args.limit and time.monotonic()-started<args.seconds:
         lease = client.call('claim',args.run,args.budget,cap,max(31,(cap+999)//1000+30))
-        if lease is None or lease.get('budget_exhausted'):
+        if lease is None:
+            stop_reason='queue-empty-or-delayed'
+            break
+        if lease.get('budget_exhausted'):
+            stop_reason='budget-exhausted'
             break
         fixture = client.one('fixtures', fixture_id=lease['fixture_id'])
         dependencies = [{'dependency_path':row['dependency_path'],'content_sha256':row['content_sha256'][2:]}
@@ -143,5 +147,8 @@ def work_staged(client, args):
         outbox.flush(client)
         count+=1
         print(canonical({'completed':count,'path':fixture['upstream_path'],'variant':lease['variant'],'outcome':outcome}),flush=True)
+    else:
+        stop_reason='worker-attempt-limit' if count>=args.limit else 'worker-time-limit'
     client.call('metric',args.run,'screening',1,int((time.monotonic()-started)*1000),count,timeouts)
-    return {'attempts':count,'seconds':time.monotonic()-started}
+    return {'attempts':count,'seconds':time.monotonic()-started,'stop_reason':stop_reason,
+            'run_id':args.run,'budget_scope_id':args.budget}
