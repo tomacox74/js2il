@@ -19,12 +19,28 @@ The package split is considered release-ready only when the following package fl
 
 `.github/workflows/release-validation.yml` is the required remote gate after the release candidate is committed and pushed. `scripts\release.js` dispatches it against the exact release-branch commit and only opens the PR after it succeeds.
 
-The workflow runs `npm run release:validate`, which:
+The workflow reuses `.github/workflows/dotnet.yml` to run all 11 existing native
+CI shards on Windows x64 (`windows-2025`) and macOS ARM64 (`macos-15`). This
+includes unit, execution and generator tests, the five ported Test262 shards,
+and five SDK packaging shards, retaining the ordinary CI `ReleaseOnly`
+exclusions. These are not the central Test262 catalogue/supervisor jobs.
+
+Linux, Windows and macOS additionally run `npm run release:validate`, preserving
+the existing Linux package gate. This command includes:
 
 - `npm run diff:test:canary:packed`
-- `dotnet test .\tests\Jroc.Tests\Jroc.Tests.csproj -c Release --filter "FullyQualifiedName~JrocSdkPackageTests" --nologo`
+- `dotnet test .\tests\Jroc.Tests\Jroc.Tests.csproj -c Release --filter "FullyQualifiedName~JrocSdkPackageTests|FullyQualifiedName~CheerioGeneratorTests" --nologo`
 
-This ensures coordinated package regressions fail in the same Linux GitHub Actions environment used for release validation, before the tag is cut.
+This validates source behavior and local package consumption on all three operating
+systems before the tag is cut. Normal PR/push CI keeps its existing Linux
+coverage; workflow-change PRs exercise the cross-platform release gate too.
+
+`.github/workflows/publish-tool.yml` repeats this reusable gate after resolving
+the release tag to an immutable commit. The publication job depends on successful
+validation, uses the same commit/version, and only then receives NuGet OIDC
+permissions. Failed or cancelled validation blocks publication; manually
+retrying a release tag does not bypass the gate. Read-only validation jobs do
+not inherit publication secrets or identity-token permissions.
 
 ### `Jroc.Core` restore/consumption coverage
 

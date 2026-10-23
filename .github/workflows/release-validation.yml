@@ -3,18 +3,45 @@ run-name: ${{ github.workflow }} - ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Exact source commit to validate"
+        type: string
+        required: false
+        default: ""
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - ".github/workflows/dotnet.yml"
+      - ".github/workflows/release-validation.yml"
+      - ".github/workflows/publish-tool.yml"
+      - "scripts/ci/**"
 
 permissions:
   contents: read
 
 jobs:
+  tests:
+    name: Cross-platform CI suite
+    uses: ./.github/workflows/dotnet.yml
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      runners: '["windows-2025","macos-15"]'
+
   validate:
-    name: Validate release package set
-    runs-on: ubuntu-latest
+    name: Validate release package set (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-2025, macos-15]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -31,6 +58,10 @@ jobs:
         run: |
           dotnet restore
           npm ci
+
+      - name: Validate release workflow invariants
+        if: github.event_name == 'pull_request'
+        run: node --test scripts/ci/release-workflows.test.js
 
       - name: Validate coordinated release package set
         run: npm run release:validate

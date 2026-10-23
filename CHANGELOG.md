@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- ci(release): require Windows x64 and macOS ARM64 native CI suites and
+  coordinated package validation before NuGet publication. Reuse existing
+  shards, freeze the release tag's commit for testing and publishing, and keep
+  publication credentials out of validation jobs.
+
 - tooling(node): add a provenance-backed first public-API corpus with 19 original
   path, buffer, events and CommonJS/ESM scenarios, 32 pinned upstream discovery
   leads, explicit applicability/eligibility triage and offline-verified retained
