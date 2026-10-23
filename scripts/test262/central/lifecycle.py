@@ -49,7 +49,10 @@ def finalize(client, args):
     if not row or not owned(client, row, args) or row['external_run_key'] != args.run_key or row['source_revision'] != context['revision']:
         raise ValueError('Collection identity mismatch')
     if row['state'] in TERMINAL:
-        return {'run_id': row['run_id'], 'state': row['state'], 'ended_at': row['ended_at'], 'unchanged': True}
+        result = {'run_id': row['run_id'], 'state': row['state'], 'ended_at': row['ended_at'], 'unchanged': True}
+        if context.get('budget'):
+            result['budget'] = client.call('finish_budget', context['budget'], True)
+        return result
     flushed = False
     if Path(args.outbox).is_file() and args.flush_verified:
         outbox = Outbox(args.outbox, args.repository, args.producer, client.epoch)
@@ -67,7 +70,10 @@ def finalize(client, args):
         state, reason = 'failed', 'job-failed'
     else:
         state, reason = 'incomplete', 'flush-unproven'
-    return finish(client, row, state, datetime.now(timezone.utc).isoformat(), 'supervisor', reason, flushed)
+    result = finish(client, row, state, datetime.now(timezone.utc).isoformat(), 'supervisor', reason, flushed)
+    if context.get('budget'):
+        result['budget'] = client.call('finish_budget', context['budget'], True)
+    return result
 
 
 def gh(path):

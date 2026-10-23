@@ -65,10 +65,26 @@ jobs:
           python -m scripts.test262.central.cli reconcile-runs \
             --repository-name "$REPOSITORY_NAME" --limit 100 "${ARGS[@]}" \
             > artifacts/test262/collection-lifecycle.json
+      - name: Inspect or reconcile settled budget scopes
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          APPLY: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+          ACTIONS_RUN_ID: ${{ github.event.workflow_run.id || inputs.actions_run_id }}
+        run: |
+          ARGS=()
+          if [ "$APPLY" = true ]; then ARGS+=(--apply); fi
+          if [ -n "$ACTIONS_RUN_ID" ]; then ARGS+=(--actions-run-id "$ACTIONS_RUN_ID"); fi
+          python -m scripts.test262.central.cli reconcile-budgets --limit 100 "${ARGS[@]}" \
+            > artifacts/test262/budget-lifecycle.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test262-collection-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/test262/collection-lifecycle.json
+          path: |
+            artifacts/test262/collection-lifecycle.json
+            artifacts/test262/budget-lifecycle.json
           if-no-files-found: warn
           retention-days: 90

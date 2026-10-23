@@ -3,12 +3,14 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+from itertools import chain, islice
+import time
 from .client import bytea, identity
 from .commands import git, REPO
 
 
 def gh(*args):
-    return json.loads(subprocess.check_output(['gh',*args],text=True))
+    return json.loads(subprocess.check_output(['gh',*args],text=True,timeout=30))
 
 
 def publication_base(client,publication):
@@ -33,7 +35,7 @@ def owned_head(client,publication,head,pull_number=None):
     """Verify the batch's exact parent, commit marker and patch, including deleted branches."""
     ref=f'refs/pull/{pull_number}/head' if pull_number is not None else publication['branch_name']
     try:
-        subprocess.run(['git','fetch','--no-tags','origin',ref],cwd=REPO,check=True,capture_output=True)
+        subprocess.run(['git','fetch','--no-tags','origin',ref],cwd=REPO,check=True,capture_output=True,timeout=30)
         if git('show','-s','--format=%P',head)!=publication_base(client,publication):
             return False
         if git('show','-s','--format=%B',head).strip()!=f'test262: native central batch {publication["batch_id"]}':
@@ -47,7 +49,7 @@ def owned_head(client,publication,head,pull_number=None):
 def recover_reservation(client,repository_name,publication):
     """Adopt proven PRs; keep unconfirmed reservations fenced for their original retry."""
     branch=publication['branch_name']
-    remote=subprocess.run(['git','ls-remote','--heads','origin',branch],cwd=REPO,capture_output=True,text=True,check=True).stdout.strip()
+    remote=subprocess.run(['git','ls-remote','--heads','origin',branch],cwd=REPO,capture_output=True,text=True,check=True,timeout=30).stdout.strip()
     head=remote.split()[0] if remote else None
     prs=list_pulls(repository_name,branch)
     key={'publication_id':publication['publication_id']}
@@ -84,41 +86,98 @@ def recover_reservation(client,repository_name,publication):
     return {'state':publication['state'],'recovery':'resume-original-batch','head':head}
 
 
-def reconcile_publications(client,repository_name,current=None):
-    publications=[p for state in ('reserved','open','updating') for p in client.read('publications',{'state':state})]
-    for publication in publications:
+def reconcile_publication(client,repository_name,publication):
+    if not publication['pr_number'] or not publication.get('expected_head'):
+        return recover_reservation(client,repository_name,publication)
+    pr=gh('api',f'repos/{repository_name}/pulls/{publication["pr_number"]}')
+    patch=None
+    if ((pr.get('head',{}).get('repo') or {}).get('full_name')!=repository_name or
+            pr.get('base',{}).get('ref')!='master' or
+            pr.get('head',{}).get('ref')!=publication['branch_name']):
+        patch={'state':'ownership-lost','closure_reason':'GitHub PR repository/base/branch differs from reservation'}
+    elif publication['expected_head'] and pr['head']['sha']!=publication['expected_head']:
+        patch={'state':'ownership-lost','closure_reason':'GitHub PR head differs from reserved head'}
+    elif pr.get('merged'):
+        patch={'state':'merged','closure_reason':'GitHub confirms merge'}
+    elif pr['state']=='closed':
+        patch={'state':'closed-deferred','closure_reason':'GitHub confirms closure without merge'}
+    if patch:
+        return client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],patch)
+    head=pr['head']['sha']
+    remote=subprocess.run(['git','ls-remote','--heads','origin',publication['branch_name']],
+                          cwd=REPO,capture_output=True,text=True,check=True,timeout=30).stdout.strip()
+    if not remote or remote.split()[0]!=head:
+        return client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],
+                           {'state':'ownership-lost','closure_reason':'Open publication branch deleted or changed'})
+    checks=gh('api','--paginate','--slurp',f'repos/{repository_name}/commits/{head}/check-runs?per_page=100')
+    rows=[]
+    for page in checks:
+        for check in page['check_runs']:
+            if check['head_sha']!=head or check['status']!='completed':
+                continue
+            conclusion=check['conclusion']
+            normalized='success' if conclusion=='success' else ('cancelled' if conclusion=='cancelled' else 'failure')
+            rows.append({'publication_id':publication['publication_id'],'check_identity':'check:'+check['app']['slug']+':'+check['name'],
+                         'external_run_key':str(check['id'])+':'+str(check['completed_at']),'head_revision':head,'conclusion':normalized})
+    client.put('publication_checks',rows)
+    return {'state':publication['state'],'checks':len(rows)}
+
+class ReconciliationClient:
+    """Capture the existing reconciler's intended writes; suppress them in dry runs."""
+    def __init__(self, client, publication, apply):
+        self.client=client; self.publication=publication; self.apply=apply
+        self.transitions=[]; self.checks=0
+
+    def one(self, *args, **kwargs):
+        return self.client.one(*args, **kwargs)
+
+    def call(self, operation, table, key, version, patch):
+        if operation!='transition' or table!='publications' or key!={'publication_id':self.publication['publication_id']}:
+            raise ValueError('Unexpected reconciliation write')
+        self.transitions.append(patch)
+        if self.apply:
+            return self.client.call(operation,table,key,version,patch)
+        return dict(self.publication,**patch,version=version+1)
+
+    def put(self, table, rows):
+        if table!='publication_checks':
+            raise ValueError('Unexpected reconciliation insert')
+        self.checks+=len(rows)
+        if self.apply:
+            self.client.put(table,rows)
+
+
+def reconcile_publications(client,repository_name,current=None,*,limit=100,pr_number=None,apply=True):
+    if not 1<=limit<=100 or (pr_number is not None and pr_number<1):
+        raise ValueError('Limit must be 1..100 and PR number positive')
+    filters={'pr_number':pr_number} if pr_number is not None else {}
+    publications=chain.from_iterable(client.read('publications',dict(filters,state=state))
+                                     for state in ('reserved','open','updating'))
+    report=[]; deadline=time.monotonic()+600; stopped=False
+    for publication in islice(publications,limit):
+        if time.monotonic()>=deadline:
+            stopped=True; break
         if publication['publication_id']==current:
             continue
-        if not publication['pr_number']:
-            recover_reservation(client,repository_name,publication)
-            continue
-        pr=gh('api',f'repos/{repository_name}/pulls/{publication["pr_number"]}')
-        patch=None
-        if ((pr.get('head',{}).get('repo') or {}).get('full_name')!=repository_name or
-                pr.get('base',{}).get('ref')!='master' or
-                pr.get('head',{}).get('ref')!=publication['branch_name']):
-            patch={'state':'ownership-lost','closure_reason':'GitHub PR repository/base/branch differs from reservation'}
-        elif publication['expected_head'] and pr['head']['sha']!=publication['expected_head']:
-            patch={'state':'ownership-lost','closure_reason':'GitHub PR head differs from reserved head'}
-        elif pr.get('merged'):
-            patch={'state':'merged','closure_reason':'GitHub confirms merge'}
-        elif pr['state']=='closed':
-            patch={'state':'closed-deferred','closure_reason':'GitHub confirms closure without merge'}
-        if patch:
-            client.call('transition','publications',{'publication_id':publication['publication_id']},publication['version'],patch)
-            continue
-        head=pr['head']['sha']
-        checks=gh('api','--paginate','--slurp',f'repos/{repository_name}/commits/{head}/check-runs?per_page=100')
-        rows=[]
-        for page in checks:
-            for check in page['check_runs']:
-                if check['head_sha']!=head or check['status']!='completed':
-                    continue
-                conclusion=check['conclusion']
-                normalized='success' if conclusion=='success' else ('cancelled' if conclusion=='cancelled' else 'failure')
-                rows.append({'publication_id':publication['publication_id'],'check_identity':'check:'+check['app']['slug']+':'+check['name'],
-                             'external_run_key':str(check['id'])+':'+str(check['completed_at']),'head_revision':head,'conclusion':normalized})
-        client.put('publication_checks',rows)
+        scoped=ReconciliationClient(client,publication,apply)
+        item={'before':publication}
+        try:
+            batch=client.one('native_batches',batch_id=publication['batch_id'])
+            item['provenance_id']=batch.get('provenance_id') if batch else None
+            item['target_revision']=publication_base(client,publication)
+            outcome=reconcile_publication(scoped,repository_name,publication)
+            item.update(disposition='reconciled' if apply else 'planned',
+                        transitions=scoped.transitions,checks=scoped.checks,outcome=outcome)
+            if outcome.get('recovery') or outcome.get('state') in ('blocked','ownership-lost'):
+                item['disposition']=outcome.get('recovery') or outcome['state']
+            if apply:
+                item['after']=client.one('publications',publication_id=publication['publication_id'])
+        except (subprocess.SubprocessError,OSError,ValueError,KeyError,TypeError):
+            # An API error/404 is not proof of PR closure. Preserve the row,
+            # report this identity, and allow other independent records to proceed.
+            item['disposition']='history-unavailable-or-invalid'
+        report.append(item)
+    return {'apply':apply,'limit':limit,'deadline_reached':stopped,'publications':report}
 
 
 def publish(client,args):
@@ -161,7 +220,7 @@ def publish(client,args):
         current=client.one('publications',publication_id=pubid)
         recover_reservation(client,args.repository_name,current)
         raise ValueError('Publication PR is closed; no branch recreation allowed')
-    remote=subprocess.run(['git','ls-remote','--heads','origin',branch],cwd=REPO,capture_output=True,text=True,check=True).stdout.strip()
+    remote=subprocess.run(['git','ls-remote','--heads','origin',branch],cwd=REPO,capture_output=True,text=True,check=True,timeout=30).stdout.strip()
     if prs and not remote:
         raise ValueError('Open publication PR lost its branch; manual reconciliation required')
     if remote:
