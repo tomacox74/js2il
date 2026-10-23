@@ -14,23 +14,38 @@ internal static class LIRStackScheduler
     {
         ArgumentNullException.ThrowIfNull(methodBody);
 
+        if (options.Mode == LIRStackSchedulerMode.Identity)
+        {
+            return Identity(methodBody);
+        }
+        if (options.Mode == LIRStackSchedulerMode.Disabled)
+        {
+            throw new InvalidOperationException(
+                "Disabled scheduler mode bypasses schedule construction.");
+        }
+        if (options.Mode < LIRStackSchedulerMode.TypedNumeric
+            || options.Mode > LIRStackSchedulerMode.GeneralRegions)
+        {
+            throw new NotSupportedException(
+                $"LIR stack scheduler mode '{options.Mode}' is not implemented yet.");
+        }
+
+        // Intermediate plans stay private, so stages extend this build's owned buffers.
+        var context = new BuildContext(methodBody);
         var schedule = options.Mode switch
         {
-            LIRStackSchedulerMode.Identity => BuildIdentityUnvalidated(methodBody),
             LIRStackSchedulerMode.TypedNumeric =>
-                BuildTypedNumericUnvalidated(methodBody),
+                BuildTypedNumericUnvalidated(methodBody, context),
             LIRStackSchedulerMode.TypedComparisons =>
-                BuildTypedComparisonsUnvalidated(methodBody),
+                BuildTypedComparisonsUnvalidated(methodBody, context),
             LIRStackSchedulerMode.ConversionsAndStableLoads =>
-                BuildConversionsAndStableLoadsUnvalidated(methodBody),
+                BuildConversionsAndStableLoadsUnvalidated(methodBody, context),
             LIRStackSchedulerMode.LiteralAndArguments =>
-                BuildLiteralAndArgumentsUnvalidated(methodBody),
+                BuildLiteralAndArgumentsUnvalidated(methodBody, context),
             LIRStackSchedulerMode.CallResults =>
-                BuildCallResultsUnvalidated(methodBody),
+                BuildCallResultsUnvalidated(methodBody, context),
             LIRStackSchedulerMode.GeneralRegions =>
-                BuildGeneralRegionsUnvalidated(methodBody),
-            LIRStackSchedulerMode.Disabled => throw new InvalidOperationException(
-                "Disabled scheduler mode bypasses schedule construction."),
+                BuildGeneralRegionsUnvalidated(methodBody, context),
             _ => throw new NotSupportedException(
                 $"LIR stack scheduler mode '{options.Mode}' is not implemented yet.")
         };
@@ -47,7 +62,8 @@ internal static class LIRStackScheduler
     }
 
     private static LIRStackSchedule BuildIdentityUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis? analysis = null)
     {
         var operations = BuildIdentityOperations(methodBody);
         var regions = BuildSchedulingRegions(methodBody, operations);
@@ -55,7 +71,9 @@ internal static class LIRStackScheduler
         Array.Fill(tempResidencies, TempResidency.MaterializedLocal);
 
         var ownedTemps = new bool[methodBody.Temps.Count];
-        var effectiveLastUses = ComputeIdentityLastUses(methodBody);
+        var effectiveLastUses = analysis is null
+            ? ComputeIdentityLastUses(methodBody)
+            : analysis.UseIndex.ToArray();
 
         return new LIRStackSchedule(
             LIRStackSchedulerMode.Identity,
@@ -75,54 +93,18 @@ internal static class LIRStackScheduler
     }
 
     private static LIRStackSchedule BuildTypedNumericUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var identity = BuildIdentityUnvalidated(methodBody);
-        var definitionIndex = new int[methodBody.Temps.Count];
-        var definitionCount = new int[methodBody.Temps.Count];
-        var useIndex = new int[methodBody.Temps.Count];
-        var useCount = new int[methodBody.Temps.Count];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)definitionCount.Length)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = new int[methodBody.Instructions.Count];
-        Array.Fill(regionByLirIndex, -1);
-        for (var regionIndex = 0;
-             regionIndex < identity.Regions.Length;
-             regionIndex++)
-        {
-            var region = identity.Regions[regionIndex];
-            for (var lirIndex = region.StartLirIndex;
-                 lirIndex < region.EndLirIndexExclusive;
-                 lirIndex++)
-            {
-                regionByLirIndex[lirIndex] = regionIndex;
-            }
-        }
-
-        var residencies = identity.TempResidencies.ToArray();
-        var ownedTemps = identity.OwnedTemps.ToArray();
+        var analysis = context.Analysis;
+        var identity = BuildIdentityUnvalidated(methodBody, analysis);
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(identity);
+        var residencies = identity.TempResidencies;
+        var ownedTemps = identity.OwnedTemps;
         var acceptedCount = 0;
         for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
         {
@@ -190,6 +172,7 @@ internal static class LIRStackScheduler
 
         PruneInvalidTypedNumericResidencies(
             methodBody,
+            analysis,
             residencies,
             ownedTemps);
         acceptedCount = ownedTemps.Count(owned => owned);
@@ -209,24 +192,22 @@ internal static class LIRStackScheduler
 
     private static void PruneInvalidTypedNumericResidencies(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         TempResidency[] residencies,
         bool[] ownedTemps)
     {
         var stack = new List<int>();
-        var uses = new List<TempVariable>();
         for (var instructionIndex = 0;
              instructionIndex < methodBody.Instructions.Count;
              instructionIndex++)
         {
             var instruction = methodBody.Instructions[instructionIndex];
-            uses.Clear();
-            var visitor = new NumericCollectUseVisitor(uses);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
+            var uses = analysis.GetUses(instructionIndex);
 
             // Remove candidates whose operand position cannot consume an
             // already-carried stack value before ordinary loaded operands.
             var encounteredNonResident = false;
-            for (var index = 0; index < uses.Count; index++)
+            for (var index = 0; index < uses.Length; index++)
             {
                 var use = uses[index];
                 var isResident = residencies[use.Index]
@@ -245,7 +226,7 @@ internal static class LIRStackScheduler
             }
 
             var residentPrefixCount = 0;
-            while (residentPrefixCount < uses.Count
+            while (residentPrefixCount < uses.Length
                 && residencies[uses[residentPrefixCount].Index]
                     == TempResidency.StackResident)
             {
@@ -275,7 +256,7 @@ internal static class LIRStackScheduler
             }
 
             residentPrefixCount = 0;
-            while (residentPrefixCount < uses.Count
+            while (residentPrefixCount < uses.Length
                 && residencies[uses[residentPrefixCount].Index]
                     == TempResidency.StackResident)
             {
@@ -316,54 +297,18 @@ internal static class LIRStackScheduler
     }
 
     private static LIRStackSchedule BuildTypedComparisonsUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var numeric = BuildTypedNumericUnvalidated(methodBody);
-        var definitionIndex = new int[methodBody.Temps.Count];
-        var definitionCount = new int[methodBody.Temps.Count];
-        var useIndex = new int[methodBody.Temps.Count];
-        var useCount = new int[methodBody.Temps.Count];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)definitionCount.Length)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = new int[methodBody.Instructions.Count];
-        Array.Fill(regionByLirIndex, -1);
-        for (var regionIndex = 0;
-             regionIndex < numeric.Regions.Length;
-             regionIndex++)
-        {
-            var region = numeric.Regions[regionIndex];
-            for (var lirIndex = region.StartLirIndex;
-                 lirIndex < region.EndLirIndexExclusive;
-                 lirIndex++)
-            {
-                regionByLirIndex[lirIndex] = regionIndex;
-            }
-        }
-
-        var residencies = numeric.TempResidencies.ToArray();
-        var ownedTemps = numeric.OwnedTemps.ToArray();
+        var numeric = BuildTypedNumericUnvalidated(methodBody, context);
+        var analysis = context.Analysis;
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(numeric);
+        var residencies = numeric.TempResidencies;
+        var ownedTemps = numeric.OwnedTemps;
         for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
         {
             if (definitionCount[tempIndex] != 1
@@ -441,6 +386,7 @@ internal static class LIRStackScheduler
             ownedTemps);
         PruneInvalidTypedNumericResidencies(
             methodBody,
+            analysis,
             residencies,
             ownedTemps);
         var acceptedCount = ownedTemps.Count(owned => owned);
@@ -470,54 +416,18 @@ internal static class LIRStackScheduler
             or LIRCompareBooleanNotEqual;
 
     private static LIRStackSchedule BuildConversionsAndStableLoadsUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var comparisons = BuildTypedComparisonsUnvalidated(methodBody);
-        var definitionIndex = new int[methodBody.Temps.Count];
-        var definitionCount = new int[methodBody.Temps.Count];
-        var useIndex = new int[methodBody.Temps.Count];
-        var useCount = new int[methodBody.Temps.Count];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)definitionCount.Length)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = new int[methodBody.Instructions.Count];
-        Array.Fill(regionByLirIndex, -1);
-        for (var regionIndex = 0;
-             regionIndex < comparisons.Regions.Length;
-             regionIndex++)
-        {
-            var region = comparisons.Regions[regionIndex];
-            for (var lirIndex = region.StartLirIndex;
-                 lirIndex < region.EndLirIndexExclusive;
-                 lirIndex++)
-            {
-                regionByLirIndex[lirIndex] = regionIndex;
-            }
-        }
-
-        var residencies = comparisons.TempResidencies.ToArray();
-        var ownedTemps = comparisons.OwnedTemps.ToArray();
+        var comparisons = BuildTypedComparisonsUnvalidated(methodBody, context);
+        var analysis = context.Analysis;
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(comparisons);
+        var residencies = comparisons.TempResidencies;
+        var ownedTemps = comparisons.OwnedTemps;
         for (var tempIndex = 0; tempIndex < methodBody.Temps.Count; tempIndex++)
         {
             if (definitionCount[tempIndex] != 1
@@ -588,6 +498,7 @@ internal static class LIRStackScheduler
             ownedTemps);
         PruneInvalidTypedNumericResidencies(
             methodBody,
+            analysis,
             residencies,
             ownedTemps);
         var acceptedCount = ownedTemps.Count(owned => owned);
@@ -620,44 +531,18 @@ internal static class LIRStackScheduler
             or LIRLoadScopeFieldByName;
 
     private static LIRStackSchedule BuildLiteralAndArgumentsUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var conversions = BuildConversionsAndStableLoadsUnvalidated(methodBody);
-        var tempCount = methodBody.Temps.Count;
-        var definitionIndex = new int[tempCount];
-        var definitionCount = new int[tempCount];
-        var useIndex = new int[tempCount];
-        var useCount = new int[tempCount];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)tempCount)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = BuildRegionIndexMap(
-            methodBody.Instructions.Count,
-            conversions.Regions,
-            conversions.Operations);
-        var residencies = conversions.TempResidencies.ToArray();
-        var ownedTemps = conversions.OwnedTemps.ToArray();
+        var conversions = BuildConversionsAndStableLoadsUnvalidated(methodBody, context);
+        var analysis = context.Analysis;
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(conversions);
+        var residencies = conversions.TempResidencies;
+        var ownedTemps = conversions.OwnedTemps;
         var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
         var selectedDefinitions = new HashSet<int>();
         var analysisBudget = Math.Max(
@@ -683,7 +568,7 @@ internal static class LIRStackScheduler
 
             selectedDefinitions.Clear();
             var rootRegion = regionByLirIndex[rootIndex];
-            var operands = CollectUsedTemps(root);
+            var operands = analysis.GetUses(rootIndex);
             TempVariable constructionResult = default;
             if (isConstruction
                 && (!LIRInstructionInfo.TryGetDefinedTemp(
@@ -697,6 +582,7 @@ internal static class LIRStackScheduler
                             constructionResult.Index] >= 0
                     || !IsSupportedConstructionConsumer(
                         methodBody,
+                        analysis,
                         constructionResult,
                         useIndex[constructionResult.Index],
                         rootRegion,
@@ -710,6 +596,7 @@ internal static class LIRStackScheduler
             {
                 if (!TrySelectConstructionProducerTree(
                         methodBody,
+                        analysis,
                         operand,
                         rootIndex,
                         rootRegion,
@@ -741,8 +628,8 @@ internal static class LIRStackScheduler
             if (!PreservesSelectedEffectOrder(
                     methodBody,
                     BuildSelectedEmissionOrder(
-                        methodBody,
-                        root,
+                        analysis,
+                        rootIndex,
                         selectedDefinitions)))
             {
                 continue;
@@ -782,16 +669,19 @@ internal static class LIRStackScheduler
             conversions.Operations,
             movesByInsertionLirIndex);
         var acceptedCount = ownedTemps.Count(owned => owned);
+        var orderUnchanged = ReferenceEquals(operationArray, conversions.Operations);
         return conversions with
         {
             Mode = LIRStackSchedulerMode.LiteralAndArguments,
             Operations = operationArray,
-            Regions = BuildSchedulingRegions(methodBody, operationArray),
+            Regions = orderUnchanged
+                ? conversions.Regions
+                : BuildSchedulingRegions(methodBody, operationArray),
             TempResidencies = residencies,
             OwnedTemps = ownedTemps,
-            EffectiveLastUses = ComputeScheduledLastUses(
-                methodBody,
-                operationArray),
+            EffectiveLastUses = orderUnchanged
+                ? conversions.EffectiveLastUses
+                : ComputeScheduledLastUses(methodBody, analysis, operationArray),
             Metrics = conversions.Metrics with
             {
                 StackResidentTempCount = residencies.Count(
@@ -807,48 +697,24 @@ internal static class LIRStackScheduler
             or LIRNewJsObject;
 
     private static LIRStackSchedule BuildCallResultsUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var literals = BuildLiteralAndArgumentsUnvalidated(methodBody);
+        var literals = BuildLiteralAndArgumentsUnvalidated(methodBody, context);
         if (methodBody.IsAsync || methodBody.IsGenerator)
         {
             return literals with { Mode = LIRStackSchedulerMode.CallResults };
         }
 
         var tempCount = methodBody.Temps.Count;
-        var definitionIndex = new int[tempCount];
-        var definitionCount = new int[tempCount];
-        var useIndex = new int[tempCount];
-        var useCount = new int[tempCount];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)tempCount)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = BuildRegionIndexMap(
-            methodBody.Instructions.Count,
-            literals.Regions,
-            literals.Operations);
-        var residencies = literals.TempResidencies.ToArray();
-        var ownedTemps = literals.OwnedTemps.ToArray();
+        var analysis = context.Analysis;
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(literals);
+        var residencies = literals.TempResidencies;
+        var ownedTemps = literals.OwnedTemps;
         var analysisBudget = Math.Max(
             methodBody.Instructions.Count * 8,
             32);
@@ -934,6 +800,7 @@ internal static class LIRStackScheduler
             {
                 if (!TrySelectCallArgumentProducerTree(
                         methodBody,
+                        analysis,
                         argument,
                         rootIndex,
                         regionByLirIndex[rootIndex],
@@ -962,8 +829,8 @@ internal static class LIRStackScheduler
             if (!PreservesSelectedEffectOrder(
                     methodBody,
                     BuildSelectedEmissionOrder(
-                        methodBody,
-                        root,
+                        analysis,
+                        rootIndex,
                         selectedCallDefinitions)))
             {
                 continue;
@@ -994,19 +861,23 @@ internal static class LIRStackScheduler
             movesByInsertionLirIndex);
         PruneInvalidTypedNumericResidencies(
             methodBody,
+            analysis,
             residencies,
             ownedTemps);
         var acceptedCount = ownedTemps.Count(owned => owned);
+        var orderUnchanged = ReferenceEquals(operations, literals.Operations);
         return literals with
         {
             Mode = LIRStackSchedulerMode.CallResults,
             Operations = operations,
-            Regions = BuildSchedulingRegions(methodBody, operations),
+            Regions = orderUnchanged
+                ? literals.Regions
+                : BuildSchedulingRegions(methodBody, operations),
             TempResidencies = residencies,
             OwnedTemps = ownedTemps,
-            EffectiveLastUses = ComputeScheduledLastUses(
-                methodBody,
-                operations),
+            EffectiveLastUses = orderUnchanged
+                ? literals.EffectiveLastUses
+                : ComputeScheduledLastUses(methodBody, analysis, operations),
             Metrics = literals.Metrics with
             {
                 StackResidentTempCount = residencies.Count(
@@ -1017,9 +888,10 @@ internal static class LIRStackScheduler
     }
 
     private static LIRStackSchedule BuildGeneralRegionsUnvalidated(
-        MethodBodyIR methodBody)
+        MethodBodyIR methodBody,
+        BuildContext context)
     {
-        var calls = BuildCallResultsUnvalidated(methodBody);
+        var calls = BuildCallResultsUnvalidated(methodBody, context);
         if (methodBody.IsAsync || methodBody.IsGenerator)
         {
             return calls with
@@ -1033,40 +905,14 @@ internal static class LIRStackScheduler
             };
         }
 
-        var tempCount = methodBody.Temps.Count;
-        var definitionIndex = new int[tempCount];
-        var definitionCount = new int[tempCount];
-        var useIndex = new int[tempCount];
-        var useCount = new int[tempCount];
-        Array.Fill(definitionIndex, -1);
-        Array.Fill(useIndex, -1);
-        for (var instructionIndex = 0;
-             instructionIndex < methodBody.Instructions.Count;
-             instructionIndex++)
-        {
-            var instruction = methodBody.Instructions[instructionIndex];
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    instruction,
-                    out var defined)
-                && (uint)defined.Index < (uint)tempCount)
-            {
-                definitionCount[defined.Index]++;
-                definitionIndex[defined.Index] = instructionIndex;
-            }
-
-            var visitor = new NumericUseVisitor(
-                useCount,
-                useIndex,
-                instructionIndex);
-            LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        }
-
-        var regionByLirIndex = BuildRegionIndexMap(
-            methodBody.Instructions.Count,
-            calls.Regions,
-            calls.Operations);
-        var residencies = calls.TempResidencies.ToArray();
-        var ownedTemps = calls.OwnedTemps.ToArray();
+        var analysis = context.Analysis;
+        var definitionIndex = analysis.DefinitionIndex;
+        var definitionCount = analysis.DefinitionCount;
+        var useIndex = analysis.UseIndex;
+        var useCount = analysis.UseCount;
+        var regionByLirIndex = context.GetRegionIndexMap(calls);
+        var residencies = calls.TempResidencies;
+        var ownedTemps = calls.OwnedTemps;
         var movesByInsertionLirIndex = new Dictionary<int, List<int>>();
         var candidateRegions = new HashSet<int>();
         var acceptedRegions = new HashSet<int>();
@@ -1102,7 +948,7 @@ internal static class LIRStackScheduler
             {
                 safe = TrySelectGeneratedCallableInstallationChain(
                     methodBody,
-                    root,
+                    analysis,
                     rootIndex,
                     rootRegion,
                     definitionIndex,
@@ -1114,10 +960,11 @@ internal static class LIRStackScheduler
             }
             else
             {
-                foreach (var operand in CollectUsedTemps(root))
+                foreach (var operand in analysis.GetUses(rootIndex))
                 {
                     if (!TrySelectGeneralProducerTree(
                             methodBody,
+                            analysis,
                             operand,
                             rootIndex,
                             rootRegion,
@@ -1178,6 +1025,7 @@ internal static class LIRStackScheduler
                     || methodBody.TempVariableSlots[rootResult.Index] < 0)
                 && IsSupportedConstructionConsumer(
                     methodBody,
+                    analysis,
                     rootResult,
                     useIndex[rootResult.Index],
                     rootRegion,
@@ -1212,19 +1060,23 @@ internal static class LIRStackScheduler
             ownedTemps);
         PruneInvalidTypedNumericResidencies(
             methodBody,
+            analysis,
             residencies,
             ownedTemps);
         var acceptedCount = ownedTemps.Count(owned => owned);
+        var orderUnchanged = ReferenceEquals(operations, calls.Operations);
         var result = calls with
         {
             Mode = LIRStackSchedulerMode.GeneralRegions,
             Operations = operations,
-            Regions = BuildSchedulingRegions(methodBody, operations),
+            Regions = orderUnchanged
+                ? calls.Regions
+                : BuildSchedulingRegions(methodBody, operations),
             TempResidencies = residencies,
             OwnedTemps = ownedTemps,
-            EffectiveLastUses = ComputeScheduledLastUses(
-                methodBody,
-                operations),
+            EffectiveLastUses = orderUnchanged
+                ? calls.EffectiveLastUses
+                : ComputeScheduledLastUses(methodBody, analysis, operations),
             Metrics = calls.Metrics with
             {
                 StackResidentTempCount = residencies.Count(
@@ -1255,21 +1107,25 @@ internal static class LIRStackScheduler
 
     private static bool TrySelectGeneratedCallableInstallationChain(
         MethodBodyIR methodBody,
-        LIRInstruction root,
+        LIRStackSchedulerAnalysis analysis,
         int rootIndex,
         int rootRegion,
-        int[] definitionIndex,
-        int[] definitionCount,
-        int[] useCount,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> regionByLirIndex,
         HashSet<int> selectedDefinitions,
         List<int> emittedDefinitionOrder)
     {
-        var callableResult = CollectUsedTemps(root)
-            .FirstOrDefault(temp => IsGeneratedCallableChainResult(
-                methodBody,
-                temp,
-                definitionIndex));
+        TempVariable callableResult = default;
+        foreach (var temp in analysis.GetUses(rootIndex))
+        {
+            if (IsGeneratedCallableChainResult(methodBody, temp, definitionIndex))
+            {
+                callableResult = temp;
+                break;
+            }
+        }
         if (!IsGeneratedCallableChainResult(
                 methodBody,
                 callableResult,
@@ -1335,7 +1191,7 @@ internal static class LIRStackScheduler
     private static bool IsGeneratedCallableChainResult(
         MethodBodyIR methodBody,
         TempVariable temp,
-        int[] definitionIndex)
+        ReadOnlySpan<int> definitionIndex)
     {
         while ((uint)temp.Index < (uint)definitionIndex.Length)
         {
@@ -1396,11 +1252,11 @@ internal static class LIRStackScheduler
 
     private static void ClaimInlineCallArrays(
         MethodBodyIR methodBody,
-        int[] definitionIndex,
-        int[] definitionCount,
-        int[] useIndex,
-        int[] useCount,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useIndex,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> regionByLirIndex,
         TempResidency[] residencies,
         bool[] ownedTemps)
     {
@@ -1523,13 +1379,14 @@ internal static class LIRStackScheduler
 
     private static bool TrySelectGeneralProducerTree(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         TempVariable temp,
         int rootIndex,
         int rootRegion,
-        int[] definitionIndex,
-        int[] definitionCount,
-        int[] useCount,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> regionByLirIndex,
         HashSet<int> selectedDefinitions,
         List<int> emittedDefinitionOrder,
         ref int analysisBudget)
@@ -1587,8 +1444,8 @@ internal static class LIRStackScheduler
             }
 
             pending.Push((current, true));
-            var operands = CollectUsedTemps(producer);
-            for (var index = operands.Count - 1; index >= 0; index--)
+            var operands = analysis.GetUses(producerIndex);
+            for (var index = operands.Length - 1; index >= 0; index--)
             {
                 pending.Push((operands[index], false));
             }
@@ -1632,61 +1489,39 @@ internal static class LIRStackScheduler
     }
 
     private static List<int> BuildSelectedEmissionOrder(
-        MethodBodyIR methodBody,
-        LIRInstruction root,
+        LIRStackSchedulerAnalysis analysis,
+        int rootIndex,
         HashSet<int> selectedDefinitions)
     {
         var order = new List<int>(selectedDefinitions.Count);
         var emitted = new HashSet<int>();
-        var selectedDefinitionByTemp = new Dictionary<int, int>(
-            selectedDefinitions.Count);
-        foreach (var definitionIndex in selectedDefinitions)
-        {
-            if (LIRInstructionInfo.TryGetDefinedTemp(
-                    methodBody.Instructions[definitionIndex],
-                    out var defined))
-            {
-                selectedDefinitionByTemp[defined.Index] = definitionIndex;
-            }
-        }
-
-        var stack = new Stack<(LIRInstruction Instruction, bool Expanded)>();
-        stack.Push((root, false));
+        var stack = new Stack<(int Index, bool Expanded)>();
+        stack.Push((rootIndex, false));
         while (stack.Count > 0)
         {
-            var (instruction, expanded) = stack.Pop();
+            var (instructionIndex, expanded) = stack.Pop();
             if (expanded)
             {
-                if (LIRInstructionInfo.TryGetDefinedTemp(
-                        instruction,
-                        out var defined))
+                if (selectedDefinitions.Contains(instructionIndex)
+                    && emitted.Add(instructionIndex))
                 {
-                    var definitionIndex =
-                        selectedDefinitionByTemp.GetValueOrDefault(
-                            defined.Index,
-                            -1);
-                    if (definitionIndex >= 0
-                        && emitted.Add(definitionIndex))
-                    {
-                        order.Add(definitionIndex);
-                    }
+                    order.Add(instructionIndex);
                 }
                 continue;
             }
 
-            stack.Push((instruction, true));
-            var uses = CollectUsedTemps(instruction);
-            for (var index = uses.Count - 1; index >= 0; index--)
+            stack.Push((instructionIndex, true));
+            var uses = analysis.GetUses(instructionIndex);
+            for (var index = uses.Length - 1; index >= 0; index--)
             {
-                var definitionIndex =
-                    selectedDefinitionByTemp.GetValueOrDefault(
-                        uses[index].Index,
-                        -1);
-                if (definitionIndex >= 0)
+                var tempIndex = uses[index].Index;
+                var definitionIndex = (uint)tempIndex < (uint)analysis.DefinitionIndex.Length
+                    ? analysis.DefinitionIndex[tempIndex]
+                    : -1;
+                if (definitionIndex >= 0
+                    && selectedDefinitions.Contains(definitionIndex))
                 {
-                    stack.Push((
-                        methodBody.Instructions[definitionIndex],
-                        false));
+                    stack.Push((definitionIndex, false));
                 }
             }
         }
@@ -1714,13 +1549,14 @@ internal static class LIRStackScheduler
 
     private static bool TrySelectCallArgumentProducerTree(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         TempVariable temp,
         int rootIndex,
         int rootRegion,
-        int[] definitionIndex,
-        int[] definitionCount,
-        int[] useCount,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> regionByLirIndex,
         HashSet<int> selectedDefinitions,
         ref int analysisBudget)
     {
@@ -1781,8 +1617,8 @@ internal static class LIRStackScheduler
                 continue;
             }
 
-            var operands = CollectUsedTemps(producer);
-            for (var index = operands.Count - 1; index >= 0; index--)
+            var operands = analysis.GetUses(producerIndex);
+            for (var index = operands.Length - 1; index >= 0; index--)
             {
                 pending.Push(operands[index]);
             }
@@ -1840,8 +1676,8 @@ internal static class LIRStackScheduler
         MethodBodyIR methodBody,
         TempVariable result,
         LIRInstruction consumer,
-        int[] useCount,
-        int[] useIndex)
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> useIndex)
         => IsTypedNumericBinary(consumer)
             || IsTypedUnaryOrComparison(consumer)
             || IsConversionConcatOrStableLoad(consumer)
@@ -1971,10 +1807,11 @@ internal static class LIRStackScheduler
 
     private static bool IsSupportedConstructionConsumer(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         TempVariable result,
         int consumerIndex,
         int rootRegion,
-        int[] regionByLirIndex)
+        ReadOnlySpan<int> regionByLirIndex)
     {
         if ((uint)consumerIndex >= (uint)methodBody.Instructions.Count)
         {
@@ -1995,19 +1832,20 @@ internal static class LIRStackScheduler
             return false;
         }
 
-        var uses = CollectUsedTemps(consumer);
-        return uses.Count > 0 && uses[0].Equals(result);
+        var uses = analysis.GetUses(consumerIndex);
+        return uses.Length > 0 && uses[0].Equals(result);
     }
 
     private static bool TrySelectConstructionProducerTree(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         TempVariable temp,
         int constructionIndex,
         int constructionRegion,
-        int[] definitionIndex,
-        int[] definitionCount,
-        int[] useCount,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> regionByLirIndex,
         HashSet<int> selectedDefinitions,
         ref int analysisBudget)
     {
@@ -2057,8 +1895,8 @@ internal static class LIRStackScheduler
                 continue;
             }
 
-            var operands = CollectUsedTemps(producer);
-            for (var index = operands.Count - 1; index >= 0; index--)
+            var operands = analysis.GetUses(producerIndex);
+            for (var index = operands.Length - 1; index >= 0; index--)
             {
                 pending.Push(operands[index]);
             }
@@ -2104,15 +1942,6 @@ internal static class LIRStackScheduler
             or LIRBuildScopesArray
             or LIRNewJsArray
             or LIRNewJsObject;
-
-    private static List<TempVariable> CollectUsedTemps(
-        LIRInstruction instruction)
-    {
-        var uses = new List<TempVariable>();
-        var visitor = new NumericCollectUseVisitor(uses);
-        LIRInstructionInfo.VisitUsedTemps(instruction, ref visitor);
-        return uses;
-    }
 
     private static bool TryGetConstructionInsertionIndex(
         int constructionIndex,
@@ -2207,8 +2036,8 @@ internal static class LIRStackScheduler
     private static bool IsSafeBoxingReturnConsumer(
         MethodBodyIR methodBody,
         LIRInstruction instruction,
-        int[] useCount,
-        int[] useIndex)
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> useIndex)
     {
         if (instruction is not LIRConvertToObject convert)
         {
@@ -2234,8 +2063,8 @@ internal static class LIRStackScheduler
     private static bool IsSupportedTypedNumericConsumer(
         MethodBodyIR methodBody,
         int consumerIndex,
-        int[] useCount,
-        int[] useIndex)
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> useIndex)
     {
         var instruction = methodBody.Instructions[consumerIndex];
         if (instruction is LIRConvertToObject convert)
@@ -2260,7 +2089,7 @@ internal static class LIRStackScheduler
     private static bool IsDefinedValueRequired(
         MethodBodyIR methodBody,
         LIRInstruction instruction,
-        int[] useCount)
+        ReadOnlySpan<int> useCount)
     {
         if (!LIRInstructionInfo.TryGetDefinedTemp(
                 instruction,
@@ -2277,10 +2106,10 @@ internal static class LIRStackScheduler
 
     private static void ClaimSafeBoxingTerminals(
         MethodBodyIR methodBody,
-        int[] definitionCount,
-        int[] useCount,
-        int[] useIndex,
-        int[] regionByLirIndex,
+        ReadOnlySpan<int> definitionCount,
+        ReadOnlySpan<int> useCount,
+        ReadOnlySpan<int> useIndex,
+        ReadOnlySpan<int> regionByLirIndex,
         TempResidency[] residencies,
         bool[] ownedTemps)
     {
@@ -2475,6 +2304,7 @@ internal static class LIRStackScheduler
 
     private static int[] ComputeScheduledLastUses(
         MethodBodyIR methodBody,
+        LIRStackSchedulerAnalysis analysis,
         ScheduledOperation[] operations)
     {
         var lastUses = new int[methodBody.Temps.Count];
@@ -2484,13 +2314,15 @@ internal static class LIRStackScheduler
         {
             for (var offset = 0; offset < operation.InstructionCount; offset++)
             {
-                var visitor = new LastUseVisitor(
-                    lastUses,
-                    scheduledPosition++);
-                LIRInstructionInfo.VisitUsedTemps(
-                    methodBody.Instructions[
-                        operation.GetLirInstructionIndex(offset)],
-                    ref visitor);
+                foreach (var use in analysis.GetUses(
+                    operation.GetLirInstructionIndex(offset)))
+                {
+                    if ((uint)use.Index < (uint)lastUses.Length)
+                    {
+                        lastUses[use.Index] = scheduledPosition;
+                    }
+                }
+                scheduledPosition++;
             }
         }
 
@@ -2608,46 +2440,25 @@ internal static class LIRStackScheduler
         }
     }
 
-    private struct NumericUseVisitor : ITempUseVisitor
+    private sealed class BuildContext(MethodBodyIR methodBody)
     {
-        private readonly int[] _useCount;
-        private readonly int[] _useIndex;
-        private readonly int _instructionIndex;
+        private ScheduledOperation[]? _mappedOperations;
+        private int[]? _regionByLirIndex;
 
-        internal NumericUseVisitor(
-            int[] useCount,
-            int[] useIndex,
-            int instructionIndex)
-        {
-            _useCount = useCount;
-            _useIndex = useIndex;
-            _instructionIndex = instructionIndex;
-        }
+        internal LIRStackSchedulerAnalysis Analysis { get; } = new(methodBody);
 
-        public void Visit(TempVariable temp)
+        internal ReadOnlySpan<int> GetRegionIndexMap(LIRStackSchedule schedule)
         {
-            if ((uint)temp.Index >= (uint)_useCount.Length)
+            if (!ReferenceEquals(_mappedOperations, schedule.Operations))
             {
-                return;
+                _regionByLirIndex = BuildRegionIndexMap(
+                    methodBody.Instructions.Count,
+                    schedule.Regions,
+                    schedule.Operations);
+                _mappedOperations = schedule.Operations;
             }
 
-            _useCount[temp.Index]++;
-            _useIndex[temp.Index] = _instructionIndex;
-        }
-    }
-
-    private struct NumericCollectUseVisitor : ITempUseVisitor
-    {
-        private readonly List<TempVariable> _uses;
-
-        internal NumericCollectUseVisitor(List<TempVariable> uses)
-        {
-            _uses = uses;
-        }
-
-        public void Visit(TempVariable temp)
-        {
-            _uses.Add(temp);
+            return _regionByLirIndex;
         }
     }
 }

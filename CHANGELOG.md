@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): share immutable LIR definition/use and ordered operand analysis
+  across stack-scheduler stages; reuse private residency/ownership buffers and
+  unchanged region/liveness layouts while retaining independent validation and
+  fresh identity fallback.
 - compiler: specialize stable parameters for closed-world local function
   expressions, extending callsite-driven typed signatures beyond declarations
   and arrows while preserving generic fallback for escapes, mixed callsites,

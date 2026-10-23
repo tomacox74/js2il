@@ -331,6 +331,44 @@ public sealed class LIRStackScheduleValidatorTests
                     LIRStackScheduleValidationBehavior.Throw)));
     }
 
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    public void ValidateOrFallback_EveryOptimizedMode_RebuildsCleanIdentity(int modeValue)
+    {
+        var body = CreateNumericReturnBody();
+        var mode = (LIRStackSchedulerMode)modeValue;
+        var optimized = LIRStackScheduler.Build(body, new LIRStackSchedulerOptions(mode));
+        System.Array.Fill(optimized.TempResidencies, TempResidency.ScheduledInline);
+        System.Array.Fill(optimized.OwnedTemps, true);
+        System.Array.Fill(optimized.EffectiveLastUses, int.MaxValue);
+        var invalid = optimized with { Operations = optimized.Operations[..^1] };
+
+        var fallback = LIRStackScheduler.ValidateOrFallback(
+            body,
+            invalid,
+            new LIRStackSchedulerOptions(
+                mode,
+                LIRStackScheduleValidationBehavior.FallbackToIdentity));
+        var identity = LIRStackScheduler.Identity(body);
+
+        Assert.Equal(LIRStackSchedulerMode.Identity, fallback.Mode);
+        Assert.Equal(1, fallback.Metrics.ValidationFallbackCount);
+        Assert.NotNull(fallback.ValidationFailureReason);
+        Assert.NotSame(optimized.TempResidencies, fallback.TempResidencies);
+        Assert.NotSame(optimized.OwnedTemps, fallback.OwnedTemps);
+        Assert.NotSame(optimized.EffectiveLastUses, fallback.EffectiveLastUses);
+        Assert.Equal(identity.Operations, fallback.Operations);
+        Assert.Equal(identity.Regions, fallback.Regions);
+        Assert.Equal(identity.TempResidencies, fallback.TempResidencies);
+        Assert.Equal(identity.OwnedTemps, fallback.OwnedTemps);
+        Assert.Equal(identity.EffectiveLastUses, fallback.EffectiveLastUses);
+    }
+
     [Fact]
     public void Validate_ScheduledInlineCallDefinition_Throws()
     {
