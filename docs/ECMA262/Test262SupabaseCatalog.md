@@ -855,7 +855,8 @@ production backup. Those remain separate operational acceptance before cutover.
 A terminal **collection batch** is not full-suite completion, conformance, native
 acceptance or publication success. A bounded batch can be `complete` with failing
 JavaScript tests and unexecuted required variants. Run/budget/publication states
-are separate; this path does not settle reservations or rewrite publication records.
+are separate. The budget follow-up below settles only proven abandoned reservations;
+publication reconciliation runs independently.
 
 Deploy reviewed migration
 `20261023170000_test262_catalogue_run_lifecycle.sql` before enabling the new
@@ -906,6 +907,81 @@ python -m scripts.test262.central.cli reconcile-runs \
 ```
 
 These commands never publish a PR, enroll a writer, change authority, replay a
-legacy import or close a shared budget. Retain finalization and reconciliation
+legacy import. Retain finalization and reconciliation
 reports with the existing recovery/retention policy. Live migration and historical
 repair are operational steps after PR review, not implied by disposable test success.
+
+## Budget lifecycle and independent publication recovery (#2344)
+
+Deploy `20261023193000_test262_catalogue_budget_lifecycle.sql` after the #2332
+migration and before running this code in production. It changes no historical
+rows or authority settings. It extends the existing claim API and adds the
+coordinator-only, epoch-fenced `api_finish_budget(epoch, id, apply)` endpoint.
+Existing scoped reads/exports include `ended_at`, `claim_cap_ms` and `lifecycle`.
+The lifecycle receipt and `finish-budget`/`reopen-budget` audits retain counters,
+run/attempt/SHA, collection proof, reason and before/after values.
+
+| Budget state | Meaning |
+| --- | --- |
+| `open` | Active or awaiting proven collection termination/settlement. Zero reservations alone proves nothing. |
+| `closed`, reason `drained` | Collection completed, reservations settled, and all selected work is terminal (completed, deferred or cancelled). This does not establish test success or full-suite coverage. |
+| `exhausted` | Pending work exists but the attempt limit or remaining time cannot fund another claim at the recorded cap. Historical unknown caps remain explicit; they are not guessed. |
+| `interrupted` | Collection failed/incomplete, or a successful bounded worker stopped with pending work and remaining capacity. |
+| `cancelled` | The latest proven collection attempt was cancelled; pending evidence/work remains retained. |
+
+Only `run` scopes with an exact `actions:<run ID>` key are finalized. All matching
+attempts must belong to the trusted coordinator and have #2332 terminal proof.
+Unproven/active attempts, foreign/ambiguous ownership, mismatched accounting and
+live leases/reservations are reported and left unchanged. No counters are inferred
+from test results. The same repository advisory lock serializes finalization with
+claims/completions. Only expired reservations can be conservatively charged through
+the existing settlement API, once, at their full reserved amount. Expired work
+returns to pending/deferred as in claim recovery. Recovery outboxes are not
+downloaded/deleted; later evidence can still be ingested without double charging.
+
+Normal finalization follows durable outbox flush and #2332 run finalization. If
+it crashes between those operations, replay of `finalize` recovers the budget
+even when the run is already terminal. The existing collection reconciliation
+workflow also reconciles budgets after runs; an exact Actions ID scopes both.
+An active lease may require a later reconciliation after expiry. Repeating the
+same terminal budget receipt preserves its timestamp and counters. A strictly
+newer Actions attempt can reopen the same scope on its first claim; charged
+attempts/time, limits and membership remain cumulative, and the claim cap cannot
+change. Prior terminal receipts remain in the audit history. A retry without
+claims is finalized against its own latest terminal run proof.
+
+```bash
+python -m scripts.test262.central.cli reconcile-budgets --limit 100
+python -m scripts.test262.central.cli reconcile-budgets --actions-run-id 40008295578 --apply
+python -m scripts.test262.central.cli reconcile-publications --pr-number 2326
+python -m scripts.test262.central.cli reconcile-publications --pr-number 2326 --apply
+```
+
+Both commands default to dry-run, inspect at most 100 records and enforce a
+ten-minute processing deadline. Budget plans execute under the same database
+lock as apply, but dry-run never settles reservations. Publication reconciliation
+reuses the publisher's existing reservation recovery/head fencing, with bounded
+30-second GitHub/git network calls and isolated unavailable-history reports.
+It never pushes, creates/reopens PRs, recreates branches, executes fixtures or
+generates acceptance. Merged/closed PRs can reconcile after branch deletion;
+an open PR with a deleted/changed branch loses ownership. Changed PR heads lose
+ownership even if merged. Existing `ownership-lost`/`blocked` records are not
+promoted to accepted evidence. Missing/ambiguous history stays unresolved.
+
+**Test262 publication reconciliation** runs on reviewed master in the protected
+coordinator environment after central completion (including no-patch/MVP runs).
+Manual dispatch defaults to `apply=false` and accepts an optional exact PR number.
+It uses read-only GitHub permissions and retains sanitized before/after
+publication, batch, provenance, expected head, target revision and check receipts.
+No publisher credentials are required. #2340 scheduling may invoke these bounded
+paths; #2341 monitoring should show unresolved dispositions, deadline limits,
+pending work and explicit ownership loss rather than treating them as success.
+Scopes that occupy a bounded scan can be inspected with an exact Actions ID/PR.
+
+After review/merge: take a fresh verified backup, apply the additive migration,
+inspect dry runs, then apply only reviewed scopes. Verify stale PR #2326 with
+its original batch/head/provenance links; #2276 is an already-merged baseline
+and #2315's changed-head ownership fence must remain. Retain before/after
+receipts, verify counters/evidence are unchanged except conservative expired
+charges, and run one scoped no-publication batch to prove automatic finalization.
+These are live acceptance steps, separate from disposable regression coverage.

@@ -14,6 +14,116 @@ ROOT=Path(__file__).resolve().parents[3]
 
 @unittest.skipUnless(DSN,'Disposable PostgreSQL TEST262_TEST_DSN required')
 class PostgresTests(unittest.TestCase):
+    def budget_fixture(self, count=1, attempts=5, milliseconds=5000):
+        run,budget,provenance=[str(uuid.uuid4()) for _ in range(3)]
+        key='actions:'+str(uuid.uuid4().int)
+        self.db.execute("INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256) VALUES(%s,%s,%s,'native',1,sha256(%s::bytea),'{}',sha256('cap'::bytea))",(provenance,self.repo,self.corpus,provenance.encode()))
+        self.db.execute("INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms) VALUES(%s,%s,'run',%s,10,10,%s,%s)",(budget,self.repo,key,attempts,milliseconds))
+        for fixture in self.fixtures[:count]:
+            work=str(uuid.uuid4())
+            self.db.execute("INSERT INTO test262.work_items(work_item_id,repository_id,provenance_id,fixture_id,variant,coherent_area,attempt_limit) VALUES(%s,%s,%s,%s,'strict','test',3)",(work,self.repo,provenance,fixture))
+            self.db.execute('INSERT INTO test262.budget_work_items VALUES(%s,%s,%s)',(self.repo,budget,work))
+        with self.worker() as db:
+            db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb(dict(run_id=run,provenance_id=provenance,external_run_key=key+':1',source_revision='c'*40,run_kind='native')),))
+        return run,budget,provenance,key
+
+    def end_budget_run(self, db, run, key, state='complete', attempt=1):
+        if state=='complete':
+            db.execute("SELECT test262.api_metric(1,%s,'screening',1,10,0,0)",(run,))
+        proof=dict(source='supervisor',external_run_key=f'{key}:{attempt}',source_revision='c'*40,
+                   reason='collection-finished' if state=='complete' else ('job-cancelled' if state=='cancelled' else 'job-failed'),
+                   flush_verified=state=='complete')
+        return db.execute('SELECT test262.api_finish_run(1,%s,%s,clock_timestamp(),%s)',(run,state,Jsonb(proof))).fetchone()[0]
+
+    def complete_budget_work(self, db, run, claim, outcome='pass', ms=20):
+        observation=str(uuid.uuid4())
+        row=dict(observation_id=observation,repository_id=self.repo,run_id=run,provenance_id=claim['provenance_id'],
+                 fixture_id=claim['fixture_id'],variant=claim['variant'],work_item_id=claim['work_item_id'],
+                 lease_generation=claim['lease_generation'],outcome=outcome,phase='runtime',active_ms=ms,
+                 started_at='2026-10-23T00:00:00Z',finished_at='2026-10-23T00:00:01Z',source_kind='live',payload={})
+        db.execute('SELECT test262.api_ingest(1,%s,%s)',(str(uuid.uuid4()),Jsonb([row])))
+        return db.execute('SELECT test262.api_complete(1,%s,%s,%s)',(claim['work_item_id'],claim['lease_generation'],observation)).fetchone()[0]
+
+    def test_budget_drained_ignores_test_outcomes_and_replay_keeps_receipt(self):
+        run,budget,_,key=self.budget_fixture()
+        with self.worker() as db:
+            claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget)).fetchone()[0]
+            self.complete_budget_work(db,run,claim,outcome='fail')
+            self.end_budget_run(db,run,key)
+            dry=db.execute('SELECT test262.api_finish_budget(1,%s,false)',(budget,)).fetchone()[0]
+            self.assertEqual((dry['state'],dry['reason']),('closed','drained'))
+            self.assertEqual(self.db.execute('SELECT state FROM test262.budget_scopes WHERE budget_scope_id=%s',(budget,)).fetchone()[0],'open')
+            result=db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['result']
+            again=db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]
+            self.assertEqual(again['result'],result)
+            self.assertEqual((result['charged_attempts'],result['charged_ms'],result['reserved_attempts']),(1,20,0))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM test262.audit_events WHERE action='finish-budget' AND details->'after'->>'budget_scope_id'=%s",(budget,)).fetchone()[0],1)
+
+    def test_budget_live_lease_is_preserved_then_expiry_is_conservatively_settled_once(self):
+        run,budget,_,key=self.budget_fixture()
+        with self.worker() as db:
+            claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget)).fetchone()[0]
+            self.end_budget_run(db,run,key,state='failed')
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['disposition'],'live-reservations')
+            self.db.execute("UPDATE test262.work_items SET lease_expires_at=clock_timestamp()-interval '1 second' WHERE work_item_id=%s",(claim['work_item_id'],))
+            self.db.execute("UPDATE test262.work_leases SET claimed_at=clock_timestamp()-interval '1 minute',expires_at=clock_timestamp()-interval '1 second' WHERE work_item_id=%s",(claim['work_item_id'],))
+            dry=db.execute('SELECT test262.api_finish_budget(1,%s,false)',(budget,)).fetchone()[0]
+            self.assertEqual((dry['state'],dry['charged_ms'],dry['expired_reservations']),('interrupted',1000,1))
+            self.assertEqual(self.db.execute('SELECT reserved_attempts,charged_attempts FROM test262.budget_scopes WHERE budget_scope_id=%s',(budget,)).fetchone(),(1,0))
+            result=db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['result']
+            self.assertEqual((result['charged_attempts'],result['charged_ms'],result['reserved_attempts']),(1,1000,0))
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['result'],result)
+            # Lost local evidence can still arrive after conservative settlement;
+            # it is retained without replacing the charge or reviving the lease.
+            self.assertTrue(self.complete_budget_work(db,run,claim)['retained_late_evidence'])
+            self.assertEqual(self.db.execute('SELECT charged_ms FROM test262.budget_scopes WHERE budget_scope_id=%s',(budget,)).fetchone()[0],1000)
+
+    def test_budget_retry_reopens_only_new_attempt_and_keeps_cumulative_limits(self):
+        run,budget,provenance,key=self.budget_fixture(count=2,attempts=2,milliseconds=5000)
+        with self.worker() as db:
+            claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget)).fetchone()[0]
+            self.complete_budget_work(db,run,claim)
+            self.end_budget_run(db,run,key)
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['state'],'interrupted')
+            retry=str(uuid.uuid4())
+            db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb(dict(run_id=retry,provenance_id=provenance,external_run_key=key+':2',source_revision='c'*40,run_kind='native')),))
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['disposition'],'active-or-unproven-run')
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_claim(1,%s,%s,2000,32)',(retry,budget))
+            second=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(retry,budget)).fetchone()[0]
+            self.complete_budget_work(db,retry,second)
+            self.end_budget_run(db,retry,key,attempt=2)
+            result=db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['result']
+            self.assertEqual((result['state'],result['charged_attempts'],result['charged_ms']),('closed',2,40))
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM test262.audit_events WHERE action='reopen-budget' AND details->>'run_id'=%s",(retry,)).fetchone()[0],1)
+
+    def test_budget_exhaustion_uses_cap_not_zero_reservations_and_cancellation_is_distinct(self):
+        for state,expected,milliseconds in [('complete','exhausted',1000),('complete','interrupted',5000),('cancelled','cancelled',5000)]:
+            run,budget,_,key=self.budget_fixture(count=2,milliseconds=milliseconds)
+            with self.worker() as db:
+                claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget)).fetchone()[0]
+                self.complete_budget_work(db,run,claim)
+                self.end_budget_run(db,run,key,state=state)
+                result=db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]
+                self.assertEqual(result['state'],expected)
+                self.assertEqual(result['pending_work'],1)
+
+    def test_budget_permissions_unproven_runs_and_foreign_scope_are_fenced(self):
+        run,budget,_,key=self.budget_fixture(count=0)
+        with self.worker() as db:
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['disposition'],'active-or-unproven-run')
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_finish_budget(0,%s,true)',(budget,))
+            unrelated,_,_,_=self.budget_fixture(count=0)
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(unrelated,budget))
+            self.end_budget_run(db,run,key,state='failed')
+            self.assertEqual(db.execute('SELECT test262.api_finish_budget(1,%s,true)',(budget,)).fetchone()[0]['state'],'interrupted')
+        for role in ('anon','authenticated','service_role','test262_ingest','test262_reporter'):
+            self.assertFalse(self.db.execute("SELECT has_function_privilege(%s,'test262.api_finish_budget(bigint,uuid,boolean)','EXECUTE')",(role,)).fetchone()[0])
+
     @classmethod
     def setUpClass(cls):
         cls.db=psycopg.connect(DSN,autocommit=True)

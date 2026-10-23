@@ -34,6 +34,15 @@ def parser():
     r.add_argument('--actions-run-id',type=int)
     r.add_argument('--actions-run-attempt',type=int)
     r.add_argument('--apply',action='store_true')
+    b=sub.add_parser('reconcile-budgets',help='Inspect settled terminal run budgets; dry-run unless --apply')
+    b.add_argument('--limit',type=int,default=100)
+    b.add_argument('--actions-run-id',type=int)
+    b.add_argument('--apply',action='store_true')
+    publication=sub.add_parser('reconcile-publications',help='Reconcile existing reservations only; never publishes')
+    publication.add_argument('--repository-name',default='tomacox74/js2il')
+    publication.add_argument('--limit',type=int,default=100)
+    publication.add_argument('--pr-number',type=int)
+    publication.add_argument('--apply',action='store_true')
     q=sub.add_parser('prepare')
     q.add_argument('--kind',choices=['mvp-composite','native'],required=True)
     q.add_argument('--repository-name',default='tomacox74/js2il')
@@ -87,6 +96,13 @@ def main(argv=None):
         elif args.command in ('finalize','reconcile-runs'):
             from . import lifecycle
             result=getattr(lifecycle,args.command.replace('-','_'))(client,args)
+        elif args.command=='reconcile-budgets':
+            from .budgets import reconcile_budgets
+            result=reconcile_budgets(client,args)
+        elif args.command=='reconcile-publications':
+            from .publication import reconcile_publications
+            result=reconcile_publications(client,args.repository_name,limit=args.limit,
+                                          pr_number=args.pr_number,apply=args.apply)
         elif args.command=='publish':
             from .publication import publish
             result=publish(client,args)

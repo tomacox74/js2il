@@ -225,3 +225,40 @@ class PublicationRecoveryTests(unittest.TestCase):
         self.assertEqual(self.client.publication['state'],'merged')
         self.assertFalse(self.git('ls-remote','--heads','origin',branch))
         self.assertEqual(self.creates,1)
+
+    def test_reconciliation_only_dry_run_then_apply_and_replay_after_branch_deletion(self):
+        head=self.seed_pushed_reservation(); branch=self.client.publication['branch_name']
+        self.client.publication.update(state='open',expected_head=head,pr_number=81)
+        self.git('push','origin','--delete',branch)
+        pr={'merged':True,'state':'closed','head':{'sha':head,'ref':branch,'repo':{'full_name':'test/repo'}},'base':{'ref':'master'}}
+        with patch.object(pub,'gh',return_value=pr):
+            dry=pub.reconcile_publications(self.client,'test/repo',pr_number=81,apply=False)
+            self.assertEqual(dry['publications'][0]['transitions'][0]['state'],'merged')
+            self.assertEqual(self.client.publication['state'],'open')
+            self.assertEqual(self.client.transitions,[])
+            applied=pub.reconcile_publications(self.client,'test/repo',pr_number=81)
+            self.assertEqual(applied['publications'][0]['before']['expected_head'],head)
+            self.assertEqual(applied['publications'][0]['after']['state'],'merged')
+            self.assertEqual(pub.reconcile_publications(self.client,'test/repo')['publications'],[])
+        self.assertEqual(self.creates,0)
+        self.assertFalse(self.git('ls-remote','--heads','origin',branch))
+
+    def test_missing_history_does_not_change_publication_or_leak_error(self):
+        head=self.seed_pushed_reservation()
+        self.client.publication.update(state='open',expected_head=head,pr_number=81)
+        with patch.object(pub,'gh',side_effect=subprocess.CalledProcessError(1,['gh'],stderr='private token')):
+            report=pub.reconcile_publications(self.client,'test/repo')
+        self.assertEqual(report['publications'][0]['disposition'],'history-unavailable-or-invalid')
+        self.assertNotIn('private token',json.dumps(report))
+        self.assertEqual(self.client.transitions,[])
+
+    def test_open_deleted_branch_is_fenced_and_closed_unmerged_is_deferred(self):
+        head=self.seed_pushed_reservation();branch=self.client.publication['branch_name']
+        self.git('push','origin','--delete',branch)
+        for state,expected in [('open','ownership-lost'),('closed','closed-deferred')]:
+            self.client.publication.update(state='open',expected_head=head,pr_number=81,version=0)
+            pr={'merged':False,'state':state,'head':{'sha':head,'ref':branch,'repo':{'full_name':'test/repo'}},'base':{'ref':'master'}}
+            with patch.object(pub,'gh',return_value=pr):
+                pub.reconcile_publications(self.client,'test/repo')
+            self.assertEqual(self.client.publication['state'],expected)
+        self.assertEqual(self.creates,0)
