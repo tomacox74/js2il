@@ -8,6 +8,7 @@ public sealed class CallableMaterializationAnalysisTests
     [Theory]
     [InlineData("const target = value => value + 1; target(2);")]
     [InlineData("const target = function (value) { return value + 1; }; target(2);")]
+    [InlineData("\"use strict\"; const target = function (value) { return value + 1; }; target(2);")]
     public void DirectOnlyBindingsAreClassifiedWithoutBailouts(string source)
     {
         var binding = Analyze(source, "target");
@@ -147,6 +148,9 @@ public sealed class CallableMaterializationAnalysisTests
     [InlineData(
         "const target = () => 1; function invoke() { return target(); } invoke();",
         CallableMaterializationReason.CapturedValueRead)]
+    [InlineData(
+        "\"use strict\"; const target = function () { return this; }; target();",
+        CallableMaterializationReason.InvocationContextRequired)]
     public void ObservableOrUncertainUsesRequireMaterialization(
         string source,
         CallableMaterializationReason expectedReason)

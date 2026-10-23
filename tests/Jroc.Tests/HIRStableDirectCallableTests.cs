@@ -16,6 +16,7 @@ public class HIRStableDirectCallableTests
     [InlineData("let target = value => value + 1; target(2);")]
     [InlineData("var target = value => value + 1; target(2);")]
     [InlineData("const target = function (value, ...rest) { return value + rest.length; }; target(2);")]
+    [InlineData("const target = function () { \"use strict\"; return 1; }; target();")]
     public void StableCallableCall_CarriesCanonicalDirectTarget(string source)
     {
         var (program, module, method) = ParseProgram(source);
@@ -50,7 +51,6 @@ public class HIRStableDirectCallableTests
     [InlineData("target(); const target = () => 1;")]
     [InlineData("const target = (left, right) => left + right; target(...[1, 2]);")]
     [InlineData("const target = () => this; target();")]
-    [InlineData("const target = function () { \"use strict\"; return 1; }; target();")]
     [InlineData("const target = async () => 1; target();")]
     [InlineData("const target = function* () { yield 1; }; target();")]
     [InlineData("const target = function self() { return self; }; target();")]

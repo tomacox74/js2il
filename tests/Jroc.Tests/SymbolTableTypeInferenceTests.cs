@@ -1495,7 +1495,7 @@ public class SymbolTableTypeInferenceTests
     public void SymbolTable_InferTypes_StableParameters_FunctionExpression_DirectCallsInferNumbers()
     {
         var source = @"
-                const add = function addNumbers(a, b) {
+                const add = function (a, b) {
                     return a + b;
                 };
 
@@ -1507,7 +1507,8 @@ public class SymbolTableTypeInferenceTests
         var functionScope = FindFirstScope(symbolTable.Root, s =>
             s.Kind == ScopeKind.Function
             && s.AstNode is FunctionExpression
-            && string.Equals(s.Name, "addNumbers", StringComparison.Ordinal));
+            && s.Parameters.Contains("a")
+            && s.Parameters.Contains("b"));
 
         Assert.NotNull(functionScope);
         AssertStableParameterTypes(

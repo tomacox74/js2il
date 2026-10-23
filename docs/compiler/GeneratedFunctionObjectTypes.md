@@ -40,6 +40,13 @@ an uncertain parameter does not prevent independent safe positions from being
 specialized. Recursive cycles without sufficient external type evidence also
 remain generic.
 
+Strict mode alone does not require a function object. A closed-world ordinary
+function expression remains direct-only when neither its body nor its nested
+arrows observe `this`, `arguments`, or `new.target`; typed callsites then pass
+value-type arguments directly. If invocation context is observable, the
+callable is materialized and the generic adapter remains the semantics-safe
+boundary.
+
 ## Metadata emission
 
 After scope TypeDefs exist, but before callable body compilation, the emitter

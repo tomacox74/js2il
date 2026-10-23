@@ -9,7 +9,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - compiler: specialize stable parameters for closed-world local function
   expressions, extending callsite-driven typed signatures beyond declarations
   and arrows while preserving generic fallback for escapes, mixed callsites,
-  and unresolved recursion.
+  and unresolved recursion. Keep strict ordinary function expressions
+  direct-only when their invocation context is unobservable, avoiding function
+  object construction and argument boxing at typed callsites.
 - fix(test262): preserve YAML null, numeric and boolean specification identifiers
   and distinguish quoted strings in catalogue ingestion, enrichment and exports.
   Keep runner eligibility unchanged and reject conflicting immutable annotations
