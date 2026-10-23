@@ -292,6 +292,12 @@ namespace Jroc.Tests.Function
         public Task Function_ParameterTypeInference_DirectRotateArrayArgument() { var testName = nameof(Function_ParameterTypeInference_DirectRotateArrayArgument); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_ParameterTypeInference_DirectFunctionExpression() { var testName = nameof(Function_ParameterTypeInference_DirectFunctionExpression); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_FunctionExpressionValueEscapes() { var testName = nameof(Function_ParameterTypeInference_FunctionExpressionValueEscapes); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_ParameterTypeInference_BinaryArguments() { var testName = nameof(Function_ParameterTypeInference_BinaryArguments); return ExecutionTest(testName); }
 
         [Fact]

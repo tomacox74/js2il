@@ -1492,6 +1492,148 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_DirectCallsInferNumbers()
+    {
+        var source = @"
+                const add = function (a, b) {
+                    return a + b;
+                };
+
+                add(1, 2);
+                add(4, 5);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.AstNode is FunctionExpression
+            && s.Parameters.Contains("a")
+            && s.Parameters.Contains("b"));
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterTypes(
+            functionScope!,
+            ("a", typeof(double)),
+            ("b", typeof(double)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_MixedCallsKeepConflictingParameterObjectTyped()
+    {
+        var source = @"
+                const add = function addValues(a, b) {
+                    return a + b;
+                };
+
+                add(1, 2);
+                add('1', 5);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.AstNode is FunctionExpression
+            && string.Equals(s.Name, "addValues", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Single(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "a");
+        AssertStableParameterType(functionScope, 1, "b", typeof(double));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_EscapeKeepsObjectParameters()
+    {
+        var source = @"
+                const add = function addNumbers(a, b) {
+                    return a + b;
+                };
+
+                module.exports = add;
+                add(1, 2);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.AstNode is FunctionExpression
+            && string.Equals(s.Name, "addNumbers", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "a");
+        AssertObjectParameter(functionScope, "b");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_ImmediateCallInfersNumbers()
+    {
+        var symbolTable = BuildSymbolTable("""
+            (function target(value) {
+                if (value === 0) return target(1);
+                return value;
+            })(2);
+            """);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.AstNode is FunctionExpression { Id.Name: "target" });
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterType(functionScope!, 0, "value", typeof(double));
+    }
+
+    [Theory]
+    [InlineData("const holder = { target: FUNCTION }; holder.target('text');")]
+    [InlineData("function factory() { return FUNCTION; } factory()('text');")]
+    [InlineData("function invoke(callback) { return callback('text'); } invoke(FUNCTION);")]
+    [InlineData("const targets = [FUNCTION]; targets[0]('text');")]
+    [InlineData("let target; target = FUNCTION; target('text');")]
+    [InlineData("const target = true ? FUNCTION : null; target('text');")]
+    [InlineData("const target = (0, FUNCTION); target('text');")]
+    [InlineData("function invoke(target = FUNCTION) { return target('text'); } invoke();")]
+    [InlineData("class Holder { target = FUNCTION; } new Holder().target('text');")]
+    [InlineData("(new FUNCTION('text'));")]
+    [InlineData("const { target = FUNCTION } = {}; target('text');")]
+    [InlineData("var target = FUNCTION; var target; target('text');")]
+    public void SymbolTable_InferTypes_StableParameters_FunctionExpression_ValueEscapeKeepsObjectParameters(string source)
+    {
+        source = source.Replace("FUNCTION", """
+            function inner(value) {
+                if (value === 0) return inner(1);
+                return value;
+            }
+            """, StringComparison.Ordinal);
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.AstNode is FunctionExpression { Id.Name: "inner" });
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_RecursiveFunctionExpressionFallsBackConservatively()
+    {
+        var source = @"
+                const sum = function sum(value) {
+                    return value === 0 ? 0 : value + sum(value - 1);
+                };
+
+                sum(4);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.AstNode is FunctionExpression
+            && string.Equals(s.Name, "sum", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_StableParameters_ClassMethod_DirectThisCalls()
     {
         var source = @"

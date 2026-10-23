@@ -99,8 +99,7 @@ internal static class StableDirectCallableEligibility
             FunctionExpression { Id: Identifier } =>
                 CallableMaterializationReason.NamedFunctionExpression,
             FunctionExpression function
-                when ArgumentsObjectSemantics.IsStrictScope(callableScope)
-                    || UsesOrdinaryFunctionObjectContext(function) =>
+                when UsesOrdinaryFunctionObjectContext(function) =>
                 CallableMaterializationReason.InvocationContextRequired,
             _ => CallableMaterializationReason.None
         };
