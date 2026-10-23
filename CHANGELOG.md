@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler: specialize stable parameters for closed-world local function
+  expressions, extending callsite-driven typed signatures beyond declarations
+  and arrows while preserving generic fallback for escapes, mixed callsites,
+  and unresolved recursion.
 
 ## v0.12.31 - 2026-10-15
 

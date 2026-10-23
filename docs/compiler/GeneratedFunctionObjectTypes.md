@@ -21,8 +21,24 @@ change the generated object layout.
 
 `GeneratedFunctionObjectRegistry` is the canonical `CallableId`-keyed store.
 It preserves discovery order, rejects inconsistent replanning, supports strict
-lookup after phase 1, and keeps canonical plus future #737 specialized entry
-points on one generated type and JavaScript identity.
+lookup after phase 1, and keeps each canonical typed entry point and its
+generic JavaScript adapter on one generated type and JavaScript identity.
+
+## Closed-world parameter specialization
+
+Callsite inference can specialize simple parameters on module-local function
+declarations, arrows, function expressions, class methods, and constructors.
+A parameter receives a typed CLR ABI only when every visible direct call or
+construction site supplies the same supported stable type and the callable
+does not escape. Numeric callsites therefore use `double` parameters directly
+instead of boxing arguments and coercing them again in the callee.
+
+Exports, aliases, value uses, computed or unresolved calls, spread arguments,
+conflicting argument types, default/rest/`arguments` requirements, and unsafe
+parameter writes retain the generic `object` ABI. Inference is positional, so
+an uncertain parameter does not prevent independent safe positions from being
+specialized. Recursive cycles without sufficient external type evidence also
+remain generic.
 
 ## Metadata emission
 

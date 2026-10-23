@@ -310,6 +310,19 @@ namespace Jroc.Tests.Function
         }
 
         [Fact]
+        public Task Function_ParameterTypeInference_DirectFunctionExpression()
+        {
+            var testName = nameof(Function_ParameterTypeInference_DirectFunctionExpression);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var functionType = moduleType.GetNestedType("addNumbers", BindingFlags.Public | BindingFlags.NonPublic)!;
+                var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                Assert.Equal(new[] { typeof(double), typeof(double) }, callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray());
+            });
+        }
+
+        [Fact]
         public Task Function_ParameterTypeInference_BinaryArguments()
         {
             var testName = nameof(Function_ParameterTypeInference_BinaryArguments);

@@ -84,12 +84,7 @@ public partial class SymbolTableBuilder
         {
             if (IsWithinExportDeclaration(
                     candidate.Scope.AstNode,
-                    parentMap)
-                || (candidate.Scope.AstNode is FunctionExpression
-                    && parentMap.TryGetValue(
-                        candidate.Scope.AstNode,
-                        out var parent)
-                    && parent is not Acornima.Ast.MethodDefinition))
+                    parentMap))
             {
                 candidate.IsCallableUnsafe = true;
             }
@@ -559,6 +554,7 @@ public partial class SymbolTableBuilder
 
         if (scope.Parent?.Kind != ScopeKind.Class
             && scope.AstNode is not FunctionDeclaration
+            && scope.AstNode is not FunctionExpression
             && scope.AstNode is not ArrowFunctionExpression)
         {
             return false;
