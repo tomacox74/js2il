@@ -1,4 +1,5 @@
 import copy
+from contextlib import contextmanager
 from datetime import datetime, timezone, timedelta
 import json
 from pathlib import Path
@@ -9,7 +10,7 @@ from unittest.mock import patch
 
 from scripts.test262.central.client import sha
 from scripts.test262.central.specification_backfill import (
-    AnnotationWriter, CanaryPause, annotations, recovery_receipt, retained_fingerprints, run,
+    AnnotationWriter, CanaryPause, annotations, recovery_receipt, retained_fingerprints, run, snapshot,
 )
 
 
@@ -54,7 +55,8 @@ class SpecificationBackfillTests(unittest.TestCase):
         payload = {'fixture_id': 'f', 'metadata': {'es6id': 1e-7}}
         row = dict(payload, actor='coordinator', recorded_at='now')
         expected = {'f': sha(payload, database_numbers=True)}
-        client = SimpleNamespace(read=lambda *args, **kwargs: iter([row]))
+        from contextlib import nullcontext
+        client = SimpleNamespace(view=lambda: nullcontext(), export_rows=lambda table: (r for r in [row]))
         self.assertEqual(annotations(client, expected), {'f': sha(row)})
         row['actor'] = ''
         with self.assertRaises(ValueError):
@@ -63,6 +65,75 @@ class SpecificationBackfillTests(unittest.TestCase):
         row['metadata'] = {'es6id': '1e-7'}
         with self.assertRaises(ValueError):
             annotations(client, expected)
+
+    def test_verification_scans_are_scoped_snapshots_and_close_on_conflict(self):
+        payload = {'fixture_id': 'f', 'metadata': {'es6id': 1e-7}}
+        row = dict(payload, actor='coordinator', recorded_at='now')
+        active = []
+        closed = []
+
+        @contextmanager
+        def view():
+            self.assertEqual(active, [])  # No nested transaction isolation changes.
+            active.append(True)
+            try:
+                yield
+            finally:
+                active.pop()
+
+        def scan(table):
+            self.assertTrue(active)
+            try:
+                # Unrelated annotations remain excluded from the selected corpus proof.
+                yield dict(row, fixture_id='other')
+                yield row
+                self.fail('Conflict should stop and close the cursor immediately')
+            finally:
+                closed.append(table)
+
+        client = SimpleNamespace(view=view, export_rows=scan)
+        with self.assertRaises(ValueError):
+            annotations(client, {'f': 'conflicting digest'})
+        self.assertEqual(active, [])
+        self.assertEqual(closed, ['fixture_specification_metadata'])
+
+    def test_snapshot_keeps_filtered_inventory_and_order_independent_bulk_fingerprints(self):
+        active = []
+        closed = []
+        bulk = {'observations': [{'observation_id': 'b'}, {'observation_id': 'a'}],
+                'observation_payloads': [{'observation_id': 'a'}],
+                'fixture_specification_metadata': [{'fixture_id': 'f'}]}
+
+        @contextmanager
+        def view():
+            active.append(True)
+            try:
+                yield
+            finally:
+                active.pop()
+
+        def read(table, filters, page):
+            self.assertTrue(active)
+            self.assertEqual(filters, {'corpus_id': 'c'})
+            self.assertEqual(page, 1000)
+            key = 'corpus_id' if table == 'corpora' else 'fixture_id'
+            yield {key: 'c' if table == 'corpora' else 'f'}
+
+        def export(table):
+            self.assertTrue(active)
+            try:
+                yield from bulk[table]
+            finally:
+                closed.append(table)
+
+        client = SimpleNamespace(view=view, read=read, export_rows=export,
+                                 db=SimpleNamespace(execute=lambda sql: SimpleNamespace(
+                                     fetchone=lambda: ('token', datetime(2026, 10, 22, tzinfo=timezone.utc)))))
+        proof = snapshot(client, 'c')
+        self.assertEqual(proof['rows']['fixtures'], {'f': sha({'fixture_id': 'f'})})
+        self.assertEqual(proof['rows']['observations'], {r['observation_id']: sha(r) for r in bulk['observations']})
+        self.assertEqual(set(closed), set(bulk))
+        self.assertEqual(active, [])
 
     def test_recovery_requires_recent_retained_catalogue_only_matching_run(self):
         report = {'backup_verified': True, 'bucket_retention_verified': True,
