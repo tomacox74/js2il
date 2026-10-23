@@ -1,5 +1,11 @@
 # Bounded Differential Test Harness
 
+The [Node compatibility measurement baseline](../../docs/nodejs/compatibility/README.md)
+defines the pinned reference, API/behavior identities, outcome vocabulary and
+denominators for future Node-specific evidence. This existing harness is a
+foundation for that work; passing its selected corpus is not an overall
+Node.js compatibility percentage.
+
 Detects semantic regressions by running every JS program under **both Node.js
 and JROC** and comparing the observable output (stdout, exit code).  Any
 mismatch is a potential compiler bug.
@@ -117,4 +123,3 @@ node   scripts/differential-test/corpus/loop-for.js
 dotnet src/Cli/bin/Release/net10.0/Jroc.dll scripts/differential-test/corpus/loop-for.js -o /tmp/out
 dotnet /tmp/out/loop-for.dll
 ```
-

@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:jroc:nodejs-compatibility:artifacts:v1",
+  "title": "JROC Node.js compatibility inventory and reference-environment artifacts",
+  "oneOf": [
+    { "$ref": "#/definitions/inventory" },
+    { "$ref": "#/definitions/environment" }
+  ],
+  "definitions": {
+    "text": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "revision": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "httpsUrl": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "strings": { "type": "array", "items": { "$ref": "#/definitions/text" }, "uniqueItems": true },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "feature"],
+      "properties": {
+        "platform": { "$ref": "#/definitions/text" },
+        "feature": { "$ref": "#/definitions/text" }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeVersion", "sourceRevision", "documentationUrl", "documentationSha256", "platform", "architecture", "dotnetSdk", "dotnetRuntime"],
+      "properties": {
+        "nodeVersion": { "$ref": "#/definitions/version" },
+        "sourceRevision": { "$ref": "#/definitions/revision" },
+        "documentationUrl": { "$ref": "#/definitions/httpsUrl" },
+        "documentationSha256": { "$ref": "#/definitions/sha256" },
+        "platform": { "$ref": "#/definitions/text" },
+        "architecture": { "$ref": "#/definitions/text" },
+        "dotnetSdk": { "$ref": "#/definitions/version" },
+        "dotnetRuntime": { "$ref": "#/definitions/version" }
+      }
+    },
+    "hashedFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/definitions/text" },
+        "sha256": { "$ref": "#/definitions/sha256" }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "source", "sha256", "nodeVersion", "members", "implementations", "overrides"],
+      "dependencies": {
+        "adapterSource": ["adapterSha256"],
+        "adapterSha256": ["adapterSource"]
+      },
+      "properties": {
+        "module": { "$ref": "#/definitions/text" },
+        "type": { "$ref": "#/definitions/text" },
+        "source": { "$ref": "#/definitions/text" },
+        "sha256": { "$ref": "#/definitions/sha256" },
+        "nodeVersion": { "$ref": "#/definitions/version" },
+        "documentationUrl": { "$ref": "#/definitions/httpsUrl" },
+        "members": { "$ref": "#/definitions/strings" },
+        "adapterSource": { "$ref": "#/definitions/text" },
+        "adapterSha256": { "$ref": "#/definitions/sha256" },
+        "implementations": { "$ref": "#/definitions/strings" },
+        "overrides": { "type": "array", "items": { "$ref": "#/definitions/hashedFile" } }
+      }
+    },
+    "contractLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "source": { "$ref": "#/definitions/text" },
+        "adapter": { "enum": ["configured-implementation", "generated-stub", "unreviewed"] }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "documentationUrl", "sourceUrl", "scope", "sections"],
+      "properties": {
+        "id": { "$ref": "#/definitions/text" },
+        "source": { "$ref": "#/definitions/text" },
+        "documentationUrl": { "$ref": "#/definitions/httpsUrl" },
+        "sourceUrl": { "$ref": "#/definitions/httpsUrl" },
+        "scope": { "enum": ["included", "excluded"] },
+        "reason": { "$ref": "#/definitions/text" },
+        "sections": { "$ref": "#/definitions/strings" }
+      },
+      "if": { "properties": { "scope": { "const": "excluded" } } },
+      "then": { "required": ["reason"] }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "document", "kind", "name", "headings", "stability"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^node:(api|module)/.+" },
+        "document": { "$ref": "#/definitions/text" },
+        "kind": { "enum": ["module", "method", "static-method", "property", "class", "event", "constructor", "global"] },
+        "name": { "$ref": "#/definitions/text" },
+        "owner": { "$ref": "#/definitions/text" },
+        "namespace": { "$ref": "#/definitions/text" },
+        "headings": { "$ref": "#/definitions/strings" },
+        "stability": { "type": "array", "items": { "type": "integer", "minimum": 0, "maximum": 3 }, "uniqueItems": true },
+        "signatureShapes": { "$ref": "#/definitions/strings" },
+        "contracts": { "type": "array", "items": { "$ref": "#/definitions/contractLink" }, "minItems": 1 }
+      }
+    },
+    "behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "document", "expectation", "status", "applicability"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^node:behavior/.+" },
+        "document": { "$ref": "#/definitions/text" },
+        "expectation": { "$ref": "#/definitions/text" },
+        "status": { "const": "not-run" },
+        "applicability": { "$ref": "#/definitions/applicability" }
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "reference", "referenceProfileSha256", "seedJrocRevision", "targetInventorySha256", "implementationEvidenceSha256", "defaults", "limitations", "outcomes", "contracts", "documents", "entries", "behaviors"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "suiteId": { "const": "nodejs-compatibility" },
+        "artifactKind": { "const": "api-inventory" },
+        "scopeId": { "$ref": "#/definitions/text" },
+        "reference": { "$ref": "#/definitions/reference" },
+        "referenceProfileSha256": { "$ref": "#/definitions/sha256" },
+        "seedJrocRevision": { "$ref": "#/definitions/revision" },
+        "targetInventorySha256": { "$ref": "#/definitions/sha256" },
+        "implementationEvidenceSha256": { "$ref": "#/definitions/sha256" },
+        "defaults": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["availability", "behavior", "applicability"],
+          "properties": {
+            "availability": { "const": "unverified" },
+            "behavior": { "const": "not-run" },
+            "applicability": { "$ref": "#/definitions/applicability" }
+          }
+        },
+        "limitations": { "$ref": "#/definitions/strings" },
+        "outcomes": {
+          "type": "array",
+          "minItems": 10,
+          "uniqueItems": true,
+          "items": { "enum": ["pass", "mismatch", "compile-failure", "unsupported", "not-run", "execution-timeout", "reference-failure", "infrastructure-failure", "flaky", "inconclusive"] }
+        },
+        "contracts": { "type": "array", "items": { "$ref": "#/definitions/contract" } },
+        "documents": { "type": "array", "items": { "$ref": "#/definitions/document" }, "minItems": 1 },
+        "entries": { "type": "array", "items": { "$ref": "#/definitions/entry" }, "minItems": 1 },
+        "behaviors": { "type": "array", "items": { "$ref": "#/definitions/behavior" } }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "recordedAt", "nodeVersion", "nodeExecutable", "nodeArguments", "runtimeOverridesPresent", "nodeVersions", "platform", "architecture", "kernelVersion", "dotnetSdk", "dotnetRuntimes", "jrocRevision", "worktreeDirty", "inventorySha256", "targetInventorySha256", "implementationEvidenceSha256", "referenceProfileSha256", "behaviorRegistrationSha256", "executableBehaviorCases", "baselineConfigSha256", "lockfiles", "builtinModules", "referenceEnvironmentEligible", "referenceSourceRevision"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "suiteId": { "const": "nodejs-compatibility" },
+        "artifactKind": { "const": "reference-environment" },
+        "scopeId": { "$ref": "#/definitions/text" },
+        "recordedAt": { "type": "string", "format": "date-time" },
+        "nodeVersion": { "$ref": "#/definitions/version" },
+        "nodeExecutable": { "$ref": "#/definitions/text" },
+        "nodeArguments": { "type": "array", "items": { "type": "string" } },
+        "runtimeOverridesPresent": { "$ref": "#/definitions/strings" },
+        "nodeVersions": {
+          "type": "object",
+          "required": ["node"],
+          "properties": { "node": { "$ref": "#/definitions/version" } },
+          "additionalProperties": { "type": "string" }
+        },
+        "platform": { "$ref": "#/definitions/text" },
+        "architecture": { "$ref": "#/definitions/text" },
+        "kernelVersion": { "$ref": "#/definitions/text" },
+        "dotnetSdk": { "$ref": "#/definitions/version" },
+        "dotnetRuntimes": { "type": "array", "items": { "$ref": "#/definitions/version" }, "minItems": 1 },
+        "jrocRevision": { "$ref": "#/definitions/revision" },
+        "worktreeDirty": { "type": "boolean" },
+        "inventorySha256": { "$ref": "#/definitions/sha256" },
+        "targetInventorySha256": { "$ref": "#/definitions/sha256" },
+        "implementationEvidenceSha256": { "$ref": "#/definitions/sha256" },
+        "referenceProfileSha256": { "$ref": "#/definitions/sha256" },
+        "behaviorRegistrationSha256": { "$ref": "#/definitions/sha256" },
+        "executableBehaviorCases": { "const": 0 },
+        "baselineConfigSha256": { "$ref": "#/definitions/sha256" },
+        "lockfiles": { "type": "array", "items": { "$ref": "#/definitions/hashedFile" }, "minItems": 1 },
+        "builtinModules": { "$ref": "#/definitions/strings" },
+        "referenceEnvironmentEligible": { "type": "boolean" },
+        "referenceSourceRevision": { "$ref": "#/definitions/revision" }
+      }
+    }
+  }
+}

@@ -88,9 +88,17 @@ function main() {
   lines.push('');
   
   if (nodeVersionTarget) {
-    lines.push(`**Target Node.js Version:** \`${nodeVersionTarget}\``);
+    lines.push(`**Legacy support-document target:** \`${nodeVersionTarget}\``);
     lines.push('');
   }
+
+  const compatibilityBaseline = JSON.parse(fs.readFileSync(
+    path.join(repoRoot, 'scripts', 'nodeCompatibility', 'baseline.json'), 'utf8'));
+  lines.push(`**Compatibility measurement reference:** Node.js \`${compatibilityBaseline.reference.nodeVersion}\`.`);
+  lines.push('See [measurement scope and evidence rules](compatibility/README.md).');
+  lines.push('Support labels below and generated contract rosters are not measured behavioral pass rates.');
+  lines.push('Existing contract documentation pins remain separate; this reference does not expand runtime support claims.');
+  lines.push('');
   
   const dt = new Date().toISOString().replace(/\..+Z$/, 'Z');
   lines.push(`**Generated:** \`${dt}\``);

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "nodejs-compatibility",
+  "scopeId": "node24-public-api-v1",
+  "reference": {
+    "nodeVersion": "24.22.1",
+    "sourceRevision": "ce7aaf1cee78b8cf0ce17364260535c418d3ed26",
+    "documentationUrl": "https://nodejs.org/docs/v24.22.1/api/all.json",
+    "documentationSha256": "3edf28696d913c7ef5f96b47f3f69ef70d641b28d560f9c76ffe7783a2234e9a",
+    "platform": "linux",
+    "architecture": "x64",
+    "dotnetSdk": "10.0.113",
+    "dotnetRuntime": "10.0.13"
+  },
+  "seedJrocRevision": "ec4c14755a904b90b1d2c6b66e7d38ac2d0f171e",
+  "builtinRosterProvenance": "require('node:module').builtinModules under official Node v24.22.1 linux-x64; exclude underscore-prefixed internals; retain node:-only modules",
+  "builtinModules": [
+    "assert", "assert/strict", "async_hooks", "buffer", "child_process", "cluster",
+    "console", "constants", "crypto", "dgram", "diagnostics_channel", "dns",
+    "dns/promises", "domain", "events", "fs", "fs/promises", "http", "http2",
+    "https", "inspector", "inspector/promises", "module", "net", "os", "path",
+    "path/posix", "path/win32", "perf_hooks", "process", "punycode",
+    "querystring", "readline", "readline/promises", "repl", "stream",
+    "stream/consumers", "stream/promises", "stream/web", "string_decoder", "sys",
+    "timers", "timers/promises", "tls", "trace_events", "tty", "url", "util",
+    "util/types", "v8", "vm", "wasi", "worker_threads", "zlib", "node:sea",
+    "node:sqlite", "node:test", "node:test/reporters"
+  ],
+  "builtinDocumentation": {
+    "constants": "os",
+    "sys": "util",
+    "module": "module",
+    "trace_events": "tracing",
+    "sea": "single-executable-applications",
+    "test": "test",
+    "test/reporters": "test",
+    "stream/web": "webstreams",
+    "stream/consumers": "webstreams"
+  },
+  "sectionNamespaces": {
+    "inspector": {
+      "promises_api": "inspector/promises",
+      "callback_api": "inspector"
+    }
+  },
+  "excludedDocuments": {
+    "documentation": "Documentation mechanics, not an executable Node API.",
+    "synopsis": "Introductory examples, not an independent public API roster.",
+    "addons": "Native C++ addon ABI is outside this first JavaScript API measurement scope.",
+    "n-api": "Native Node-API ABI is outside this first JavaScript API measurement scope.",
+    "embedding": "Native C++ embedder ABI is outside this first JavaScript API measurement scope.",
+    "cli": "Node executable command-line behavior is a separate, unmeasured compatibility dimension.",
+    "debugger": "Interactive Node debugger protocol and CLI are outside this first scope.",
+    "deprecations": "Historical cross-references; current documented API entries remain in scope."
+  },
+  "loaderBehaviors": [
+    { "key": "commonjs-relative", "document": "modules", "expectation": "Resolve a relative CommonJS request and observe its exports." },
+    { "key": "commonjs-cache", "document": "modules", "expectation": "Repeated require observes module identity and initialization once." },
+    { "key": "esm-relative", "document": "esm", "expectation": "Resolve and execute a relative ES module import." },
+    { "key": "package-exports-conditions", "document": "packages", "expectation": "Select documented import/require conditions from package exports." },
+    { "key": "package-imports", "document": "packages", "expectation": "Resolve package-local imports aliases under the selected conditions." },
+    { "key": "package-type", "document": "packages", "expectation": "Interpret .js using the nearest package type and honor .mjs/.cjs." },
+    { "key": "transitive-dependency", "document": "modules", "expectation": "Resolve a transitive dependency from the requesting package location." },
+    { "key": "unresolved-request", "document": "modules", "expectation": "Reject unresolved requests with the documented observable error." }
+  ],
+  "outcomes": [
+    "pass", "mismatch", "compile-failure", "unsupported", "not-run",
+    "execution-timeout", "reference-failure", "infrastructure-failure",
+    "flaky", "inconclusive"
+  ]
+}
