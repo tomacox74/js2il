@@ -11,6 +11,7 @@ const { limits, workspaceFiles, fixtureEnvironment, runBounded } = require('./bo
 const { sha256, hashJson, validateArtifact } = require('../nodeCompatibility/artifacts');
 const { collectEnvironment, validateEnvironment } = require('../nodeCompatibility/checkReference');
 const baseline = require('../nodeCompatibility/baseline.json');
+const { validateCorpus } = require('../nodeCompatibility/behaviorCorpus');
 
 const repoRoot = path.resolve(__dirname, '../..');
 const defaultManifest = path.join(__dirname, 'corpus/node-compatibility/manifest.json');
@@ -340,6 +341,7 @@ async function runSuite(options) {
       if (!allInputs.has(file)) allInputs.set(file, readBounded(fixtureRoot, file));
     }
   }
+  validateCorpus(manifest, file => allInputs.get(file), inventory);
   for (const id of options.cases) {
     if (!manifest.cases.some(scenario => scenario.id === id)) throw new Error(`Unknown scenario ${id}.`);
   }
@@ -368,7 +370,8 @@ async function runSuite(options) {
     'scripts/differential-test/run.js', 'scripts/differential-test/compatibility.js', 'scripts/differential-test/boundedProcess.js',
     'scripts/nodeCompatibility/artifacts.js', 'scripts/nodeCompatibility/artifact.schema.json',
     'scripts/nodeCompatibility/execution.schema.json', 'scripts/nodeCompatibility/baseline.json',
-    'scripts/nodeCompatibility/checkReference.js', 'scripts/nodeCompatibility/buildInventory.js', 'package-lock.json'
+    'scripts/nodeCompatibility/checkReference.js', 'scripts/nodeCompatibility/buildInventory.js', 'package-lock.json',
+    'scripts/nodeCompatibility/behaviorCorpus.js', 'scripts/nodeCompatibility/behavior.schema.json'
   ];
   const runnerFiles = runnerPaths.map(file => store.write(`inputs/runner/${file}`, fs.readFileSync(path.join(repoRoot, file))));
   const compilerFiles = fs.readdirSync(path.dirname(compilerPath)).sort()
@@ -437,6 +440,11 @@ function verifyBundle(directory) {
   validateArtifact(environment, 'reference-environment');
   const inventory = JSON.parse(verifyReference(bundle.provenance.inventory));
   validateArtifact(inventory, 'api-inventory');
+  validateCorpus(manifest, file => {
+    const reference = bundle.provenance.corpusFiles.find(item => item.path === `inputs/corpus/files/${file}`);
+    if (!reference) throw new Error(`Missing retained corpus fixture: ${file}`);
+    return verifyReference(reference);
+  }, inventory);
   if (manifest.corpusId !== bundle.provenance.corpusId || manifest.scopeId !== bundle.scopeId
     || manifest.referenceProfileSha256 !== environment.referenceProfileSha256
     || environment.jrocRevision !== bundle.provenance.checkoutRevision

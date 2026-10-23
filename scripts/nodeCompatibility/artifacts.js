@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const Ajv = require('ajv');
 const schema = require('./artifact.schema.json');
 const executionSchema = require('./execution.schema.json');
+const behaviorSchema = require('./behavior.schema.json');
 
 const ajv = new Ajv({ allErrors: true });
 ajv.addFormat('date-time', value => {
@@ -12,12 +13,14 @@ ajv.addFormat('date-time', value => {
 });
 ajv.addSchema(schema);
 ajv.addSchema(executionSchema);
+ajv.addSchema(behaviorSchema);
 const validators = {
   'api-inventory': ajv.compile({ $ref: `${schema.$id}#/definitions/inventory` }),
   'reference-environment': ajv.compile({ $ref: `${schema.$id}#/definitions/environment` }),
   'scenario-manifest': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/manifest` }),
   'execution-result': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/result` }),
-  'execution-bundle': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/bundle` })
+  'execution-bundle': ajv.compile({ $ref: `${executionSchema.$id}#/definitions/bundle` }),
+  'behavior-corpus': ajv.compile({ $ref: behaviorSchema.$id })
 };
 
 function sha256(bytes) {
@@ -94,11 +97,37 @@ function validateArtifact(artifact, kind) {
     assertUnique(artifact.cases, 'id', 'scenario');
     for (const scenario of artifact.cases) {
       if (!scenario.files.includes(scenario.entry)) throw new Error(`Entry is absent from files for ${scenario.id}.`);
+      if (artifact.corpusMetadata && !scenario.files.includes(artifact.corpusMetadata)) throw new Error('Every scenario must retain corpus metadata.');
       assertUnique(scenario.observables, 'path', 'observable');
       for (const observable of scenario.observables) {
         if (scenario.files.includes(observable.path)) throw new Error('An observable cannot overwrite an input file.');
         if (observable.order?.some(([before, after]) => before === after)) throw new Error('An event cannot precede itself.');
       }
+    }
+  } else if (kind === 'behavior-corpus') {
+    assertUnique(artifact.fixtures, 'path', 'fixture');
+    assertUnique(artifact.scenarios, 'id', 'scenario');
+    assertUnique(artifact.upstream.files, 'path', 'upstream file');
+    const sources = new Set(artifact.upstream.files.map(file => file.path));
+    const prefix = `https://raw.githubusercontent.com/nodejs/node/${artifact.upstream.sourceRevision}/`;
+    for (const file of [artifact.upstream.license, ...artifact.upstream.files]) {
+      if (file.url !== prefix + file.path) throw new Error('Upstream URL must bind the exact source revision and path.');
+    }
+    for (const file of artifact.upstream.files) {
+      if (file.classification === 'runnable'
+        && (file.executionEligibility !== 'eligible' || file.applicability.state !== 'applicable')) {
+        throw new Error('Runnable upstream leads require reviewed applicability and execution eligibility.');
+      }
+      if (file.classification === 'excluded'
+        && (file.applicability.state !== 'excluded' || file.executionEligibility !== 'outside-profile')) {
+        throw new Error('Upstream exclusions must preserve separate applicability and eligibility reasons.');
+      }
+    }
+    for (const scenario of artifact.scenarios) {
+      if (scenario.origin.relatedUpstreamPaths.some(file => !sources.has(file))) throw new Error('Unknown upstream discovery lead.');
+    }
+    for (const file of artifact.dependencies.harness) {
+      if (!artifact.fixtures.some(fixture => fixture.path === file)) throw new Error('Missing harness dependency.');
     }
   } else if (kind === 'execution-result') {
     if (artifact.policySha256 !== hashJson(artifact.policy)) throw new Error('Comparison policy digest mismatch.');

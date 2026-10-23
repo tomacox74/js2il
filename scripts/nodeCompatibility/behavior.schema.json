@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:jroc:nodejs-compatibility:behavior:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "suiteId", "artifactKind", "scopeId", "corpusId", "referenceProfileSha256", "selection", "upstream", "fixtures", "dependencies", "scenarios"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "suiteId": { "const": "nodejs-compatibility" },
+    "artifactKind": { "const": "behavior-corpus" },
+    "scopeId": { "$ref": "#/definitions/text" },
+    "corpusId": { "$ref": "#/definitions/text" },
+    "referenceProfileSha256": { "$ref": "#/definitions/sha256" },
+    "selection": { "$ref": "#/definitions/text" },
+    "upstream": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository", "sourceRevision", "reviewedForReferenceProfileSha256", "license", "files"],
+      "properties": {
+        "repository": { "const": "https://github.com/nodejs/node" },
+        "sourceRevision": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/revision" },
+        "reviewedForReferenceProfileSha256": { "$ref": "#/definitions/sha256" },
+        "license": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "url", "sha256", "bytes", "spdx", "notice"],
+          "properties": {
+            "path": { "const": "LICENSE" }, "url": { "$ref": "#/definitions/text" },
+            "sha256": { "$ref": "#/definitions/sha256" }, "bytes": { "type": "integer", "minimum": 1 },
+            "spdx": { "const": "MIT" }, "notice": { "$ref": "#/definitions/text" }
+          }
+        },
+        "files": {
+          "type": "array", "minItems": 1, "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "url", "sha256", "bytes", "classification", "reason", "applicability", "executionEligibility"],
+            "properties": {
+              "path": { "$ref": "#/definitions/path" }, "url": { "$ref": "#/definitions/text" },
+              "sha256": { "$ref": "#/definitions/sha256" }, "bytes": { "type": "integer", "minimum": 1 },
+              "classification": { "enum": ["runnable", "adaptation-required", "platform-specific", "excluded"] },
+              "reason": { "$ref": "#/definitions/text" },
+              "applicability": {
+                "type": "object", "additionalProperties": false, "required": ["state", "reason"],
+                "properties": {
+                  "state": { "enum": ["applicable", "unknown", "excluded"] }, "reason": { "$ref": "#/definitions/text" }
+                }
+              },
+              "executionEligibility": { "enum": ["eligible", "harness-required", "outside-profile", "resource-budget"] }
+            }
+          }
+        }
+      }
+    },
+    "fixtures": { "type": "array", "minItems": 1, "items": { "$ref": "urn:jroc:nodejs-compatibility:execution:v1#/definitions/file" } },
+    "dependencies": {
+      "type": "object", "additionalProperties": false,
+      "required": ["networkDuringExecution", "npmInstallRequired", "harness", "packages"],
+      "properties": {
+        "networkDuringExecution": { "const": false }, "npmInstallRequired": { "const": false },
+        "harness": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/path" } },
+        "packages": { "$ref": "#/definitions/text" }
+      }
+    },
+    "scenarios": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "targets", "scenarioSha256", "origin"],
+        "properties": {
+          "id": { "$ref": "urn:jroc:nodejs-compatibility:execution:v1#/definitions/id" },
+          "targets": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/text" } },
+          "scenarioSha256": { "$ref": "#/definitions/sha256" },
+          "origin": {
+            "type": "object", "additionalProperties": false, "required": ["kind", "license", "rationale", "relatedUpstreamPaths"],
+            "properties": {
+              "kind": { "const": "original" }, "license": { "const": "Apache-2.0" }, "rationale": { "$ref": "#/definitions/text" },
+              "relatedUpstreamPaths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/path" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "text": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/text" },
+    "sha256": { "$ref": "urn:jroc:nodejs-compatibility:artifacts:v1#/definitions/sha256" },
+    "path": { "$ref": "urn:jroc:nodejs-compatibility:execution:v1#/definitions/path" }
+  }
+}
