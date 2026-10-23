@@ -985,3 +985,88 @@ and #2315's changed-head ownership fence must remain. Retain before/after
 receipts, verify counters/evidence are unchanged except conservative expired
 charges, and run one scoped no-publication batch to prove automatic finalization.
 These are live acceptance steps, separate from disposable regression coverage.
+
+## Same-SHA scheduled native recovery (#2340)
+
+The existing central workflow's **Monday 06:15 UTC** timer selects `native`.
+There is one scheduler and its frequency is unchanged. Manual dispatch still
+defaults to MVP; master-push MVP validation remains the prerequisite for native
+preparation. The shared `central.schedule.collection_kind` policy resolves the
+event into the actual worker kind, native generation and credential-free focused
+validation. A scheduled collection never publishes: publication still requires
+manual dispatch, native mode and the explicit publication checkbox.
+
+Each scheduled Actions run gets a **new allocation** identified by its own run ID.
+Rerunning an attempt of that Actions run preserves its existing budget identity,
+charged attempts/time, limits and claim cap. A new recovery allocation does not
+reset, extend or transfer charges out of an exhausted predecessor. Default limits
+remain 200 candidate files, 100 accepted files, 400 attempts and 1,200,000 ms;
+workers independently stop at 100 attempts or 600 seconds. A worker limit,
+infrastructure failure or queue delay is not evidence of budget exhaustion.
+`central-worker.json` records the actual stop reason; the #2344 lifecycle receipt
+is authoritative for the settled budget state.
+
+Planning first resolves exact corpus, binary, harness, tooling, capabilities,
+environment and timeout provenance. At that same provenance, unfinished pending/
+leased fixtures precede new discovery and component-based retries. Only missing
+nonterminal variants are enrolled in the new budget. Existing completed,
+cancelled and per-item deferred variants are not reset or rescreened. Per-item
+attempt exhaustion still requires an explicit reviewed retry policy; budget
+exhaustion merely leaves unattempted variants pending for a later allocation.
+Recovery-only selections leave the discovery cursor unchanged. New discovery
+continues to use its rotating share, and incompatible provenance cannot supply
+missing variants or current acceptance. Explicit area, native-porting exclusions
+and registration filters remain in force.
+
+Live/expired leases, eligibility delays, late writes, contradictory evidence and
+outbox replay retain the existing claim/completion/settlement fences. A scheduled
+run cannot steal a live lease; delayed or leased-only work may produce no claim
+and remains visible for a subsequent invocation. A successful collection can have
+an exhausted or interrupted budget. Native sealing still requires every required
+variant to have trusted, matching, non-invalidated live passes; a single partial
+fixture cannot be accepted. A new merge or changed provenance starts independent
+evidence instead of combining historical passes.
+
+### Bounded disposable acceptance
+
+The existing isolated worker pilot includes `--scheduled-recovery`; no production
+credentials, database writes or publication are needed. It runs the production
+policy resolver, planner, claim API, native worker, outboxes, finalizers and sealer
+on a pinned two-variant Math.abs fixture, against the same built binaries/source
+SHA and unchanged native identity. Two explicit scenarios exercise normal
+**attempt** exhaustion (1 attempt) and **time** exhaustion (remaining time cannot
+fund another 120,000 ms reservation). Worker limits are higher, so these are not
+worker-limit or infrastructure stops.
+
+For each scenario, the first allocation executes one required variant, fails to
+claim the other because of its budget, remains incomplete for native acceptance,
+and finalizes its budget as exhausted. The next simulated scheduled invocation
+gets its own allocation, resumes exactly the missing variant, reuses the first
+immutable pass only at the same provenance, and seals one complete fixture.
+A third invocation performs zero executions and leaves discovery cursor/old
+charges unchanged. Lost responses after run finalization and after budget
+finalization are replayed without duplicate charging or timestamp changes.
+The existing concurrent-worker, process-kill, lease-expiry and late-write drills
+remain part of the same pilot and preserve their separate scopes.
+
+```bash
+# Only after provisioning the empty loopback catalogue_pilot service and building
+# the fixture image, CLI and NativeScreeningHost. This driver rejects remote DSNs.
+python -m scripts.test262.central.pilot --workers 2 --queue-drills --process-kill \
+  --scheduled-recovery --restore-drill --root "$TEST262_ROOT" \
+  --output artifacts/test262/worker-pilot
+```
+
+Retained `scheduled-recovery/scheduled-recovery-report.json` and the enclosing
+pilot report contain source/pin and full execution identity, per-invocation
+run/attempt/budget/work/observation IDs, required variants, before/after cursors,
+charges, reservations, stop reasons and acceptance bindings. Artifacts also retain
+the per-invocation contexts and acknowledged outboxes under the existing policy.
+The driver refuses remote/existing production catalogues. Its partial inventory,
+empty registration snapshot and successful master-validation input are controlled
+disposable fixtures, explicitly labelled; actual native execution/accounting is
+real. A simulated `schedule` input is **not** an observation of GitHub's clock.
+After merge, verify the next actual scheduled workflow's `central-schedule.json`,
+same-SHA/provenance when applicable, worker and lifecycle receipts. Do not claim
+same-SHA recovery across a changed compiler/pin/environment, or infer full-suite
+conformance from this bounded proof.

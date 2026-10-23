@@ -22,18 +22,20 @@ on:
         type: boolean
         default: false
   schedule:
+    # One existing timer: native discovery and same-provenance backlog recovery.
+    # Scheduled runs never publish; manual MVP remains the dispatch default.
     - cron: '15 6 * * 1'
 permissions:
   contents: read
   actions: read
 # Queue claims and budgets coordinate workers; this only serializes target preparation.
 concurrency:
-  group: test262-central-${{ inputs.kind || 'mvp-composite' }}
+  group: test262-central-${{ inputs.kind || 'native' }}
   cancel-in-progress: false
 jobs:
   supervise:
     concurrency:
-      group: test262-central-${{ inputs.kind == 'native' && 'native-target' || 'mvp-target' }}
+      group: test262-central-${{ (inputs.kind || 'native') == 'native' && 'native-target' || 'mvp-target' }}
       cancel-in-progress: false
     if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && github.ref == 'refs/heads/master' }}
     environment: test262-catalogue
@@ -41,6 +43,7 @@ jobs:
     timeout-minutes: 60
     outputs:
       has_patch: ${{ steps.native_batch.outputs.has_patch }}
+      kind: ${{ steps.collection_plan.outputs.kind }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -59,6 +62,15 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Resolve scheduled or manual collection policy
+        id: collection_plan
+        env:
+          COLLECTION_EVENT: ${{ github.event_name }}
+          REQUESTED_KIND: ${{ inputs.kind }}
+        run: |
+          python -m scripts.test262.central.schedule --event "$COLLECTION_EVENT" \
+            --kind "$REQUESTED_KIND" --github-output "$GITHUB_OUTPUT" \
+            --output artifacts/test262/central-schedule.json
       - name: Build trusted binaries and isolated fixture image
         run: |
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
@@ -75,7 +87,7 @@ jobs:
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
           GH_TOKEN: ${{ github.token }}
-          KIND: ${{ inputs.kind || 'mvp-composite' }}
+          KIND: ${{ steps.collection_plan.outputs.kind }}
           AREA: ${{ inputs.area }}
           COMPILATION_COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
           TEST262_PROGRESS: '1'
@@ -92,10 +104,11 @@ jobs:
             --output artifacts/test262/central-context.json "${COVERAGE_ARGS[@]}"
           python -m scripts.test262.central.cli work \
             --context artifacts/test262/central-context.json --root "$TEST262_ROOT" \
-            --outbox artifacts/test262/central-outbox.sqlite
+            --outbox artifacts/test262/central-outbox.sqlite \
+            --output artifacts/test262/central-worker.json
       - name: Seal and generate fresh native acceptance
         id: native_batch
-        if: ${{ inputs.kind == 'native' }}
+        if: ${{ steps.collection_plan.outputs.kind == 'native' }}
         env:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
@@ -216,7 +229,7 @@ jobs:
   validate:
     # Executes generated fixtures with no catalogue/GitHub write credentials or environment secrets.
     needs: supervise
-    if: ${{ inputs.kind == 'native' && needs.supervise.outputs.has_patch == 'true' }}
+    if: ${{ needs.supervise.outputs.kind == 'native' && needs.supervise.outputs.has_patch == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
