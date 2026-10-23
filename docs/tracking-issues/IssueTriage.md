@@ -56,15 +56,14 @@ Synced to:
 ### Tier 4 - Deferred performance queue
 
 11. **[#451](https://github.com/tomacox74/jroc/issues/451)** `perf(il): expand typed temps/locals to reduce casts/boxing` - Best broad performance enabler once the current compatibility and conformance priorities relax.
-12. **[#737](https://github.com/tomacox74/jroc/issues/737)** `perf: callsite-based typed parameter specialization for non-exported functions` - Builds on the same typed fast-path direction as [#451](https://github.com/tomacox74/jroc/issues/451).
-13. **[#738](https://github.com/tomacox74/jroc/issues/738)** `perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations` - Still the umbrella Prime performance issue, but now clearly secondary to the remaining Node and `test262` work.
-14. **[#742](https://github.com/tomacox74/jroc/issues/742)** `perf(prime): trim timing/config coercion overhead in main path` - Scoped child under [#738](https://github.com/tomacox74/jroc/issues/738).
-15. **[#743](https://github.com/tomacox74/jroc/issues/743)** `perf(prime): add Prime perf acceptance gate and reporting` - Best once Prime tuning resumes.
-16. **[#746](https://github.com/tomacox74/jroc/issues/746)** `perf: make dromaeo-object-regexp faster than Jint prepared` - Valuable benchmark target, but still behind compatibility and tooling work.
-17. **[#747](https://github.com/tomacox74/jroc/issues/747)** `perf(regexp): cache Regex instances by source+flags` - Child optimization under [#746](https://github.com/tomacox74/jroc/issues/746).
-18. **[#748](https://github.com/tomacox74/jroc/issues/748)** `perf(dispatch): add RegExp fast paths in Object.CallMember1/2` - Another child optimization under [#746](https://github.com/tomacox74/jroc/issues/746).
-19. **[#768](https://github.com/tomacox74/jroc/issues/768)** `Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)` - Still scenario-specific rather than a broad ecosystem unblocker.
-20. **[#837](https://github.com/tomacox74/jroc/issues/837)** `perf(runtime): investigate DLR-backed CallMember fast path` - Remains research-heavy rather than a near-term implementation slice.
+12. **[#738](https://github.com/tomacox74/jroc/issues/738)** `perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations` - Still the umbrella Prime performance issue, but now clearly secondary to the remaining Node and `test262` work.
+13. **[#742](https://github.com/tomacox74/jroc/issues/742)** `perf(prime): trim timing/config coercion overhead in main path` - Scoped child under [#738](https://github.com/tomacox74/jroc/issues/738).
+14. **[#743](https://github.com/tomacox74/jroc/issues/743)** `perf(prime): add Prime perf acceptance gate and reporting` - Best once Prime tuning resumes.
+15. **[#746](https://github.com/tomacox74/jroc/issues/746)** `perf: make dromaeo-object-regexp faster than Jint prepared` - Valuable benchmark target, but still behind compatibility and tooling work.
+16. **[#747](https://github.com/tomacox74/jroc/issues/747)** `perf(regexp): cache Regex instances by source+flags` - Child optimization under [#746](https://github.com/tomacox74/jroc/issues/746).
+17. **[#748](https://github.com/tomacox74/jroc/issues/748)** `perf(dispatch): add RegExp fast paths in Object.CallMember1/2` - Another child optimization under [#746](https://github.com/tomacox74/jroc/issues/746).
+18. **[#768](https://github.com/tomacox74/jroc/issues/768)** `Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)` - Still scenario-specific rather than a broad ecosystem unblocker.
+19. **[#837](https://github.com/tomacox74/jroc/issues/837)** `perf(runtime): investigate DLR-backed CallMember fast path` - Remains research-heavy rather than a near-term implementation slice.
 
 ## Execution notes
 

@@ -32,6 +32,37 @@ public sealed class CallableMaterializationEmissionTests
     }
 
     [Fact]
+    public void DirectOnlyStrictFunctionExpressionUsesTypedUnboxedCall()
+    {
+        const string source = """
+            "use strict";
+            const add = function (left, right) {
+                return left + right;
+            };
+            console.log(add(1, 2));
+            """;
+        var il = CompileToIl(source, "strict-function-expression-direct-call.js");
+        var moduleInit = ExtractModuleInitializer(il);
+
+        Assert.Contains(
+            "/FunctionExpression_add::__js_call__(object, float64, float64)",
+            moduleInit,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "/FunctionExpression_add/FunctionObject::.ctor",
+            moduleInit,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "InvokeFunctionCallWithArgs",
+            moduleInit,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "box [System.Runtime]System.Double",
+            moduleInit,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void EscapingArrowMaterializesOnceWhileKnownCallRemainsDirect()
     {
         const string source = """

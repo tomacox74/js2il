@@ -9,10 +9,18 @@ released compiler, start with the [project README](../README.md).
 Install:
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- Node.js and npm
+- Node.js 24 LTS and npm
 - Git
 - [GitHub CLI](https://cli.github.com/) authenticated with `gh auth login`
   when running release automation
+
+Workflows that run Node.js or npm use `actions/setup-node@v6` with
+`node-version: '24'` and `check-latest: true` so each run selects the latest
+available Node.js 24 release rather than an older runner-cached patch.
+Keep these settings when adding jobs. Test262 fixture image builds also use
+`docker build --pull` to refresh their Node.js 24 base image.
+JavaScript actions target the Node.js 24 runtime supplied by the GitHub Actions
+runner; keep action versions on a Node.js 24-compatible release line.
 
 ## Build from source
 

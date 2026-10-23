@@ -42,6 +42,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          check-latest: true
+      - run: npm ci --ignore-scripts
       - name: Validate bounded inputs
         env:
           LIMIT: ${{ inputs.limit || 100 }}
@@ -118,6 +120,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          check-latest: true
       - uses: actions/download-artifact@v8
         with:
           name: test262-catalog-base
@@ -125,6 +128,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          check-latest: true
       - uses: actions/download-artifact@v8
         with:
           name: test262-catalog-compiler

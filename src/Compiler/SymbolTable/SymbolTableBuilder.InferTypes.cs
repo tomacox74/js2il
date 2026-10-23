@@ -85,11 +85,8 @@ public partial class SymbolTableBuilder
             if (IsWithinExportDeclaration(
                     candidate.Scope.AstNode,
                     parentMap)
-                || (candidate.Scope.AstNode is FunctionExpression
-                    && parentMap.TryGetValue(
-                        candidate.Scope.AstNode,
-                        out var parent)
-                    && parent is not Acornima.Ast.MethodDefinition))
+                || candidate.Scope.AstNode is FunctionExpression functionExpression
+                    && !HasAuditedFunctionExpressionUse(candidate.Scope, functionExpression, parentMap))
             {
                 candidate.IsCallableUnsafe = true;
             }
@@ -213,6 +210,36 @@ public partial class SymbolTableBuilder
         }
 
         return changed;
+    }
+
+    private bool HasAuditedFunctionExpressionUse(
+        Scope scope,
+        FunctionExpression functionExpression,
+        IReadOnlyDictionary<Node, Node> parentMap)
+    {
+        parentMap.TryGetValue(functionExpression, out var parent);
+        switch (parent)
+        {
+            case VariableDeclarator { Id: Identifier id } declarator
+                when ReferenceEquals(declarator.Init, functionExpression) && scope.Parent != null:
+                var binding = TryResolveBinding(scope.Parent, id.Name);
+                return binding != null
+                    && ReferenceEquals(binding.DeclarationNode, declarator)
+                    && !binding.HasNonInitializationWrite
+                    && !binding.IsScriptGlobalBinding;
+
+            case CallExpression call:
+                return ReferenceEquals(call.Callee, functionExpression);
+
+            case MethodDefinition method:
+                return scope.Parent?.Kind == ScopeKind.Class
+                    && ReferenceEquals(method.Value, functionExpression);
+
+            default:
+                // Identifier-use auditing cannot see property storage, returned closures,
+                // callbacks, or other escapes of the expression value itself.
+                return false;
+        }
     }
 
     private static bool TryGetStaticMemberName(MemberExpression member, out string name)
@@ -559,6 +586,7 @@ public partial class SymbolTableBuilder
 
         if (scope.Parent?.Kind != ScopeKind.Class
             && scope.AstNode is not FunctionDeclaration
+            && scope.AstNode is not FunctionExpression
             && scope.AstNode is not ArrowFunctionExpression)
         {
             return false;

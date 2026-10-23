@@ -310,6 +310,34 @@ namespace Jroc.Tests.Function
         }
 
         [Fact]
+        public Task Function_ParameterTypeInference_DirectFunctionExpression()
+        {
+            var testName = nameof(Function_ParameterTypeInference_DirectFunctionExpression);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var functionType = moduleType.GetNestedType("FunctionExpression_add", BindingFlags.Public | BindingFlags.NonPublic)!;
+                var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                Assert.Equal(new[] { typeof(double), typeof(double) }, callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray());
+            });
+        }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_FunctionExpressionValueEscapes()
+        {
+            var testName = nameof(Function_ParameterTypeInference_FunctionExpressionValueEscapes);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                foreach (var functionName in new[] { "propertyTarget", "returnedTarget", "callbackTarget", "arrayTarget", "assignedTarget" })
+                {
+                    var functionType = assembly.GetTypes().Single(t => t.Name == functionName);
+                    var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                    Assert.Equal(typeof(object), Assert.Single(callMethod.GetParameters().Skip(1)).ParameterType);
+                }
+            });
+        }
+
+        [Fact]
         public Task Function_ParameterTypeInference_BinaryArguments()
         {
             var testName = nameof(Function_ParameterTypeInference_BinaryArguments);

@@ -9,6 +9,9 @@ import tempfile
 
 from .client import Client, EXPORT_TABLES
 
+# Offline verification of the complete catalogue; page and statement bounds stay in Client.
+COORDINATOR_EXPORT_SECONDS = 30 * 60
+
 
 def project_reference(settings):
     candidates = set()
@@ -84,13 +87,14 @@ def coordinator(dsn, settings):
                 raise ValueError('Cross-repository rows exposed')
         with tempfile.TemporaryDirectory(prefix='test262-verification-') as temporary:
             path = Path(temporary) / 'snapshot.ndjson'
-            exported = client.export(path, seconds=1200)
+            exported = client.export(path, seconds=COORDINATOR_EXPORT_SECONDS)
             receipt = verify_export(path, expected)
             if receipt != exported:
                 raise ValueError('Exporter receipt mismatch')
         return {'verified': True, 'project_reference': project_reference(settings),
                 'bounded_annotation_rows': len(result['rows']), 'raw_insert_denied': True,
                 'foreign_repository_read_empty': True, 'export': receipt,
+                'export_transport': client.export_transport,
                 'payload_retained': False}
     finally:
         client.close()
@@ -123,6 +127,8 @@ def main():
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {'identity': args.identity, 'verified': False, 'source_revision': os.getenv('GITHUB_SHA')}
+    if args.identity == 'coordinator':
+        report['export_budget_seconds'] = COORDINATOR_EXPORT_SECONDS
     try:
         dsn = os.environ.get('DATABASE_URL')
         if not dsn:
