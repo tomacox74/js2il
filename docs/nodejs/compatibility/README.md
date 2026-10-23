@@ -6,6 +6,51 @@ It does **not** publish a compatibility score or claim that JROC implements
 Node 24. The differential runner, executable corpus, package workloads and
 reporting gates are separate implementation issues.
 
+## Artifact contracts and future catalogue integration
+
+The stable suite namespace is `nodejs-compatibility`. Inventory and environment
+artifacts use distinct `artifactKind` values, `api-inventory` and
+`reference-environment`, with independent version-1 contracts in
+[`artifact.schema.json`](../../../scripts/nodeCompatibility/artifact.schema.json).
+The generator validates inventory structure, identities, links and digests before
+writing it. The reference checker validates the inventory before reading its
+provenance and validates the complete environment envelope before publishing it.
+Missing required fields, unknown fields/kinds/versions, duplicate identities,
+unresolved owner/contract links and inconsistent digests are explicit failures.
+
+Offline consumers can use the same validator without invoking Git, .NET,
+fixtures, a database or the reference-environment checker:
+
+```js
+const { validateArtifact } = require('./scripts/nodeCompatibility/artifacts');
+validateArtifact(inventory, 'api-inventory');
+validateArtifact(environment, 'reference-environment');
+```
+
+Run `npm ci --ignore-scripts` first to install the lockfile-pinned tooling
+dependencies, including the JSON Schema validator. Schema validation establishes
+artifact shape; the shared validator additionally checks identity/link/digest
+invariants. `validateEnvironment` in `checkReference.js` adds the pinned baseline
+and runtime-policy checks. None of these checks independently authenticates a
+producer or establishes trusted catalogue acceptance.
+
+These are offline measurement inputs, not executable results or a publication
+protocol. `referenceEnvironmentEligible: true` means only that the local checker
+accepted the declared environment and clean worktree. It does not mean cases
+ran, behavior passed, CI validated that SHA, or the catalogue accepted the evidence.
+Node component-version values are retained verbatim, including empty strings
+for components not enabled in a Node build.
+
+The Test262 catalogue is undergoing independent changes. Keep execution,
+serialization, reporting and any future ingestion adapter separate; do not add
+catalogue connectivity, credentials, schema migrations, leases or publication
+dependencies to these tools. Revisit additive integration when the catalogue
+changes settle and the Node runner plus initial executable corpus produce real
+evidence. Preserve Test262 identities, history, authority and permissions, and
+keep Node/ECMA-262 denominators separate. Historical import requires retained
+provenance and must not promote local/historical results to trusted acceptance.
+This contract does not promise compatibility with today's Test262 SQL/API.
+
 ## Reference and reproduction
 
 The initial reference is **Node 24.22.1**, Linux x64, .NET SDK 10.0.113,
@@ -52,10 +97,44 @@ of tracked npm/NuGet lockfiles. The current repository has npm lockfiles but
 does not thereby establish a locked NuGet dependency graph or bitwise
 reproducibility. The seed JROC SHA in the manifest identifies the implementation
 snapshot this work started from, **not** the revision measured in later runs.
-The current behavior-registration hash is not an executable corpus revision:
-`executableBehaviorCases` is zero until the corpus/runner work supplies one.
+`behaviorRegistrationSha256` identifies pending behavior registrations, not an
+executable corpus. There is deliberately no `corpusRevision` in these artifacts:
+`executableBehaviorCases` is zero. The executable corpus identity and execution
+result contract belong to the runner/corpus work, not this environment envelope.
 Future execution envelopes must additionally identify actual fixtures, runner,
 compiled artifact, effective runtime/options and package installation inputs.
+
+### Digest boundaries (version 1)
+
+The inventory retains declarations/configuration and target definitions in one
+file, but they have separate semantic identities. The environment carries all
+three semantic digests as well as the full inventory-file checksum:
+
+| Digest | Exact input and purpose |
+| --- | --- |
+| `inventorySha256` | SHA-256 of the exact inventory file bytes, including formatting/newline and all evidence. This is an envelope field, not a self-hash inside the inventory. |
+| `targetInventorySha256` | Semantic JSON hash of `{ suiteId, scopeId, applicability: defaults.applicability, documents, entries, behaviors }`. Omit `documentationUrl` and `sourceUrl` from each document, `contracts` from each entry, and `status` from each behavior. Everything else in those collections is retained, including expectations, signatures, structural sections and exclusions. |
+| `implementationEvidenceSha256` | Semantic JSON hash of `{ suiteId, contracts, associations }`, where `associations` is the ordered list of `{ id, contracts }` for entries with contract links. It covers declaration/adapter/override hashes and their mappings, not target definitions or execution results. |
+| `referenceProfileSha256` | Semantic JSON hash of the complete `reference` object, including the exact Node documentation/source pin and platform/.NET profile. |
+| `behaviorRegistrationSha256` | Semantic JSON hash of the complete ordered `behaviors` array, including pending status. This is an environment field, not an executable-corpus revision. |
+| `baselineConfigSha256` | SHA-256 of the exact baseline configuration file bytes. |
+
+Semantic JSON hashing recursively sorts object keys with JavaScript's default
+string ordering, preserves array order, serializes with `JSON.stringify` without
+whitespace/newline, encodes UTF-8, then computes SHA-256 as lowercase hex.
+Undefined and non-finite values are rejected. This is a versioned Node artifact
+rule, not the Test262 catalogue's PostgreSQL numeric canonicalization contract.
+Retain the original JSON bytes for byte-checksum verification. Reformatting or
+reordering object keys leaves semantic digests unchanged but changes a byte hash;
+array reordering changes semantic identity. The generator supplies deterministic
+collection order.
+
+A contract-only change must not reidentify target scope. Changing only a
+reference pin/URL must not reidentify otherwise unchanged targets or contract
+evidence. Adding/removing/changing target definitions, applicability or scenario
+expectations does change target identity. These boundaries have regression tests;
+the whole artifact checksum remains sensitive to every change. Consumers still
+compare exact profiles and inspect scope differences before comparing results.
 
 ## Inventory scope and provenance
 

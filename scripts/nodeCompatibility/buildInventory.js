@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('./baseline.json');
+const { sha256, inventoryDigests, validateArtifact } = require('./artifacts');
 
 const repoRoot = path.resolve(__dirname, '../..');
 const outputPath = path.join(repoRoot, 'docs/nodejs/compatibility/inventory.v1.json');
@@ -13,10 +13,6 @@ const memberKinds = {
   methods: 'method', classMethods: 'static-method', properties: 'property',
   classes: 'class', events: 'event', ctors: 'constructor', globals: 'global'
 };
-
-function sha256(bytes) {
-  return crypto.createHash('sha256').update(bytes).digest('hex');
-}
 
 function verifyDocumentation(bytes, baseline) {
   const actual = sha256(bytes);
@@ -30,7 +26,7 @@ function readContractEvidence(root) {
   const directory = path.join(root, 'src/JavaScriptRuntime/Node/Contracts');
   const adapterFiles = fs.readdirSync(path.join(root, 'src/JavaScriptRuntime/Node'));
   const overrideDirectory = path.join(root, 'scripts/nodeContracts');
-  const overrides = fs.readdirSync(overrideDirectory).filter(x => x.endsWith('.overrides.json'))
+  const overrides = fs.readdirSync(overrideDirectory).filter(x => x.endsWith('.overrides.json')).sort()
     .map(file => ({
       path: `scripts/nodeContracts/${file}`,
       value: JSON.parse(fs.readFileSync(path.join(overrideDirectory, file), 'utf8'))
@@ -205,8 +201,9 @@ function buildInventory(data, baseline, contracts) {
     expectation: item.expectation, status: 'not-run',
     applicability: { platform: 'all-reference-platforms', feature: 'public-module-loading' }
   })).sort((a, b) => a.id.localeCompare(b.id, 'en'));
-  return {
-    schemaVersion: baseline.schemaVersion, scopeId: baseline.scopeId,
+  const inventory = {
+    schemaVersion: baseline.schemaVersion, suiteId: baseline.suiteId,
+    artifactKind: 'api-inventory', scopeId: baseline.scopeId,
     reference: baseline.reference, seedJrocRevision: baseline.seedJrocRevision,
     defaults: {
       availability: 'unverified', behavior: 'not-run',
@@ -226,6 +223,7 @@ function buildInventory(data, baseline, contracts) {
     entries: [...entries.values()].sort((a, b) => a.id.localeCompare(b.id, 'en')),
     behaviors
   };
+  return { ...inventory, ...inventoryDigests(inventory) };
 }
 
 async function main(args) {
@@ -246,6 +244,7 @@ async function main(args) {
   }
   const data = verifyDocumentation(fs.readFileSync(input), config);
   const manifest = buildInventory(data, config, readContractEvidence(repoRoot));
+  validateArtifact(manifest, 'api-inventory');
   const output = `${JSON.stringify(manifest, null, 2)}\n`;
   if (args.includes('--check')) {
     if (fs.readFileSync(outputPath, 'utf8') !== output) {

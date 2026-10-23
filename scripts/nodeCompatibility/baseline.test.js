@@ -7,7 +7,8 @@ const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 const { test } = require('node:test');
 const { buildInventory, verifyDocumentation, readContractEvidence, sha256 } = require('./buildInventory');
-const { validateEnvironment } = require('./checkReference');
+const { validateEnvironment, collectEnvironment } = require('./checkReference');
+const { hashJson, inventoryDigests, validateArtifact } = require('./artifacts');
 const config = require('./baseline.json');
 const repoRoot = path.resolve(__dirname, '../..');
 
@@ -146,11 +147,19 @@ test('CLI rejects unknown flags and wrong documentation before changing the inve
 
 function environment() {
   return {
+    schemaVersion: 1, suiteId: config.suiteId, artifactKind: 'reference-environment',
+    scopeId: config.scopeId, recordedAt: '2026-10-23T19:00:00.000Z',
+    nodeExecutable: '/usr/bin/node', nodeVersions: { node: '24.22.1' },
+    kernelVersion: 'test-kernel',
     nodeVersion: '24.22.1', platform: 'linux', architecture: 'x64',
     nodeArguments: [], runtimeOverridesPresent: [],
     dotnetSdk: '10.0.113', dotnetRuntimes: ['10.0.13'],
     jrocRevision: 'a'.repeat(40), worktreeDirty: false,
-    inventorySha256: 'b'.repeat(64), corpusRevision: 'c'.repeat(64),
+    inventorySha256: 'b'.repeat(64), behaviorRegistrationSha256: 'c'.repeat(64),
+    targetInventorySha256: 'e'.repeat(64), implementationEvidenceSha256: 'f'.repeat(64),
+    referenceProfileSha256: hashJson(config.reference),
+    baselineConfigSha256: 'b'.repeat(64), executableBehaviorCases: 0,
+    referenceEnvironmentEligible: true, referenceSourceRevision: config.reference.sourceRevision,
     lockfiles: [{ path: 'package-lock.json', sha256: 'd'.repeat(64) }],
     builtinModules: config.builtinModules
   };
@@ -164,17 +173,20 @@ test('reference environment rejects patch, platform, SDK, runtime and dirty drif
     { dotnetSdk: '10.0.114' }, { dotnetRuntimes: ['10.0.12'] },
     { dotnetRuntimes: ['10.0.13', '10.0.14'] },
     { jrocRevision: 'unknown' }, { worktreeDirty: true },
-    { inventorySha256: null }, { corpusRevision: null }, { lockfiles: [] },
+    { inventorySha256: null }, { behaviorRegistrationSha256: null }, { lockfiles: [] },
     { builtinModules: ['http'] }, { nodeArguments: ['--jitless'] },
     { runtimeOverridesPresent: ['NODE_OPTIONS'] }
   ]) {
     assert.throws(() => validateEnvironment({ ...environment(), ...changed }, config));
   }
-  assert.doesNotThrow(() => validateEnvironment({ ...environment(), worktreeDirty: true }, config, { allowDirty: true }));
+  assert.doesNotThrow(() => validateEnvironment({
+    ...environment(), worktreeDirty: true, referenceEnvironmentEligible: false
+  }, config, { allowDirty: true }));
 });
 
 test('checked-in inventory has unique IDs and only explicitly untested evidence', () => {
   const inventory = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/nodejs/compatibility/inventory.v1.json'), 'utf8'));
+  assert.doesNotThrow(() => validateArtifact(inventory, 'api-inventory'));
   assert.equal(new Set(inventory.entries.map(x => x.id)).size, inventory.entries.length);
   assert.equal(inventory.reference.nodeVersion, config.reference.nodeVersion);
   assert.equal(inventory.reference.documentationSha256, config.reference.documentationSha256);
@@ -188,4 +200,137 @@ test('checked-in inventory has unique IDs and only explicitly untested evidence'
   assert(processContract.implementations.includes('exit'));
   const stub = inventory.entries.find(x => x.id === 'node:api/http/property/METHODS');
   assert.equal(stub.contracts[0].adapter, 'generated-stub');
+});
+
+test('artifacts have explicit suite and artifact identities', () => {
+  const inventory = buildInventory(sourceFixture(), config, []);
+  assert.equal(inventory.suiteId, 'nodejs-compatibility');
+  assert.equal(inventory.artifactKind, 'api-inventory');
+});
+
+test('registration-only environments do not require an executable corpus identity', () => {
+  const sample = environment();
+  assert(!Object.hasOwn(sample, 'corpusRevision'));
+  assert.doesNotThrow(() => validateEnvironment(sample, config));
+});
+
+test('target and implementation identities change independently', () => {
+  const first = buildInventory(sourceFixture(), config, []);
+  const contracts = readContractEvidence(repoRoot);
+  const second = buildInventory(sourceFixture(), config, contracts);
+  assert.match(first.targetInventorySha256, /^[a-f0-9]{64}$/);
+  assert.equal(first.targetInventorySha256, second.targetInventorySha256);
+  assert.notEqual(first.implementationEvidenceSha256, second.implementationEvidenceSha256);
+  const changed = sourceFixture();
+  changed.modules[0].methods.push({ name: 'get', textRaw: '`http.get(options)`' });
+  const third = buildInventory(changed, config, []);
+  assert.notEqual(first.targetInventorySha256, third.targetInventorySha256);
+  assert.equal(first.implementationEvidenceSha256, third.implementationEvidenceSha256);
+});
+
+test('contract-only changes do not reidentify target scope', () => {
+  const contracts = readContractEvidence(repoRoot);
+  const first = buildInventory(sourceFixture(), config, contracts);
+  const changed = structuredClone(contracts);
+  changed[0].sha256 = '0'.repeat(64);
+  const second = buildInventory(sourceFixture(), config, changed);
+  assert.equal(first.targetInventorySha256, second.targetInventorySha256);
+  assert.notEqual(first.implementationEvidenceSha256, second.implementationEvidenceSha256);
+  assert.notEqual(sha256(JSON.stringify(first)), sha256(JSON.stringify(second)));
+});
+
+test('reference upgrades do not reidentify unchanged targets or implementation evidence', () => {
+  const first = buildInventory(sourceFixture(), config, []);
+  const updated = structuredClone(config);
+  updated.reference.nodeVersion = '24.22.2';
+  updated.reference.sourceRevision = 'a'.repeat(40);
+  const second = buildInventory(sourceFixture(), updated, []);
+  assert.equal(first.targetInventorySha256, second.targetInventorySha256);
+  assert.equal(first.implementationEvidenceSha256, second.implementationEvidenceSha256);
+  assert.notEqual(first.referenceProfileSha256, second.referenceProfileSha256);
+  assert.deepEqual(first.entries.map(x => x.id), second.entries.map(x => x.id));
+});
+
+test('semantic hashing is independent of object-key order but preserves array order', () => {
+  assert.equal(hashJson({ z: 1, a: { y: 2, b: 3 } }), hashJson({ a: { b: 3, y: 2 }, z: 1 }));
+  assert.notEqual(hashJson([1, 2]), hashJson([2, 1]));
+  assert.throws(() => hashJson({ missing: undefined }), /undefined/);
+  assert.throws(() => hashJson({ number: Infinity }), /non-finite/);
+});
+
+test('typed inventory artifacts round-trip without losing evidence or identities', () => {
+  const original = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/nodejs/compatibility/inventory.v1.json'), 'utf8'));
+  const restored = JSON.parse(JSON.stringify(original));
+  validateArtifact(restored, 'api-inventory');
+  assert.deepEqual(restored, original);
+  assert.deepEqual(inventoryDigests(restored), inventoryDigests(original));
+});
+
+test('inventory validation rejects malformed, ambiguous and forged artifacts', () => {
+  const original = buildInventory(sourceFixture(), config, []);
+  validateArtifact(original, 'api-inventory');
+  const mutations = [
+    value => { delete value.suiteId; },
+    value => { value.suiteId = 'test262'; },
+    value => { value.artifactKind = 'reference-environment'; },
+    value => { value.schemaVersion = 2; },
+    value => { value.unrecognized = true; },
+    value => { value.defaults.behavior = 'pass'; },
+    value => { value.entries[0].stability = ['stable']; },
+    value => { value.targetInventorySha256 = '0'.repeat(64); },
+    value => { value.implementationEvidenceSha256 = '0'.repeat(64); },
+    value => { value.referenceProfileSha256 = '0'.repeat(64); },
+    value => { value.behaviors[0].status = 'pass'; },
+    value => { value.behaviors[0].expectation += ' changed'; },
+    value => { value.entries.push(structuredClone(value.entries[0])); },
+    value => { value.behaviors.push(structuredClone(value.behaviors[0])); },
+    value => { value.entries[0].owner = 'unknown'; },
+    value => { value.entries[0].contracts = [{ source: 'unknown.cs' }]; },
+    value => { delete value.documents.find(x => x.scope === 'excluded').reason; }
+  ];
+  for (const mutate of mutations) {
+    const changed = structuredClone(original);
+    mutate(changed);
+    assert.throws(() => validateArtifact(changed, 'api-inventory'));
+  }
+  assert.throws(() => validateArtifact(original, 'unknown'), /Unknown artifact/);
+});
+
+test('environment validation rejects mislabeled corpus identity and eligibility claims', () => {
+  const original = environment();
+  validateArtifact(JSON.parse(JSON.stringify(original)), 'reference-environment');
+  assert.doesNotThrow(() => validateEnvironment({
+    ...original, nodeVersions: { ...original.nodeVersions, nghttp3: '', ngtcp2: '' }
+  }, config));
+  for (const changed of [
+    { corpusRevision: 'a'.repeat(64) },
+    { suiteId: 'test262' }, { artifactKind: 'api-inventory' }, { schemaVersion: 2 },
+    { executableBehaviorCases: 8 }, { behaviorRegistrationSha256: 'unknown' },
+    { recordedAt: '2026-02-30T00:00:00.000Z' }, { referenceEnvironmentEligible: false },
+    { nodeVersions: { node: '24.18.0' } },
+    { lockfiles: [...original.lockfiles, ...original.lockfiles] },
+    { referenceProfileSha256: '0'.repeat(64) },
+    { referenceSourceRevision: '0'.repeat(40) }
+  ]) {
+    assert.throws(() => validateEnvironment({ ...original, ...changed }, config));
+  }
+});
+
+test('reference collection rejects malformed, forged and stale inventory evidence', t => {
+  const inventoryPath = path.join(repoRoot, 'docs/nodejs/compatibility/inventory.v1.json');
+  const readFile = fs.readFileSync.bind(fs);
+  const original = JSON.parse(readFile(inventoryPath, 'utf8'));
+  let changed;
+  t.mock.method(fs, 'readFileSync', (file, ...args) => file === inventoryPath
+    ? Buffer.from(JSON.stringify(changed)) : readFile(file, ...args));
+  changed = structuredClone(original);
+  changed.defaults.behavior = 'pass';
+  assert.throws(() => collectEnvironment(), /Invalid api-inventory artifact/);
+  changed = structuredClone(original);
+  changed.targetInventorySha256 = '0'.repeat(64);
+  assert.throws(() => collectEnvironment(), /targetInventorySha256 mismatch/);
+  changed = structuredClone(original);
+  changed.contracts[0].sha256 = '0'.repeat(64);
+  Object.assign(changed, inventoryDigests(changed));
+  assert.throws(() => collectEnvironment(), /contract evidence is stale/);
 });

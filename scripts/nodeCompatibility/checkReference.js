@@ -7,16 +7,19 @@ const os = require('node:os');
 const path = require('node:path');
 const { builtinModules } = require('node:module');
 const { sha256, readContractEvidence } = require('./buildInventory');
+const { hashJson, validateArtifact } = require('./artifacts');
 const config = require('./baseline.json');
 
 const repoRoot = path.resolve(__dirname, '../..');
 const inventoryRelativePath = 'docs/nodejs/compatibility/inventory.v1.json';
 
 function validateEnvironment(environment, baseline, { allowDirty = false } = {}) {
+  validateArtifact(environment, 'reference-environment');
   if (environment.nodeArguments.length || environment.runtimeOverridesPresent.length) {
     throw new Error('Reference runtime flags or environment overrides are present; use the declared default-options profile.');
   }
   for (const [key, expected] of Object.entries({
+    scopeId: baseline.scopeId,
     nodeVersion: baseline.reference.nodeVersion,
     platform: baseline.reference.platform,
     architecture: baseline.reference.architecture,
@@ -32,12 +35,9 @@ function validateEnvironment(environment, baseline, { allowDirty = false } = {})
   if (runtime !== baseline.reference.dotnetRuntime) {
     throw new Error(`Reference .NET runtime mismatch: expected ${baseline.reference.dotnetRuntime}, default patch selection is ${runtime ?? 'unavailable'}.`);
   }
-  if (!/^[a-f0-9]{40}$/.test(environment.jrocRevision ?? '')) throw new Error('Missing exact JROC revision.');
-  for (const key of ['inventorySha256', 'corpusRevision']) {
-    if (!/^[a-f0-9]{64}$/.test(environment[key] ?? '')) throw new Error(`Missing ${key}.`);
-  }
-  if (!environment.lockfiles.length || environment.lockfiles.some(x => !/^[a-f0-9]{64}$/.test(x.sha256))) {
-    throw new Error('Missing dependency lockfile hashes.');
+  if (environment.referenceSourceRevision !== baseline.reference.sourceRevision
+    || environment.referenceProfileSha256 !== hashJson(baseline.reference)) {
+    throw new Error('Reference profile provenance does not match baseline configuration.');
   }
   const normalize = values => [...values].map(x => x.replace(/^node:/, '')).sort();
   if (JSON.stringify(normalize(environment.builtinModules)) !== JSON.stringify(normalize(baseline.builtinModules))) {
@@ -55,18 +55,22 @@ function collectEnvironment() {
   }).trim();
   const bytes = fs.readFileSync(path.join(repoRoot, inventoryRelativePath));
   const inventory = JSON.parse(bytes);
-  if (JSON.stringify(inventory.reference) !== JSON.stringify(config.reference)
+  validateArtifact(inventory, 'api-inventory');
+  if (hashJson(inventory.reference) !== hashJson(config.reference)
+    || inventory.suiteId !== config.suiteId
     || inventory.scopeId !== config.scopeId || inventory.schemaVersion !== config.schemaVersion) {
     throw new Error('Inventory reference metadata does not match baseline configuration.');
   }
-  if (JSON.stringify(inventory.contracts) !== JSON.stringify(readContractEvidence(repoRoot))) {
+  if (hashJson(inventory.contracts) !== hashJson(readContractEvidence(repoRoot))) {
     throw new Error('Inventory contract evidence is stale. Regenerate the compatibility inventory.');
   }
   const lockfiles = run('git', ['ls-files', '-z']).split('\0')
     .filter(file => /(^|\/)(package-lock\.json|packages\.lock\.json)$/.test(file)).sort()
     .map(file => ({ path: file, sha256: sha256(fs.readFileSync(path.join(repoRoot, file))) }));
+  const worktreeDirty = run('git', ['status', '--porcelain', '--untracked-files=normal']).length > 0;
   return {
-    schemaVersion: 1, scopeId: config.scopeId, recordedAt: new Date().toISOString(),
+    schemaVersion: 1, suiteId: config.suiteId,
+    artifactKind: 'reference-environment', scopeId: config.scopeId, recordedAt: new Date().toISOString(),
     nodeVersion: process.versions.node, nodeExecutable: process.execPath,
     nodeArguments: process.execArgv,
     runtimeOverridesPresent: [
@@ -80,11 +84,16 @@ function collectEnvironment() {
     dotnetRuntimes: run('dotnet', ['--list-runtimes']).split('\n')
       .filter(x => x.startsWith('Microsoft.NETCore.App ')).map(x => x.split(' ')[1]),
     jrocRevision: run('git', ['rev-parse', 'HEAD']),
-    worktreeDirty: run('git', ['status', '--porcelain', '--untracked-files=normal']).length > 0,
+    worktreeDirty,
     inventorySha256: sha256(bytes),
-    corpusRevision: sha256(JSON.stringify(inventory.behaviors)),
+    targetInventorySha256: inventory.targetInventorySha256,
+    implementationEvidenceSha256: inventory.implementationEvidenceSha256,
+    referenceProfileSha256: inventory.referenceProfileSha256,
+    behaviorRegistrationSha256: hashJson(inventory.behaviors),
     executableBehaviorCases: 0,
     baselineConfigSha256: sha256(fs.readFileSync(path.join(__dirname, 'baseline.json'))),
+    referenceEnvironmentEligible: !worktreeDirty,
+    referenceSourceRevision: config.reference.sourceRevision,
     lockfiles,
     builtinModules: builtinModules.filter(x => !x.startsWith('_'))
   };
@@ -97,10 +106,7 @@ function main(args) {
   }
   const environment = collectEnvironment();
   validateEnvironment(environment, config, { allowDirty: args.includes('--allow-dirty') });
-  console.log(JSON.stringify({
-    ...environment, referenceEnvironmentEligible: !environment.worktreeDirty,
-    referenceSourceRevision: config.reference.sourceRevision
-  }, null, 2));
+  console.log(JSON.stringify(environment, null, 2));
 }
 
 if (require.main === module) {

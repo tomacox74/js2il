@@ -9,7 +9,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - tooling(node): define a pinned Node 24.22.1 compatibility measurement scope
   with a public API inventory, separate contract/implementation/behavior evidence,
   explicit outcome and denominator policies, and a strict reference-environment
-  provenance check. This establishes measurement inputs, not a compatibility score.
+  provenance check. Validate typed offline artifacts and separate target,
+  implementation-evidence and reference-profile identities for future catalogue
+  ingestion without introducing database dependencies. Pending registrations
+  have their own digest, not an executable-corpus revision. This establishes
+  measurement inputs, not a compatibility score.
 - perf(compiler): share immutable LIR definition/use and ordered operand analysis
   across stack-scheduler stages; reuse private residency/ownership buffers and
   unchanged region/liveness layouts while retaining independent validation and
