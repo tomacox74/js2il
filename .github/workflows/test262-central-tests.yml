@@ -36,4 +36,5 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - run: node --test scripts/test262/catalog.test.js scripts/test262/specificationMetadata.test.js scripts/test262/nativePorting.test.js scripts/test262/nativeScreeningHost.test.js scripts/test262/compilationCoverage.test.js
+      # These integration files build the same .NET projects/output directories.
+      - run: node --test --test-concurrency=1 scripts/test262/catalog.test.js scripts/test262/specificationMetadata.test.js scripts/test262/nativePorting.test.js scripts/test262/nativeScreeningHost.test.js scripts/test262/compilationCoverage.test.js
