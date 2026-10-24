@@ -36,6 +36,7 @@ test('release validation reuses all CI shards on both operating systems', () => 
   assert.equal(JSON.parse(ci.on.workflow_call.inputs.runners.default)[0], 'ubuntu-latest');
   assert.match(matrix.os, /fromJSON\(inputs.runners/);
   assert.equal(ci.jobs.test.defaults.run.shell, 'bash');
+  assert.equal(ci.jobs.test.env.DOTNET_DefaultStackSize, '800000');
   assert.equal(ci.jobs.test.strategy['fail-fast'], false);
   assert.equal(validation.jobs.validate.strategy['fail-fast'], false);
   assert.equal(validation.jobs.validate.steps.at(-1).run, 'npm run release:validate');

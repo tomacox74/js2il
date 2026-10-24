@@ -191,6 +191,9 @@ The same validation is repeated for the exact tag commit by the publisher;
 an earlier green release-branch run is not substituted for tag validation.
 Workflow-change PRs also exercise this cross-platform gate without publishing
 or receiving NuGet credentials. Ordinary source PR CI remains Linux-only.
+Native CI uses an 8 MiB managed-thread stack on all runners, matching the Linux
+default for recursive Debug compiler traversals. Test fixture bytes are retained
+exactly across checkouts, including files with byte-count assertions.
 
 For the complete restore, build, and post-publish validation matrix, see
 [SDK packaging validation](sdk/PackagingValidation.md).

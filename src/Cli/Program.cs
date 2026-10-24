@@ -80,6 +80,12 @@ class Program
             {
                 args = args[1..];
             }
+            if (args.Length == 1 && args[0] is "-h" or "-?" or "--help")
+            {
+                // Avoid PowerArgs' interactive console renderer for redirected output.
+                PrintUsage(Console.WriteLine);
+                return;
+            }
             var remainingArgs = ExtractAdditionalInputs(args, out var additionalInputs);
             var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
@@ -326,26 +332,29 @@ class Program
 
     // Print usage information using the logger (outputs to stderr for error scenarios)
     private static void PrintUsage(ICompilerOutput logger)
+        => PrintUsage(logger.WriteLineError);
+
+    private static void PrintUsage(Action<string> writeLine)
     {
-        logger.WriteLineError("Usage: jroc <InputFile> [<OutputPath>] [options]");
-        logger.WriteLineError("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
-        logger.WriteLineError("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
-        logger.WriteLineError("");
-        logger.WriteLineError("Option                 Description");
-        logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
-        logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
-        logger.WriteLineError("-a, --additional-input <file> Add another input (repeatable; incompatible with --moduleid)");
-        logger.WriteLineError("--assemblyname <name>   Set the assembly identity and artifact basename");
-        logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
-        logger.WriteLineError("-v, --verbose          Enable diagnostics output to console");
-        logger.WriteLineError("--diagnostic-file <path> Write diagnostics output to a text file");
-        logger.WriteLineError("--analyzeunused        Analyze and report unused properties and methods");
-        logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
-        logger.WriteLineError("--coverage             Analyze compilation modes without writing assemblies");
-        logger.WriteLineError("--json                 Print coverage analysis as JSON");
-        logger.WriteLineError("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");
-        logger.WriteLineError("--version              Show version information and exit");
-        logger.WriteLineError("-h, -?, --help         Show help and exit");
+        writeLine("Usage: jroc <InputFile> [<OutputPath>] [options]");
+        writeLine("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
+        writeLine("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
+        writeLine("");
+        writeLine("Option                 Description");
+        writeLine("-i, --input            The JavaScript file to convert (positional supported)");
+        writeLine("--moduleid             Compile an npm/CommonJS module id instead of a file path");
+        writeLine("-a, --additional-input <file> Add another input (repeatable; incompatible with --moduleid)");
+        writeLine("--assemblyname <name>   Set the assembly identity and artifact basename");
+        writeLine("-o, --output           The output directory for the generated IL (created if missing)");
+        writeLine("-v, --verbose          Enable diagnostics output to console");
+        writeLine("--diagnostic-file <path> Write diagnostics output to a text file");
+        writeLine("--analyzeunused        Analyze and report unused properties and methods");
+        writeLine("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        writeLine("--coverage             Analyze compilation modes without writing assemblies");
+        writeLine("--json                 Print coverage analysis as JSON");
+        writeLine("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");
+        writeLine("--version              Show version information and exit");
+        writeLine("-h, -?, --help         Show help and exit");
     }
 
     private static bool TryValidateDiagnosticFilePath(

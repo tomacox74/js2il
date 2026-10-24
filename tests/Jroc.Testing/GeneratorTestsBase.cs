@@ -49,6 +49,9 @@ namespace Jroc.Tests
                     compiled.Artifact.PeBytes,
                     compiled.Artifact.AssemblyName);
                 il = RemoveVolatileMethodRvaComments(il);
+                var projectDirectory = TestProjectLayout.FindProjectRoot(GetType(), sourceFilePath)
+                    ?? throw new InvalidOperationException($"Could not find the test project for '{sourceFilePath}'.");
+                il = NormalizeProjectSourcePaths(il, projectDirectory);
 
                 if (verifyAssembly is not null)
                 {
@@ -82,6 +85,18 @@ namespace Jroc.Tests
                     .Where(line => !line.Contains(
                         "// Method begins at RVA",
                         StringComparison.Ordinal)));
+        }
+
+        internal static string NormalizeProjectSourcePaths(string il, string projectDirectory)
+        {
+            var escapedDirectory = projectDirectory.TrimEnd('\\', '/')
+                .Replace("\\", "\\\\", StringComparison.Ordinal)
+                + (projectDirectory.Contains('\\') ? "\\\\" : "/");
+            return string.Join('\n', il.Split('\n').Select(line =>
+                line.Contains("ldstr \"" + escapedDirectory, StringComparison.Ordinal)
+                    ? line.Replace(escapedDirectory, "{ProjectDirectory}", StringComparison.Ordinal)
+                        .Replace("\\\\", "/", StringComparison.Ordinal)
+                    : line));
         }
 
         private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)

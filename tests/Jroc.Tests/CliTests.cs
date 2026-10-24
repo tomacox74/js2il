@@ -135,18 +135,13 @@ namespace Jroc.Tests
             Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
-        [Fact]
-        public void Help_PrintsUsage_And_ExitCode0()
+        [Theory]
+        [InlineData("-h")]
+        [InlineData("-?")]
+        [InlineData("--help")]
+        public void Help_PrintsUsage_And_ExitCode0(string flag)
         {
-            if (OperatingSystem.IsLinux())
-            {
-                // appears to hang indefinitely on Linux when -h is passed to the process.
-                // Skip this test on Linux until the root cause is identified and fixed.
-                Console.WriteLine("[CliTests] Skipping Help_PrintsUsage_And_ExitCode0 test on Linux due to hang.");
-                return;
-            }
-
-            var (code, stdout, stderr) = RunOutOfProc("-h");
+            var (code, stdout, stderr) = RunOutOfProc(flag);
             Assert.Equal(0, code);
             // Accept either our custom usage or PowerArgs default (which uses the host process name)
             Assert.True(stdout.Contains("Usage: jroc <InputFile>") || stdout.Contains("Usage - "), stdout);
