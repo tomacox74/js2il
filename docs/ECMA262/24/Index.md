@@ -1,17 +1,25 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 24: Keyed Collections
 
-This folder contains JROC coverage documentation for Section 24: Keyed Collections. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 24: Keyed Collections](Section24.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 24 | Keyed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](Section24.md) |
 
 ## Subsections
 
-- [Section 24.1: Map Objects](Section24_1.md)
-- [Section 24.2: Set Objects](Section24_2.md)
-- [Section 24.3: WeakMap Objects](Section24_3.md)
-- [Section 24.4: WeakSet Objects](Section24_4.md)
-- [Section 24.5: Abstract Operations for Keyed Collections](Section24_5.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 24.1 | Map Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-objects) | [Section24_1.md](Section24_1.md) |
+| 24.2 | Set Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-objects) | [Section24_2.md](Section24_2.md) |
+| 24.3 | WeakMap Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap-objects) | [Section24_3.md](Section24_3.md) |
+| 24.4 | WeakSet Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakset-objects) | [Section24_4.md](Section24_4.md) |
+| 24.5 | Abstract Operations for Keyed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-keyed-collections) | [Section24_5.md](Section24_5.md) |

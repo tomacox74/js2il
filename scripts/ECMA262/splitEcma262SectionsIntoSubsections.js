@@ -4,13 +4,10 @@
  * Generates/updates docs/ECMA262 subsection docs:
  * - Splits SectionN.md clause tables into SectionN_k.md files
  * - Rebuilds SectionN.md hub pages from subsection docs (idempotent)
- * - Updates Index.md section rollup status
+ * - Refreshes nested Index.md tables and root Index.md section rollup status
  *
- * Status rollup precedence:
- *   Not Yet Supported > Incomplete > Supported with Limitations > Supported > Untracked
- *   N/A (informational) is neutral and only wins when all statuses are informational.
- * Legacy "Not Supported" is treated as "Not Yet Supported".
- * Legacy "Partially Supported" is treated as "Supported with Limitations".
+ * JSON-backed subsection pages are maintained by generateEcma262SectionMarkdown.js.
+ * Status rollup policy is shared with rollupEcma262Statuses.js.
  */
 
 'use strict';
@@ -18,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { buildGeneratedTimestampLine, isGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
+const { getRollupStatus, rollupStatuses } = require('./rollupEcma262Statuses');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->';
@@ -109,25 +107,6 @@ function parseClauseTableRow(line) {
     Status: parts[2],
     Link: parts[3],
   };
-}
-
-function getRollupStatus(statuses) {
-  const norm = statuses
-    .map((s) => (s ?? '').trim())
-    .filter((s) => s.length > 0);
-
-  const withoutInformational = norm.filter((s) => s !== 'N/A (informational)');
-  if (norm.length > 0 && withoutInformational.length === 0) return 'N/A (informational)';
-
-  const effective = withoutInformational;
-
-  if (effective.includes('Not Yet Supported')) return 'Not Yet Supported';
-  if (effective.includes('Not Supported')) return 'Not Yet Supported';
-  if (effective.includes('Incomplete')) return 'Incomplete';
-  if (effective.includes('Supported with Limitations')) return 'Supported with Limitations';
-  if (effective.includes('Partially Supported')) return 'Supported with Limitations';
-  if (effective.includes('Supported')) return 'Supported';
-  return 'Untracked';
 }
 
 function upsertGeneratedTimestampBeforeSummary(lines, generatedAt) {
@@ -333,6 +312,7 @@ function main() {
           const subTitle = subTitleRow ? subTitleRow.Title : subRows[0].Title;
 
           const subPath = path.join(sectionDir, `Section${sectionNumber}_${sub}.md`);
+          if (fs.existsSync(subPath.replace(/\.md$/, '.json'))) continue;
           if (!shouldOverwriteSubsectionDoc(subPath)) {
             if (fs.existsSync(subPath)) {
               const existingSub = readLines(subPath);
@@ -388,6 +368,19 @@ function main() {
     for (const sf of subFiles) {
       const subClause = `${sectionNumber}.${sf.sub}`;
       const subPath = path.join(sectionDir, sf.fileName);
+      const jsonPath = subPath.replace(/\.md$/, '.json');
+      if (fs.existsSync(jsonPath)) {
+        const doc = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        subRowsForIndex.push({
+          Sub: sf.sub,
+          Clause: doc.clause,
+          Title: String(doc.title).replace(/\|/g, '\\|'),
+          Status: doc.status,
+          Link: `[tc39.es](${doc.specUrl})`,
+          File: sf.fileName,
+        });
+        continue;
+      }
 
       const existingSub = readLines(subPath);
       const existingSubLines = existingSub.lines.slice();
@@ -483,6 +476,7 @@ function main() {
     }
   }
 
+  rollupStatuses(rootDir, generatedAt);
   console.log('Split complete: subsection docs generated and indexes updated.');
 }
 

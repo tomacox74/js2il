@@ -1,23 +1,31 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 29: Memory Model
 
-This folder contains JROC coverage documentation for Section 29: Memory Model. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 29: Memory Model](Section29.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 29 | Memory Model | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](Section29.md) |
 
 ## Subsections
 
-- [Section 29.1: Memory Model Fundamentals](Section29_1.md)
-- [Section 29.2: Agent Events Records](Section29_2.md)
-- [Section 29.3: Chosen Value Records](Section29_3.md)
-- [Section 29.4: Candidate Executions](Section29_4.md)
-- [Section 29.5: Abstract Operations for the Memory Model](Section29_5.md)
-- [Section 29.6: Relations of Candidate Executions](Section29_6.md)
-- [Section 29.7: Properties of Valid Executions](Section29_7.md)
-- [Section 29.8: Races](Section29_8.md)
-- [Section 29.9: Data Races](Section29_9.md)
-- [Section 29.10: Data Race Freedom](Section29_10.md)
-- [Section 29.11: Shared Memory Guidelines](Section29_11.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 29.1 | Memory Model Fundamentals | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-memory-model-fundamentals) | [Section29_1.md](Section29_1.md) |
+| 29.2 | Agent Events Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-agent-event-records) | [Section29_2.md](Section29_2.md) |
+| 29.3 | Chosen Value Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-chosen-value-records) | [Section29_3.md](Section29_3.md) |
+| 29.4 | Candidate Executions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-candidate-executions) | [Section29_4.md](Section29_4.md) |
+| 29.5 | Abstract Operations for the Memory Model | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-the-memory-model) | [Section29_5.md](Section29_5.md) |
+| 29.6 | Relations of Candidate Executions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-relations-of-candidate-executions) | [Section29_6.md](Section29_6.md) |
+| 29.7 | Properties of Valid Executions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-valid-executions) | [Section29_7.md](Section29_7.md) |
+| 29.8 | Races | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-races) | [Section29_8.md](Section29_8.md) |
+| 29.9 | Data Races | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-data-races) | [Section29_9.md](Section29_9.md) |
+| 29.10 | Data Race Freedom | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-data-race-freedom) | [Section29_10.md](Section29_10.md) |
+| 29.11 | Shared Memory Guidelines | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-shared-memory-guidelines) | [Section29_11.md](Section29_11.md) |

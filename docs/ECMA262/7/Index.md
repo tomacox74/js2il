@@ -1,16 +1,24 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 7: Abstract Operations
 
-This folder contains JROC coverage documentation for Section 7: Abstract Operations. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 7: Abstract Operations](Section7.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 7 | Abstract Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations) | [Section7.md](Section7.md) |
 
 ## Subsections
 
-- [Section 7.1: Type Conversion](Section7_1.md)
-- [Section 7.2: Testing and Comparison Operations](Section7_2.md)
-- [Section 7.3: Operations on Objects](Section7_3.md)
-- [Section 7.4: Operations on Iterator Objects](Section7_4.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 7.1 | Type Conversion | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-type-conversion) | [Section7_1.md](Section7_1.md) |
+| 7.2 | Testing and Comparison Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-testing-and-comparison-operations) | [Section7_2.md](Section7_2.md) |
+| 7.3 | Operations on Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-operations-on-objects) | [Section7_3.md](Section7_3.md) |
+| 7.4 | Operations on Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-operations-on-iterator-objects) | [Section7_4.md](Section7_4.md) |

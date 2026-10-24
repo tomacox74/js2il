@@ -29,7 +29,8 @@ Scripts
 
 What it does
 - Generates/updates subsection documents (e.g. 27/Section27_3.md) from a parent section’s clause table when applicable.
-- Rebuilds hub pages and updates Index.md rollups.
+- Rebuilds hub pages, nested `Index.md` tables and root `Index.md` rollups using the shared status policy.
+- Preserves JSON-backed subsection Markdown; regenerate those pages from JSON instead of legacy clause tables.
 
 When to use it
 - After updating the top-level section tables / coverage metadata and you want the subsection docs and rollups refreshed.
@@ -41,7 +42,8 @@ How to run
 ### 1b) Roll up statuses from JSON (automated, non-destructive)
 
 If you treat the subsection JSON files (e.g. `docs/ECMA262/15/Section15_5.json`) as the source of truth for
-status, you can regenerate the **section hub pages** (e.g. `docs/ECMA262/15/Section15.md`) and the **root index**
+status, you can regenerate the **section hub pages** (e.g. `docs/ECMA262/15/Section15.md`), **nested indexes**
+(e.g. `docs/ECMA262/15/Index.md`) and the **root index**
 (`docs/ECMA262/Index.md`) from those JSON statuses.
 
 Script
@@ -50,6 +52,10 @@ Script
 What it does
 - Rebuilds each `docs/ECMA262/<N>/Section<N>.md` hub page “Section Entry” + “Subsections” table from the sibling `Section<N>_<k>.json` files.
 - Updates the `Status` column for each section row in `docs/ECMA262/Index.md`.
+- Rebuilds every numeric section's `Index.md` with a rolled-up section status and a subsection table containing title, status, specification and document links.
+- Keeps informational sections without numbered subsections in the same table format.
+- Preserves existing timestamps when generated content has not changed.
+- Leaves independently maintained Test262 conformance evidence unchanged.
 
 What it does NOT do
 - Does not split/merge subsection docs.
@@ -66,8 +72,10 @@ Status notes
 - Legacy `Partially Supported` is deprecated and treated as `Supported with Limitations` by the scripts.
 
 How to run
+- npm: `npm run generate:ecma262-indexes`
 - direct: `node scripts/ECMA262/rollupEcma262Statuses.js`
 - custom root: `node scripts/ECMA262/rollupEcma262Statuses.js --root docs/ECMA262`
+- generator regressions: `npm run test:ecma262-docs`
 
 ### 2) “Structural sync” of a subsection file (manual, links-only)
 
@@ -130,6 +138,9 @@ If you want to (re)generate a subsection markdown file from its JSON description
 
 - script: scripts/ECMA262/generateEcma262SectionMarkdown.js
 - example: `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section 27.3`
+
+This command also refreshes section hubs, nested index tables and the root status rollup, so a subsection
+status change cannot leave its navigation indexes stale.
 
 Note: by convention these docs are links-only. The generator supports an embedded reference appendix,
 but that should only be used when explicitly requested.

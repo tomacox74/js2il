@@ -1,15 +1,23 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 23: Indexed Collections
 
-This folder contains JROC coverage documentation for Section 23: Indexed Collections. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 23: Indexed Collections](Section23.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](Section23.md) |
 
 ## Subsections
 
-- [Section 23.1: Array Objects](Section23_1.md)
-- [Section 23.2: TypedArray Objects](Section23_2.md)
-- [Section 23.3: Uint8Array Objects](Section23_3.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 23.1 | Array Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array-objects) | [Section23_1.md](Section23_1.md) |
+| 23.2 | TypedArray Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-objects) | [Section23_2.md](Section23_2.md) |
+| 23.3 | Uint8Array Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-uint8array) | [Section23_3.md](Section23_3.md) |

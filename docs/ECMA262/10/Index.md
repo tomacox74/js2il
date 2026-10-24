@@ -1,17 +1,25 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 10: Ordinary and Exotic Objects Behaviours
 
-This folder contains JROC coverage documentation for Section 10: Ordinary and Exotic Objects Behaviours. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 10: Ordinary and Exotic Objects Behaviours](Section10.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 10 | Ordinary and Exotic Objects Behaviours | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-and-exotic-objects-behaviours) | [Section10.md](Section10.md) |
 
 ## Subsections
 
-- [Section 10.1: Ordinary Object Internal Methods and Internal Slots](Section10_1.md)
-- [Section 10.2: ECMAScript Function Objects](Section10_2.md)
-- [Section 10.3: Built-in Function Objects](Section10_3.md)
-- [Section 10.4: Built-in Exotic Object Internal Methods and Slots](Section10_4.md)
-- [Section 10.5: Proxy Object Internal Methods and Internal Slots](Section10_5.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 10.1 | Ordinary Object Internal Methods and Internal Slots | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots) | [Section10_1.md](Section10_1.md) |
+| 10.2 | ECMAScript Function Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-function-objects) | [Section10_2.md](Section10_2.md) |
+| 10.3 | Built-in Function Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-built-in-function-objects) | [Section10_3.md](Section10_3.md) |
+| 10.4 | Built-in Exotic Object Internal Methods and Slots | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots) | [Section10_4.md](Section10_4.md) |
+| 10.5 | Proxy Object Internal Methods and Internal Slots | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots) | [Section10_5.md](Section10_5.md) |

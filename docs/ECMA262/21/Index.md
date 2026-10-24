@@ -1,16 +1,24 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 21: Numbers and Dates
 
-This folder contains JROC coverage documentation for Section 21: Numbers and Dates. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 21: Numbers and Dates](Section21.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 21 | Numbers and Dates | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numbers-and-dates) | [Section21.md](Section21.md) |
 
 ## Subsections
 
-- [Section 21.1: Number Objects](Section21_1.md)
-- [Section 21.2: BigInt Objects](Section21_2.md)
-- [Section 21.3: The Math Object](Section21_3.md)
-- [Section 21.4: Date Objects](Section21_4.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 21.1 | Number Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number-objects) | [Section21_1.md](Section21_1.md) |
+| 21.2 | BigInt Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint-objects) | [Section21_2.md](Section21_2.md) |
+| 21.3 | The Math Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math-object) | [Section21_3.md](Section21_3.md) |
+| 21.4 | Date Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-date-objects) | [Section21_4.md](Section21_4.md) |

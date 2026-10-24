@@ -1,22 +1,30 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 12: ECMAScript Language: Lexical Grammar
 
-This folder contains JROC coverage documentation for Section 12: ECMAScript Language: Lexical Grammar. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 12: ECMAScript Language: Lexical Grammar](Section12.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 12 | ECMAScript Language: Lexical Grammar | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section12.md](Section12.md) |
 
 ## Subsections
 
-- [Section 12.1: Unicode Format-Control Characters](Section12_1.md)
-- [Section 12.2: White Space](Section12_2.md)
-- [Section 12.3: Line Terminators](Section12_3.md)
-- [Section 12.4: Comments](Section12_4.md)
-- [Section 12.5: Hashbang Comments](Section12_5.md)
-- [Section 12.6: Tokens](Section12_6.md)
-- [Section 12.7: Names and Keywords](Section12_7.md)
-- [Section 12.8: Punctuators](Section12_8.md)
-- [Section 12.9: Literals](Section12_9.md)
-- [Section 12.10: Automatic Semicolon Insertion](Section12_10.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 12.1 | Unicode Format-Control Characters | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-unicode-format-control-characters) | [Section12_1.md](Section12_1.md) |
+| 12.2 | White Space | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-white-space) | [Section12_2.md](Section12_2.md) |
+| 12.3 | Line Terminators | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-line-terminators) | [Section12_3.md](Section12_3.md) |
+| 12.4 | Comments | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-comments) | [Section12_4.md](Section12_4.md) |
+| 12.5 | Hashbang Comments | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hashbang) | [Section12_5.md](Section12_5.md) |
+| 12.6 | Tokens | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-tokens) | [Section12_6.md](Section12_6.md) |
+| 12.7 | Names and Keywords | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-names-and-keywords) | [Section12_7.md](Section12_7.md) |
+| 12.8 | Punctuators | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-punctuators) | [Section12_8.md](Section12_8.md) |
+| 12.9 | Literals | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar-literals) | [Section12_9.md](Section12_9.md) |
+| 12.10 | Automatic Semicolon Insertion | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-automatic-semicolon-insertion) | [Section12_10.md](Section12_10.md) |

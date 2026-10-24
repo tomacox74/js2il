@@ -1,14 +1,22 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 5: Notational Conventions
 
-This folder contains JROC coverage documentation for Section 5: Notational Conventions. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 5: Notational Conventions](Section5.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 5 | Notational Conventions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-notational-conventions) | [Section5.md](Section5.md) |
 
 ## Subsections
 
-- [Section 5.1: Syntactic and Lexical Grammars](Section5_1.md)
-- [Section 5.2: Algorithm Conventions](Section5_2.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 5.1 | Syntactic and Lexical Grammars | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-syntactic-and-lexical-grammars) | [Section5_1.md](Section5_1.md) |
+| 5.2 | Algorithm Conventions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-algorithm-conventions) | [Section5_2.md](Section5_2.md) |

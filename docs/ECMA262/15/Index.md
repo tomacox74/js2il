@@ -1,22 +1,30 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 15: ECMAScript Language: Functions and Classes
 
-This folder contains JROC coverage documentation for Section 15: ECMAScript Language: Functions and Classes. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 15: ECMAScript Language: Functions and Classes](Section15.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 15 | ECMAScript Language: Functions and Classes | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](Section15.md) |
 
 ## Subsections
 
-- [Section 15.1: Parameter Lists](Section15_1.md)
-- [Section 15.2: Function Definitions](Section15_2.md)
-- [Section 15.3: Arrow Function Definitions](Section15_3.md)
-- [Section 15.4: Method Definitions](Section15_4.md)
-- [Section 15.5: Generator Function Definitions](Section15_5.md)
-- [Section 15.6: Async Generator Function Definitions](Section15_6.md)
-- [Section 15.7: Class Definitions](Section15_7.md)
-- [Section 15.8: Async Function Definitions](Section15_8.md)
-- [Section 15.9: Async Arrow Function Definitions](Section15_9.md)
-- [Section 15.10: Tail Position Calls](Section15_10.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 15.1 | Parameter Lists | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parameter-lists) | [Section15_1.md](Section15_1.md) |
+| 15.2 | Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-definitions) | [Section15_2.md](Section15_2.md) |
+| 15.3 | Arrow Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arrow-function-definitions) | [Section15_3.md](Section15_3.md) |
+| 15.4 | Method Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-method-definitions) | [Section15_4.md](Section15_4.md) |
+| 15.5 | Generator Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generator-function-definitions) | [Section15_5.md](Section15_5.md) |
+| 15.6 | Async Generator Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-generator-function-definitions) | [Section15_6.md](Section15_6.md) |
+| 15.7 | Class Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions) | [Section15_7.md](Section15_7.md) |
+| 15.8 | Async Function Definitions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-definitions) | [Section15_8.md](Section15_8.md) |
+| 15.9 | Async Arrow Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-async-arrow-function-definitions) | [Section15_9.md](Section15_9.md) |
+| 15.10 | Tail Position Calls | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-tail-position-calls) | [Section15_10.md](Section15_10.md) |
