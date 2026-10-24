@@ -172,6 +172,11 @@ class StoredHistoryTests(unittest.TestCase):
         self.assertFalse(self.report(broken,use_stored_history=True)['verified'])
         self.assertFalse(self.report(rows[:-1],use_stored_history=True)['verified'])
         self.assertFalse(self.report(frozen(),use_stored_history=True)['verified'])
+        ambiguous=copy.deepcopy(rows)
+        for table,data in copy.deepcopy(rows):
+            if table in ('imports','import_records','legacy_control_records'):
+                data['import_id']='other';ambiguous.append((table,data))
+        self.assertFalse(self.report(ambiguous,use_stored_history=True)['verified'])
 
     def test_offline_deadline_interrupts_work(self):
         from unittest.mock import patch

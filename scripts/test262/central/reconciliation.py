@@ -158,8 +158,9 @@ def stored_history(db):
         if key in target:
             raise ValueError('Ambiguous stored source attribution')
         target[key]=document
-    entries=[]
+    entries=[];uri_imports={}
     for (import_id,uri),source in sorted(sources.items()):
+        uri_imports.setdefault(uri,set()).add(import_id)
         proof=receipts.get((import_id,uri),{})
         mapped=db.execute("SELECT count(*) FROM import_records WHERE json_extract(data,'$.import_id')=? AND json_extract(data,'$.entity_kind')='observation'",(import_id,)).fetchone()[0]
         hashes=[proof.get(k) for k in ('sha256','archive_sha256')]
@@ -182,10 +183,12 @@ def stored_history(db):
     lists=[gaps[k] for k in sorted(gaps)]
     return {'state':'stored_receipts_joined','source_entries':len(entries),
             'attribution_complete':bool(entries and len(lists)==1 and manifest_hashes and
+                not any(len(ids)>1 for ids in uri_imports.values()) and
                 not any(not e['receipt_matches'] for e in entries) and not (receipts.keys()-sources.keys()) and
                 all(len(h)==64 and all(c in '0123456789abcdef' for c in h) for h in manifest_hashes)),
             'distinct_imports':len({e['import_id'] for e in entries}), 'entries':entries,
             'unmatched_entries':sum(not e['receipt_matches'] for e in entries),
+            'ambiguous_entries':sum(len(ids)>1 for ids in uri_imports.values()),
             'orphan_receipts':len(receipts.keys()-sources.keys()),
             'recorded_manifest_sha256':sorted(manifest_hashes),'distinct_gap_lists':len(lists),
             'unavailable_gaps':len(lists[0]) if len(lists)==1 else None,
