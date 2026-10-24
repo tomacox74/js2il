@@ -1249,3 +1249,165 @@ producer/run/variant identities, charges, fault checkpoints and revocation resul
 before closing #2339. The ordinary catalogue-only restore drill also includes these
 new records and limited function ACLs. Production onboarding is a separate operator
 decision and is not required to establish the disposable acceptance gates.
+
+## Operational monitoring (#2341)
+
+The operator selected **dashboard warnings first, with notification rules paused**,
+and adopted these targets on 23 October 2026: avoidable recorded execution repeats
+below 5% over seven days, interactive queries within two seconds, and verified
+backup age within 36 hours. The versioned policy is
+`grafana/alerting/test262-monitoring-policy.json`. No contact point or notification
+routing is enabled by this implementation. The paused provisioning definitions are
+`grafana/alerting/test262-operational-paused.json`.
+
+### Read-only access policy and compatibility
+
+Retain the existing shared read-only performance/catalogue datasource. Its role
+must have only the intended reporting-view and existing performance SELECT access,
+without raw catalogue access, writes, scheduling or publication API execution.
+This implementation does not change the datasource or expand its privileges.
+Keep effective-grant audits and measurements in the operator's private records;
+do not publish live database permission snapshots or operational evidence in git.
+Backup access remains catalogue-only and must not gain performance-table access.
+
+### Reports, collector and freshness semantics
+
+Deploy the reviewed additive operational-reporting migration, then update the
+existing `jroc-test262-summary` and `jroc-test262-conformance` dashboards from the
+matching repository JSON. Keep their UIDs and existing panels/variables/links;
+operational panels own IDs 100 and above. The older `test262-catalogue.json`
+template is separate and is not a replacement for the live conformance dashboard.
+Rebuild only the operational additions with:
+
+```sh
+python -m scripts.test262.central.monitoring_dashboard
+```
+
+The added views expose collection states/timestamps, budget charges/reservations
+and ledger mismatches, current versus historical queues, delivery latency,
+publication ownership/backlog, exact build/harness/environment fingerprint and
+upstream pin, registration/validation revision, duplicate classification and
+backup/restore receipt freshness. They grant SELECT only to the existing reporter
+role; no raw-table grants are added. The conformance view preserves its columns
+and verdict rules while replacing repeated per-fixture evidence aggregation with
+one set-based aggregation. Missing required variants and untrusted/conflicting
+observations keep their original semantics.
+
+`test262-operational-monitor.yml` observes GitHub metadata hourly at minute 47,
+using existing protected coordinator settings and a read-only Actions token. It
+builds or runs no fixtures, claims no work, changes no targets/cursors/budgets,
+performs no publication and sends no notifications. This is an operational-health
+collector, not another work scheduler. It appends sanitized samples through
+`api_monitor`; ingest-only, reporter and execution-only workers cannot call it.
+The server assigns repository, producer and observation time, validates bounded
+metadata, fences epoch/revocation and rejects conflicting immutable replay.
+
+The new operational sample table is included in catalogue-only backups. It is
+telemetry rather than conformance evidence and is outside the existing 32-table
+logical result-export contract. Its backup SELECT grant is added only for an
+already provisioned backup role; no backup login or performance access is created.
+
+A no-write rehearsal is available without a database connection:
+
+```sh
+python -m scripts.test262.central.monitoring --dry-run \
+  --repository-name tomacox74/js2il --output artifacts/test262/monitoring-receipt.json
+```
+
+Do not put real credentials in commands/history; configure the variable through
+the existing credential manager. Normal recording additionally uses the protected
+`TEST262_DATABASE_URL`, repository/producer IDs and authority epoch. The workflow
+retains sanitized receipts/diagnostics for 90 days. No existing workflow is
+manually dispatched as part of implementation or baseline measurement.
+
+The collector queries the latest 20 runs of each reviewed workflow, verifies the
+repository/event/attempt and keeps the latest observed state separate from the
+last successful run. It downloads only the exact small receipt artifact, verifies
+its ZIP SHA-256 against GitHub metadata and validates both retained object proofs.
+Backup receipts require catalogue-only verification; restore receipts require
+shadow authority, disabled writer bindings and no production cutover. It retains
+only timestamps, IDs/digests and verification flags, not storage destinations,
+secrets, database dumps or fixture payloads. Missing, expired, mismatched or
+unreadable receipts become unknown. A successful Actions conclusion alone does
+not establish backup or restore success.
+
+Receipt retention describes the exact-version storage checks made by that job;
+it is **not a fresh S3 query** and does not prove indefinite archival or recovery
+objectives. #2343 continues to own retention policy/RPO/RTO. A sample older than
+two hours or a missing collector is unknown, never silently healthy. Current
+master means the last GitHub observation; it is not an atomic statement that no
+new push occurred during a query. New master pushes have one hour for validation
+and registration refresh before becoming a freshness warning. The exact revisions
+and observation times remain visible alongside that grace period.
+
+### Thresholds and response
+
+| Signal | Warning / interpretation |
+| --- | --- |
+| Monitoring receipt | Older than two hours; absent metadata is unknown |
+| Backup | Last successful verified receipt older than 36 hours, failed latest job, failed retention or expired object retention; absent proof is unknown |
+| Restore | Verified disposable restore older than eight days or failed latest job; absent proof is unknown |
+| Native target | Incoherent registration/validation or mismatch with observed master after the one-hour validation grace |
+| Collection | Trusted collection still running after two hours; collection completion is not full-suite completion |
+| Reservations | Ledger mismatch or reserved lease still expired after a 15-minute settlement grace |
+| Publication | Blocked/ownership-lost, or reserved/updating batch older than 24 hours; batch age is explicitly not publication creation time |
+| Delivery latency | Worst producer p95 exceeds 300 seconds over seven days; negative clock skew or no samples is unknown |
+| Duplicate execution | At least 5% avoidable repeats among classified eligible recorded executions; incomplete classification is unknown |
+| Interactive SQL | Target <=2,000 ms; measure database time and browser/transport time separately, and never substitute the 1,800-second export budget |
+
+On a warning, use the linked run/PR, exact revision/provenance, reservation ledger
+and durable receipts before changing state. Historical interrupted budgets and
+old-provenance pending work are not automatically current leaks/backlog. A failed
+or disconnected local outbox is not visible until it reconnects; the delivery panel
+measures received evidence only. Do not refund charges, reopen work, change epochs,
+republish or re-enable credentials merely to clear a dashboard warning.
+
+### Duplicate measurement and limits
+
+The seven-day numerator is a new immutable live execution observation at identical
+provenance/fixture/variant after a prior pass finished, without a recorded deliberate
+retry or lease recovery. The denominator includes baseline and avoidable recorded
+executions. Explicit deliberate retry generations and timely reopen/backoff decisions
+are separated, as are recovery generations following real lease expiry. Replaying an
+acknowledged upload adds no observation and therefore does not inflate execution
+counts. Repeat evidence without a prior pass is unclassified, rather than automatically
+labelled unnecessary. Missing lease/work identities are counted as uninstrumented.
+Either uncertainty prevents a passing classification claim. This measures auditable
+recorded executions, not unobservable CPU work lost before durable evidence; it
+makes no exactly-once execution claim.
+
+Keep representative seven-day counts and classification completeness in private
+operator evidence. Do not extrapolate one measurement to future independent
+writers. Verify representative performance panels through the shared datasource.
+Reviewed Linux/Windows smoke and BenchmarkDotNet suite workflows run on
+release/manual dispatch, so quiet time is not a missed daily job.
+An expected release/manual run needs its own ingestion receipt before declaring
+continuous ingestion or attributing a missing measurement.
+
+### Query regression and rollout acceptance
+
+Retain before/after timing and full-row equivalence results privately. Compare
+the current native/MVP report against the set-based replacement in one read-only
+statement snapshot before deployment. Measure database execution separately from
+connector overhead and browser rendering; a read-only SQL rehearsal is not proof
+of deployed Grafana latency, and a small diagnostic sample is not a sustained p95
+acceptance test. Never publish live measurements or permission/database metadata
+without explicit operator authorization.
+
+After merge: deploy the exact reviewed migration, update both existing dashboard
+UIDs, let the protected collector produce a sample, and repeat representative
+filtered queries through Grafana at current volume. Verify all new panels, actual
+native/MVP conformance latency, unknown/no-data behavior, unchanged performance
+panels and effective grants. Retain that receipt on #2341 before marking deployment
+acceptance complete. The PR's PostgreSQL tests exercise warning→recovery→unknown,
+permission/idempotency checks, retry/recovery/unclassified measurement, and partial,
+untrusted and conflicting conformance evidence; the existing real-worker and restore
+pilot checks the new schema and ACLs too.
+
+All proposed rules are paused, with NoData and query errors preserved as distinct
+states, a five-minute evaluation interval and 15-minute pending period. Grafana's
+advertised alert-management tool returned `tool not found` during this review; no
+live rule was created and no delivery test was claimed. The versioned paused
+provisioning file is reviewable independently. Notification activation, contact-point
+selection and a real delivery/recovery test remain a later operator decision under
+the chosen dashboard-first policy; do not route notifications to an invented address.

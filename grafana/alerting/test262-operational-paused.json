@@ -1,0 +1,787 @@
+{
+  "apiVersion": 1,
+  "groups": [
+    {
+      "orgId": 1,
+      "name": "test262-operational-health",
+      "folder": "Test262",
+      "interval": "5m",
+      "rules": [
+        {
+          "uid": "t262-monitor-age",
+          "title": "Test262 monitor-age",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal monitor-age",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='monitor-age' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-backup-health",
+          "title": "Test262 backup-health",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal backup-health",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='backup-health' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-restore-health",
+          "title": "Test262 restore-health",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal restore-health",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='restore-health' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-duplicate-execution-percent",
+          "title": "Test262 duplicate-execution-percent",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal duplicate-execution-percent",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='duplicate-execution-percent' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-reservation-health",
+          "title": "Test262 reservation-health",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal reservation-health",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='reservation-health' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-collection-lifecycle",
+          "title": "Test262 collection-lifecycle",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal collection-lifecycle",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='collection-lifecycle' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-publication-backlog",
+          "title": "Test262 publication-backlog",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal publication-backlog",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='publication-backlog' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-native-target-freshness",
+          "title": "Test262 native-target-freshness",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal native-target-freshness",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='native-target-freshness' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "t262-ingestion-p95-seconds",
+          "title": "Test262 ingestion-p95-seconds",
+          "condition": "C",
+          "for": "15m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "isPaused": true,
+          "labels": {
+            "service": "test262-catalogue",
+            "severity": "warning"
+          },
+          "annotations": {
+            "summary": "Review operational signal ingestion-p95-seconds",
+            "runbook_url": "https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Test262SupabaseCatalog.md#operational-monitoring-2341"
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "dfdvmewbhyccga",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "grafana-postgresql-datasource",
+                  "uid": "dfdvmewbhyccga"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT repository_id::text AS repository,breach::double precision AS value FROM test262_reporting.v_operational_signals WHERE signal='ingestion-p95-seconds' AND breach IS NOT NULL",
+                "intervalMs": 1000,
+                "maxDataPoints": 1000
+              }
+            },
+            {
+              "refId": "B",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "conditions": [],
+                "settings": {
+                  "mode": "strict"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": [
+                        "C"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "type": "query"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

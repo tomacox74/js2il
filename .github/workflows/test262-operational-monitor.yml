@@ -1,0 +1,41 @@
+name: Test262 operational health sample
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '47 * * * *'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: test262-operational-monitor
+  cancel-in-progress: false
+jobs:
+  observe:
+    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && github.ref == 'refs/heads/master' }}
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Observe workflow receipts and record sanitized operational metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/monitor-diagnostic.json
+        run: python -m scripts.test262.central.monitoring --output artifacts/test262/monitoring-receipt.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test262-operational-monitor-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/monitor*.json
+          if-no-files-found: warn
+          retention-days: 90
