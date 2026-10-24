@@ -1543,3 +1543,39 @@ cadence. This verifier neither reads nor changes `public.perf_results`; its repo
 cannot assert performance-row equality or newer ingestion. Never infer continuous
 performance ingestion from a successful SELECT or manufacture a retroactive
 checksum for an earlier deployment.
+
+### Opt-in protected reconciliation while the export exists
+
+PR #2390's disposable proof does not retroactively reconcile a deleted production
+payload. The existing **Test262 specification deployment verification** workflow
+now has an optional `reconcile` input, default **false**. After review/merge, an
+operator can choose that input for a separately authorized read-only verification.
+No new scheduler or workflow dispatch is performed by this change.
+
+The coordinator uses its existing bounded coherent export exactly once, then runs
+the offline verifier **before the temporary export is deleted**. The reporter
+check remains unchanged. The same sanitized coordinator receipt retains the
+semantic checks, table digests, snapshot identity and stored-ledger handoff. A
+semantic or ledger failure leaves verification failed; unknown/missing ledger
+records cannot silently pass. Export and offline processing each have a 30-minute
+bound; the job has a 65-minute ceiling. Offline SQLite work uses runner disk/CPU;
+only the existing export reads PostgreSQL. This is a batch workload, with no
+interactive latency or production completion-time claim.
+
+The stored-ledger mode joins `artifact_source` and `history_verified_snapshot`
+records already present **in that same export**, checks source/archive receipt
+hash shape and observation mapping counts, and hashes the source-to-import and
+gap ledgers. It preserves multiple sources mapping to one immutable import,
+recorded original-manifest digests and unavailable gaps from import limitations.
+Missing receipts, orphan receipts, conflicting gap lists and absent/invalid
+manifest attribution fail this mode. Source/archive hashes are retained receipt
+claims, not new reads of original archive bytes. This mode explicitly records
+`original_manifest_inspected=false`, `archive_preservation_verified=false` and
+`history_complete=false`; #2242/#2343 retain those independent obligations.
+
+The original 4 GB archive need not be downloaded just to establish this stored
+attribution join. If the original manifest is separately available, the standalone
+verifier's manifest join remains useful. Retain the reviewed receipt privately
+beyond Actions expiration; do not publish live database/permission metadata into
+git. Existing performance-cadence and scoped permission receipts from #2341 remain
+separate compatibility evidence.

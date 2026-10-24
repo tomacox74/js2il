@@ -60,7 +60,12 @@ def verify_export(path, expected):
     return dict(header, **footer)
 
 
-def coordinator(dsn, settings):
+def reconcile_export(path, receipt):
+    from .reconciliation import reconcile
+    return reconcile(path,receipt,use_stored_history=True,seconds=30*60)
+
+
+def coordinator(dsn, settings, *, reconcile_snapshot=False):
     client = Client(dsn, epoch=int(os.environ['AUTHORITY_EPOCH']))
     try:
         contract = client.contract
@@ -91,11 +96,12 @@ def coordinator(dsn, settings):
             receipt = verify_export(path, expected)
             if receipt != exported:
                 raise ValueError('Exporter receipt mismatch')
-        return {'verified': True, 'project_reference': project_reference(settings),
+            reconciliation = reconcile_export(path,receipt) if reconcile_snapshot else None
+        return {'verified': reconciliation['verified'] if reconciliation is not None else True, 'project_reference': project_reference(settings),
                 'bounded_annotation_rows': len(result['rows']), 'raw_insert_denied': True,
                 'foreign_repository_read_empty': True, 'export': receipt,
                 'export_transport': client.export_transport,
-                'payload_retained': False}
+                'payload_retained': False, **({'reconciliation':reconciliation} if reconciliation is not None else {})}
     finally:
         client.close()
 
@@ -123,6 +129,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('identity', choices=('coordinator', 'reporter'))
     parser.add_argument('--output', required=True)
+    parser.add_argument('--reconcile', action='store_true',help='Coordinator only: reconcile this export before removing its payload')
     args = parser.parse_args()
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -139,7 +146,10 @@ def main():
         # libpq uses require if the secret omits sslmode; do not log connection settings.
         os.environ['PGSSLMODE'] = settings.get('sslmode', 'require')
         project_reference(settings)
-        report.update(globals()[args.identity](dsn, settings))
+        if args.identity=='coordinator' and args.reconcile:
+            report.update(coordinator(dsn,settings,reconcile_snapshot=True))
+        else:
+            report.update(globals()[args.identity](dsn, settings))
     except Exception as error:
         # Database exceptions can echo connection strings or source rows.
         report['error_class'] = type(error).__name__

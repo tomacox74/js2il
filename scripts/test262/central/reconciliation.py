@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import sqlite3
 import tempfile
+import time
 
 from .client import EXPORT_TABLES
 
@@ -61,7 +62,7 @@ def eq(a, b, fields):
     return ' AND '.join(f'{col(a,k)}={col(b,k)}' for k in fields)
 
 
-def load_export(db, path, expected):
+def load_export(db, path, expected, check_deadline=lambda:None):
     counts = dict.fromkeys(EXPORT_TABLES, 0)
     for table in EXPORT_TABLES:
         db.execute(f'CREATE TABLE {table}(key TEXT PRIMARY KEY, data TEXT NOT NULL, digest TEXT NOT NULL)')
@@ -69,6 +70,7 @@ def load_export(db, path, expected):
     header = footer = None
     with Path(path).open('rb') as stream:
         while True:
+            check_deadline()
             line = stream.readline(MAX_LINE + 1)
             if not line:
                 break
@@ -137,6 +139,59 @@ def relationships(db):
             sql = f'SELECT count(*) FROM {table} c WHERE {nonnull} AND NOT EXISTS(SELECT 1 FROM {parent} p WHERE {match})'
             checks[name] = db.execute(sql).fetchone()[0]
     return checks, sorted(external)
+
+
+def stored_history(db):
+    """Join only durable source/verification/gap records in this exact export.
+
+    This does not reconstruct or claim inspection of the original 4 GB archive.
+    """
+    sources = {}
+    receipts = {}
+    for (data,) in db.execute("SELECT data FROM legacy_control_records WHERE json_extract(data,'$.source_table') IN ('artifact_source','history_verified_snapshot')"):
+        row=json.loads(data);document=row['document']
+        uri=document.get('uri' if row['source_table']=='artifact_source' else 'source_uri')
+        if not isinstance(uri,str) or not uri.startswith('github-actions:'):
+            raise ValueError('Invalid stored source attribution')
+        target=sources if row['source_table']=='artifact_source' else receipts
+        key=(row['import_id'],uri)
+        if key in target:
+            raise ValueError('Ambiguous stored source attribution')
+        target[key]=document
+    entries=[]
+    for (import_id,uri),source in sorted(sources.items()):
+        proof=receipts.get((import_id,uri),{})
+        mapped=db.execute("SELECT count(*) FROM import_records WHERE json_extract(data,'$.import_id')=? AND json_extract(data,'$.entity_kind')='observation'",(import_id,)).fetchone()[0]
+        hashes=[proof.get(k) for k in ('sha256','archive_sha256')]
+        valid=all(isinstance(h,str) and len(h)==64 and all(c in '0123456789abcdef' for c in h) for h in hashes)
+        entries.append({'source_key_sha256':hashlib.sha256(uri.encode()).hexdigest(),'import_id':import_id,
+                        'source_file_sha256':proof.get('sha256'),'archive_sha256':proof.get('archive_sha256'),
+                        'receipt_observations':proof.get('observations'),'mapped_observations':mapped,
+                        'receipt_matches':bool(valid and proof.get('observations')==mapped)})
+    gaps={};manifest_hashes=set()
+    for (data,) in db.execute('SELECT data FROM imports'):
+        for value in json.loads(data).get('limitations',{}).get('missing_artifacts',[]):
+            if not isinstance(value,str):
+                raise ValueError('Invalid stored gap record')
+            if value.startswith('See archived discovery manifest sha256:'):
+                manifest_hashes.add(value.split(':',1)[1])
+            elif value.startswith('['):
+                parsed=decode(value)
+                if not isinstance(parsed,list):raise ValueError('Invalid stored gap list')
+                gaps[logical_json(parsed)]=parsed
+    lists=[gaps[k] for k in sorted(gaps)]
+    return {'state':'stored_receipts_joined','source_entries':len(entries),
+            'attribution_complete':bool(entries and len(lists)==1 and manifest_hashes and
+                not any(not e['receipt_matches'] for e in entries) and not (receipts.keys()-sources.keys()) and
+                all(len(h)==64 and all(c in '0123456789abcdef' for c in h) for h in manifest_hashes)),
+            'distinct_imports':len({e['import_id'] for e in entries}), 'entries':entries,
+            'unmatched_entries':sum(not e['receipt_matches'] for e in entries),
+            'orphan_receipts':len(receipts.keys()-sources.keys()),
+            'recorded_manifest_sha256':sorted(manifest_hashes),'distinct_gap_lists':len(lists),
+            'unavailable_gaps':len(lists[0]) if len(lists)==1 else None,
+            'gap_ledger_sha256':hashlib.sha256(logical_json(lists).encode()).hexdigest(),
+            'ledger_sha256':hashlib.sha256(logical_json(entries).encode()).hexdigest(),
+            'original_manifest_inspected':False,'archive_preservation_verified':False,'history_complete':False}
 
 
 def semantics(db):
@@ -293,13 +348,21 @@ def join_history(db, manifest, repository_name):
             'archive_preservation_verified':False,'history_complete':False}
 
 
-def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=None):
+def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=None, use_stored_history=False, seconds=None):
+    if seconds is not None and seconds<=0:raise ValueError('Reconciliation deadline must be positive')
+    deadline=time.monotonic()+seconds if seconds is not None else None
+    def check_deadline():
+        if deadline is not None and time.monotonic()>=deadline:
+            raise TimeoutError('Offline reconciliation deadline exceeded')
     with tempfile.TemporaryDirectory(prefix='test262-reconcile-',dir=scratch) as directory, \
          closing(sqlite3.connect(Path(directory)/'index.sqlite')) as db:
         db.execute('PRAGMA temp_store=FILE')
         db.execute('PRAGMA cache_size=-8192')
-        receipt = load_export(db,path,expected)
+        if deadline is not None:
+            db.set_progress_handler(lambda:int(time.monotonic()>=deadline),10000)
+        receipt = load_export(db,path,expected,check_deadline)
         refs, external = relationships(db)
+        db.execute("CREATE INDEX import_mapping ON import_records(json_extract(data,'$.import_id'),json_extract(data,'$.entity_kind'))")
         checks = semantics(db)
         evidence = evidence_summary(db)
         tables = {}
@@ -307,18 +370,21 @@ def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=No
         # Snapshot token/as_of are receipt metadata, not logical database content.
         root.update((logical_json({k:receipt[k] for k in ('repository_id','epoch','schema','api')})+'\n').encode())
         for table in sorted(EXPORT_TABLES):
+            check_deadline()
             digest = hashlib.sha256()
             for (row_hash,) in db.execute(f'SELECT digest FROM {table} ORDER BY digest,key'):
                 digest.update((row_hash+'\n').encode())
             tables[table] = {'rows':receipt['counts'][table],'logical_sha256':digest.hexdigest(),
                              'relationship_failures':sum(n for k,n in refs.items() if k.startswith(table+'.'))}
             root.update((logical_json([table,tables[table]['rows'],digest.hexdigest()])+'\n').encode())
-        history = join_history(db,manifest,repository_name) if manifest is not None else {'state':'not_supplied','archive_preservation_verified':False}
+        history = (join_history(db,manifest,repository_name) if manifest is not None else stored_history(db) if use_stored_history
+                   else {'state':'not_supplied','archive_preservation_verified':False})
         return {'report_schema':1,'logical_digest_version':1,'export':receipt,'tables':tables,
                 'logical_sha256':root.hexdigest(),'relationship_checks':refs,'semantic_checks':checks,
                 'external_references_not_exported':external,'evidence':evidence,'history':history,
                 'verified':not any(refs.values()) and not any(checks.values()) and all(i['parity'] for i in evidence['imports'])
-                  and not history.get('unmatched_entries',0) and not history.get('ambiguous_entries',0),
+                  and not history.get('unmatched_entries',0) and not history.get('ambiguous_entries',0)
+                  and (not use_stored_history or history.get('attribution_complete',False)),
                 'limitations':['Scoped to one verified export; does not establish production equivalence to an earlier snapshot.',
                   'Nonexported producers, execution_events, retry_decisions, API bindings, projections and performance data are not reconciled.',
                   'Native acceptance remains governed by catalogue APIs/reporting; this report grants no execution/publication authority.',
