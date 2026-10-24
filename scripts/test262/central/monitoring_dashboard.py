@@ -21,6 +21,11 @@ def panel(id,title,query,y,description,width=24,x=0,height=8):
 
 def extend(dashboard,conformance=False):
     panels=[p for p in dashboard['panels'] if p['id']<100]
+    for item in panels:
+        content=item.get('options',{}).get('content')
+        if isinstance(content,str):
+            item['options']['content']=content.replace('refresh every minute','refresh every five minutes')
+    dashboard['description']=dashboard.get('description','').replace('refresh every minute','refresh every five minutes')
     y=max(p['gridPos']['y']+p['gridPos']['h'] for p in panels)
     target=panel(101 if not conformance else 100,'Master, build, pin and registration freshness',
         "SELECT evidence_kind,registration_revision,observed_master_revision,matches_observed_master,"
