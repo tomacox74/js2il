@@ -629,11 +629,25 @@ internal sealed class RuntimeAtomicsSynchronizationDomain : IDisposable
         RuntimeAtomicsWaitResult result;
         try
         {
-            // Timer waits may fire fractionally before the requested elapsed milliseconds.
-            var roundedTimeout = timeoutMilliseconds >= 0 && timeoutMilliseconds < int.MaxValue
-                ? timeoutMilliseconds + 1
-                : timeoutMilliseconds;
-            var signaled = waiter.Signal.Wait(roundedTimeout, agent.ShutdownToken);
+            var started = Stopwatch.GetTimestamp();
+            var remaining = timeoutMilliseconds;
+            bool signaled;
+            while (true)
+            {
+                signaled = waiter.Signal.Wait(remaining, agent.ShutdownToken);
+                if (signaled || timeoutMilliseconds < 0)
+                {
+                    break;
+                }
+
+                // Native waits may return early; only the monotonic deadline permits timeout.
+                var remainingMilliseconds = timeoutMilliseconds - Stopwatch.GetElapsedTime(started).TotalMilliseconds;
+                if (remainingMilliseconds <= 0)
+                {
+                    break;
+                }
+                remaining = (int)System.Math.Ceiling(remainingMilliseconds);
+            }
             result = signaled && !waiter.IsCancelled
                 ? RuntimeAtomicsWaitResult.Notified
                 : RuntimeAtomicsWaitResult.TimedOut;

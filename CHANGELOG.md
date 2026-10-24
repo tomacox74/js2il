@@ -6,6 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- ci(release): require Windows x64 and macOS ARM64 native CI suites and
+  coordinated package validation before NuGet publication. Reuse existing
+  shards, freeze the release tag's commit for testing and publishing, and keep
+  publication credentials out of validation jobs.
+- fix(portability): preserve fixture bytes across checkouts, normalize only
+  project-source paths in IL snapshots, avoid Windows test-assembly file locks,
+  and make cwd/socket-option assertions independent of OS path aliases and native
+  boolean encodings. CLI help no longer invokes an interactive renderer under
+  redirected output, and synchronous Atomics waits enforce a monotonic timeout.
+
 - tooling(node): add a provenance-backed first public-API corpus with 19 original
   path, buffer, events and CommonJS/ESM scenarios, 32 pinned upstream discovery
   leads, explicit applicability/eligibility triage and offline-verified retained

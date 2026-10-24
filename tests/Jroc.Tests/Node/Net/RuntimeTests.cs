@@ -54,7 +54,9 @@ namespace Jroc.Tests.Node.Net
             socket.setKeepAlive(true);
 
             var keepAliveValue = accepted.Client.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive);
-            Assert.Equal(1, Convert.ToInt32(keepAliveValue));
+            Assert.NotEqual(0, Convert.ToInt32(keepAliveValue));
+            socket.setKeepAlive(false);
+            Assert.Equal(0, Convert.ToInt32(accepted.Client.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive)));
         }
 
         [Fact]

@@ -122,7 +122,8 @@ public sealed class FreshRealmTests
             using var services = CompilerServices.BuildServiceProvider(options);
             Assert.True(services.GetRequiredService<Compiler>().Compile(scriptPath, moduleName));
 
-            var assembly = loadContext.LoadFromAssemblyPath(Path.Combine(directory, moduleName + ".dll"));
+            using var stream = new MemoryStream(File.ReadAllBytes(Path.Combine(directory, moduleName + ".dll")));
+            var assembly = loadContext.LoadFromStream(stream);
             for (var attempt = 0; attempt < 2; attempt++)
             {
                 using var exports = JsEngine.LoadModule(assembly, JsEngine.GetEntryModuleId(assembly));

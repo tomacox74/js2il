@@ -13,18 +13,60 @@ on:
         default: ''
 
 jobs:
+  resolve-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      commit: ${{ steps.commit.outputs.sha }}
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      - name: Validate release tag
+        id: tag
+        shell: bash
+        env:
+          REQUESTED_REF: ${{ github.event.inputs.ref || github.ref }}
+        run: |
+          tag="${REQUESTED_REF#refs/tags/}"
+          if [[ ! "$tag" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Expected a release tag such as v0.9.17, got '$REQUESTED_REF'." >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout release tag
+        uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+
+      - name: Freeze release source commit
+        id: commit
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  validate-release:
+    needs: resolve-release
+    permissions:
+      contents: read
+    uses: ./.github/workflows/release-validation.yml
+    with:
+      ref: ${{ needs.resolve-release.outputs.commit }}
+
   build-and-publish:
-    runs-on: windows-latest
+    needs: [resolve-release, validate-release]
+    runs-on: windows-2025
     permissions:
       id-token: write
       contents: read
     env:
       NUGET_SERVER: https://api.nuget.org/v3/index.json
+      VERSION: ${{ needs.resolve-release.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ needs.resolve-release.outputs.commit }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -42,29 +84,6 @@ jobs:
 
       - name: Restore .NET tools
         run: dotnet tool restore
-
-      - name: Compute version from tag
-        shell: pwsh
-        run: |
-          $ref = "${{ github.event.inputs.ref }}"
-          if ([string]::IsNullOrWhiteSpace($ref)) {
-            $ref = "$env:GITHUB_REF_NAME"
-          }
-
-          $tag = $ref.Trim()
-          if ($tag.StartsWith('refs/tags/')) {
-            $tag = $tag.Substring('refs/tags/'.Length)
-          }
-          if ($tag.Contains('/')) {
-            Write-Error "Publish coordinated packages expects a release tag like v0.9.17, but got '$ref'."
-            exit 1
-          }
-          if ($tag -notmatch '^v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$') {
-            Write-Error "Publish coordinated packages expects a semver tag like v0.9.17, but got '$tag'."
-            exit 1
-          }
-          if ($tag.StartsWith('v')) { $version = $tag.Substring(1) } else { $version = $tag }
-          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Restore
         run: dotnet restore jroc.sln

@@ -5,6 +5,18 @@ name: .NET
 run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ github.event.release.tag_name || github.event.inputs.branch || github.head_ref || github.ref_name }}
 
 on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Exact source commit to validate"
+        type: string
+        required: false
+        default: ""
+      runners:
+        description: "JSON array of runner labels"
+        type: string
+        required: false
+        default: '["ubuntu-latest"]'
   push:
     branches: [ "master" ]
   pull_request:
@@ -14,10 +26,30 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    env:
+      # Match Linux's 8 MiB stack for recursive Debug compiler traversals.
+      DOTNET_Thread_DefaultStackSize: "800000"
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
+        os: ${{ fromJSON(inputs.runners || '["ubuntu-latest"]') }}
+        name:
+          - unit
+          - test262-language-expressions
+          - test262-language-statements
+          - test262-builtins-array-object
+          - test262-builtins-typed-regexp-string
+          - test262-other
+          - sdk-packaging-metadata
+          - sdk-packaging-build
+          - sdk-packaging-runtime
+          - sdk-packaging-samples
+          - sdk-packaging-npm-samples
         include:
           - name: unit
             project: tests/Jroc.Tests/Jroc.Tests.csproj
@@ -52,9 +84,11 @@ jobs:
           - name: sdk-packaging-npm-samples
             project: tests/Jroc.Tests/Jroc.Tests.csproj
             filter: "Category!=ReleaseOnly&FullyQualifiedName~JrocSdkPackageTests&CiShard=npm-samples"
-    name: test (${{ matrix.name }})
+    name: test (${{ matrix.os }}, ${{ matrix.name }})
     steps:
     - uses: actions/checkout@v5
+      with:
+        ref: ${{ inputs.ref || github.sha }}
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
@@ -105,7 +139,7 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v7
       with:
-        name: verify-received-snapshots-${{ matrix.name }}
+        name: verify-received-snapshots-${{ matrix.os }}-${{ matrix.name }}
         path: |
           **/*.received.txt
         if-no-files-found: ignore

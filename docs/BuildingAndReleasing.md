@@ -79,6 +79,15 @@ package set when a release tag is created. The legacy
 `.github/workflows/release.yml` workflow also produces a published artifact
 bundle.
 
+Before NuGet login or publication, the publishing workflow resolves the release
+tag once and requires Windows x64 (`windows-2025`) and macOS ARM64 (`macos-15`)
+validation against that exact commit. Both platforms run the same 11 native
+CI shards as ordinary Linux PR CI. Packed-tool canaries and Release
+package-consumption/Cheerio tests run on Linux, Windows and macOS, preserving
+the existing Linux package gate. A failed, cancelled or skipped required
+validation job prevents publication. Publishing checks out the frozen commit,
+not a potentially changed tag.
+
 The release branch must be created **before** any version-bump command runs.
 
 ## Preferred automated release
@@ -171,9 +180,20 @@ Dispatch the validation workflow against the pushed branch:
 gh workflow run release-validation.yml --ref release/0.x.y
 ```
 
-The workflow runs `npm run release:validate`, including the packed-tool canary
-suite and package-consumption tests for `Jroc.Runtime`, `Jroc.Core`, and
-`Jroc.SDK`. Wait for it to succeed before opening the pull request.
+The workflow runs the shared native CI suite on Windows and macOS, including
+unit/execution/generator, five Test262 and five SDK packaging shards. It also
+runs `npm run release:validate` on Linux, Windows and macOS, including packed-tool canaries
+and Release package-consumption/Cheerio tests. Wait for all jobs to succeed
+before opening the pull request. This is the existing ported native Test262
+suite, not the separate central catalogue screening infrastructure.
+
+The same validation is repeated for the exact tag commit by the publisher;
+an earlier green release-branch run is not substituted for tag validation.
+Workflow-change PRs also exercise this cross-platform gate without publishing
+or receiving NuGet credentials. Ordinary source PR CI remains Linux-only.
+Native CI uses an 8 MiB managed-thread stack on all runners, matching the Linux
+default for recursive Debug compiler traversals. Test fixture bytes are retained
+exactly across checkouts, including files with byte-count assertions.
 
 For the complete restore, build, and post-publish validation matrix, see
 [SDK packaging validation](sdk/PackagingValidation.md).
