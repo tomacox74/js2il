@@ -197,19 +197,39 @@ def semantics(db):
     # Conflicted/awaiting-refresh batches are reported separately, never repaired.
     check('native_acceptance.sealed_evidence', f'''SELECT count(*) FROM batch_fixtures f
       JOIN native_batches b ON {eq('f','b',['batch_id'])}
+      JOIN fixtures fixture ON {eq('f','fixture',['fixture_id'])}
       WHERE {col('f','state')}='accepted' AND {col('b','state')}='sealed' AND (
+       {col('fixture','metadata_state')} IS NOT 'valid' OR {col('fixture','is_support_file')}=1
+       OR NOT EXISTS(SELECT 1 FROM provenance_fixture_eligibility eligible
+         WHERE {eq('eligible','f',['fixture_id'])} AND {eq('eligible','b',['provenance_id'])}
+          AND {col('eligible','eligibility')}='runnable')
+       OR
        NOT EXISTS(SELECT 1 FROM fixture_variants v WHERE {eq('f','v',['fixture_id'])} AND {col('v','required')}=1)
        OR EXISTS(SELECT 1 FROM fixture_variants v WHERE {eq('f','v',['fixture_id'])} AND {col('v','required')}=1
          AND NOT EXISTS(SELECT 1 FROM batch_evidence e JOIN observations o ON {eq('e','o',['observation_id'])}
           JOIN runs r ON {eq('o','r',['run_id'])}
           WHERE {eq('e','f',['batch_id','fixture_id'])} AND {eq('e','v',['variant'])}
            AND {col('o','provenance_id')}={col('b','provenance_id')} AND {col('o','outcome')}='pass'
-           AND {col('r','trust_class')}='trusted'
+           AND {col('r','trust_class')}='trusted' AND {col('o','source_kind')}='live'
            AND NOT EXISTS(SELECT 1 FROM observation_invalidations i WHERE {eq('o','i',['observation_id'])})))
        OR EXISTS(SELECT 1 FROM observations o JOIN runs r ON {eq('o','r',['run_id'])}
          WHERE {eq('o','b',['provenance_id'])} AND {eq('o','f',['fixture_id'])}
           AND {col('r','trust_class')}='trusted' AND {col('o','outcome')}<>'pass'
           AND NOT EXISTS(SELECT 1 FROM observation_invalidations i WHERE {eq('o','i',['observation_id'])})))''')
+    checks['native_acceptance.dependency_manifest'] = 0
+    for (data,) in db.execute(f'''SELECT DISTINCT fixture.data FROM fixtures fixture
+      JOIN batch_fixtures f ON {eq('fixture','f',['fixture_id'])} JOIN native_batches b ON {eq('f','b',['batch_id'])}
+      WHERE {col('f','state')}='accepted' AND {col('b','state')}='sealed' '''):
+        fixture=json.loads(data)
+        dependencies=[]
+        for dep,resolved in db.execute(f'''SELECT d.data,{col('r','upstream_path')} FROM fixture_dependencies d
+          LEFT JOIN fixtures r ON {col('d','resolved_fixture_id')}={col('r','fixture_id')}
+          WHERE {col('d','fixture_id')}=? ORDER BY {col('d','dependency_path')}''',(fixture['fixture_id'],)):
+            d=json.loads(dep)
+            dependencies.append(dict(dependency_path=d['dependency_path'],content_sha256=d['content_sha256'].removeprefix('\\x'),
+                                     dependency_kind=d['dependency_kind'],resolved_path=resolved))
+        expected='\\x'+hashlib.sha256(logical_json(dependencies).encode()).hexdigest()
+        checks['native_acceptance.dependency_manifest'] += fixture.get('dependency_manifest_digest') != expected
     return checks
 
 

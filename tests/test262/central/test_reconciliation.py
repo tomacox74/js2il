@@ -26,7 +26,7 @@ def row(table, **values):
 def frozen():
     return [row('corpora',corpus_id='c',inventory_state='sealed',expected_fixture_count=1,revision='a'*40),
       row('repository_corpora',corpus_id='c'),
-      row('fixtures',fixture_id='f',corpus_id='c',upstream_path='test/f.js',content_sha256='hash',metadata_state='valid',is_support_file=False),
+      row('fixtures',fixture_id='f',corpus_id='c',upstream_path='test/f.js',content_sha256='hash',metadata_state='valid',is_support_file=False,dependency_manifest_digest='\\x'+hashlib.sha256(b'[]').hexdigest()),
       row('fixture_variants',fixture_id='f',variant='strict',required=True),
       row('provenances',provenance_id='p',corpus_id='c',evidence_kind='native'),
       row('runs',run_id='r',producer_id='producer',provenance_id='p',trust_class='trusted',state='complete'),
@@ -110,20 +110,23 @@ class ReconciliationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Missing identity/reference'):self.report(rows)
 
     def test_accepted_native_requires_complete_trusted_nonconflicting_variants(self):
-        rows=frozen()+[row('budget_scopes',budget_scope_id='budget',reserved_attempts=0,reserved_ms=0,charged_attempts=0,charged_ms=0,attempt_limit=10,time_limit_ms=10000,state='closed'),
+        rows=frozen()+[row('provenance_fixture_eligibility',provenance_id='p',fixture_id='f',eligibility='runnable'),row('budget_scopes',budget_scope_id='budget',reserved_attempts=0,reserved_ms=0,charged_attempts=0,charged_ms=0,attempt_limit=10,time_limit_ms=10000,state='closed'),
           row('validation_events',validation_id='v',conclusion='success',target_revision='a'*40),
           row('registration_snapshots',snapshot_id='s',source_revision='a'*40,state='sealed'),
           row('native_batches',batch_id='b',provenance_id='p',validation_id='v',registration_snapshot_id='s',budget_scope_id='budget',state='sealed'),
           row('batch_fixtures',batch_id='b',fixture_id='f',state='accepted'),
           row('batch_evidence',batch_id='b',fixture_id='f',variant='strict',observation_id='o')]
         self.assertTrue(self.report(rows)['verified'])
-        for change in ('missing','untrusted','conflict','invalidated'):
+        for change in ('missing','untrusted','conflict','invalidated','legacy','excluded','dependency'):
             broken=copy.deepcopy(rows)
             if change=='missing':broken.pop()
             if change=='untrusted':broken[5][1]['trust_class']='legacy'
+            if change=='legacy':broken[6][1]['source_kind']='legacy-snapshot'
+            if change=='excluded':broken[8][1]['eligibility']='policy-excluded'
+            if change=='dependency':broken[2][1]['dependency_manifest_digest']='wrong'
             if change=='conflict':broken.append(row('observations',observation_id='other',run_id='r',provenance_id='p',fixture_id='f',variant='strict',outcome='fail',phase='execution',source_kind='live'))
             if change=='invalidated':broken.append(row('observation_invalidations',observation_id='o'))
-            with self.subTest(change=change):self.assertEqual(self.report(broken)['semantic_checks']['native_acceptance.sealed_evidence'],1)
+            with self.subTest(change=change):self.assertEqual(sum(n for k,n in self.report(broken)['semantic_checks'].items() if k.startswith('native_acceptance.')),1)
 
     def test_history_entries_can_share_import_without_erasing_gaps(self):
         rows=frozen()+[row('imports',import_id='i',source_schema='native-v4',expected_counts={'attempts':1},imported_counts={'observations':1},limitations={'artifact_history_complete':False}),
