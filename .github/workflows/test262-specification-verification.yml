@@ -2,6 +2,11 @@ name: Test262 specification deployment verification
 
 on:
   workflow_dispatch:
+    inputs:
+      reconcile:
+        description: 'Reconcile the existing coordinator export and stored source ledger (read-only; up to 30 additional minutes)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -19,7 +24,7 @@ jobs:
         identity: [coordinator, reporter]
     runs-on: ubuntu-24.04
     environment: test262-catalogue
-    timeout-minutes: 35
+    timeout-minutes: 65
     steps:
       - uses: actions/checkout@v5
         with:
@@ -35,7 +40,11 @@ jobs:
           PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
           AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_PROGRESS: '1'
-        run: python -m scripts.test262.central.verify_specification_deployment '${{ matrix.identity }}' --output '/tmp/test262-verification-${{ matrix.identity }}.json'
+          RECONCILE_SNAPSHOT: ${{ inputs.reconcile && matrix.identity == 'coordinator' && '1' || '0' }}
+        run: |
+          args=()
+          if [ "$RECONCILE_SNAPSHOT" = '1' ]; then args+=(--reconcile); fi
+          python -m scripts.test262.central.verify_specification_deployment '${{ matrix.identity }}' --output '/tmp/test262-verification-${{ matrix.identity }}.json' "${args[@]}"
       - name: Retain sanitized receipt only
         if: always()
         uses: actions/upload-artifact@v7

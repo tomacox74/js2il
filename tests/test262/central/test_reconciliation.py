@@ -151,4 +151,40 @@ class ReconciliationTests(unittest.TestCase):
         self.assertEqual(report['evidence']['observations_without_payload'],1)
 
 
+
+class StoredHistoryTests(unittest.TestCase):
+    report=ReconciliationTests.report
+    def test_stored_receipts_join_without_original_archive(self):
+        rows=frozen()+[row('imports',import_id='i',source_schema='native-v4',expected_counts={'attempts':1},imported_counts={'observations':1},
+          limitations={'missing_artifacts':['See archived discovery manifest sha256:'+'a'*64,json.dumps([{'reason':'unavailable'}]*11)],'artifact_history_complete':False}),
+          row('import_records',import_id='i',source_table='attempts',source_key='1',entity_kind='observation',entity_id='o')]
+        for aid in (1,2):
+            uri=f'github-actions:test/repo/test262-native-port.yml/10/{aid}'
+            rows.append(row('legacy_control_records',import_id='i',source_table='artifact_source',source_key=str(aid),document={'uri':uri}))
+            rows.append(row('legacy_control_records',import_id='i',source_table='history_verified_snapshot',source_key=str(aid),document={
+              'source_uri':uri,'sha256':'b'*64,'archive_sha256':'c'*64,'observations':1}))
+        result=self.report(rows,use_stored_history=True)
+        self.assertTrue(result['verified']);h=result['history']
+        self.assertEqual((h['source_entries'],h['distinct_imports'],h['unavailable_gaps']),(2,1,11))
+        self.assertTrue(h['attribution_complete']);self.assertFalse(h['original_manifest_inspected'])
+        self.assertFalse(h['archive_preservation_verified']);self.assertFalse(h['history_complete'])
+        broken=copy.deepcopy(rows);broken[-1][1]['document']['archive_sha256']='invalid'
+        self.assertFalse(self.report(broken,use_stored_history=True)['verified'])
+        self.assertFalse(self.report(rows[:-1],use_stored_history=True)['verified'])
+        self.assertFalse(self.report(frozen(),use_stored_history=True)['verified'])
+        ambiguous=copy.deepcopy(rows)
+        for table,data in copy.deepcopy(rows):
+            if table in ('imports','import_records','legacy_control_records'):
+                data['import_id']='other';ambiguous.append((table,data))
+        self.assertFalse(self.report(ambiguous,use_stored_history=True)['verified'])
+
+    def test_offline_deadline_interrupts_work(self):
+        from unittest.mock import patch
+        clock=[0]
+        def now():clock[0]+=1;return clock[0]
+        with patch('scripts.test262.central.reconciliation.time.monotonic',side_effect=now):
+            import sqlite3
+            with self.assertRaises(TimeoutError):self.report(frozen(),seconds=.1)
+
+
 if __name__=='__main__':unittest.main()
