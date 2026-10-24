@@ -1,25 +1,33 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 9: Executable Code and Execution Contexts
 
-This folder contains JROC coverage documentation for Section 9: Executable Code and Execution Contexts. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 9: Executable Code and Execution Contexts](Section9.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 9 | Executable Code and Execution Contexts | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](Section9.md) |
 
 ## Subsections
 
-- [Section 9.1: Environment Records](Section9_1.md)
-- [Section 9.2: PrivateEnvironment Records](Section9_2.md)
-- [Section 9.3: Realms](Section9_3.md)
-- [Section 9.4: Execution Contexts](Section9_4.md)
-- [Section 9.5: Jobs and Host Operations to Enqueue Jobs](Section9_5.md)
-- [Section 9.6: Agents](Section9_6.md)
-- [Section 9.7: Agent Clusters](Section9_7.md)
-- [Section 9.8: Forward Progress](Section9_8.md)
-- [Section 9.9: Processing Model of WeakRef and FinalizationRegistry Targets](Section9_9.md)
-- [Section 9.10: ClearKeptObjects ( )](Section9_10.md)
-- [Section 9.11: AddToKeptObjects ( value )](Section9_11.md)
-- [Section 9.12: CleanupFinalizationRegistry ( finalizationRegistry )](Section9_12.md)
-- [Section 9.13: CanBeHeldWeakly ( v )](Section9_13.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 9.1 | Environment Records | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-environment-records) | [Section9_1.md](Section9_1.md) |
+| 9.2 | PrivateEnvironment Records | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-privateenvironment-records) | [Section9_2.md](Section9_2.md) |
+| 9.3 | Realms | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-code-realms) | [Section9_3.md](Section9_3.md) |
+| 9.4 | Execution Contexts | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-execution-contexts) | [Section9_4.md](Section9_4.md) |
+| 9.5 | Jobs and Host Operations to Enqueue Jobs | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-jobs) | [Section9_5.md](Section9_5.md) |
+| 9.6 | Agents | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-agents) | [Section9_6.md](Section9_6.md) |
+| 9.7 | Agent Clusters | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-agent-clusters) | [Section9_7.md](Section9_7.md) |
+| 9.8 | Forward Progress | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-forward-progress) | [Section9_8.md](Section9_8.md) |
+| 9.9 | Processing Model of WeakRef and FinalizationRegistry Targets | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakref-processing-model) | [Section9_9.md](Section9_9.md) |
+| 9.10 | ClearKeptObjects ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#ClearKeptObjects) | [Section9_10.md](Section9_10.md) |
+| 9.11 | AddToKeptObjects ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#AddToKeptObjects) | [Section9_11.md](Section9_11.md) |
+| 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) | [Section9_12.md](Section9_12.md) |
+| 9.13 | CanBeHeldWeakly ( v ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#CanBeHeldWeakly) | [Section9_13.md](Section9_13.md) |

@@ -8,6 +8,7 @@
  *   docs/ECMA262/15/Section15_7.json
  * Output:
  *   docs/ECMA262/15/Section15_7.md
+ *   Refreshed section hubs, nested indexes and root status rollups.
  */
 
 'use strict';
@@ -15,6 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const { buildGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
+const { rollupStatuses } = require('./rollupEcma262Statuses');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->';
@@ -412,6 +414,7 @@ function main() {
   const generatedAt = new Date();
   const lines = render(doc, `${parsed.parent}.${parsed.sub}`, mdPath, repoRootDir, generatedAt);
   const changed = writeTextPreserveEol(mdPath, lines);
+  rollupStatuses(rootDir, generatedAt);
 
   console.log(`${changed ? 'Generated' : 'Up-to-date'} ${path.relative(path.resolve(__dirname, '..', '..'), mdPath)}`);
 }

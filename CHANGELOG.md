@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs(ecma262): restore subsection index tables with rolled-up section status.
+  Keep nested indexes, section hubs and root statuses synchronized across the
+  JSON generation and legacy split commands.
 - ci(release): require Windows x64 and macOS ARM64 native CI suites and
   coordinated package validation before NuGet publication. Reuse existing
   shards, freeze the release tag's commit for testing and publishing, and keep

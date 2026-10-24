@@ -4,7 +4,7 @@ Specifies statements and declarations, including control flow, blocks, and bindi
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
 _This section is split into subsection documents for readability._
 
@@ -28,7 +28,7 @@ _This section is split into subsection documents for readability._
 | 14.8 | The continue Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-continue-statement) | [Section14_8.md](Section14_8.md) |
 | 14.9 | The break Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-break-statement) | [Section14_9.md](Section14_9.md) |
 | 14.10 | The return Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-return-statement) | [Section14_10.md](Section14_10.md) |
-| 14.11 | The with Statement | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-with-statement) | [Section14_11.md](Section14_11.md) |
+| 14.11 | The with Statement | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-with-statement) | [Section14_11.md](Section14_11.md) |
 | 14.12 | The switch Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-switch-statement) | [Section14_12.md](Section14_12.md) |
 | 14.13 | Labelled Statements | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements) | [Section14_13.md](Section14_13.md) |
 | 14.14 | The throw Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-throw-statement) | [Section14_14.md](Section14_14.md) |

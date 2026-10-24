@@ -4,7 +4,7 @@ Covers functions and classes, including callable/constructable semantics and cla
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
 _This section is split into subsection documents for readability._
 
@@ -12,7 +12,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 15 | ECMAScript Language: Functions and Classes | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) |
+| 15 | ECMAScript Language: Functions and Classes | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) |
 
 ## Subsections
 

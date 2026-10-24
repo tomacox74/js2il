@@ -1,28 +1,36 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 13: ECMAScript Language: Expressions
 
-This folder contains JROC coverage documentation for Section 13: ECMAScript Language: Expressions. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 13: ECMAScript Language: Expressions](Section13.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 13 | ECMAScript Language: Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](Section13.md) |
 
 ## Subsections
 
-- [Section 13.1: Identifiers](Section13_1.md)
-- [Section 13.2: Primary Expression](Section13_2.md)
-- [Section 13.3: Left-Hand-Side Expressions](Section13_3.md)
-- [Section 13.4: Update Expressions](Section13_4.md)
-- [Section 13.5: Unary Operators](Section13_5.md)
-- [Section 13.6: Exponentiation Operator](Section13_6.md)
-- [Section 13.7: Multiplicative Operators](Section13_7.md)
-- [Section 13.8: Additive Operators](Section13_8.md)
-- [Section 13.9: Bitwise Shift Operators](Section13_9.md)
-- [Section 13.10: Relational Operators](Section13_10.md)
-- [Section 13.11: Equality Operators](Section13_11.md)
-- [Section 13.12: Binary Bitwise Operators](Section13_12.md)
-- [Section 13.13: Binary Logical Operators](Section13_13.md)
-- [Section 13.14: Conditional Operator ( ? : )](Section13_14.md)
-- [Section 13.15: Assignment Operators](Section13_15.md)
-- [Section 13.16: Comma Operator ( , )](Section13_16.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 13.1 | Identifiers | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-identifiers) | [Section13_1.md](Section13_1.md) |
+| 13.2 | Primary Expression | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression) | [Section13_2.md](Section13_2.md) |
+| 13.3 | Left-Hand-Side Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) | [Section13_3.md](Section13_3.md) |
+| 13.4 | Update Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-update-expressions) | [Section13_4.md](Section13_4.md) |
+| 13.5 | Unary Operators | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-unary-operators) | [Section13_5.md](Section13_5.md) |
+| 13.6 | Exponentiation Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-exp-operator) | [Section13_6.md](Section13_6.md) |
+| 13.7 | Multiplicative Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-multiplicative-operators) | [Section13_7.md](Section13_7.md) |
+| 13.8 | Additive Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-additive-operators) | [Section13_8.md](Section13_8.md) |
+| 13.9 | Bitwise Shift Operators | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bitwise-shift-operators) | [Section13_9.md](Section13_9.md) |
+| 13.10 | Relational Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-relational-operators) | [Section13_10.md](Section13_10.md) |
+| 13.11 | Equality Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-equality-operators) | [Section13_11.md](Section13_11.md) |
+| 13.12 | Binary Bitwise Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-binary-bitwise-operators) | [Section13_12.md](Section13_12.md) |
+| 13.13 | Binary Logical Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-binary-logical-operators) | [Section13_13.md](Section13_13.md) |
+| 13.14 | Conditional Operator ( ? : ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-conditional-operator) | [Section13_14.md](Section13_14.md) |
+| 13.15 | Assignment Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators) | [Section13_15.md](Section13_15.md) |
+| 13.16 | Comma Operator ( , ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-comma-operator) | [Section13_16.md](Section13_16.md) |

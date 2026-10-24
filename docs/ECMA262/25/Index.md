@@ -1,17 +1,25 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 25: Structured Data
 
-This folder contains JROC coverage documentation for Section 25: Structured Data. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 25: Structured Data](Section25.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 25 | Structured Data | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](Section25.md) |
 
 ## Subsections
 
-- [Section 25.1: ArrayBuffer Objects](Section25_1.md)
-- [Section 25.2: SharedArrayBuffer Objects](Section25_2.md)
-- [Section 25.3: DataView Objects](Section25_3.md)
-- [Section 25.4: The Atomics Object](Section25_4.md)
-- [Section 25.5: The JSON Object](Section25_5.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 25.1 | ArrayBuffer Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraybuffer-objects) | [Section25_1.md](Section25_1.md) |
+| 25.2 | SharedArrayBuffer Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-sharedarraybuffer-objects) | [Section25_2.md](Section25_2.md) |
+| 25.3 | DataView Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-dataview-objects) | [Section25_3.md](Section25_3.md) |
+| 25.4 | The Atomics Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-atomics-object) | [Section25_4.md](Section25_4.md) |
+| 25.5 | The JSON Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-json-object) | [Section25_5.md](Section25_5.md) |
