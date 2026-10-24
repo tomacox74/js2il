@@ -33,6 +33,14 @@ jobs:
       - run: python -m unittest discover -s tests/test262/central -p 'test_*.py' -v
         env:
           TEST262_TEST_DSN: postgresql://postgres:disposable-test-password@localhost:5432/catalogue_tests
+          TEST262_RECONCILIATION_REPORT: artifacts/test262/reconciliation-disposable.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test262-reconciliation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/reconciliation-disposable.json
+          if-no-files-found: warn
+          retention-days: 90
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
