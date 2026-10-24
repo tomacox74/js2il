@@ -262,6 +262,16 @@ def run(args):
             report['scheduled_recovery']={}
             run_drill(client,dsn,recovery_args,fixture,revision,output/'scheduled-recovery',report['scheduled_recovery'])
             report['complete']=True
+        if args.independent_enlistments:
+            from .pilot_enlistments import run_drill
+            report['complete']=False
+            report['stage']='independent-enlistments'
+            independent_args=SimpleNamespace(**vars(workargs),host=args.host)
+            report['independent_enlistments']={}
+            fixture=next(r for r in selected if r['path']=='test/built-ins/Math/abs/length.js')
+            run_drill(client,admin,independent_args,fixture,revision,output/'independent-enlistments',
+                      report['independent_enlistments'])
+            report['complete']=True
         if args.restore_drill:
             from .pilot_restore import run_restore_drill
             report['complete']=False
@@ -292,6 +302,7 @@ if __name__=='__main__':
     p.add_argument('--process-kill',action='store_true')
     p.add_argument('--restore-drill',action='store_true')
     p.add_argument('--scheduled-recovery',action='store_true')
+    p.add_argument('--independent-enlistments',action='store_true')
     p.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
     try:
         run(p.parse_args())
