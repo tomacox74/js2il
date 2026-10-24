@@ -1,0 +1,1031 @@
+{
+  "corpora": {
+    "primary_key": [
+      "corpus_id"
+    ],
+    "references": [],
+    "required": [
+      "inventory_state",
+      "expected_fixture_count",
+      "revision"
+    ]
+  },
+  "repository_corpora": {
+    "primary_key": [
+      "repository_id",
+      "corpus_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      },
+      {
+        "columns": [
+          "corpus_id"
+        ],
+        "parent": "corpora",
+        "parent_columns": [
+          "corpus_id"
+        ]
+      }
+    ]
+  },
+  "fixtures": {
+    "primary_key": [
+      "fixture_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "corpus_id"
+        ],
+        "parent": "corpora",
+        "parent_columns": [
+          "corpus_id"
+        ]
+      }
+    ],
+    "required": [
+      "upstream_path",
+      "content_sha256",
+      "metadata_state",
+      "is_support_file"
+    ]
+  },
+  "fixture_specification_metadata": {
+    "primary_key": [
+      "fixture_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ],
+    "required": [
+      "upstream_revision",
+      "upstream_path",
+      "content_sha256"
+    ]
+  },
+  "fixture_variants": {
+    "primary_key": [
+      "fixture_id",
+      "variant"
+    ],
+    "references": [
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ],
+    "required": [
+      "required"
+    ]
+  },
+  "fixture_dependencies": {
+    "primary_key": [
+      "fixture_id",
+      "dependency_path"
+    ],
+    "references": [
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      },
+      {
+        "columns": [
+          "resolved_fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ]
+  },
+  "provenances": {
+    "primary_key": [
+      "provenance_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "corpus_id"
+        ],
+        "parent": "repository_corpora",
+        "parent_columns": [
+          "repository_id",
+          "corpus_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "evidence_kind"
+    ]
+  },
+  "provenance_fixture_eligibility": {
+    "primary_key": [
+      "provenance_id",
+      "fixture_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ]
+  },
+  "runs": {
+    "primary_key": [
+      "run_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "producer_id"
+        ],
+        "parent": "producers",
+        "parent_columns": [
+          "repository_id",
+          "producer_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "trust_class",
+      "state"
+    ]
+  },
+  "observations": {
+    "primary_key": [
+      "observation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "run_id"
+        ],
+        "parent": "runs",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "work_item_id"
+        ],
+        "parent": "work_items",
+        "parent_columns": [
+          "repository_id",
+          "work_item_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id",
+          "variant"
+        ],
+        "parent": "fixture_variants",
+        "parent_columns": [
+          "fixture_id",
+          "variant"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "work_item_id",
+          "lease_generation"
+        ],
+        "parent": "work_leases",
+        "parent_columns": [
+          "repository_id",
+          "work_item_id",
+          "lease_generation"
+        ]
+      }
+    ],
+    "required": [
+      "outcome",
+      "phase",
+      "observed_error_type",
+      "source_kind"
+    ]
+  },
+  "observation_payloads": {
+    "primary_key": [
+      "observation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "observation_id"
+        ],
+        "parent": "observations",
+        "parent_columns": [
+          "observation_id"
+        ]
+      }
+    ],
+    "required": [
+      "availability"
+    ]
+  },
+  "observation_invalidations": {
+    "primary_key": [
+      "observation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "observation_id"
+        ],
+        "parent": "observations",
+        "parent_columns": [
+          "observation_id"
+        ]
+      }
+    ]
+  },
+  "validation_events": {
+    "primary_key": [
+      "validation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "conclusion",
+      "target_revision"
+    ]
+  },
+  "work_items": {
+    "primary_key": [
+      "work_item_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "lease_owner"
+        ],
+        "parent": "producers",
+        "parent_columns": [
+          "repository_id",
+          "producer_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id",
+          "variant"
+        ],
+        "parent": "fixture_variants",
+        "parent_columns": [
+          "fixture_id",
+          "variant"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "completion_observation_id"
+        ],
+        "parent": "observations",
+        "parent_columns": [
+          "repository_id",
+          "observation_id"
+        ]
+      }
+    ],
+    "required": [
+      "lease_generation",
+      "state"
+    ]
+  },
+  "work_leases": {
+    "primary_key": [
+      "work_item_id",
+      "lease_generation"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "work_item_id"
+        ],
+        "parent": "work_items",
+        "parent_columns": [
+          "repository_id",
+          "work_item_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "producer_id"
+        ],
+        "parent": "producers",
+        "parent_columns": [
+          "repository_id",
+          "producer_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "run_id"
+        ],
+        "parent": "runs",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ]
+  },
+  "budget_reservations": {
+    "primary_key": [
+      "reservation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "budget_scope_id"
+        ],
+        "parent": "budget_scopes",
+        "parent_columns": [
+          "repository_id",
+          "budget_scope_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "work_item_id",
+          "lease_generation"
+        ],
+        "parent": "work_leases",
+        "parent_columns": [
+          "repository_id",
+          "work_item_id",
+          "lease_generation"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "state",
+      "reserved_attempts",
+      "reserved_ms",
+      "charged_attempts",
+      "charged_ms"
+    ]
+  },
+  "budget_scopes": {
+    "primary_key": [
+      "budget_scope_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "reserved_attempts",
+      "reserved_ms",
+      "charged_attempts",
+      "charged_ms",
+      "attempt_limit",
+      "time_limit_ms",
+      "state"
+    ]
+  },
+  "budget_work_items": {
+    "primary_key": [
+      "budget_scope_id",
+      "work_item_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "budget_scope_id"
+        ],
+        "parent": "budget_scopes",
+        "parent_columns": [
+          "repository_id",
+          "budget_scope_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "work_item_id"
+        ],
+        "parent": "work_items",
+        "parent_columns": [
+          "repository_id",
+          "work_item_id"
+        ]
+      }
+    ]
+  },
+  "registration_snapshots": {
+    "primary_key": [
+      "snapshot_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "source_revision",
+      "state"
+    ]
+  },
+  "registrations": {
+    "primary_key": [
+      "snapshot_id",
+      "upstream_path",
+      "source_file",
+      "registration_kind"
+    ],
+    "references": [
+      {
+        "columns": [
+          "snapshot_id"
+        ],
+        "parent": "registration_snapshots",
+        "parent_columns": [
+          "snapshot_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ]
+  },
+  "reporting_targets": {
+    "primary_key": [
+      "repository_id",
+      "channel",
+      "evidence_kind"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "registration_snapshot_id"
+        ],
+        "parent": "registration_snapshots",
+        "parent_columns": [
+          "repository_id",
+          "snapshot_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "validation_id"
+        ],
+        "parent": "validation_events",
+        "parent_columns": [
+          "repository_id",
+          "validation_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "evidence_kind"
+    ]
+  },
+  "native_batches": {
+    "primary_key": [
+      "batch_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "provenance_id"
+        ],
+        "parent": "provenances",
+        "parent_columns": [
+          "repository_id",
+          "provenance_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "validation_id"
+        ],
+        "parent": "validation_events",
+        "parent_columns": [
+          "repository_id",
+          "validation_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "registration_snapshot_id"
+        ],
+        "parent": "registration_snapshots",
+        "parent_columns": [
+          "repository_id",
+          "snapshot_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "budget_scope_id"
+        ],
+        "parent": "budget_scopes",
+        "parent_columns": [
+          "repository_id",
+          "budget_scope_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "state"
+    ]
+  },
+  "batch_fixtures": {
+    "primary_key": [
+      "batch_id",
+      "fixture_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "batch_id"
+        ],
+        "parent": "native_batches",
+        "parent_columns": [
+          "batch_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id"
+        ],
+        "parent": "fixtures",
+        "parent_columns": [
+          "fixture_id"
+        ]
+      }
+    ],
+    "required": [
+      "state"
+    ]
+  },
+  "batch_evidence": {
+    "primary_key": [
+      "batch_id",
+      "fixture_id",
+      "variant"
+    ],
+    "references": [
+      {
+        "columns": [
+          "batch_id",
+          "fixture_id"
+        ],
+        "parent": "batch_fixtures",
+        "parent_columns": [
+          "batch_id",
+          "fixture_id"
+        ]
+      },
+      {
+        "columns": [
+          "fixture_id",
+          "variant"
+        ],
+        "parent": "fixture_variants",
+        "parent_columns": [
+          "fixture_id",
+          "variant"
+        ]
+      },
+      {
+        "columns": [
+          "observation_id"
+        ],
+        "parent": "observations",
+        "parent_columns": [
+          "observation_id"
+        ]
+      }
+    ]
+  },
+  "publications": {
+    "primary_key": [
+      "publication_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "batch_id"
+        ],
+        "parent": "native_batches",
+        "parent_columns": [
+          "repository_id",
+          "batch_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "state"
+    ]
+  },
+  "publication_checks": {
+    "primary_key": [
+      "publication_id",
+      "check_identity",
+      "external_run_key"
+    ],
+    "references": [
+      {
+        "columns": [
+          "publication_id"
+        ],
+        "parent": "publications",
+        "parent_columns": [
+          "publication_id"
+        ]
+      }
+    ]
+  },
+  "imports": {
+    "primary_key": [
+      "import_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ],
+    "required": [
+      "source_schema",
+      "expected_counts",
+      "imported_counts",
+      "limitations"
+    ]
+  },
+  "import_records": {
+    "primary_key": [
+      "import_id",
+      "source_table",
+      "source_key"
+    ],
+    "references": [
+      {
+        "columns": [
+          "import_id"
+        ],
+        "parent": "imports",
+        "parent_columns": [
+          "import_id"
+        ]
+      }
+    ],
+    "required": [
+      "entity_kind",
+      "entity_id"
+    ]
+  },
+  "legacy_control_records": {
+    "primary_key": [
+      "import_id",
+      "source_table",
+      "source_key"
+    ],
+    "references": [
+      {
+        "columns": [
+          "import_id"
+        ],
+        "parent": "imports",
+        "parent_columns": [
+          "import_id"
+        ]
+      }
+    ],
+    "required": [
+      "document"
+    ]
+  },
+  "reconciliation_state": {
+    "primary_key": [
+      "repository_id",
+      "pipeline",
+      "channel"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "last_validation_id"
+        ],
+        "parent": "validation_events",
+        "parent_columns": [
+          "repository_id",
+          "validation_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ]
+  },
+  "reconciliations": {
+    "primary_key": [
+      "reconciliation_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "validation_id"
+        ],
+        "parent": "validation_events",
+        "parent_columns": [
+          "repository_id",
+          "validation_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "pipeline",
+          "channel"
+        ],
+        "parent": "reconciliation_state",
+        "parent_columns": [
+          "repository_id",
+          "pipeline",
+          "channel"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ]
+  },
+  "run_metrics": {
+    "primary_key": [
+      "run_id",
+      "stage"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "run_id"
+        ],
+        "parent": "runs",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id"
+        ],
+        "parent": "repositories",
+        "parent_columns": [
+          "repository_id"
+        ]
+      }
+    ]
+  }
+}

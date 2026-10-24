@@ -14,6 +14,22 @@ ROOT=Path(__file__).resolve().parents[3]
 
 @unittest.skipUnless(DSN,'Disposable PostgreSQL TEST262_TEST_DSN required')
 class PostgresTests(unittest.TestCase):
+    def test_reconciliation_relationship_contract_matches_deployed_schema(self):
+        from scripts.test262.central.reconciliation import CONTRACT
+        rows=self.db.execute("""SELECT child.relname,parent.relname,
+          ARRAY(SELECT attname FROM unnest(k.conkey) WITH ORDINALITY a(num,pos)
+                JOIN pg_attribute p ON p.attrelid=k.conrelid AND p.attnum=a.num ORDER BY a.pos),
+          ARRAY(SELECT attname FROM unnest(k.confkey) WITH ORDINALITY a(num,pos)
+                JOIN pg_attribute p ON p.attrelid=k.confrelid AND p.attnum=a.num ORDER BY a.pos)
+          FROM pg_constraint k JOIN pg_class child ON child.oid=k.conrelid
+          JOIN pg_namespace n ON n.oid=child.relnamespace JOIN pg_class parent ON parent.oid=k.confrelid
+          WHERE n.nspname='test262' AND k.contype='f'""").fetchall()
+        actual={(child,tuple(columns),parent,tuple(parent_columns))
+                for child,parent,columns,parent_columns in rows if child in CONTRACT}
+        expected={(child,tuple(r['columns']),r['parent'],tuple(r['parent_columns']))
+                  for child,spec in CONTRACT.items() for r in spec['references']}
+        self.assertEqual(actual,expected)
+
     def test_operational_receipts_warn_recover_and_keep_unknown_distinct(self):
         from datetime import datetime, timezone, timedelta
         now=datetime.now(timezone.utc)
@@ -615,14 +631,22 @@ class PostgresTests(unittest.TestCase):
         self.assertEqual(client.contract['bulk_export_version'], 1)
         original = client.export_rows
         late = str(uuid.uuid4())
+        late_provenance,late_run,late_observation = (str(uuid.uuid4()) for _ in range(3))
         inserted = []
 
         def concurrent_insert(table):
             with closing(original(table)) as rows:
                 for row in rows:
                     if not inserted:
-                        self.db.execute("""INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms)
-                            VALUES(%s,%s,'run',%s,1,1,1,1000)""", (late, self.repo, late))
+                        with self.db.transaction():
+                            self.db.execute("""INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms)
+                                VALUES(%s,%s,'run',%s,1,1,1,1000)""", (late, self.repo, late))
+                            self.db.execute("""INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256)
+                              VALUES(%s,%s,%s,'native',1,sha256(%s::bytea),'{}',sha256('cap'::bytea))""",(late_provenance,self.repo,self.corpus,late_provenance.encode()))
+                            self.db.execute("""INSERT INTO test262.runs(run_id,repository_id,producer_id,provenance_id,external_run_key,source_revision,run_kind,trust_class)
+                              VALUES(%s,%s,%s,%s,%s,repeat('b',40),'native','trusted')""",(late_run,self.repo,self.producer,late_provenance,late_run))
+                            self.db.execute("""INSERT INTO test262.observations(observation_id,repository_id,run_id,provenance_id,fixture_id,variant,outcome,phase,started_at,finished_at,active_ms,payload_sha256,source_kind)
+                              VALUES(%s,%s,%s,%s,%s,'strict','pass','execution',now(),now(),1,sha256('late'::bytea),'live')""",(late_observation,self.repo,late_run,late_provenance,self.fixtures[0]))
                         inserted.append(True)
                     yield row
 
@@ -634,6 +658,23 @@ class PostgresTests(unittest.TestCase):
             exported = [json.loads(line) for line in output.read_text().splitlines()[1:-1]]
             self.assertNotIn(late, {r['row']['budget_scope_id'] for r in exported if r['table'] == 'budget_scopes'})
             self.assertIn(late, {r['budget_scope_id'] for r in client.rows('budget_scopes')})
+            for table,key,value in [('provenances','provenance_id',late_provenance),('runs','run_id',late_run),('observations','observation_id',late_observation)]:
+                self.assertNotIn(value,{r['row'][key] for r in exported if r['table']==table})
+                self.assertIn(value,{r[key] for r in client.rows(table)})
+            from scripts.test262.central.reconciliation import reconcile
+            report=reconcile(output,summary)
+            self.assertFalse(any(report['relationship_checks'].values()))
+            # A second serialization of this frozen input may reorder all rows.
+            # The logical digest remains stable while the exact file SHA changes.
+            from test_reconciliation import write_export
+            reordered=Path(directory)/'reordered.ndjson'
+            changed=write_export(reordered,[(r['table'],r['row']) for r in reversed(exported)],
+                                 {k:summary[k] for k in ('repository_id','epoch','schema','api','snapshot_token','as_of')})
+            self.assertEqual(report['logical_sha256'],reconcile(reordered,changed)['logical_sha256'])
+            if os.getenv('TEST262_RECONCILIATION_REPORT'):
+                target=Path(os.environ['TEST262_RECONCILIATION_REPORT']);target.parent.mkdir(parents=True,exist_ok=True)
+                target.write_text(json.dumps(dict(report,disposable=True,concurrent_chain_excluded=True,
+                  reordered_logical_digest_equal=True),indent=2)+'\n')
             self.assertEqual(client.db.execute("SELECT count(*) FROM pg_cursors WHERE name LIKE 'test262_export_%'").fetchone()[0], 0)
             clock = [0]
 

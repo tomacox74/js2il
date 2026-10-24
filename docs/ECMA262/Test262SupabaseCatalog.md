@@ -1411,3 +1411,135 @@ live rule was created and no delivery test was claimed. The versioned paused
 provisioning file is reviewable independently. Notification activation, contact-point
 selection and a real delivery/recovery test remain a later operator decision under
 the chosen dashboard-first policy; do not route notifications to an invented address.
+
+## Offline export reconciliation (#2342)
+
+Use `scripts.test262.central.reconciliation` against an **existing** export from
+`Client.export`, with its independently retained receipt. This consumes the
+32-table logical export contract; it does not introduce another exporter, read
+PostgreSQL, import history, execute fixtures or change catalogue authority.
+The newer monitoring samples, API bindings, producers, execution events, retry
+decisions, derived projections and performance tables are outside that contract.
+The report lists references to nonexported tables as unverified boundaries.
+
+```sh
+python -m scripts.test262.central.reconciliation \
+  --export /private/snapshot.ndjson \
+  --receipt /private/export-receipt.json \
+  --history-manifest /private/history-manifest.json \
+  --repository-name tomacox74/js2il \
+  --scratch /private/temporary-disk \
+  --output /private/reconciliation.json
+```
+
+The receipt must identify the repository, epoch, schema and API. Supplying its
+snapshot token, as-of, counts and digest also binds those fields exactly; use the
+complete retained receipt for acceptance. Missing headers/footers, mismatched
+counts/digests, duplicate JSON keys, duplicate primary identities, foreign
+repository rows, unknown tables and missing identity/reference fields are errors.
+Exit 1 means semantic/relationship/import parity checks failed; malformed input
+raises an error and produces no new success report. Never use an old report after
+a failed invocation. Keep the input and report private; no source rows, payloads,
+archive locations or DSNs are emitted into the reconciliation report.
+
+A temporary SQLite file indexes the verified rows on private disk and is removed
+when processing ends. It is disposable working storage, never shared authority.
+Memory is bounded by the record limit (32 MiB), SQLite's 8 MiB page cache and
+small report structures; disk must fit the source rows, indexes and sort workspace.
+This offline workload has no claimed production runtime or interactive SLO.
+It is separate from the export's 1,800-second bound. Do not repeat the completed
+production export merely to exercise these checks.
+
+### Reconciliation scope and interpretation
+
+Every exported table has a row count, logical digest and relationship-failure
+count. `reconciliation_contract.json` records primary identities and foreign-key
+relationships. A PostgreSQL integration test compares its relationships with
+`pg_constraint` after all reviewed migrations, so schema drift cannot silently
+remove a check. Nullable foreign keys follow PostgreSQL MATCH SIMPLE semantics.
+Repository identity is checked against the export header; references to omitted
+repository/producer tables cannot establish credential or permission correctness.
+
+Additional semantic checks cover fixture/corpus/provenance consistency,
+observation/run provenance, completed-work evidence identity, batch-evidence
+fixture/variant/provenance, target evidence kind and native validation/registration
+revision, annotation content/path/pin identity, sealed inventory counts,
+registration paths, reservation balances/limits and imported observation mappings.
+For accepted fixtures in sealed native batches, required variants must exist and
+all have bound trusted passing observations without invalidation or contradictory
+trusted observations. Native batch provenance/validation/registration must agree.
+The verifier does not publish or promote an accepted fixture. Conflicted and
+awaiting-refresh batches remain explicit evidence, not repaired rows.
+
+Missing payloads, observations without payloads, invalidations, conflicting trusted
+variants, publication ownership/blocking and incomplete historical coverage are
+reported independently. `verified=true` means the defined structural/semantic and
+import-parity checks passed for this export; it does **not** mean all fixtures
+pass, the entire suite completed, all payloads/archives are preserved, credentials
+are safe, or historical coverage is complete. Operational run/budget/publication
+repairs remain with their existing owners (#2332/#2344); reconciliation never
+mutates evidence to make a report pass.
+
+### Logical comparison versus exact file integrity
+
+The existing footer SHA-256 covers exact header/row bytes before the footer; the
+report also records the whole-file SHA-256. Keep both, the snapshot token and
+as-of time. They identify a particular serialization and MVCC snapshot.
+
+Logical digest version 1 encodes sorted object keys, exact finite decimal numbers
+without insignificant scale (including normalized zero), and ordered arrays.
+Each table hashes the sorted multiset of canonical row SHA-256 values, framed by
+newlines. The root hashes repository/epoch/schema/API and sorted
+`[table, count, table_digest]` records. Row timestamps, payloads and all other
+exported fields remain content. Only snapshot token/as-of metadata is excluded
+from logical comparison. Thus reordered bulk streams of the same frozen logical
+input match, while a row/payload/array-order change differs. This is not a promise
+that two exports from a changing live database will match, and it does not replace
+exact file integrity checks. Missing and empty tables remain distinguished by the
+required complete footer table set.
+
+### Historical ledger and retained evidence
+
+Supply the original `history.py` manifest to join each source URI to
+`legacy_control_records.artifact_source` within the same export. The report retains
+hashed source identities, matching import IDs, unmatched/ambiguous entry counts,
+exact-file and logical manifest digests and a digest/count of unavailable gaps.
+Multiple source entries may map to one immutable import. Keep the recorded
+#2242 distinction: **62 processed source entries, 61 distinct imports and 11
+unavailable archive gaps**. These are historical receipt totals, not constants to
+force onto a different snapshot. Import parity compares expected/mapped/uploaded/
+reported observations independently and leaves historical completeness false.
+The join proves attribution only; it does not read retained object bytes, verify
+archive hashes/versions/retention or establish recovery objectives. Those remain
+#2242/#2343. Absence of a manifest is explicitly `not_supplied`, not a passed ledger
+handoff. Do not substitute a newly invented manifest for unavailable source data.
+
+Reuse the complete export receipt from verification run `39884233665` documented
+in #2338/#2342. Its counts/digest are evidence for that historical snapshot, but
+its discarded full payload cannot retroactively produce this new semantic report.
+A disposable report validates the implementation; it is not a production semantic
+reconciliation. If no original export remains, attach this verifier to the next
+independently approved verification/export opportunity rather than rerunning a
+full production export just because the issue is old. Keep #2342 open until the
+chosen verified snapshot's semantic report and ledger handoff are retained.
+
+The existing `test_bulk_export_snapshot_deadline_and_portal_cleanup` PostgreSQL 17
+test now commits an entire late provenance/run/observation chain during export.
+The original snapshot excludes the chain and the late budget; subsequent scoped
+reads see all of them. It also reconciles the real exported rows and repeats their
+serialization in reverse order with an equal logical digest. Existing all-table
+scope-parity, permission, deadline and portal-cleanup tests remain in place.
+`test_reconciliation.py` injects corruption, wrong provenance, missing variants,
+legacy/conflicting/invalidated acceptance evidence and duplicate-source ledger
+entries. CI retains a sanitized **disposable** report for 90 days; copy the reviewed
+receipt/digest and exact source/CI references to durable operator records before
+expiry, in coordination with #2343. The report explicitly identifies intentional
+evidence anomalies in the shared test database; it is not a clean production
+acceptance certificate.
+
+For performance compatibility, reuse #2341's scoped datasource/grant audit,
+representative performance-panel checks and intended release/manual ingestion
+cadence. This verifier neither reads nor changes `public.perf_results`; its report
+cannot assert performance-row equality or newer ingestion. Never infer continuous
+performance ingestion from a successful SELECT or manufacture a retroactive
+checksum for an earlier deployment.
