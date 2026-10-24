@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": 2341,
+  "operator_choice": {
+    "notifications": "dashboard-first; proposed rules paused",
+    "targets": "adopted in conversation on 2026-10-23 America/Los_Angeles"
+  },
+  "targets": {
+    "duplicate_percent": {
+      "operator": "less-than",
+      "value": 5,
+      "window_days": 7,
+      "require_complete_classification": true,
+      "scope": "immutable trusted live execution observations; excludes explicit deliberate retries and lease recovery; uninstrumented/unclassified records prevent a passing claim"
+    },
+    "query_latency_ms": {
+      "value": 2000,
+      "scope": "interactive query target; server and end-to-end measurements must remain separate",
+      "baseline_acceptance": "Diagnostic sample only; production Grafana verification required after deployment"
+    },
+    "backup_age_hours": {
+      "value": 36,
+      "receipt_digest_required": true
+    },
+    "restore_age_days": 8,
+    "monitor_age_hours": 2,
+    "collection_running_hours": 2,
+    "reservation_expiry_grace_minutes": 15,
+    "publication_reservation_hours": 24,
+    "native_validation_grace_hours": 1,
+    "ingestion_p95_seconds": 300
+  },
+  "alerting": {
+    "is_paused": true,
+    "notification_destination": null,
+    "no_data_state": "NoData",
+    "execution_error_state": "Error",
+    "evaluation_interval": "5m",
+    "pending_period": "15m",
+    "delivery_verified": false
+  },
+  "cadence": {
+    "monitor": "hourly, read-only GitHub metadata plus append-only operational sample; no fixture scheduling",
+    "backup": "daily 03:40 UTC",
+    "restore": "Sunday 05:10 UTC",
+    "performance": "release or manual; no daily-ingestion SLA"
+  }
+}

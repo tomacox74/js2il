@@ -14,6 +14,67 @@ ROOT=Path(__file__).resolve().parents[3]
 
 @unittest.skipUnless(DSN,'Disposable PostgreSQL TEST262_TEST_DSN required')
 class PostgresTests(unittest.TestCase):
+    def test_operational_receipts_warn_recover_and_keep_unknown_distinct(self):
+        from datetime import datetime, timezone, timedelta
+        now=datetime.now(timezone.utc)
+        check=dict(fetch_state='observed',latest_run_id=123,latest_attempt=1,latest_state='completed',
+            latest_conclusion='failure',success_run_id=122,success_attempt=1,
+            success_finished_at=now.isoformat(),receipt_verified=True,retention_verified=True,
+            retention_until=(now+timedelta(days=35)).isoformat())
+        document=dict(master_revision='b'*40,master_committed_at=(now-timedelta(hours=2)).isoformat(),checks={'backup':check})
+        def signal():
+            return self.db.execute("SELECT health_state,breach FROM test262_reporting.v_operational_signals WHERE repository_id=%s AND signal='backup-health'",(self.repo,)).fetchone()
+        with self.worker() as db:
+            sample=str(uuid.uuid4())
+            first=db.execute('SELECT test262.api_monitor(1,%s,%s)',(sample,Jsonb(document))).fetchone()[0]
+            replay=db.execute('SELECT test262.api_monitor(1,%s,%s)',(sample,Jsonb(document))).fetchone()[0]
+            self.assertEqual(first['observed_at'],replay['observed_at'])
+            self.assertTrue(replay['replayed'])
+            self.assertEqual(signal(),('warning',1))
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_monitor(1,%s,%s)',(sample,Jsonb(dict(document,master_revision='c'*40))))
+            for patch,expected in [({'latest_conclusion':'success'},('ok',0)),
+                    ({'receipt_verified':None},('unknown',None)),
+                    ({'receipt_verified':True,'retention_until':(now-timedelta(hours=1)).isoformat()},('warning',1)),
+                    ({'retention_until':(now+timedelta(days=35)).isoformat()},('ok',0))]:
+                check.update(patch)
+                db.execute('SELECT test262.api_monitor(1,%s,%s)',(str(uuid.uuid4()),Jsonb(document)))
+                self.assertEqual(signal(),expected)
+            with self.assertRaises(psycopg.Error):
+                db.execute('SELECT test262.api_monitor(1,%s,%s)',(str(uuid.uuid4()),Jsonb(dict(document,password='must-not-store'))))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                db.execute('INSERT INTO test262.monitor_samples(sample_id,repository_id,producer_id,document) VALUES(%s,%s,%s,%s)',(str(uuid.uuid4()),self.repo,self.producer,Jsonb(document)))
+        for role in ('test262_ingest','test262_worker','test262_reporter','anon','authenticated','service_role'):
+            self.assertFalse(self.db.execute("SELECT has_function_privilege(%s,'test262.api_monitor(bigint,uuid,jsonb)','EXECUTE')",(role,)).fetchone()[0])
+        self.assertTrue(self.db.execute("SELECT has_table_privilege('test262_reporter','test262_reporting.v_operational_signals','SELECT')").fetchone()[0])
+        self.assertFalse(self.db.execute("SELECT has_table_privilege('test262_reporter','test262.monitor_samples','SELECT')").fetchone()[0])
+
+    def test_execution_rate_separates_deliberate_recovery_unclassified_and_uninstrumented(self):
+        from datetime import datetime, timezone, timedelta
+        pid=str(uuid.uuid4());run=str(uuid.uuid4());base=datetime.now(timezone.utc)-timedelta(days=1)
+        self.db.execute("INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256) VALUES(%s,%s,%s,'native',1,sha256(%s::bytea),'{}',sha256('cap'::bytea))",(pid,self.repo,self.corpus,pid.encode()))
+        with self.worker() as db:
+            db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb(dict(run_id=run,provenance_id=pid,external_run_key=run,source_revision='b'*40,run_kind='native')),))
+        work={}
+        def add(fixture,generation,index,outcome='pass',intentional=False,lease=1,unlinked=False):
+            start=base+timedelta(minutes=index);wid=None
+            if not unlinked:
+                key=(fixture,generation)
+                wid=work.get(key)
+                if not wid:
+                    wid=str(uuid.uuid4());work[key]=wid
+                    self.db.execute("INSERT INTO test262.work_items(work_item_id,repository_id,provenance_id,fixture_id,variant,coherent_area,retry_generation,attempt_limit,selection_reason) VALUES(%s,%s,%s,%s,'strict','metrics',%s,4,%s)",(wid,self.repo,pid,self.fixtures[fixture],generation,Jsonb({'deliberate_retry':intentional})))
+                self.db.execute("INSERT INTO test262.work_leases(work_item_id,lease_generation,repository_id,producer_id,run_id,claimed_at,expires_at,release_reason) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(wid,lease,self.repo,self.producer,run,start,start+timedelta(seconds=31),'expired' if fixture==2 and lease==1 else 'complete'))
+            self.db.execute("INSERT INTO test262.observations(observation_id,repository_id,run_id,provenance_id,fixture_id,variant,work_item_id,lease_generation,outcome,failure_class,phase,started_at,finished_at,active_ms,payload_sha256,source_kind) VALUES(%s,%s,%s,%s,%s,'strict',%s,%s,%s,%s,'execution',%s,%s,10,sha256('fixture'::bytea),'live')",(str(uuid.uuid4()),self.repo,run,pid,self.fixtures[fixture],wid,None if unlinked else lease,outcome,None if outcome=='pass' else 'unresolved',start,start+timedelta(milliseconds=10)))
+        add(0,0,0);add(0,1,1);add(0,2,2,intentional=True)
+        add(1,0,0,'fail');add(1,1,1,'fail')
+        add(2,0,0);add(2,0,1,lease=2)
+        add(3,0,0,unlinked=True)
+        counts=dict(self.db.execute('SELECT execution_class,count(*) FROM test262_reporting.v_execution_classification WHERE provenance_id=%s GROUP BY execution_class',(pid,)).fetchall())
+        self.assertEqual(counts,{'baseline':3,'avoidable-repeat':1,'intentional-retry':1,'unclassified-repeat':1,'lease-recovery':1})
+        measured=self.db.execute('SELECT uninstrumented_observations,classification_complete FROM test262_reporting.v_duplicate_executions_7d WHERE repository_id=%s',(self.repo,)).fetchone()
+        self.assertGreaterEqual(measured[0],1);self.assertFalse(measured[1])
+
     def test_execution_only_worker_claims_own_run_and_revocation_fences_live_session(self):
         from psycopg import sql
         name='independent_'+uuid.uuid4().hex

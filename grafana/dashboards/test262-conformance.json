@@ -1,0 +1,552 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Evidence-scoped Test262 conformance, readiness, current fixture status and historical diagnostics. Operational signals use explicit unknown states; notifications are paused.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [
+    {
+      "targetBlank": true,
+      "title": "Catalogue summary",
+      "type": "link",
+      "url": "https://tomacox74.grafana.net/d/jroc-test262-summary/jroc-test262-catalogue-summary"
+    }
+  ],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "## Current conformance requires a reporting target and trusted evidence\nEach result below is scoped to a channel, evidence kind and provenance. **Native** results measure the native implementation; **MVP composite** results measure the composite pipeline and are reported separately.\n\nPass rate = fixtures with all required variants passing \u00f7 runnable fixtures. Missing, conflicting and failing results remain in that denominator. Excluded fixtures are shown separately, so this is scoped runnable conformance, not a claim that the entire Test262 suite passes.\n\n**No current rows means conformance has not yet been established.** Historical observations are diagnostic evidence, not a current conformance score. Counts describe stored evidence; archive import completion is a separate check. Panels use the current snapshot, independent of the time picker.",
+        "mode": "markdown"
+      },
+      "title": "How to read this report",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Authority state, not a conformance verdict.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 5
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT deployment_state FROM test262_reporting.v_catalogue_summary WHERE repository_id IN (${repository:sqlstring})",
+          "refId": "A"
+        }
+      ],
+      "title": "Catalogue deployment state",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Stored trusted observations; a count alone does not establish conformance.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT trusted_observations FROM test262_reporting.v_catalogue_summary WHERE repository_id IN (${repository:sqlstring})",
+          "refId": "A"
+        }
+      ],
+      "title": "Trusted observations",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Zero means no current reporting target is available.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) AS scopes FROM (SELECT DISTINCT channel,evidence_kind,provenance_id FROM test262_reporting.v_current_fixture_status WHERE repository_id IN (${repository:sqlstring})) t",
+          "refId": "A"
+        }
+      ],
+      "title": "Current report scopes",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Inventory includes exclusions; this is not the conformance denominator.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 5
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT fixtures FROM test262_reporting.v_catalogue_summary WHERE repository_id IN (${repository:sqlstring})",
+          "refId": "A"
+        }
+      ],
+      "title": "Stored fixtures",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Separate denominators for each target. No result means no current conformance report. An empty denominator produces NULL, never a fabricated zero.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT channel,evidence_kind,provenance_id,corpus_id,count(*) AS inventory_fixtures,count(*) FILTER (WHERE eligibility='runnable' AND status <> 'metadata-error') AS runnable_fixtures,count(*) FILTER (WHERE status='complete-pass' AND eligibility='runnable') AS passing_fixtures,round(100.0*count(*) FILTER (WHERE status='complete-pass' AND eligibility='runnable') / NULLIF(count(*) FILTER (WHERE eligibility='runnable' AND status <> 'metadata-error'),0),2) AS runnable_pass_percent,count(*) FILTER (WHERE status='fail') AS failing_fixtures,count(*) FILTER (WHERE status='incomplete') AS incomplete_fixtures,count(*) FILTER (WHERE status='conflicted') AS conflicted_fixtures,count(*) FILTER (WHERE status='excluded') AS excluded_fixtures,count(*) FILTER (WHERE status='metadata-error') AS metadata_errors,max(last_received_at) AS last_evidence_at,max(target_updated_at) AS target_updated_at FROM test262_reporting.v_current_fixture_status WHERE repository_id IN (${repository:sqlstring}) GROUP BY channel,evidence_kind,provenance_id,corpus_id ORDER BY channel,evidence_kind",
+          "refId": "A"
+        }
+      ],
+      "title": "Current conformance by scope",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Includes exclusions, incomplete results, metadata errors and conflicts.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT channel,evidence_kind,provenance_id,status,count(*) AS fixtures FROM test262_reporting.v_current_fixture_status WHERE repository_id IN (${repository:sqlstring}) GROUP BY channel,evidence_kind,provenance_id,status ORDER BY channel,evidence_kind,status",
+          "refId": "A"
+        }
+      ],
+      "title": "Current status breakdown",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "First 500 fixtures; use status counts for totals.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT channel,evidence_kind,provenance_id,upstream_path,status,eligibility,reason_codes,required_variant_count,recorded_variant_count,pass_variant_count,conflict_flag,last_received_at FROM test262_reporting.v_current_fixture_status WHERE repository_id IN (${repository:sqlstring}) AND status IN ('fail','incomplete','conflicted','metadata-error') ORDER BY status,upstream_path LIMIT 500",
+          "refId": "A"
+        }
+      ],
+      "title": "Current fixtures requiring attention",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Observation and fixture counts by provenance. Do not sum observed fixtures across outcomes or revisions to derive a suite pass rate.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT evidence_kind,trust_class,provenance_id,outcome,observations,observed_fixtures,last_received_at FROM test262_reporting.v_catalogue_outcomes WHERE repository_id IN (${repository:sqlstring}) ORDER BY trust_class,evidence_kind,provenance_id,outcome LIMIT 500",
+          "refId": "A"
+        }
+      ],
+      "title": "Historical outcomes \u2014 not current conformance",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Diagnostic evidence across stored provenances, including historical results; not restricted to current target.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT evidence_kind,provenance_id,failure_class,phase,observed_error_type,attempt_count,fixture_count,representative_path,last_received_at FROM test262_reporting.v_failure_clusters WHERE repository_id IN (${repository:sqlstring}) ORDER BY fixture_count DESC LIMIT 100",
+          "refId": "A"
+        }
+      ],
+      "title": "Failure clusters by provenance",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Selected snapshot verification does not imply all historical archives are complete. history_complete and limitations are shown as stored.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT import_id,import_state,source_schema,uploaded_observations,mapped_observations,expected_observations,coverage,history_complete,completed_provenances,source_artifact,history_limitations,as_of FROM test262_reporting.v_catalogue_imports WHERE repository_id IN (${repository:sqlstring}) ORDER BY started_at DESC LIMIT 20",
+          "refId": "A"
+        }
+      ],
+      "title": "Import verification and history gaps",
+      "type": "table"
+    },
+    {
+      "id": 100,
+      "title": "Master, build, pin and registration freshness",
+      "type": "table",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "dfdvmewbhyccga"
+      },
+      "description": "Master is an hourly GitHub observation. NULL means unknown/stale monitoring. Exact execution fingerprint binds binaries, harness and environment; empty evidence is not conformance.",
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "dfdvmewbhyccga"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT evidence_kind,registration_revision,observed_master_revision,matches_observed_master,registration_validation_coherent,validation_revision,upstream_pin,execution_identity_sha256,last_trusted_evidence_at,master_observed_at,as_of FROM test262_reporting.v_target_health WHERE repository_id IN (${repository:sqlstring})"
+        }
+      ]
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 42,
+  "tags": [
+    "jroc",
+    "test262",
+    "conformance"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "dfdvmewbhyccga"
+        },
+        "definition": "SELECT canonical_name AS __text, repository_id::text AS __value FROM test262_reporting.v_catalogue_summary ORDER BY canonical_name",
+        "includeAll": false,
+        "label": "Repository",
+        "multi": false,
+        "name": "repository",
+        "options": [],
+        "query": "SELECT canonical_name AS __text, repository_id::text AS __value FROM test262_reporting.v_catalogue_summary ORDER BY canonical_name",
+        "refresh": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "JROC Test262 Conformance",
+  "uid": "jroc-test262-conformance",
+  "weekStart": ""
+}
