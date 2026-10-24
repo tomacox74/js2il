@@ -69,6 +69,15 @@ def parser():
     w.add_argument('--output',help='Retain the bounded worker stop/budget receipt')
     w.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll')
     w.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
+    enlist=sub.add_parser('enlist',help='Join a prepared shared allocation from a verified independent checkout')
+    enlist.add_argument('--context',required=True); enlist.add_argument('--root',required=True)
+    enlist.add_argument('--run-key',required=True); enlist.add_argument('--outbox',required=True)
+    enlist.add_argument('--image',default='test262-fixture:local')
+    enlist.add_argument('--limit',type=int,default=100); enlist.add_argument('--seconds',type=int,default=600)
+    enlist.add_argument('--output')
+    enlist.add_argument('--replay-only',action='store_true',help='Replay an existing outbox and end an interrupted collection; no execution')
+    enlist.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll')
+    enlist.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
     s=sub.add_parser('seal'); s.add_argument('--context',required=True); s.add_argument('--batch-key',required=True); s.add_argument('--output',required=True)
     g=sub.add_parser('generate'); g.add_argument('--batch-file',required=True); g.add_argument('--cache',required=True); g.add_argument('--root',required=True); g.add_argument('--output',required=True)
     pub=sub.add_parser('publish'); pub.add_argument('--batch-file',required=True); pub.add_argument('--patch',required=True)
@@ -92,8 +101,15 @@ def main(argv=None):
             from .inventory import enrich_specification_metadata
             result=enrich_specification_metadata(client,args)
         elif args.command=='flush':
-            Outbox(args.outbox,args.repository,args.producer,client.epoch).flush(client)
+            outbox=Outbox(args.outbox,args.repository,args.producer,client.epoch)
+            try:
+                outbox.flush(client)
+            finally:
+                outbox.db.close()
             result={'flushed':True}
+        elif args.command=='enlist':
+            from .enlist import run as enlist
+            result=enlist(client,args)
         elif args.command in ('finalize','reconcile-runs'):
             from . import lifecycle
             result=getattr(lifecycle,args.command.replace('-','_'))(client,args)

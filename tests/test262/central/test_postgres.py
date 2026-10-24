@@ -14,6 +14,38 @@ ROOT=Path(__file__).resolve().parents[3]
 
 @unittest.skipUnless(DSN,'Disposable PostgreSQL TEST262_TEST_DSN required')
 class PostgresTests(unittest.TestCase):
+    def test_execution_only_worker_claims_own_run_and_revocation_fences_live_session(self):
+        from psycopg import sql
+        name='independent_'+uuid.uuid4().hex
+        producer,run,budget,item=[str(uuid.uuid4()) for _ in range(4)]
+        self.db.execute(sql.SQL('CREATE ROLE {} LOGIN INHERIT').format(sql.Identifier(name)))
+        self.db.execute(sql.SQL('GRANT test262_worker TO {}').format(sql.Identifier(name)))
+        self.db.execute("INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'local',%s,%s)",(producer,self.repo,name,name))
+        self.db.execute("INSERT INTO test262.api_subjects VALUES(%s,%s,%s,'coordinator','trusted',true)",(name,self.repo,producer))
+        self.db.execute("INSERT INTO test262.budget_scopes(budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms) VALUES(%s,%s,'batch',%s,1,1,2,2000)",(budget,self.repo,name))
+        self.db.execute("INSERT INTO test262.work_items(work_item_id,repository_id,provenance_id,fixture_id,variant,coherent_area,attempt_limit,retry_generation) VALUES(%s,%s,%s,%s,'strict','independent',2,12345)",(item,self.repo,self.prov,self.fixtures[0]))
+        self.db.execute('INSERT INTO test262.budget_work_items VALUES(%s,%s,%s)',(self.repo,budget,item))
+        with psycopg.connect(DSN,autocommit=True) as db:
+            db.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(name)))
+            db.execute('SELECT test262.api_start_run(1,%s)',(Jsonb(dict(run_id=run,provenance_id=self.prov,external_run_key=name,source_revision='b'*40,run_kind='native')),))
+            claim=db.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',(run,budget)).fetchone()[0]
+            self.assertEqual(claim['work_item_id'],item)
+            self.assertEqual(claim['lease_owner'],producer)
+            completed=self.complete_budget_work(db,run,claim)
+            self.assertTrue(completed['completed'])
+            db.execute("SELECT test262.api_metric(1,%s,'screening',1,10,1,0)",(run,))
+            ended=db.execute("SELECT test262.api_finish_run(1,%s,'complete',clock_timestamp(),%s)",(run,Jsonb(dict(source='supervisor',external_run_key=name,source_revision='b'*40,reason='collection-finished',flush_verified=True)))).fetchone()[0]
+            self.assertEqual(ended['state'],'complete')
+            for statement in ("SELECT test262.api_put(1,'work_items','[]')",
+                              "SELECT test262.api_transition(1,'reporting_targets','{}',0,'{}')",
+                              "SELECT * FROM test262.observations"):
+                with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                    db.execute(statement)
+            self.assertFalse(self.db.execute("SELECT pg_has_role(%s,'test262_coordinator','MEMBER')",(name,)).fetchone()[0])
+            self.db.execute('UPDATE test262.api_subjects SET enabled=false WHERE login_name=%s',(name,))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                db.execute("SELECT test262.api_read(1,'runs','{}',NULL,1)")
+
     def budget_fixture(self, count=1, attempts=5, milliseconds=5000):
         run,budget,provenance=[str(uuid.uuid4()) for _ in range(3)]
         key='actions:'+str(uuid.uuid4().int)

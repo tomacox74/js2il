@@ -1070,3 +1070,182 @@ After merge, verify the next actual scheduled workflow's `central-schedule.json`
 same-SHA/provenance when applicable, worker and lifecycle receipts. Do not claim
 same-SHA recovery across a changed compiler/pin/environment, or infer full-suite
 conformance from this bounded proof.
+
+## Independent local and downstream workers (#2339)
+
+The supported execution path is `central.cli enlist` on Linux with Docker,
+Python 3.12, Node 24 and the reviewed .NET 10 runtime/build. A downstream worker is
+an independently managed checkout of the same reviewed repository revision; it
+uses the existing producer kind `local`. Windows/macOS native supervisors and
+remote-host connectivity are not covered by the acceptance pilot. They must use
+an equivalent supported Linux environment before contributing trusted work.
+
+### Enrollment and permission boundary
+
+Deploy the reviewed `20261024001000_test262_catalogue_worker_execution.sql`
+migration before enrollment. It creates the NOLOGIN `test262_worker` execution
+role only; it creates no login, producer, allocation or authority change. An
+operator creates a dedicated LOGIN and secret out of band, binds it with
+`central/enroll_worker.sql`, and grants **only** `test262_worker`. Never share the
+coordinator, importer, reporter, backup or another worker's credential. Each
+worker needs a distinct LOGIN, producer UUID, checkout, run key and durable outbox.
+
+The v1 binding uses permission `coordinator` / trust `trusted` because the existing
+claim/complete API checks those labels. Its actual SQL grants are execution-only:
+contract/scoped reads, own-run start/metrics/finalization, claims, renewals, ingestion
+and completion. It has no raw-table access, coordinator membership, allocation
+creation/finalization, inventory/target/cursor changes, batch sealing, export
+portal, or publication API. Repository scope and run/lease ownership are enforced
+server-side on every call. The role can read the approved repository's catalogue
+and execute centrally enrolled work; it is not a sandbox for arbitrary untrusted
+contributors. An untrusted collector remains append-only and cannot claim trusted
+work. The operator must review the host, source, dependencies and role memberships
+before assigning trusted execution credentials.
+
+Operator commands (IDs verified against the intended repository, LOGIN/secret
+already provisioned; use the operator connection configured outside shell history):
+
+```sh
+psql -X -v ON_ERROR_STOP=1 -v repository_id='<repository-uuid>' \
+  -v producer_id='<new-worker-uuid>' -v login_name='<dedicated-login>' \
+  -f scripts/test262/central/enroll_worker.sql
+```
+
+### Prepare once, enlist independently
+
+The trusted coordinator prepares a **shared non-Actions allocation** using the
+existing planner. Keep candidate/attempt/time limits explicit and bounded.
+An `actions:<id>` allocation is reserved for its original Actions owner/attempts
+by #2344 and cannot be borrowed by independent workers. Native preparation still
+requires current master and successful exact-SHA validation. MVP and native use
+the same enlistment command; the context determines the kind.
+
+```sh
+python -m scripts.test262.central.cli prepare --kind native \
+  --revision '<reviewed-source-sha>' --root '<pinned-test262-root>' \
+  --run-key 'shared:reviewed-session' --budget-key 'shared:reviewed-session' \
+  --candidate-limit 5 --accepted-limit 5 --attempt-limit 20 --budget-ms 1200000 \
+  --output artifacts/test262/shared-context.json
+```
+
+For MVP use `--kind mvp-composite`. The coordinator's repository/producer/database
+settings stay on the coordinator. Deliver only the sanitized context and verified
+build artifacts to the workers. The context is a plan reference, not a credential
+or permission grant. Each worker configures its own `TEST262_DATABASE_URL` through
+its secret manager plus `TEST262_REPOSITORY_ID`, `TEST262_PRODUCER_ID` and
+`TEST262_AUTHORITY_EPOCH`. A direct/session-pooled TLS connection must preserve its
+own `session_user` binding. No service-role or admin credentials are supported.
+
+Before supplying secrets, each worker checks out the exact clean source SHA,
+installs lockfile dependencies, acquires the exact upstream pin, and builds the
+reviewed fixture image. Build both Cli and NativeScreeningHost for the needed mode.
+Use the coordinator's exact reviewed binary bundle when a local rebuild produces
+a different identity. Never override a mismatch or copy a newer identity into an
+old context. Compiler/runtime/harness/tooling, capabilities, timeouts and environment
+must all match; matching source SHA alone is insufficient.
+
+```sh
+npm ci --ignore-scripts
+python -m pip install -r scripts/test262/central/requirements.txt
+dotnet build src/Cli/Jroc.csproj -c Release --nologo
+dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+docker build -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
+# Configure this worker's scoped connection/identities after building.
+python -m scripts.test262.central.cli enlist \
+  --context artifacts/test262/shared-context.json --root '<pinned-test262-root>' \
+  --run-key 'local-session-1' --outbox '<durable-worker-directory>/outbox.sqlite' \
+  --image test262-fixture:local --limit 10 --seconds 300 \
+  --output artifacts/test262/enlistment-receipt.json
+```
+
+A second worker runs that command from its own checkout with its own identity and
+outbox. Run identity includes the producer UUID; repeating an interrupted run key
+resumes the same run rather than resetting charges. An ended run key cannot execute
+again; use a new explicitly bounded session to claim remaining work. Membership
+and shared reservations are central; SQLite is only the local durable outbox.
+The coordinator remains responsible for the shared allocation's lifecycle and
+fresh native acceptance/publication. `collection_state=complete` means this bounded
+worker's upload/collection ended, not full-suite completion or publication approval.
+
+### Disconnection, stale clients, interruption and revocation
+
+Cold starts require the central contract, active authority, current target,
+sealed registration snapshot and matching native validation. They fail before
+creating a run/outbox or claiming work if unavailable/stale/incompatible. The
+central target is checked again before each new claim. A target can change just
+after that check; the existing server lease remains bounded and any eventual result
+retains its original provenance. This is not an atomic guarantee of current master
+throughout execution, and results never themselves authorize publication.
+
+An already leased variant may finish while disconnected. Its result/completion
+are committed locally before upload. The supervisor then stops on upload failure;
+it does not execute an offline queue of new central claims. Preserve the SQLite
+file **and WAL/SHM files** together while active, or take a SQLite backup after the
+supervisor stops. Never copy another producer's spool or edit its scope, epoch,
+request IDs, observations, generations or receipts to force a replay.
+
+After restoring connectivity, use the same producer/run key/context and outbox:
+
+```sh
+python -m scripts.test262.central.cli enlist --replay-only \
+  --context artifacts/test262/shared-context.json --root '<pinned-test262-root>' \
+  --run-key 'local-session-1' --outbox '<durable-worker-directory>/outbox.sqlite' \
+  --output artifacts/test262/recovery-receipt.json
+```
+
+Replay performs zero new executions, permits historical results from an older
+checkout/target, and ends a still-running interrupted collection as `incomplete`.
+It preserves any already terminal collection state. Existing `cli flush --outbox`
+is also supported for upload-only recovery. A live lease can complete once; after
+expiry/reclaim, late evidence remains auditable without completing the replacement
+lease or refunding/recharging its reservation. Conflicting immutable replays fail;
+distinct contradictory observations remain evidence and cannot bypass trusted
+native acceptance. Changed epochs/revocation fail closed: retain/quarantine the old
+outbox for operator review; do not rewrite its scope or re-enable a revoked identity
+just to flush it. Offline experiments without a central lease are local diagnostics,
+not current central conformance or suite-completion evidence.
+
+Revoke a worker with the operator-only `central/revoke_worker.sql` using the same
+three verified IDs. It disables its subject and producer, revokes the worker role
+and sets NOLOGIN; existing connections are fenced on subsequent API calls. Already
+issued leases expire and are conservatively settled by the existing claim path.
+Keep evidence/outboxes for audit. Do not delete historical runs, observations or
+charges as part of cleanup. Operator changes in production require explicit approval;
+implementing/testing this issue does not enroll production workers.
+
+### Retained independent-enlistment acceptance drill
+
+The existing `test262-worker-pilot.yml` adds `--independent-enlistments`; no second
+scheduler/workflow or production connection is needed. It provisions two distinct
+execution-only LOGINS/producers in the already protected empty loopback database,
+clones two separate source and upstream checkouts, independently stages the exact
+reviewed binary outputs, and launches two supervisor processes from those checkouts.
+They share a central allocation but have separate runs/outboxes and race their first
+claims. Dependencies/runtime artifacts are shared read-only inputs on one CI host;
+this establishes independent enlistments, not different hardware or a remote WAN.
+
+Three labelled scenarios execute real strict/non-strict Math.abs variants: MVP
+with a lost committed acknowledgement, native with SIGKILL after durable persistence
+and fixture cleanup, and a deliberate native retry with connection loss before
+upload. Standard flush/replay-only commands must recover with zero new executions,
+two distinct completed variants, two charges and no reservations/pending outboxes.
+A separate synthetic control provenance waits for real server lease expiry, reclaims
+across the two producer identities, fences old-owner renewals/late completion,
+preserves contradictory evidence and rejects changed immutable replay payloads.
+Dirty-checkout, changed-binary and offline cold launches must leave central state
+unchanged. Unit regressions cover stale target, pin and environment mismatch checks.
+Both logins are revoked at the end, including a rejection on an already open session.
+
+The drill uses a controlled partial inventory, empty registrations and synthetic
+successful central validation, explicitly labelled in its report. It does not claim
+production conformance, actual remote onboarding, a live cutover or in-flight fixture
+container termination. The existing native acceptance, process-kill, queue and restore
+regressions remain in the same CI workflow and supply complementary evidence.
+
+Retain `independent-enlistments/independent-enlistments-report.json`, sanitized
+per-process configuration/logs, contexts, execution/recovery receipts and outboxes
+under the existing 90-day pilot artifact. Review exact checkout/build/harness/pin,
+producer/run/variant identities, charges, fault checkpoints and revocation results
+before closing #2339. The ordinary catalogue-only restore drill also includes these
+new records and limited function ACLs. Production onboarding is a separate operator
+decision and is not required to establish the disposable acceptance gates.

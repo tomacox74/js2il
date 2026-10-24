@@ -54,7 +54,7 @@ jobs:
         env:
           TEST262_PILOT_ADMIN_DSN: postgresql://postgres:disposable-pilot-only@127.0.0.1:5432/catalogue_pilot
         run: |
-          python -m scripts.test262.central.pilot --workers 2 --queue-drills --process-kill --scheduled-recovery --restore-drill --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
+          python -m scripts.test262.central.pilot --workers 2 --queue-drills --process-kill --scheduled-recovery --independent-enlistments --restore-drill --root "$TEST262_ROOT" --output artifacts/test262/worker-pilot
       - name: Preserve pilot report, outboxes and disposable restore evidence
         if: always()
         uses: actions/upload-artifact@v7
