@@ -9,7 +9,7 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
-    private bool TryLowerTryStatement(HIRTryStatement tryStmt)
+    private bool TryLowerTryStatement(HIRTryStatement tryStmt, Func<bool>? lowerTryBlock = null)
     {
         var lirInstructions = _methodBodyIR.Instructions;
 
@@ -33,14 +33,14 @@ public sealed partial class HIRToLIRLowerer
         // the same protected region also contains await expressions.
         if (_isGenerator && (hasCatch || hasFinally) && yieldCount > 0)
         {
-            return TryLowerGeneratorTryWithYield(tryStmt);
+            return TryLowerGeneratorTryWithYield(tryStmt, lowerTryBlock);
         }
 
         // Async try/finally (and try/catch/finally) cannot use IL exception regions when awaits occur
         // within the protected region, because awaits suspend MoveNext via 'ret'.
         if (_isAsync && hasFinally && awaitCount > 0)
         {
-            return TryLowerAsyncTryWithFinallyWithAwait(tryStmt);
+            return TryLowerAsyncTryWithFinallyWithAwait(tryStmt, lowerTryBlock);
         }
         if (_isAsync && hasCatch && !hasFinally && awaitCount > 0)
         {
@@ -51,9 +51,10 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerStatement(tryStmt.TryBlock);
         }
 
-        if (hasFinally && tryStmt.FinallyBody != null && ContainsAbruptStatement(tryStmt.FinallyBody))
+        if (hasFinally && tryStmt.FinallyBody != null
+            && (tryStmt.FinallyBody is HIRDisposeResourcesStatement || ContainsAbruptStatement(tryStmt.FinallyBody)))
         {
-            return TryLowerTryStatementWithExplicitFinally(tryStmt);
+            return TryLowerTryStatementWithExplicitFinally(tryStmt, lowerTryBlock);
         }
 
         // Track current control-flow depth so we can decide when break/continue exits the try.
@@ -101,7 +102,7 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRLabel(innerTryStart));
             }
 
-            if (!TryLowerStatement(tryStmt.TryBlock))
+            if (!(lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock)))
             {
                 return false;
             }
@@ -212,7 +213,7 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-        private bool TryLowerTryStatementWithExplicitFinally(HIRTryStatement tryStmt)
+        private bool TryLowerTryStatementWithExplicitFinally(HIRTryStatement tryStmt, Func<bool>? lowerTryBlock = null)
         {
             var lirInstructions = _methodBodyIR.Instructions;
             var hasCatch = tryStmt.CatchBody != null;
@@ -271,7 +272,7 @@ public sealed partial class HIRToLIRLowerer
                     lirInstructions.Add(new LIRLabel(innerTryStart));
                 }
 
-                if (!TryLowerStatement(tryStmt.TryBlock))
+                if (!(lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock)))
                 {
                     return false;
                 }
@@ -445,7 +446,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
 
-    private bool TryLowerGeneratorTryWithYield(HIRTryStatement tryStmt)
+    private bool TryLowerGeneratorTryWithYield(HIRTryStatement tryStmt, Func<bool>? lowerTryBlock = null)
     {
         if (!_isGenerator || _methodBodyIR.LeafScopeId.IsNil)
         {
@@ -541,7 +542,7 @@ public sealed partial class HIRToLIRLowerer
             }
             try
             {
-                if (!TryLowerStatement(tryStmt.TryBlock))
+                if (!(lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock)))
                 {
                     return false;
                 }

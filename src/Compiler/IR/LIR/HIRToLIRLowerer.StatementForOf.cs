@@ -227,16 +227,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
-                    var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                        ? DestructuringWriteMode.ForDeclarationBindingInitialization
-                        : DestructuringWriteMode.Assignment;
-
-                    if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
-                    {
-                        return false;
-                    }
-
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerForOfIteration(forOfStmt, itemTemp))
                     {
                         return false;
                     }
@@ -429,7 +420,8 @@ public sealed partial class HIRToLIRLowerer
                     var retTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
                     DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+                    if (!EmitReturnCompletion(retTemp))
+                        return false;
                 }
 
                 _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
@@ -606,16 +598,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
-                    var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                        ? DestructuringWriteMode.ForDeclarationBindingInitialization
-                        : DestructuringWriteMode.Assignment;
-
-                    if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
-                    {
-                        return false;
-                    }
-
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerForOfIteration(forOfStmt, itemTemp))
                     {
                         return false;
                     }
@@ -726,7 +709,8 @@ public sealed partial class HIRToLIRLowerer
                         var retTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
                         DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+                        if (!EmitReturnCompletion(retTemp))
+                            return false;
                     }
 
                     _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
@@ -807,16 +791,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
-                    var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                        ? DestructuringWriteMode.ForDeclarationBindingInitialization
-                        : DestructuringWriteMode.Assignment;
-
-                    if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
-                    {
-                        return false;
-                    }
-
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerForOfIteration(forOfStmt, itemTemp))
                     {
                         return false;
                     }
@@ -976,16 +951,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
 
-                    var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                        ? DestructuringWriteMode.ForDeclarationBindingInitialization
-                        : DestructuringWriteMode.Assignment;
-
-                    if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
-                    {
-                        return false;
-                    }
-
-                    if (!TryLowerStatement(forOfStmt.Body))
+                    if (!TryLowerForOfIteration(forOfStmt, itemTemp))
                     {
                         return false;
                     }

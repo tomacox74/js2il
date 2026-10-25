@@ -182,17 +182,19 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 20 (0x14)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldarg.1
-			IL_000e: stfld object Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::x
-			IL_0013: ret
+			IL_0007: ldtoken Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldarg.1
+			IL_0018: stfld object Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::x
+			IL_001d: ret
 		} // end of method B::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -597,7 +599,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 239 (0xef)
+		// Code size: 163 (0xa3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_ThisBeforeSuper_Throws/Scope,
@@ -662,7 +664,7 @@
 		IL_007c: ldloc.2
 		IL_007d: ldc.i4.0
 		IL_007e: conv.r8
-		IL_007f: ldc.i4.0
+		IL_007f: ldc.i4.1
 		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0085: castclass Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D/Scope_ctor/FunctionObject
 		IL_008a: stloc.s 5
@@ -672,35 +674,11 @@
 		IL_0095: stloc.s 6
 		IL_0097: ldloc.s 6
 		IL_0099: stloc.1
-		IL_009a: ldc.i4.1
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: dup
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldloc.0
-		IL_00a3: stelem.ref
-		IL_00a4: stloc.2
-		IL_00a5: ldloc.2
-		IL_00a6: ldc.i4.0
-		IL_00a7: newarr [System.Runtime]System.Object
-		IL_00ac: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_00b1: ldloc.1
-		IL_00b2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_00b7: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_00bc: newobj instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D::.ctor(object[])
-		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_00c6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_00cb: dup
-		IL_00cc: ldloc.1
-		IL_00cd: ldstr "prototype"
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_00d7: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00dc: ldnull
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00e2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_00e7: ldc.i4.1
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
-		IL_00ed: pop
-		IL_00ee: ret
+		IL_009a: ldloc.1
+		IL_009b: dup
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_00a1: pop
+		IL_00a2: ret
 	} // end of method Classes_Inheritance_ThisBeforeSuper_Throws::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_ThisBeforeSuper_Throws

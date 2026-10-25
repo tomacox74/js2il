@@ -13,11 +13,26 @@ public sealed partial class HIRToLIRLowerer
     private const string GeneratorPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue);
     private const string GeneratorHasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn);
 
+    private bool NeedsSynchronousExpressionProtection =>
+        (_isGenerator && _generatorTryCatchFinallyStack.Count > 0
+            || _isAsync && _asyncTryCatchStack.Count > 0)
+        && _generatorExpressionProtectionDepth == 0
+        && !HasActiveSynchronousExceptionHandler;
+
     private void ProtectGeneratorExpression(int start)
     {
-        if (HasActiveSynchronousExceptionHandler
-            || _methodBodyIR.Instructions.Skip(start).Any(instruction => instruction is LIRYield or LIRAwait)
-            || !_methodBodyIR.Instructions.Skip(start).Any(instruction =>
+        if (HasActiveSynchronousExceptionHandler)
+        {
+            return;
+        }
+
+        if (_methodBodyIR.Instructions.Skip(start).Any(instruction => instruction is LIRYield or LIRAwait))
+        {
+            ProtectSuspendingExpression(start);
+            return;
+        }
+
+        if (!_methodBodyIR.Instructions.Skip(start).Any(instruction =>
                 (LIRInstructionInfo.GetEffectsForScheduling(instruction)
                     & (LIRInstructionEffects.MayThrow | LIRInstructionEffects.UnsupportedBarrier)) != 0))
         {
@@ -56,6 +71,43 @@ public sealed partial class HIRToLIRLowerer
             HandlerStartLabelId: catchStart,
             HandlerEndLabelId: catchEnd,
             CatchType: typeof(Exception)));
+    }
+
+    private void ProtectSuspendingExpression(int start)
+    {
+        var instructions = _methodBodyIR.Instructions;
+        var labelOffsets = new Dictionary<int, int>();
+        for (var i = 0; i < instructions.Count; i++)
+        {
+            if (instructions[i] is LIRLabel label)
+                labelOffsets.Add(label.LabelId, i);
+        }
+
+        var protectedInstructions = new HashSet<LIRInstruction>(ReferenceEqualityComparer.Instance);
+        foreach (var region in _methodBodyIR.ExceptionRegions)
+        {
+            var end = labelOffsets[region.HandlerEndLabelId];
+            for (var i = Math.Max(start, labelOffsets[region.TryStartLabelId]); i < end; i++)
+                protectedInstructions.Add(instructions[i]);
+        }
+
+        var expression = instructions.Skip(start).ToArray();
+        instructions.RemoveRange(start, expression.Length);
+        foreach (var instruction in expression)
+        {
+            var instructionStart = instructions.Count;
+            instructions.Add(instruction);
+            var effects = LIRInstructionInfo.GetEffectsForScheduling(instruction);
+            if (!protectedInstructions.Contains(instruction)
+                && (effects & (LIRInstructionEffects.MayThrow | LIRInstructionEffects.UnsupportedBarrier)) != 0
+                && (effects & LIRInstructionEffects.Suspension) == 0
+                && ((effects & LIRInstructionEffects.ControlFlow) == 0
+                    || instruction is LIRThrow or LIRThrowNewTypeError))
+            {
+                // Keep resume labels and branch targets outside CLR handlers.
+                ProtectGeneratorExpression(instructionStart);
+            }
+        }
     }
 
     private bool TryGetOuterGeneratorTryCatchFinallyContext(out GeneratorTryCatchFinallyContext outerCtx)

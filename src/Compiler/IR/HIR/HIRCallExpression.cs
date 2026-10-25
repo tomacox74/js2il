@@ -22,4 +22,5 @@ public sealed class HIRCallExpression : HIRExpression
     public HIRStaticClassMethodTarget? StaticClassMethodTarget { get; init; }
     public bool IsBigIntLiteral { get; init; }
     public bool IsDefaultDerivedConstructorCall { get; init; }
+    public IReadOnlyList<HIRStatement> InstanceInitializers { get; init; } = [];
 }

@@ -5,6 +5,35 @@ namespace Jroc.HIR;
 
 partial class HIRMethodBuilder
 {
+    private bool TryBuildClassElementDecoratorPreparation(Node element, string owner, out HIRExpression? preparation)
+    {
+        preparation = null;
+        var decorators = element switch
+        {
+            MethodDefinition method => method.Decorators.Select(decorator => decorator.Expression),
+            PropertyDefinition field => field.Decorators.Select(decorator => decorator.Expression),
+            _ => Enumerable.Empty<Expression>()
+        };
+        var values = new List<HIRExpression>();
+        foreach (var decorator in decorators)
+        {
+            if (!TryParseExpression(decorator, out var value) || value == null) return false;
+            values.Add(value);
+        }
+        if (values.Count == 0) return true;
+        var (key, computed, isStatic, kind) = element switch
+        {
+            MethodDefinition method => (method.Key, method.Computed, method.Static,
+                method.Kind == PropertyKind.Get ? "getter" : method.Kind == PropertyKind.Set ? "setter" : "method"),
+            PropertyDefinition field => (field.Key, field.Computed, field.Static, "field"),
+            _ => throw new InvalidOperationException("Decorators require a class element")
+        };
+        if (!Jroc.Services.ClassElementNames.TryGetPropertyName(key, computed, out var name) || name == null)
+            return false;
+        preparation = new HIRClassElementDecoratorsExpression(owner, name, kind, isStatic, values);
+        return true;
+    }
+
     private bool TryBuildDecoratedClass(
         Node classNode,
         Scope classScope,
@@ -43,7 +72,7 @@ partial class HIRMethodBuilder
         HIRExpression? superClass = null;
         if (heritage != null)
         {
-            var heritageBuilder = new HIRMethodBuilder(classScope);
+            var heritageBuilder = new HIRMethodBuilder(classScope) { _classHeritageScope = classScope };
             if (!heritageBuilder.TryParseExpressionForPrologue(
                     UnwrapClassHeritageExpression(heritage)!, out superClass)
                 || superClass == null)

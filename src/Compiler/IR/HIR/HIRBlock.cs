@@ -12,4 +12,5 @@ public class HIRBlock : HIRStatement
   
     public ImmutableArray<HIRStatement> Statements { get; }
     public string? ScopeName { get; }
+    public HIRResourceKind ResourceKind { get; init; }
 }

@@ -726,7 +726,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 63 (0x3f)
+			// Code size: 73 (0x49)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -738,30 +738,32 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::_scopes
-			IL_0015: ldarg.2
-			IL_0016: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_001b: ldc.i4.5
-			IL_001c: shr.un
-			IL_001d: conv.r.un
-			IL_001e: stloc.1
-			IL_001f: ldc.r8 1
-			IL_0028: ldloc.1
-			IL_0029: add
-			IL_002a: stloc.1
-			IL_002b: ldloc.1
-			IL_002c: box [System.Runtime]System.Double
-			IL_0031: stloc.2
-			IL_0032: ldarg.0
-			IL_0033: ldloc.2
-			IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-			IL_0039: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
-			IL_003e: ret
+			IL_0007: ldtoken Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::_scopes
+			IL_001f: ldarg.2
+			IL_0020: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0025: ldc.i4.5
+			IL_0026: shr.un
+			IL_0027: conv.r.un
+			IL_0028: stloc.1
+			IL_0029: ldc.r8 1
+			IL_0032: ldloc.1
+			IL_0033: add
+			IL_0034: stloc.1
+			IL_0035: ldloc.1
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.2
+			IL_003c: ldarg.0
+			IL_003d: ldloc.2
+			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_0043: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray::wordArray
+			IL_0048: ret
 		} // end of method BitArray::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -1344,7 +1346,7 @@
 		IL_0032: ldloc.s 7
 		IL_0034: ldc.i4.1
 		IL_0035: conv.r8
-		IL_0036: ldc.i4.0
+		IL_0036: ldc.i4.1
 		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_003c: castclass Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray/Scope_ctor/FunctionObject
 		IL_0041: stloc.s 9

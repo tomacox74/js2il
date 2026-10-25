@@ -48,6 +48,7 @@ sealed record MethodDescriptor
 
     public string Name { get; init; }
     public TypeBuilder TypeBuilder { get; init; }
+    public TypeDefinitionHandle ClassOwnerType { get; set; }
     public IReadOnlyList<MethodParameterDescriptor> Parameters { get; set; }
 
     /// <summary>
@@ -557,6 +558,9 @@ internal sealed class JsMethodCompiler
                 ?? throw new InvalidOperationException("A class constructor has no declaring class.");
             methodDescriptor.StorageConstructor = _serviceProvider.GetRequiredService<ClassRegistry>()
                 .GetStorageConstructor(ScopeNaming.GetRegistryClassName(ownerScope)).Constructor;
+            _serviceProvider.GetRequiredService<ClassRegistry>().TryGet(
+                ScopeNaming.GetRegistryClassName(ownerScope), out var classOwnerType);
+            methodDescriptor.ClassOwnerType = classOwnerType;
         }
 
         // Allow class instance methods that `return this` to have a class-typed IL signature.

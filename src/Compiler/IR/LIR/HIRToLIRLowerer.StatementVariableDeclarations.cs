@@ -166,6 +166,8 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRConstUndefined(initialValue));
                 DefineTempStorage(initialValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             }
+            if (exprStmt.ResourceKind != HIRResourceKind.None)
+                initialValue = AddDisposableResource(initialValue, exprStmt.ResourceKind);
             if (binding.Kind == BindingKind.Var)
             {
                 return TryStoreToBinding(binding, initialValue, out _);
@@ -258,6 +260,9 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(value));
             DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
+
+        if (exprStmt.ResourceKind != HIRResourceKind.None)
+            value = AddDisposableResource(value, exprStmt.ResourceKind);
 
         if (exprStmt.Initializer != null
             && binding.Kind == BindingKind.Var

@@ -457,6 +457,12 @@ public sealed partial class HIRToLIRLowerer
         {
             if (privateTarget.FieldName != null)
             {
+                if (UsesInstancePrivateField(privateTarget.RegistryClassName, privateTarget.FieldName))
+                {
+                    EmitPrivateFieldOperation(nameof(JavaScriptRuntime.RuntimeServices.SetClassPrivateField),
+                        privateTarget.RegistryClassName, privateTarget.FieldName, target.Object, valueToStore);
+                    return true;
+                }
                 _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
                     privateTarget.RegistryClassName,
                     privateTarget.FieldName,

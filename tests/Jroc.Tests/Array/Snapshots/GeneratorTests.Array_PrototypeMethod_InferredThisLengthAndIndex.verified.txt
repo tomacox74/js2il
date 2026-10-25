@@ -964,7 +964,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1944 (0x798)
+		// Code size: 1879 (0x757)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/Scope,
@@ -1509,7 +1509,7 @@
 		IL_065e: ldloc.s 9
 		IL_0660: ldc.i4.0
 		IL_0661: conv.r8
-		IL_0662: ldc.i4.0
+		IL_0662: ldc.i4.1
 		IL_0663: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0668: castclass Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/DerivedArray/FunctionObject
 		IL_066d: stloc.s 21
@@ -1522,83 +1522,67 @@
 		IL_0684: stloc.s 19
 		IL_0686: ldloc.s 19
 		IL_0688: stloc.s 6
-		IL_068a: ldc.i4.0
-		IL_068b: newarr [System.Runtime]System.Object
-		IL_0690: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0695: ldloc.s 6
-		IL_0697: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_069c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_06a1: newobj instance void Modules.Array_PrototypeMethod_InferredThisLengthAndIndex/DerivedArray::.ctor()
-		IL_06a6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_06ab: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_06b0: dup
-		IL_06b1: ldloc.s 6
-		IL_06b3: ldstr "prototype"
-		IL_06b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_06bd: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_06c2: ldnull
-		IL_06c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_06c8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_06cd: ldc.i4.1
-		IL_06ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
-		IL_06d3: stloc.s 7
-		IL_06d5: ldloc.s 7
-		IL_06d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_06dc: volatile.
-		IL_06de: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_06e3: brfalse IL_06fc
+		IL_068a: ldloc.s 6
+		IL_068c: dup
+		IL_068d: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_0692: stloc.s 7
+		IL_0694: ldloc.s 7
+		IL_0696: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_069b: volatile.
+		IL_069d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_06a2: brfalse IL_06bb
 
-		IL_06e8: ldstr "push"
-		IL_06ed: ldstr "subclass"
-		IL_06f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_06f7: br IL_0715
+		IL_06a7: ldstr "push"
+		IL_06ac: ldstr "subclass"
+		IL_06b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_06b6: br IL_06d4
 
-		IL_06fc: ldstr "push"
-		IL_0701: ldstr "subclass"
-		IL_0706: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:152"
-		IL_070b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-		IL_0710: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_06bb: ldstr "push"
+		IL_06c0: ldstr "subclass"
+		IL_06c5: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:152"
+		IL_06ca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
+		IL_06cf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0715: pop
-		IL_0716: ldstr "console"
-		IL_071b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0720: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0725: stloc.s 19
-		IL_0727: ldloc.s 7
-		IL_0729: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_072e: volatile.
-		IL_0730: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_0735: brfalse IL_0749
+		IL_06d4: pop
+		IL_06d5: ldstr "console"
+		IL_06da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_06df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_06e4: stloc.s 19
+		IL_06e6: ldloc.s 7
+		IL_06e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_06ed: volatile.
+		IL_06ef: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_06f4: brfalse IL_0708
 
-		IL_073a: ldstr "scanPhaseTwo"
-		IL_073f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_0744: br IL_075d
+		IL_06f9: ldstr "scanPhaseTwo"
+		IL_06fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0703: br IL_071c
 
-		IL_0749: ldstr "scanPhaseTwo"
-		IL_074e: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:158"
-		IL_0753: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-		IL_0758: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0708: ldstr "scanPhaseTwo"
+		IL_070d: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:158"
+		IL_0712: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+		IL_0717: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_075d: stloc.s 12
-		IL_075f: volatile.
-		IL_0761: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_0766: brfalse IL_077e
+		IL_071c: stloc.s 12
+		IL_071e: volatile.
+		IL_0720: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_0725: brfalse IL_073d
 
-		IL_076b: ldloc.s 19
-		IL_076d: ldstr "log"
-		IL_0772: ldloc.s 12
-		IL_0774: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-		IL_0779: br IL_0796
+		IL_072a: ldloc.s 19
+		IL_072c: ldstr "log"
+		IL_0731: ldloc.s 12
+		IL_0733: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+		IL_0738: br IL_0755
 
-		IL_077e: ldloc.s 19
-		IL_0780: ldstr "log"
-		IL_0785: ldloc.s 12
-		IL_0787: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:159"
-		IL_078c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-		IL_0791: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
+		IL_073d: ldloc.s 19
+		IL_073f: ldstr "log"
+		IL_0744: ldloc.s 12
+		IL_0746: ldstr "Array_PrototypeMethod_InferredThisLengthAndIndex:Modules.Array_PrototypeMethod_InferredThisLengthAndIndex:__js_module_init__:159"
+		IL_074b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+		IL_0750: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember1(object, string, object, string, int32&)
 
-		IL_0796: pop
-		IL_0797: ret
+		IL_0755: pop
+		IL_0756: ret
 	} // end of method Array_PrototypeMethod_InferredThisLengthAndIndex::__js_module_init__
 
 } // end of class Modules.Array_PrototypeMethod_InferredThisLengthAndIndex

@@ -624,17 +624,19 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 24 (0x18)
+			// Code size: 34 (0x22)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldstr "anon-class"
-			IL_0012: stfld string Modules.Import_DefaultAnonClass_Lib/Class1::kind
-			IL_0017: ret
+			IL_0007: ldtoken Modules.Import_DefaultAnonClass_Lib/Class1
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldstr "anon-class"
+			IL_001c: stfld string Modules.Import_DefaultAnonClass_Lib/Class1::kind
+			IL_0021: ret
 		} // end of method Class1::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -740,7 +742,7 @@
 		IL_0044: ldloc.2
 		IL_0045: ldc.i4.0
 		IL_0046: conv.r8
-		IL_0047: ldc.i4.0
+		IL_0047: ldc.i4.1
 		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_004d: castclass Modules.Import_DefaultAnonClass_Lib/Class1/Scope_ctor/FunctionObject
 		IL_0052: stloc.s 4

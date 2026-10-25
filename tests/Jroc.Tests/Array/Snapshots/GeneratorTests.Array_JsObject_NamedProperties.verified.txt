@@ -330,7 +330,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2104 (0x838)
+		// Code size: 2039 (0x7f7)
 		.maxstack 10
 		.locals init (
 			[0] class Modules.Array_JsObject_NamedProperties/Scope,
@@ -924,7 +924,7 @@
 		IL_06fe: ldloc.s 22
 		IL_0700: ldc.i4.0
 		IL_0701: conv.r8
-		IL_0702: ldc.i4.0
+		IL_0702: ldc.i4.1
 		IL_0703: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0708: castclass Modules.Array_JsObject_NamedProperties/DerivedArray/Scope_ctor/FunctionObject
 		IL_070d: stloc.s 24
@@ -937,87 +937,71 @@
 		IL_0724: stloc.s 19
 		IL_0726: ldloc.s 19
 		IL_0728: stloc.s 9
-		IL_072a: ldc.i4.0
-		IL_072b: newarr [System.Runtime]System.Object
-		IL_0730: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0735: ldloc.s 9
-		IL_0737: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_073c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_0741: newobj instance void Modules.Array_JsObject_NamedProperties/DerivedArray::.ctor()
-		IL_0746: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_074b: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0750: dup
-		IL_0751: ldloc.s 9
-		IL_0753: ldstr "prototype"
-		IL_0758: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_075d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0762: ldnull
-		IL_0763: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0768: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_076d: ldc.i4.1
-		IL_076e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
-		IL_0773: stloc.s 10
-		IL_0775: ldloc.s 10
-		IL_0777: ldc.r8 1
-		IL_0780: ldc.r8 42
-		IL_0789: ldc.i4.0
-		IL_078a: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_078f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0794: stloc.s 12
-		IL_0796: volatile.
-		IL_0798: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_079d: brfalse IL_07b3
+		IL_072a: ldloc.s 9
+		IL_072c: dup
+		IL_072d: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_0732: stloc.s 10
+		IL_0734: ldloc.s 10
+		IL_0736: ldc.r8 1
+		IL_073f: ldc.r8 42
+		IL_0748: ldc.i4.0
+		IL_0749: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+		IL_074e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0753: stloc.s 12
+		IL_0755: volatile.
+		IL_0757: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_075c: brfalse IL_0772
 
-		IL_07a2: ldloc.s 10
-		IL_07a4: ldstr "length"
-		IL_07a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_07ae: br IL_07c9
+		IL_0761: ldloc.s 10
+		IL_0763: ldstr "length"
+		IL_0768: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_076d: br IL_0788
 
-		IL_07b3: ldloc.s 10
-		IL_07b5: ldstr "length"
-		IL_07ba: ldstr "Array_JsObject_NamedProperties:Modules.Array_JsObject_NamedProperties:__js_module_init__:228"
-		IL_07bf: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-		IL_07c4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0772: ldloc.s 10
+		IL_0774: ldstr "length"
+		IL_0779: ldstr "Array_JsObject_NamedProperties:Modules.Array_JsObject_NamedProperties:__js_module_init__:228"
+		IL_077e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
+		IL_0783: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_07c9: stloc.s 19
-		IL_07cb: ldloc.s 10
-		IL_07cd: ldc.r8 1
-		IL_07d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_07db: stloc.s 13
-		IL_07dd: ldloc.s 12
-		IL_07df: ldloc.s 19
-		IL_07e1: ldloc.s 13
-		IL_07e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_07e8: pop
-		IL_07e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_07ee: stloc.s 12
-		IL_07f0: ldloc.1
-		IL_07f1: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
-		IL_07f6: stloc.s 13
-		IL_07f8: ldloc.s 12
-		IL_07fa: ldloc.s 13
-		IL_07fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0801: pop
-		IL_0802: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0807: stloc.s 12
-		IL_0809: ldloc.s 12
-		IL_080b: ldloc.1
-		IL_080c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0811: pop
-		IL_0812: ldloc.1
-		IL_0813: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
-		IL_0818: pop
-		IL_0819: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_081e: stloc.s 12
-		IL_0820: ldloc.1
-		IL_0821: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
-		IL_0826: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_082b: stloc.s 17
-		IL_082d: ldloc.s 12
-		IL_082f: ldloc.s 17
-		IL_0831: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0836: pop
-		IL_0837: ret
+		IL_0788: stloc.s 19
+		IL_078a: ldloc.s 10
+		IL_078c: ldc.r8 1
+		IL_0795: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_079a: stloc.s 13
+		IL_079c: ldloc.s 12
+		IL_079e: ldloc.s 19
+		IL_07a0: ldloc.s 13
+		IL_07a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_07a7: pop
+		IL_07a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07ad: stloc.s 12
+		IL_07af: ldloc.1
+		IL_07b0: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Stringify(object)
+		IL_07b5: stloc.s 13
+		IL_07b7: ldloc.s 12
+		IL_07b9: ldloc.s 13
+		IL_07bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_07c0: pop
+		IL_07c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07c6: stloc.s 12
+		IL_07c8: ldloc.s 12
+		IL_07ca: ldloc.1
+		IL_07cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_07d0: pop
+		IL_07d1: ldloc.1
+		IL_07d2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::preventExtensions(object)
+		IL_07d7: pop
+		IL_07d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07dd: stloc.s 12
+		IL_07df: ldloc.1
+		IL_07e0: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::isExtensible(object)
+		IL_07e5: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_07ea: stloc.s 17
+		IL_07ec: ldloc.s 12
+		IL_07ee: ldloc.s 17
+		IL_07f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_07f5: pop
+		IL_07f6: ret
 	} // end of method Array_JsObject_NamedProperties::__js_module_init__
 
 } // end of class Modules.Array_JsObject_NamedProperties

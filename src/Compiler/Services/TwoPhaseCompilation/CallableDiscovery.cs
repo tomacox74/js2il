@@ -491,7 +491,9 @@ public sealed class CallableDiscovery
             baseIntrinsicName,
             ClassRequiresParentScopes(classScope),
             astNode is ClassDeclaration { Decorators.Count: > 0 }
-                or ClassExpression { Decorators.Count: > 0 });
+                or ClassExpression { Decorators.Count: > 0 },
+            classBody.Body.Any(element => element is MethodDefinition { Decorators.Count: > 0 }
+                or PropertyDefinition { Decorators.Count: > 0 }));
         
         // Recurse into class scope for any nested callables in method bodies
         // (e.g., arrows defined inside methods)

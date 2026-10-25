@@ -281,17 +281,19 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 28 (0x1c)
+			// Code size: 38 (0x26)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldc.r8 7
-			IL_0016: stfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
-			IL_001b: ret
+			IL_0007: ldtoken Modules.Generator_ClassMethod_WithThis/Counter
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldc.r8 7
+			IL_0020: stfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
+			IL_0025: ret
 		} // end of method Counter::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -565,7 +567,7 @@
 		IL_0032: ldloc.s 5
 		IL_0034: ldc.i4.0
 		IL_0035: conv.r8
-		IL_0036: ldc.i4.0
+		IL_0036: ldc.i4.1
 		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_003c: castclass Modules.Generator_ClassMethod_WithThis/Counter/Scope_ctor/FunctionObject
 		IL_0041: stloc.s 7

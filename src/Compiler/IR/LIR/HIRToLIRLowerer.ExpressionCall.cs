@@ -235,11 +235,12 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
             _methodBodyIR.Instructions.Add(new LIRCallFunctionBaseConstructor(constructor, argsArray, usesLexicalReceiver));
-
-            // After super() the constructor is considered initialized.
             if (!usesLexicalReceiver)
-            {
                 _superConstructorCalled = true;
+            foreach (var initializer in callExpr.InstanceInitializers)
+            {
+                if (!TryLowerStatement(initializer))
+                    return false;
             }
 
             // In JS, super(...) returns the derived `this` value.
@@ -1556,7 +1557,8 @@ public sealed partial class HIRToLIRLowerer
                 && !UsesDynamicClassInstanceProperties()
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
-                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var methodReturnTypeHandle, out var hasScopesParam, out _, out var maxParamCount))
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var methodReturnTypeHandle, out var hasScopesParam, out _, out var maxParamCount)
+                && !_classRegistry.RequiresMethodInvocationContext(methodHandle))
             {
                 if (hasSpreadArgs)
                 {

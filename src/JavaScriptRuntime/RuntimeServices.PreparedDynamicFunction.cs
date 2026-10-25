@@ -2,6 +2,24 @@ namespace JavaScriptRuntime;
 
 public partial class RuntimeServices
 {
+    internal sealed record PreparedDynamicFunction(object Factory, object[] Sources);
+
+    internal static bool TryCreatePreparedDynamicFunction(object?[] arguments, out object? function)
+    {
+        function = null;
+        if (_currentInvocation.Value?.PreparedFunction is not { } prepared
+            || prepared.Sources.Length != arguments.Length)
+            return false;
+        for (var i = 0; i < arguments.Length; i++)
+        {
+            if (!string.Equals(DotNet2JSConversions.ToString(arguments[i]), prepared.Sources[i] as string, StringComparison.Ordinal))
+                return false;
+        }
+        function = CallableOperations.Call0(prepared.Factory, null);
+        Function.DefineMetadataProperty(function!, "name", "anonymous");
+        return true;
+    }
+
     public static object? GetPreparedDynamicFunctionConstructor(object receiver)
         => ObjectRuntime.GetItem(receiver, "Function");
 
@@ -32,6 +50,22 @@ public partial class RuntimeServices
         object? syntaxError,
         bool construct)
     {
+        if (constructor is JsClassConstructorObject && factory is not null)
+        {
+            var previous = _currentInvocation.Value;
+            PublishInvocationFrame((previous ?? new InvocationFrame()) with
+            {
+                PreparedFunction = new PreparedDynamicFunction(factory, sources)
+            });
+            try
+            {
+                return CallableOperations.Construct(constructor, arguments, constructor);
+            }
+            finally
+            {
+                PublishInvocationFrame(previous);
+            }
+        }
         if (constructor is not BuiltinDelegateFunctionAdapter adapter
             || !adapter.Target.Equals(GlobalThis.Function))
         {

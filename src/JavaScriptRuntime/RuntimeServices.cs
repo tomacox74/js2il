@@ -33,6 +33,8 @@ public partial class RuntimeServices
     {
         public HashSet<JsClassConstructorObject> Constructors { get; } =
             new(ReferenceEqualityComparer.Instance);
+        public Dictionary<object, Dictionary<string, object?>> Fields { get; } =
+            new(ReferenceEqualityComparer.Instance);
     }
 
     private sealed class ClassMethodHomeSlot(JsClassConstructorObject owner)
@@ -114,7 +116,8 @@ public partial class RuntimeServices
         object?[]? CurrentArguments = null,
         JsCallArguments? CurrentCallArguments = null,
         object? CurrentNewTarget = null,
-        object? CurrentCallee = null)
+        object? CurrentCallee = null,
+        PreparedDynamicFunction? PreparedFunction = null)
     {
         internal bool IsEmpty =>
             CurrentThis is null
@@ -123,7 +126,8 @@ public partial class RuntimeServices
             && CurrentArguments is null
             && CurrentCallArguments is null
             && CurrentNewTarget is null
-            && CurrentCallee is null;
+            && CurrentCallee is null
+            && PreparedFunction is null;
     }
 
     internal readonly record struct InvocationFrameState(
@@ -423,7 +427,8 @@ public partial class RuntimeServices
                 : previous?.CurrentNewTarget,
             publishesCallee
                 ? currentCallee
-                : previous?.CurrentCallee);
+                : previous?.CurrentCallee,
+            previous?.PreparedFunction);
         PublishInvocationFrame(next);
         return new InvocationFrameState(previous, WasPublished: true);
     }
@@ -474,15 +479,15 @@ public partial class RuntimeServices
     public static void ConstructDerivedFunctionBase(object receiver, object constructor, object[] args)
     {
         var context = receiver as LexicalSuperConstructorContext;
+        var owner = context?.Constructor ?? GetCurrentCallee() as JsClassConstructorObject;
         receiver = context?.Receiver ?? receiver;
         var newTarget = context?.NewTarget ?? GetCurrentNewTarget() ?? constructor;
         object? constructed;
         if (constructor is BuiltinDelegateFunctionAdapter builtinConstructor
             && builtinConstructor.IsConstructor)
         {
-            constructed = Function.ConstructWithReceiver(
+            constructed = CallableOperations.Construct(
                 builtinConstructor,
-                receiver,
                 args,
                 newTarget);
         }
@@ -493,6 +498,10 @@ public partial class RuntimeServices
                 args,
                 newTarget,
                 classConstructor.Type.IsInstanceOfType(receiver) ? receiver : null);
+        }
+        else if (constructor is BoundFunctionObject)
+        {
+            constructed = CallableOperations.Construct(constructor, args, newTarget);
         }
         else if (constructor is JsFunctionObject functionObject
             && functionObject.IsConstructor)
@@ -525,6 +534,10 @@ public partial class RuntimeServices
         }
 
         InitializeDerivedConstructorThisBinding(constructed);
+        if (owner is not null && constructed is not null)
+        {
+            InstallClassPrivateMethods(constructed, owner);
+        }
     }
 
     public static void PopDerivedConstructorThisBinding()
@@ -687,7 +700,8 @@ public partial class RuntimeServices
 
     public static object SetClassConstructorPrototype(object constructorValue, object? baseConstructorValue)
     {
-        var validatedBase = ValidateClassHeritage(baseConstructorValue);
+        var basePrototype = GetValidatedClassHeritagePrototype(baseConstructorValue);
+        var validatedBase = baseConstructorValue;
         if (constructorValue is JsClassConstructorObject classConstructor)
         {
             classConstructor.IsDerivedClass = true;
@@ -696,7 +710,7 @@ public partial class RuntimeServices
             PrototypeChain.SetPrototype(
                 classConstructor,
                 validatedBase is JsNull ? Function.Prototype : validatedBase);
-            LinkClassInstancePrototype(classConstructor, validatedBase);
+            LinkClassInstancePrototype(classConstructor, basePrototype);
             return classConstructor;
         }
 
@@ -706,15 +720,12 @@ public partial class RuntimeServices
 
     private static void LinkClassInstancePrototype(
         JsClassConstructorObject derivedConstructor,
-        object? baseConstructor)
+        object? basePrototype)
     {
         _ = TryEnsureClassConstructorMetadataPropertyDescriptor(
             derivedConstructor,
             "prototype",
             out var derivedPrototypeDescriptor);
-        var basePrototype = baseConstructor is JsNull
-            ? JsNull.Null
-            : ObjectRuntime.GetProperty(baseConstructor!, "prototype");
         if (derivedPrototypeDescriptor.Value is object derivedPrototype
             && basePrototype is not null)
         {
@@ -723,6 +734,12 @@ public partial class RuntimeServices
     }
 
     public static object? ValidateClassHeritage(object? heritage)
+    {
+        _ = GetValidatedClassHeritagePrototype(heritage);
+        return heritage;
+    }
+
+    private static object GetValidatedClassHeritagePrototype(object? heritage)
     {
         if (heritage is JsNull)
         {
@@ -735,12 +752,12 @@ public partial class RuntimeServices
         }
 
         var prototype = JavaScriptRuntime.ObjectRuntime.GetProperty(heritage, "prototype");
-        if (prototype is not null && prototype is not JsNull && !TypeUtilities.IsConstructorReturnOverride(prototype))
+        if (prototype is null || (prototype is not JsNull && !TypeUtilities.IsConstructorReturnOverride(prototype)))
         {
             throw new TypeError("Class extends value does not have valid prototype property");
         }
 
-        return heritage;
+        return prototype;
     }
 
     private static JsClassConstructorObject GetExecutingClassConstructor(Type ownerType)
@@ -869,12 +886,15 @@ public partial class RuntimeServices
 
         var flags = (isStatic ? BindingFlags.Static : BindingFlags.Instance)
             | BindingFlags.Public
-            | BindingFlags.NonPublic;
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly;
         var method = ownerType.GetMethod(clrMethodName, flags)
             ?? throw new TypeError($"Class method '{clrMethodName}' was not found on {ownerType.FullName}");
 
         BuiltinFunctionVariadic functionValue = (object? receiver, in JsCallArguments args) =>
         {
+            var previousHome = SetCurrentLexicalSuperReceiver(targetValue);
+            var previousScopes = SetCurrentLexicalSuperScopes(scopes);
             try
             {
                 return InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, receiver, args.ToArray());
@@ -884,6 +904,11 @@ public partial class RuntimeServices
                 return Promise.reject(exception is JsThrownValueException thrown
                     ? thrown.Value
                     : exception);
+            }
+            finally
+            {
+                SetCurrentLexicalSuperReceiver(previousHome);
+                SetCurrentLexicalSuperScopes(previousScopes);
             }
         };
 
@@ -947,7 +972,8 @@ public partial class RuntimeServices
 
         var flags = (isStatic ? BindingFlags.Static : BindingFlags.Instance)
             | BindingFlags.Public
-            | BindingFlags.NonPublic;
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly;
         var method = ownerType.GetMethod(clrMethodName, flags)
             ?? throw new TypeError($"Class accessor '{clrMethodName}' was not found on {ownerType.FullName}");
 
@@ -1428,9 +1454,7 @@ public partial class RuntimeServices
         object privateBrand,
         JsFunctionObject functionObject)
     {
-        if (receiver is null
-            || receiver is JsNull
-            || !ownerType.IsInstanceOfType(ResolveGeneratedClassStorageReceiver(receiver)))
+        if (receiver is null || receiver is JsNull)
         {
             return false;
         }
@@ -1439,20 +1463,7 @@ public partial class RuntimeServices
         {
             return PrototypeChainContainsFunction(receiver, functionObject);
         }
-
-        var expectedPrototype = ObjectRuntime.GetProperty(
-            classConstructor,
-            "prototype");
-        var current = PrototypeChain.GetPrototypeOrNull(receiver);
-        while (current != null && current is not JsNull)
-        {
-            if (ReferenceEquals(current, expectedPrototype))
-            {
-                return true;
-            }
-            current = PrototypeChain.GetPrototypeOrNull(current);
-        }
-        return false;
+        return HasDirectClassPrivateBrand(receiver, ownerType, classConstructor);
     }
 
     private static bool PrototypeChainContainsFunction(
@@ -1564,7 +1575,7 @@ public partial class RuntimeServices
                 $"Private method '{methodName}' was not found");
         var validatedReceiver = ValidateClassPrivateMethodReceiver(
             receiver, ownerType, method.IsStatic, callee, lexicalThis);
-        var instance = method.IsStatic ? null : validatedReceiver;
+        var instance = method.IsStatic ? null : ResolveGeneratedClassStorageReceiver(validatedReceiver);
         var scopes = method.IsStatic
             ? (validatedReceiver as JsClassConstructorObject)?.Scopes ?? EmptyScopes
             : ownerType.GetField(
@@ -1709,25 +1720,31 @@ public partial class RuntimeServices
         var brandField = callee?.GetType().GetField(
             "_privateBrand",
             BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-        if (brandField?.GetValue(callee) is JsClassConstructorObject brand
-            && brand.Type == ownerType)
+        if (TryGetLexicalClassPrivateBrand(
+                brandField?.GetValue(callee) as JsClassConstructorObject, ownerType, out constructor))
         {
-            constructor = brand;
             return true;
         }
 
         if (callee != null
             && _classMethodHomes.TryGetValue(callee, out var methodHome)
-            && methodHome.Owner.Type == ownerType)
+            && TryGetLexicalClassPrivateBrand(methodHome.Owner, ownerType, out constructor))
         {
-            constructor = methodHome.Owner;
             return true;
         }
 
-        if (lexicalThis is JsClassConstructorObject staticOwner
-            && staticOwner.Type == ownerType)
+        for (var activeOwner = GetCurrentNewTarget() as JsClassConstructorObject;
+            activeOwner != null; activeOwner = activeOwner.PrivateBrandBaseConstructor)
         {
-            constructor = staticOwner;
+            if (TryGetLexicalClassPrivateBrand(activeOwner, ownerType, out constructor))
+            {
+                return true;
+            }
+        }
+
+        if (lexicalThis is JsClassConstructorObject staticOwner
+            && TryGetLexicalClassPrivateBrand(staticOwner, ownerType, out constructor))
+        {
             return true;
         }
 
@@ -1739,9 +1756,8 @@ public partial class RuntimeServices
             {
                 foreach (var instanceOwner in instanceBrand.Constructors)
                 {
-                    if (instanceOwner.Type == ownerType)
+                    if (TryGetLexicalClassPrivateBrand(instanceOwner, ownerType, out constructor))
                     {
-                        constructor = instanceOwner;
                         return true;
                     }
                 }
@@ -1762,7 +1778,7 @@ public partial class RuntimeServices
         Type ownerType,
         JsClassConstructorObject constructor)
     {
-        if (receiver == null || !ownerType.IsInstanceOfType(receiver))
+        if (receiver == null)
         {
             return false;
         }
@@ -1770,7 +1786,7 @@ public partial class RuntimeServices
         if (!_classInstancePrivateBrands.TryGetValue(receiver, out var instanceBrand))
         {
             // Direct newobj construction does not materialize a class-constructor brand.
-            return true;
+            return ownerType.IsInstanceOfType(receiver);
         }
 
         lock (instanceBrand.Constructors)
@@ -2088,22 +2104,18 @@ public partial class RuntimeServices
         return _currentInvocation.Value?.CurrentNewTarget;
     }
 
-    public static void InitializeConstructedClassPrototype(object instance)
+    public static void InitializeConstructedClassPrototype(object instance, Type ownerType)
     {
+        SetCurrentThis(instance);
         if (GetCurrentNewTarget() is JsClassConstructorObject constructor)
         {
-            var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
-            lock (brand.Constructors)
+            _ = _classInstancePrivateBrands.GetOrCreateValue(instance);
+            var owner = constructor;
+            while (owner != null && owner.Type != ownerType)
+                owner = owner.PrivateBrandBaseConstructor;
+            if (owner != null)
             {
-                for (var owner = constructor;
-                    owner != null;
-                    owner = owner.PrivateBrandBaseConstructor)
-                {
-                    if (owner.Type.IsInstanceOfType(instance))
-                    {
-                        brand.Constructors.Add(owner);
-                    }
-                }
+                InstallClassPrivateMethods(instance, owner);
             }
             if (PrototypeChain.GetPrototypeOrNull(instance) == null)
             {
@@ -2114,6 +2126,25 @@ public partial class RuntimeServices
                     PrototypeChain.SetPrototype(instance, prototype);
                 }
             }
+
+        }
+    }
+
+    private static void InstallClassPrivateMethods(object instance, JsClassConstructorObject owner)
+    {
+        ObjectRuntime.EnsureCanAddPrivateElement(instance);
+        var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
+        lock (brand.Constructors)
+        {
+            if (!brand.Constructors.Add(owner)
+                && owner.Type.GetMethods(BindingFlags.Instance | BindingFlags.Public
+                    | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+                    .Any(method => method.Name.StartsWith("__jroc_priv_", StringComparison.Ordinal)))
+            {
+                throw new TypeError("Cannot initialize private methods more than once");
+            }
+            foreach (var initializer in owner.InstanceDecoratorInitializers)
+                CallableOperations.Call0(initializer, instance);
         }
     }
 

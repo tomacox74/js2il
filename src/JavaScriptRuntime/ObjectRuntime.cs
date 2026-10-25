@@ -363,6 +363,8 @@ namespace JavaScriptRuntime
         {
             var key = ToPropertyKeyString(prop);
             ConfigureFunctionNameFromPropertyKey(ToExternalPropertyKey(key), value);
+            if (!isExtensible(target) && !hasOwn(target, key))
+                throw new TypeError($"Cannot define property {key}, object is not extensible");
             if (target is IExoticJsObject)
             {
                 var descriptor = new JsObject();

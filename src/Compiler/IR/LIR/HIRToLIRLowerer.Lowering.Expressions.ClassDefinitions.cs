@@ -69,6 +69,8 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        if (expression.DecoratedFieldOwner is { } fieldOwner && expression.DecoratedFieldName is { } fieldName)
+            valueTemp = EmitDecoratedClassField(fieldOwner, targetTemp, fieldName, valueTemp);
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
@@ -78,6 +80,9 @@ public sealed partial class HIRToLIRLowerer
             Arguments: new List<TempVariable> { EnsureObject(targetTemp), EnsureObject(keyTemp), EnsureObject(valueTemp) },
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        if (expression.DecoratedFieldOwner is { } initializedFieldOwner
+            && expression.DecoratedFieldName is { } initializedFieldName)
+            EmitDecoratedClassField(initializedFieldOwner, targetTemp, initializedFieldName);
         return true;
     }
 

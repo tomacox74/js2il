@@ -43,6 +43,18 @@
   "support": {
     "entries": [
       {
+        "clause": "15.8",
+        "feature": "Complete pinned async-function statement evidence",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/async-function/RemainingLanguageCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/async-function/evaluation-body.js"
+        ],
+        "notes": "All 74 pinned async-function statement cases have outcomes: 72 verified passing and two explicitly unsupported eval dependencies. Coverage includes parameter initialization and TDZ, function metadata, lexical arguments and new.target, async return values, and body evaluation. Intrinsic constructor calls without a matching direct CLR overload use dynamic JavaScript construction, preserving runtime TypeError and rejected-Promise behavior instead of failing IL emission. Every required native variant passed one frozen branch-local build; this is not central trusted acceptance."
+      },
+      {
         "clause": "15.8.4",
         "feature": "Complete pinned async-function expression evidence and finally overrides",
         "status": "Supported with Limitations",

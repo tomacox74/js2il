@@ -184,7 +184,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 80 (0x50)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -194,25 +194,27 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Classes_Constructor_ReturnObjectOverridesThis/A::_scopes
-			IL_0015: ldarg.0
-			IL_0016: ldc.r8 1
-			IL_001f: stfld float64 Modules.Classes_Constructor_ReturnObjectOverridesThis/A::a
-			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0029: dup
-			IL_002a: ldstr "b"
-			IL_002f: ldc.r8 2
-			IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_003d: stloc.1
-			IL_003e: ldarg.0
-			IL_003f: ldloc.1
-			IL_0040: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/A::__jroc_ctorReturn
-			IL_0045: ret
+			IL_0007: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/A
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Classes_Constructor_ReturnObjectOverridesThis/A::_scopes
+			IL_001f: ldarg.0
+			IL_0020: ldc.r8 1
+			IL_0029: stfld float64 Modules.Classes_Constructor_ReturnObjectOverridesThis/A::a
+			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0033: dup
+			IL_0034: ldstr "b"
+			IL_0039: ldc.r8 2
+			IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0047: stloc.1
+			IL_0048: ldarg.0
+			IL_0049: ldloc.1
+			IL_004a: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/A::__jroc_ctorReturn
+			IL_004f: ret
 		} // end of method A::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -340,21 +342,23 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 48 (0x30)
+			// Code size: 58 (0x3a)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldc.r8 1
-			IL_0016: stfld float64 Modules.Classes_Constructor_ReturnObjectOverridesThis/B::a
-			IL_001b: ldarg.0
-			IL_001c: ldc.r8 1
-			IL_0025: box [System.Runtime]System.Double
-			IL_002a: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
-			IL_002f: ret
+			IL_0007: ldtoken Modules.Classes_Constructor_ReturnObjectOverridesThis/B
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldc.r8 1
+			IL_0020: stfld float64 Modules.Classes_Constructor_ReturnObjectOverridesThis/B::a
+			IL_0025: ldarg.0
+			IL_0026: ldc.r8 1
+			IL_002f: box [System.Runtime]System.Double
+			IL_0034: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/B::__jroc_ctorReturn
+			IL_0039: ret
 		} // end of method B::.ctor
 
 		.method family hidebysig specialname rtspecialname 

@@ -308,7 +308,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 78 (0x4e)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -319,29 +319,31 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::_scopes
-			IL_0015: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-			IL_001a: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0007: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example::_scopes
 			IL_001f: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
-			IL_0024: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0029: stloc.1
-			IL_002a: ldloc.1
-			IL_002b: ldarg.0
-			IL_002c: ldstr "86"
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetClassComputedFieldKey(class [System.Runtime]System.Type, object, object)
-			IL_0036: stloc.2
-			IL_0037: ldarg.0
-			IL_0038: ldloc.2
-			IL_0039: ldc.r8 41
-			IL_0042: box [System.Runtime]System.Double
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
-			IL_004c: pop
-			IL_004d: ret
+			IL_0024: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0029: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example
+			IL_002e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0033: stloc.1
+			IL_0034: ldloc.1
+			IL_0035: ldarg.0
+			IL_0036: ldstr "86"
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetClassComputedFieldKey(class [System.Runtime]System.Type, object, object)
+			IL_0040: stloc.2
+			IL_0041: ldarg.0
+			IL_0042: ldloc.2
+			IL_0043: ldc.r8 41
+			IL_004c: box [System.Runtime]System.Double
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassFieldDataProperty(object, object, object)
+			IL_0056: pop
+			IL_0057: ret
 		} // end of method Example::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -429,7 +431,7 @@
 		IL_0030: ldloc.3
 		IL_0031: ldc.i4.0
 		IL_0032: conv.r8
-		IL_0033: ldc.i4.0
+		IL_0033: ldc.i4.1
 		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0039: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/FunctionObject
 		IL_003e: stloc.s 5

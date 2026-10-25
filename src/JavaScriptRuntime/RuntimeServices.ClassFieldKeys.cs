@@ -2,6 +2,9 @@ namespace JavaScriptRuntime;
 
 public partial class RuntimeServices
 {
+    public static object ThrowClassNameTDZ(string name)
+        => throw new ReferenceError($"Cannot access '{name}' before initialization");
+
     public static object GetClassFieldHomeObject(object receiver)
         => PrototypeChain.GetPrototypeOrNull(receiver)
             ?? throw new InvalidOperationException("A class field initializer requires the instance prototype.");

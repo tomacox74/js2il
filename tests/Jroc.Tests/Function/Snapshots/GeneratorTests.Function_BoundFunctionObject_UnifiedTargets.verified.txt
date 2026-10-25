@@ -782,7 +782,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 52 (0x34)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -792,21 +792,23 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: ldarg.2
-			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0013: stloc.0
-			IL_0014: ldarg.0
-			IL_0015: ldloc.0
-			IL_0016: stfld object Modules.Function_BoundFunctionObject_UnifiedTargets/Box::total
-			IL_001b: ldarg.0
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTargetOrReceiverType(object)
-			IL_0021: stloc.1
-			IL_0022: ldarg.0
-			IL_0023: ldloc.1
-			IL_0024: stfld object Modules.Function_BoundFunctionObject_UnifiedTargets/Box::seenNewTarget
-			IL_0029: ret
+			IL_0007: ldtoken Modules.Function_BoundFunctionObject_UnifiedTargets/Box
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001d: stloc.0
+			IL_001e: ldarg.0
+			IL_001f: ldloc.0
+			IL_0020: stfld object Modules.Function_BoundFunctionObject_UnifiedTargets/Box::total
+			IL_0025: ldarg.0
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentNewTargetOrReceiverType(object)
+			IL_002b: stloc.1
+			IL_002c: ldarg.0
+			IL_002d: ldloc.1
+			IL_002e: stfld object Modules.Function_BoundFunctionObject_UnifiedTargets/Box::seenNewTarget
+			IL_0033: ret
 		} // end of method Box::.ctor
 
 		.method family hidebysig specialname rtspecialname 

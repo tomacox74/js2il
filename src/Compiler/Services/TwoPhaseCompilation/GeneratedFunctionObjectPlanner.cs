@@ -89,6 +89,7 @@ internal static class GeneratedFunctionObjectPlanner
                 JavaScriptRuntime.InvocationContextRequirements.Arguments;
         }
         if (callable.Semantics.UsesPrivateNames
+            || IsClassCallable(callable) && (callable.NeedsArgumentsObject || callable.HasRestParameters)
             || callable.Semantics.IsNamedFunctionExpression
             || callable.IncludeCalleeInArgumentsObject
             || callableScope?.MayUseBoundWithObject == true)
