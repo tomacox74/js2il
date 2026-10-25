@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs(ecma262): align section 9 environment, private-name, realm, execution
+  context, agent and weak-reference coverage with the current implementation.
+  Retain the missing agent-wide asynchronous module evaluation counter as an
+  explicit gap rather than claiming complete execution-model support.
 - docs(ecma262): restore subsection index tables with rolled-up section status.
   Keep nested indexes, section hubs and root statuses synchronized across the
   JSON generation and legacy split commands.

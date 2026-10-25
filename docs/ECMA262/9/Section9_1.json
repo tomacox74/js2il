@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.1",
   "title": "Environment Records",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-environment-records",
   "parent": {
     "clause": "9"
@@ -96,19 +96,19 @@
     {
       "clause": "9.1.1.2.2",
       "title": "CreateMutableBinding ( N , D )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-createmutablebinding-n-d"
     },
     {
       "clause": "9.1.1.2.3",
       "title": "CreateImmutableBinding ( N , S )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-createimmutablebinding-n-s"
     },
     {
       "clause": "9.1.1.2.4",
       "title": "InitializeBinding ( N , V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-initializebinding-n-v"
     },
     {
@@ -126,25 +126,25 @@
     {
       "clause": "9.1.1.2.7",
       "title": "DeleteBinding ( N )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-deletebinding-n"
     },
     {
       "clause": "9.1.1.2.8",
       "title": "HasThisBinding ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-hasthisbinding"
     },
     {
       "clause": "9.1.1.2.9",
       "title": "HasSuperBinding ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-hassuperbinding"
     },
     {
       "clause": "9.1.1.2.10",
       "title": "WithBaseObject ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records-withbaseobject"
     },
     {
@@ -294,37 +294,37 @@
     {
       "clause": "9.1.1.5",
       "title": "Module Environment Records",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records"
     },
     {
       "clause": "9.1.1.5.1",
       "title": "GetBindingValue ( N , S )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records-getbindingvalue-n-s"
     },
     {
       "clause": "9.1.1.5.2",
       "title": "DeleteBinding ( N )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records-deletebinding-n"
     },
     {
       "clause": "9.1.1.5.3",
       "title": "HasThisBinding ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records-hasthisbinding"
     },
     {
       "clause": "9.1.1.5.4",
       "title": "GetThisBinding ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records-getthisbinding"
     },
     {
       "clause": "9.1.1.5.5",
       "title": "CreateImportBinding ( envRec , N , M , N2 )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createimportbinding"
     },
     {
@@ -348,7 +348,7 @@
     {
       "clause": "9.1.2.3",
       "title": "NewObjectEnvironment ( O , W , E )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-newobjectenvironment"
     },
     {
@@ -366,11 +366,11 @@
     {
       "clause": "9.1.2.6",
       "title": "NewModuleEnvironment ( E )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-newmoduleenvironment"
     }
   ],
-  "intro": "JROC models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.",
+  "intro": "JROC implements environment semantics through compiler-managed scope instances, realm-owned global lexical bindings, object-backed with environments and native ESM binding cells rather than literal ECMA-262 Environment Record objects. General eval, host module loading hooks and full general asynchronous cyclic-module semantics remain limited or unsupported.",
   "support": {
     "entries": [
       {
@@ -382,7 +382,7 @@
           "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
           "tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js"
         ],
-        "notes": "Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated."
+        "notes": "Scope bindings and lowered storage operations implement lexical initialization, temporal-dead-zone checks, immutable bindings and closure capture. Script-mode global lexical bindings belong to the realm's RuntimeExecutionContext and remain separate from global-object properties. General eval is unsupported outside the compiler's narrow recognized direct-eval literal forms."
       },
       {
         "clause": "9.1.1.2",
@@ -399,7 +399,7 @@
           "test/language/statements/with/set-mutable-binding-idref-with-proxy-env.js",
           "test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js"
         ],
-        "notes": "Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, and observable Proxy trap/receiver ordering. Proxy traps receive the symbol-valued unscopables key on first use, independently of earlier Symbol property access. Environments box primitive values once and are retained by closures. Strict-mode with syntax is rejected; eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results."
+        "notes": "Non-strict with environments implement dynamic HasBinding with Symbol.unscopables, separate GetBindingValue and SetMutableBinding existence checks, strict-mode errors after deletion, observable Proxy trap/receiver ordering and property deletion. Identifier calls use the with object as their receiver without replacing lexical this or super bindings. Primitive values are boxed once and the object environment is retained by closures. Declarations keep their declarative/global var-hoisting targets; immutable lexical bindings are not created on with objects. Strict-mode with syntax is rejected, and general eval-dependent environment behavior remains unsupported. The complete pinned with-statement area has 164 branch-locally verified cases and 17 explicit eval exclusions; these are not central trusted acceptance results."
       },
       {
         "clause": "9.1.1.3",
@@ -420,9 +420,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-global-environment-records",
         "testScripts": [
           "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js",
+          "tests/Jroc.Tests/RuntimeExecutionContextTests.cs",
           "tests/Jroc.Tests/ValidatorTests.cs"
         ],
-        "notes": "Global bindings are modeled in JROC global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete."
+        "notes": "Script-mode declarations use realm-owned lexical bindings and declared-name sets, separate from GlobalThis properties. Global declaration instantiation checks lexical conflicts, restricted properties and global-object extensibility. CommonJS wrappers and ESM modules have separate module-local bindings. General eval-driven declaration instantiation remains unsupported."
       },
       {
         "clause": "9.1.1.5",
@@ -430,10 +431,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records",
         "testScripts": [
-          "tests/Jroc.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
-          "tests/Jroc.Tests/Import/JavaScript/Import_RequireEsmModule.js"
+          "tests/Jroc.Tests/Import/JavaScript/Import_LiveBindings_Named.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
+          "tests/Jroc.Tests/Import/ImportRewriteErrorTests.cs",
+          "tests/Jroc.Tests/RuntimeModuleStateTests.cs"
         ],
-        "notes": "Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete."
+        "notes": "Native static ESM lowering creates live export binding cells, forwarding imports and re-exports, temporal-dead-zone checks and immutable imported bindings. The linker rejects missing or ambiguous exports and invalid import writes/deletes. Binding cells and module namespaces belong to the realm's RuntimeModuleState. Common cyclic graphs are supported; host loading hooks and full general asynchronous cyclic-module evaluation remain limited, as documented in section 16.2."
       },
       {
         "clause": "9.1.2.1",
@@ -456,6 +459,27 @@
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js"
         ],
         "notes": "Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required."
+      },
+      {
+        "clause": "9.1.2.3",
+        "feature": "NewObjectEnvironment for non-strict with statements",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-newobjectenvironment",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/with/VariableWithCompletionExecutionTests.cs"
+        ],
+        "notes": "Lowering evaluates and boxes the with object once, probes its dynamic bindings and retains the object for closures created inside the statement. Runtime helpers preserve unscopables, property receivers and strict assignment checks. General eval-dependent object environments remain unsupported."
+      },
+      {
+        "clause": "9.1.2.6",
+        "feature": "NewModuleEnvironment for compiled ESM graphs",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-newmoduleenvironment",
+        "testScripts": [
+          "tests/Jroc.Tests/Import/NativeEsmOverheadTests.cs",
+          "tests/Jroc.Tests/RuntimeModuleStateTests.cs"
+        ],
+        "notes": "Compiler module records and symbol-table import/export plans initialize realm-owned live binding cells and namespace objects. The supported bundled graphs do not provide the complete general host loading and asynchronous cyclic-module algorithms."
       }
     ]
   }

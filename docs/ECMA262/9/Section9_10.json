@@ -16,9 +16,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#ClearKeptObjects",
         "testScripts": [
-          "tests/Jroc.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+          "tests/Jroc.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js",
+          "tests/Jroc.Tests/RuntimeAgentSchedulingTests.cs"
         ],
-        "notes": "The finalization host clears kept objects at cleanup checkpoints around event-loop iterations. This is sufficient for the current WeakRef baseline and deterministic tests, but it is still a single-runtime approximation rather than a full multi-realm host model."
+        "notes": "The agent-owned FinalizationRegistryHost clears its kept-object set at event-loop checkpoints. Realms in one agent share that host, while other agents have independent hosts. Collection and cleanup scheduling remain dependent on .NET GC and the implemented host checkpoints."
       }
     ]
   }
