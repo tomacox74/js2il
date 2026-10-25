@@ -1,14 +1,22 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 6: ECMAScript Data Types and Values
 
-This folder contains JROC coverage documentation for Section 6: ECMAScript Data Types and Values. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 6: ECMAScript Data Types and Values](Section6.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 6 | ECMAScript Data Types and Values | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](Section6.md) |
 
 ## Subsections
 
-- [Section 6.1: ECMAScript Language Types](Section6_1.md)
-- [Section 6.2: ECMAScript Specification Types](Section6_2.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 6.1 | ECMAScript Language Types | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types) | [Section6_1.md](Section6_1.md) |
+| 6.2 | ECMAScript Specification Types | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-specification-types) | [Section6_2.md](Section6_2.md) |

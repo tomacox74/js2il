@@ -1,14 +1,22 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 11: ECMAScript Language: Source Text
 
-This folder contains JROC coverage documentation for Section 11: ECMAScript Language: Source Text. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 11: ECMAScript Language: Source Text](Section11.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 11 | ECMAScript Language: Source Text | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-source-code) | [Section11.md](Section11.md) |
 
 ## Subsections
 
-- [Section 11.1: Source Text](Section11_1.md)
-- [Section 11.2: Types of Source Code](Section11_2.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 11.1 | Source Text | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-source-text) | [Section11_1.md](Section11_1.md) |
+| 11.2 | Types of Source Code | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-types-of-source-code) | [Section11_2.md](Section11_2.md) |

@@ -4,7 +4,7 @@ Covers control abstraction objects, including promises and generator/async contr
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
 _This section is split into subsection documents for readability._
 
@@ -19,7 +19,7 @@ _This section is split into subsection documents for readability._
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
 | 27.1 | Iteration | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-iteration) | [Section27_1.md](Section27_1.md) |
-| 27.2 | Promise Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise-objects) | [Section27_2.md](Section27_2.md) |
+| 27.2 | Promise Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-objects) | [Section27_2.md](Section27_2.md) |
 | 27.3 | GeneratorFunction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-objects) | [Section27_3.md](Section27_3.md) |
 | 27.4 | AsyncGeneratorFunction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorfunction-objects) | [Section27_4.md](Section27_4.md) |
 | 27.5 | Generator Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-generator-objects) | [Section27_5.md](Section27_5.md) |

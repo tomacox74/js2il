@@ -2,10 +2,10 @@
  * Rolls up ECMA-262 coverage statuses:
  *   1) From subsection JSON docs (e.g. docs/ECMA262/15/Section15_5.json)
  *      into the parent section hub markdown (e.g. docs/ECMA262/15/Section15.md)
- *   2) From each section hub into docs/ECMA262/Index.md
+ *   2) From each section hub into its nested Index.md and docs/ECMA262/Index.md
  *
  * This is intentionally lightweight and does not attempt to re-split spec text
- * or regenerate subsection docs; it only keeps hub pages + the root index in sync
+ * or regenerate subsection docs; it only keeps hub pages and indexes in sync
  * with the per-subsection JSON status values.
  *
  * Usage:
@@ -85,7 +85,8 @@ function writeLinesPreserveEol(filePath, lines) {
 
   const newText = lines.join(eol) + eol;
 
-  if (existingText !== null && existingText === newText) {
+  const withoutTimestamp = (text) => text.split(/\r?\n/).filter((line) => !isGeneratedTimestampLine(line)).join('\n');
+  if (existingText !== null && withoutTimestamp(existingText) === withoutTimestamp(newText)) {
     return false;
   }
 
@@ -415,23 +416,55 @@ function updateIndexMarkdown(rootDir, sectionStatusByNumber, generatedAt) {
   return writeLinesPreserveEol(indexPath, indexLines);
 }
 
-function main() {
-  const args = parseArgs(process.argv);
-  if (args.help) {
-    usage();
-    return;
-  }
+function updateSectionIndexMarkdown(sectionDir, sectionNumber, generatedAt) {
+  const sectionPath = path.join(sectionDir, `Section${sectionNumber}.md`);
+  if (!fs.existsSync(sectionPath)) return false;
+  const { lines } = readLines(sectionPath);
+  const entry = findExistingSectionEntry(lines, sectionNumber);
+  if (!entry) throw new Error(`Missing section entry in ${sectionPath}`);
+  const status = normalizeLegacyStatus(entry.Status);
+  validateStatus(status);
 
-  const rootDir = args.root ? path.resolve(process.cwd(), args.root) : DEFAULT_ROOT;
+  const out = [
+    '<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->',
+    '',
+    `# Section ${sectionNumber}: ${entry.Title}`,
+    '',
+    '[Back to ECMA-262 index](../Index.md)',
+    '',
+    buildGeneratedTimestampLine(generatedAt),
+    '',
+    '## Section',
+    '',
+    '| Section | Title | Status | Spec | Document |',
+    '|---:|---|---|---|---|',
+    `| ${sectionNumber} | ${escapePipes(entry.Title)} | ${status} | ${entry.Link} | [Section${sectionNumber}.md](Section${sectionNumber}.md) |`,
+  ];
+  const header = '| Subsection | Title | Status | Spec | Document |';
+  const tableIndex = findLineIndex(lines, header);
+  if (tableIndex >= 0) {
+    out.push(
+      '', '## Subsections', '',
+      'The section status is rolled up from these subsection statuses.',
+      '', header, '|---:|---|---|---|---|'
+    );
+    for (let i = tableIndex + 2; i < lines.length && lines[i].trim().startsWith('|'); i++) {
+      out.push(lines[i]);
+    }
+  }
+  return writeLinesPreserveEol(path.join(sectionDir, 'Index.md'), out);
+}
+
+function rollupStatuses(rootDir, generatedAt = new Date()) {
   if (!fs.existsSync(rootDir)) {
     throw new Error(`ECMA262 docs root not found: ${rootDir}`);
   }
 
-  const generatedAt = new Date();
   const sectionDirs = listNumericSectionDirs(rootDir);
 
   const sectionStatusByNumber = {};
   let changedSectionCount = 0;
+  let changedNestedIndexCount = 0;
 
   for (const sectionNumber of sectionDirs) {
     const sectionDir = path.join(rootDir, sectionNumber);
@@ -450,6 +483,7 @@ function main() {
           sectionStatusByNumber[String(sectionNumber)] = normalizedStatus;
         }
       }
+      if (updateSectionIndexMarkdown(sectionDir, sectionNumber, generatedAt)) changedNestedIndexCount++;
       continue;
     }
 
@@ -490,14 +524,27 @@ function main() {
       sectionStatusByNumber[String(sectionNumber)] = hub.status;
     }
     if (hub.changed) changedSectionCount++;
+    if (updateSectionIndexMarkdown(sectionDir, sectionNumber, generatedAt)) changedNestedIndexCount++;
   }
 
   const indexChanged = updateIndexMarkdown(rootDir, sectionStatusByNumber, generatedAt);
+  return { changedSectionCount, changedNestedIndexCount, indexChanged };
+}
 
+function main() {
+  const args = parseArgs(process.argv);
+  if (args.help) {
+    usage();
+    return;
+  }
+  const rootDir = args.root ? path.resolve(process.cwd(), args.root) : DEFAULT_ROOT;
+  const { changedSectionCount, changedNestedIndexCount, indexChanged } = rollupStatuses(rootDir);
   console.log(
-    `Rollup complete. Updated sections: ${changedSectionCount}. Index updated: ${indexChanged ? 'yes' : 'no'}.`
+    `Rollup complete. Updated sections: ${changedSectionCount}. Nested indexes: ${changedNestedIndexCount}. Root index updated: ${indexChanged ? 'yes' : 'no'}.`
   );
 }
+
+module.exports = { getRollupStatus, rollupStatuses };
 
 if (require.main === module) {
   main();

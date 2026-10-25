@@ -1,15 +1,23 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 2: Conformance
 
-This folder contains JROC coverage documentation for Section 2: Conformance. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 2: Conformance](Section2.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 2 | Conformance | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance) | [Section2.md](Section2.md) |
 
 ## Subsections
 
-- [Section 2.1: Example Normative Optional Clause Heading](Section2_1.md)
-- [Section 2.2: Example Legacy Clause Heading](Section2_2.md)
-- [Section 2.3: Example Legacy Normative Optional Clause Heading](Section2_3.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 2.1 | Example Normative Optional Clause Heading | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance-normative-optional) | [Section2_1.md](Section2_1.md) |
+| 2.2 | Example Legacy Clause Heading | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance-legacy) | [Section2_2.md](Section2_2.md) |
+| 2.3 | Example Legacy Normative Optional Clause Heading | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance-legacy-normative-optional) | [Section2_3.md](Section2_3.md) |

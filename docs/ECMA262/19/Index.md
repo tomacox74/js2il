@@ -1,16 +1,24 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 19: The Global Object
 
-This folder contains JROC coverage documentation for Section 19: The Global Object. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 19: The Global Object](Section19.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 19 | The Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-global-object) | [Section19.md](Section19.md) |
 
 ## Subsections
 
-- [Section 19.1: Value Properties of the Global Object](Section19_1.md)
-- [Section 19.2: Function Properties of the Global Object](Section19_2.md)
-- [Section 19.3: Constructor Properties of the Global Object](Section19_3.md)
-- [Section 19.4: Other Properties of the Global Object](Section19_4.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 19.1 | Value Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object) | [Section19_1.md](Section19_1.md) |
+| 19.2 | Function Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-global-object) | [Section19_2.md](Section19_2.md) |
+| 19.3 | Constructor Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object) | [Section19_3.md](Section19_3.md) |
+| 19.4 | Other Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-other-properties-of-the-global-object) | [Section19_4.md](Section19_4.md) |

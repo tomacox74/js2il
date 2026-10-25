@@ -1,17 +1,25 @@
+<!-- AUTO-GENERATED: rollupEcma262Statuses.js -->
+
 # Section 4: Overview
 
-This folder contains JROC coverage documentation for Section 4: Overview. Start with the top-level section document, then use the subsection pages for clause-level status and notes.
+[Back to ECMA-262 index](../Index.md)
 
-## Section document
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
-- [Section 4: Overview](Section4.md)
+## Section
+
+| Section | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 4 | Overview | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-overview) | [Section4.md](Section4.md) |
 
 ## Subsections
 
-- [Section 4.1: Web Scripting](Section4_1.md)
-- [Section 4.2: Hosts and Implementations](Section4_2.md)
-- [Section 4.3: ECMAScript Overview](Section4_3.md)
-- [Section 4.4: Terms and Definitions](Section4_4.md)
-- [Section 4.5: Organization of This Specification](Section4_5.md)
+The section status is rolled up from these subsection statuses.
 
-Where a JSON file accompanies a coverage Markdown page, it is the structured source used to maintain the coverage documentation.
+| Subsection | Title | Status | Spec | Document |
+|---:|---|---|---|---|
+| 4.1 | Web Scripting | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-web-scripting) | [Section4_1.md](Section4_1.md) |
+| 4.2 | Hosts and Implementations | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-hosts-and-implementations) | [Section4_2.md](Section4_2.md) |
+| 4.3 | ECMAScript Overview | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-overview) | [Section4_3.md](Section4_3.md) |
+| 4.4 | Terms and Definitions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-terms-and-definitions) | [Section4_4.md](Section4_4.md) |
+| 4.5 | Organization of This Specification | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-organization-of-this-specification) | [Section4_5.md](Section4_5.md) |

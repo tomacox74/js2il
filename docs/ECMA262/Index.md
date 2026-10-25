@@ -20,12 +20,12 @@ Notes:
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 - Coverage maintenance workflow: see the [ECMA-262 documentation guide](readme.md).
 
-> Last generated (UTC): 2026-07-25T20:59:24Z
+> Last generated (UTC): 2026-10-24T01:01:58Z
 
 ## Summary
 - Total top-level sections indexed: **29**
 - Top-level sections with tracked status: **28**
-- Status breakdown: Supported with Limitations: **13**, Incomplete: **8**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
+- Status breakdown: Supported with Limitations: **14**, Incomplete: **7**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
 ## Test262 Conformance Status
@@ -63,7 +63,7 @@ The applicable corpus is taken from the [pinned Test262 revision](https://github
 | 12 | ECMAScript Language: Lexical Grammar | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section 12 index](12/Index.md) |
 | 13 | ECMAScript Language: Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section 13 index](13/Index.md) |
 | 14 | ECMAScript Language: Statements and Declarations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section 14 index](14/Index.md) |
-| 15 | ECMAScript Language: Functions and Classes | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section 15 index](15/Index.md) |
+| 15 | ECMAScript Language: Functions and Classes | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section 15 index](15/Index.md) |
 | 16 | ECMAScript Language: Scripts and Modules | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-scripts-and-modules) | [Section 16 index](16/Index.md) |
 | 17 | Error Handling and Language Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-error-handling-and-language-extensions) | [Section 17 index](17/Index.md) |
 | 18 | ECMAScript Standard Built-in Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section 18 index](18/Index.md) |
