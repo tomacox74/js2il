@@ -17,9 +17,11 @@
         "specUrl": "https://tc39.es/ecma262/#sec-forward-progress",
         "testScripts": [
           "tests/Jroc.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js",
-          "tests/Jroc.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js"
+          "tests/Jroc.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js",
+          "tests/Jroc.Tests/RuntimeAgentSchedulingTests.cs",
+          "tests/Jroc.Tests/RuntimeAgentClusterSharedServicesTests.cs"
         ],
-        "notes": "NodeEventLoopPump bounds work per checkpoint and drains queued work deterministically for supported host queues; full multi-agent progress guarantees are out of scope."
+        "notes": "Each agent owns a NodeEventLoopPump and scheduling queues. Pumps bound work per checkpoint; independent executors drain their own callbacks, and cross-agent Atomics notifications wake matching waiters. These implemented scheduling paths do not establish every ECMAScript multi-agent forward-progress guarantee."
       }
     ]
   }

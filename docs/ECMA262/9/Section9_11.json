@@ -16,9 +16,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#AddToKeptObjects",
         "testScripts": [
-          "tests/Jroc.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+          "tests/Jroc.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js",
+          "tests/Jroc.Tests/RuntimeAgentSchedulingTests.cs"
         ],
-        "notes": "WeakRef.deref() adds live targets to the host-kept set so they survive same-job `gc()` forcing until the next cleanup checkpoint. The approximation is scoped to the current jroc runtime/event loop."
+        "notes": "WeakRef.deref() adds a live target to the agent-owned FinalizationRegistryHost kept-object set so it survives same-job host-opt-in gc() forcing until a cleanup checkpoint. The kept set is shared by realms in that agent, not process-global; collection timing remains host/.NET-GC dependent."
       }
     ]
   }

@@ -4,17 +4,19 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-08-07T08:24:54Z
+> Last generated (UTC): 2026-10-25T02:53:21Z
+
+RuntimeExecutionContext frames select the realm, global object, module location and active require state, while RuntimeServices invocation frames carry this, arguments, new.target and callee state. Compiler lowering supplies lexical and module origins for supported call paths. Full general ScriptOrModule record tracking and general eval are not implemented.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 9.4 | Execution Contexts | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-execution-contexts) |
+| 9.4 | Execution Contexts | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-execution-contexts) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 9.4.1 | GetActiveScriptOrModule ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getactivescriptormodule) |
+| 9.4.1 | GetActiveScriptOrModule ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getactivescriptormodule) |
 | 9.4.2 | ResolveBinding ( name [ , env ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-resolvebinding) |
 | 9.4.3 | GetThisEnvironment ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getthisenvironment) |
 | 9.4.4 | ResolveThisBinding ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-resolvethisbinding) |
@@ -29,7 +31,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| GetActiveScriptOrModule | Not Yet Supported |  |  | Full script/module record tracking for active execution contexts is not implemented. |
+| Active module origin in supported execution paths (GetActiveScriptOrModule) | Supported with Limitations | `tests/Jroc.Tests/RuntimeExecutionContextTests.cs`<br>`tests/Jroc.Tests/RuntimeModuleStateTests.cs`<br>[`Import_DynamicImport_Esm_Namespace.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_DynamicImport_Esm_Namespace.js)<br>[`Import_ImportMeta_Url.js`](../../../tests/Jroc.Tests/Import/JavaScript/Import_ImportMeta_Url.js) |  | Nested execution frames preserve and restore module locations and active require parents. Compiled dynamic imports receive an explicit defining-module identifier, and import.meta and require delegates are cached per realm and module. This supplies module origin for supported compiled paths without implementing the full general ScriptOrModule record stack or general eval. |
 
 ### 9.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-resolvebinding))
 
