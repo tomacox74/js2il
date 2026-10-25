@@ -17,10 +17,23 @@ from .client import EXPORT_TABLES
 
 CONTRACT = json.loads(Path(__file__).with_name('reconciliation_contract.json').read_text())
 MAX_LINE = 32 * 1024 * 1024
+COLUMNS = {table: set(spec['primary_key']) | set(spec.get('required',[])) |
+           {k for ref in spec['references'] for k in ref['columns']} for table,spec in CONTRACT.items()}
+for _spec in CONTRACT.values():
+    for _ref in _spec['references']:
+        if _ref['parent'] in COLUMNS:
+            COLUMNS[_ref['parent']].update(_ref['parent_columns'])
+COLUMNS = {table:tuple(sorted(columns)) for table,columns in COLUMNS.items()}
 
 
 def logical_json(value):
     """Version-1 logical encoding: sorted keys, exact decimals, ordered arrays."""
+    try:
+        # Most rows contain no decimals. Use CPython's encoder for that common
+        # case, retaining the existing exact-decimal encoding below.
+        return json.dumps(value,sort_keys=True,ensure_ascii=False,allow_nan=False,separators=(',',':'))
+    except TypeError:
+        pass
     if isinstance(value, dict):
         return '{' + ','.join(json.dumps(k, ensure_ascii=False) + ':' + logical_json(v)
                               for k, v in sorted(value.items())) + '}'
@@ -55,17 +68,20 @@ def col(alias, field):
     # Identifiers come solely from the reviewed contract or fixed checks below.
     if not field.replace('_', '').isalnum():
         raise ValueError('Invalid contract column')
-    return f"json_extract({alias}.data,'$.{field}')"
+    return f'{alias}."{field}"'
 
 
 def eq(a, b, fields):
     return ' AND '.join(f'{col(a,k)}={col(b,k)}' for k in fields)
 
 
-def load_export(db, path, expected, check_deadline=lambda:None):
+def load_export(db, path, expected, check_deadline=lambda:None, progress=lambda **event:None):
     counts = dict.fromkeys(EXPORT_TABLES, 0)
     for table in EXPORT_TABLES:
-        db.execute(f'CREATE TABLE {table}(key TEXT PRIMARY KEY, data TEXT NOT NULL, digest TEXT NOT NULL)')
+        # Append first; build uniqueness and relationship indexes in sorted
+        # passes instead of maintaining large random-key B-trees per record.
+        db.execute(f'CREATE TABLE {table}(key TEXT NOT NULL,digest BLOB NOT NULL,'+
+                   ','.join('"'+k+'"' for k in COLUMNS[table])+')')
     digest, whole = hashlib.sha256(), hashlib.sha256()
     header = footer = None
     with Path(path).open('rb') as stream:
@@ -98,18 +114,32 @@ def load_export(db, path, expected, check_deadline=lambda:None):
                     raise ValueError('Unexpected export record')
                 table, row = record['table'], record['row']
                 spec = CONTRACT[table]
-                required = set(spec['primary_key']) | set(spec.get('required',[])) | {k for ref in spec['references'] for k in ref['columns']}
+                required = set(COLUMNS[table])
                 if not required <= row.keys() or any(row[k] is None for k in spec['primary_key']):
                     raise ValueError('Missing identity/reference fields: ' + table)
                 if 'repository_id' in row and row['repository_id'] != header['repository_id']:
                     raise ValueError('Foreign repository row')
                 data = logical_json(row)
                 key = logical_json([row[k] for k in spec['primary_key']])
-                try:
-                    db.execute(f'INSERT INTO {table} VALUES(?,?,?)', (key,data,hashlib.sha256(data.encode()).hexdigest()))
-                except sqlite3.IntegrityError as error:
-                    raise ValueError('Duplicate primary key: ' + table) from error
+                values=[]
+                for field in COLUMNS[table]:
+                    value=row[field]
+                    # Non-attribution legacy documents are bound by the full
+                    # row digest but never read by any semantic check.
+                    if table=='legacy_control_records' and field=='document' and row['source_table'] not in ('artifact_source','history_verified_snapshot'):
+                        value=None
+                    if isinstance(value,Decimal):
+                        # JSON numeric scale is insignificant. Preserve numeric
+                        # SQLite comparison for scalar integer identities/counts.
+                        integer=int(value)
+                        value=integer if value==integer and -(2**63)<=integer<2**63 else float(value)
+                    elif isinstance(value,(dict,list)):
+                        value=logical_json(value)
+                    values.append(value)
+                db.execute(f'INSERT INTO {table} VALUES('+','.join('?' for _ in range(2+len(values)))+')',
+                           (key,hashlib.sha256(data.encode()).digest(),*values))
                 counts[table] += 1
+                if counts[table]%100000==0:progress(stage='load',table=table,rows=counts[table])
             digest.update(line)
     if not header or footer != {'counts':counts, 'sha256':digest.hexdigest()}:
         raise ValueError('Incomplete export or count/digest mismatch')
@@ -117,10 +147,16 @@ def load_export(db, path, expected, check_deadline=lambda:None):
     if any(actual.get(k) != expected[k] for k in ('snapshot_token','as_of','counts','sha256') if k in expected):
         raise ValueError('Independent export receipt mismatch')
     db.commit()
+    for table in EXPORT_TABLES:
+        check_deadline();progress(stage='identity-index',table=table,rows=counts[table])
+        try:
+            db.execute(f'CREATE UNIQUE INDEX pk_{table} ON {table}(key)')
+        except sqlite3.IntegrityError as error:
+            raise ValueError('Duplicate primary key: '+table) from error
     return dict(header, **footer, file_sha256=whole.hexdigest())
 
 
-def relationships(db):
+def relationships(db,progress=lambda **event:None):
     checks, external = {}, []
     indexed = set()
     for table, spec in CONTRACT.items():
@@ -132,11 +168,13 @@ def relationships(db):
                 continue
             index = (parent, tuple(fields))
             if index not in indexed:
-                db.execute(f'CREATE INDEX r{len(indexed)} ON {parent}(' + ','.join(col(parent,k).replace(parent+'.data','data') for k in fields) + ')')
+                progress(stage='relationship-index',table=parent)
+                db.execute(f'CREATE INDEX r{len(indexed)} ON {parent}(' + ','.join('"'+k+'"' for k in fields) + ')')
                 indexed.add(index)
             nonnull = ' AND '.join(col('c',k)+' IS NOT NULL' for k in ref['columns'])
             match = ' AND '.join(f'{col("c",a)}={col("p",b)}' for a,b in zip(ref['columns'],fields))
             sql = f'SELECT count(*) FROM {table} c WHERE {nonnull} AND NOT EXISTS(SELECT 1 FROM {parent} p WHERE {match})'
+            progress(stage='relationships',table=table,check=name)
             checks[name] = db.execute(sql).fetchone()[0]
     return checks, sorted(external)
 
@@ -148,13 +186,13 @@ def stored_history(db):
     """
     sources = {}
     receipts = {}
-    for (data,) in db.execute("SELECT data FROM legacy_control_records WHERE json_extract(data,'$.source_table') IN ('artifact_source','history_verified_snapshot')"):
-        row=json.loads(data);document=row['document']
-        uri=document.get('uri' if row['source_table']=='artifact_source' else 'source_uri')
+    for import_id,source_table,raw_document in db.execute("SELECT import_id,source_table,document FROM legacy_control_records WHERE source_table IN ('artifact_source','history_verified_snapshot')"):
+        document=json.loads(raw_document)
+        uri=document.get('uri' if source_table=='artifact_source' else 'source_uri')
         if not isinstance(uri,str) or not uri.startswith('github-actions:'):
             raise ValueError('Invalid stored source attribution')
-        target=sources if row['source_table']=='artifact_source' else receipts
-        key=(row['import_id'],uri)
+        target=sources if source_table=='artifact_source' else receipts
+        key=(import_id,uri)
         if key in target:
             raise ValueError('Ambiguous stored source attribution')
         target[key]=document
@@ -162,7 +200,7 @@ def stored_history(db):
     for (import_id,uri),source in sorted(sources.items()):
         uri_imports.setdefault(uri,set()).add(import_id)
         proof=receipts.get((import_id,uri),{})
-        mapped=db.execute("SELECT count(*) FROM import_records WHERE json_extract(data,'$.import_id')=? AND json_extract(data,'$.entity_kind')='observation'",(import_id,)).fetchone()[0]
+        mapped=db.execute("SELECT count(*) FROM import_records WHERE import_id=? AND entity_kind='observation'",(import_id,)).fetchone()[0]
         hashes=[proof.get(k) for k in ('sha256','archive_sha256')]
         valid=all(isinstance(h,str) and len(h)==64 and all(c in '0123456789abcdef' for c in h) for h in hashes)
         entries.append({'source_key_sha256':hashlib.sha256(uri.encode()).hexdigest(),'import_id':import_id,
@@ -170,8 +208,8 @@ def stored_history(db):
                         'receipt_observations':proof.get('observations'),'mapped_observations':mapped,
                         'receipt_matches':bool(valid and proof.get('observations')==mapped)})
     gaps={};manifest_hashes=set()
-    for (data,) in db.execute('SELECT data FROM imports'):
-        for value in json.loads(data).get('limitations',{}).get('missing_artifacts',[]):
+    for (data,) in db.execute('SELECT limitations FROM imports'):
+        for value in json.loads(data).get('missing_artifacts',[]):
             if not isinstance(value,str):
                 raise ValueError('Invalid stored gap record')
             if value.startswith('See archived discovery manifest sha256:'):
@@ -197,9 +235,10 @@ def stored_history(db):
             'original_manifest_inspected':False,'archive_preservation_verified':False,'history_complete':False}
 
 
-def semantics(db):
+def semantics(db,progress=lambda **event:None):
     checks = {}
     def check(name, query):
+        progress(stage='semantics',check=name)
         checks[name] = db.execute(query).fetchone()[0]
     check('corpora.repository_scope', f'''SELECT count(*) FROM corpora c WHERE NOT EXISTS(
       SELECT 1 FROM repository_corpora r WHERE {eq('r','c',['corpus_id'])})''')
@@ -275,33 +314,31 @@ def semantics(db):
           AND {col('r','trust_class')}='trusted' AND {col('o','outcome')}<>'pass'
           AND NOT EXISTS(SELECT 1 FROM observation_invalidations i WHERE {eq('o','i',['observation_id'])})))''')
     checks['native_acceptance.dependency_manifest'] = 0
-    for (data,) in db.execute(f'''SELECT DISTINCT fixture.data FROM fixtures fixture
+    for fixture_id,manifest_digest in db.execute(f'''SELECT DISTINCT fixture.fixture_id,fixture.dependency_manifest_digest FROM fixtures fixture
       JOIN batch_fixtures f ON {eq('fixture','f',['fixture_id'])} JOIN native_batches b ON {eq('f','b',['batch_id'])}
       WHERE {col('f','state')}='accepted' AND {col('b','state')}='sealed' '''):
-        fixture=json.loads(data)
         dependencies=[]
-        for dep,resolved in db.execute(f'''SELECT d.data,{col('r','upstream_path')} FROM fixture_dependencies d
+        for path,content_hash,kind,resolved in db.execute(f'''SELECT d.dependency_path,d.content_sha256,d.dependency_kind,{col('r','upstream_path')} FROM fixture_dependencies d
           LEFT JOIN fixtures r ON {col('d','resolved_fixture_id')}={col('r','fixture_id')}
-          WHERE {col('d','fixture_id')}=? ORDER BY {col('d','dependency_path')}''',(fixture['fixture_id'],)):
-            d=json.loads(dep)
-            dependencies.append(dict(dependency_path=d['dependency_path'],content_sha256=d['content_sha256'].removeprefix('\\x'),
-                                     dependency_kind=d['dependency_kind'],resolved_path=resolved))
+          WHERE {col('d','fixture_id')}=? ORDER BY {col('d','dependency_path')}''',(fixture_id,)):
+            dependencies.append(dict(dependency_path=path,content_sha256=content_hash.removeprefix('\\x'),
+                                     dependency_kind=kind,resolved_path=resolved))
         expected='\\x'+hashlib.sha256(logical_json(dependencies).encode()).hexdigest()
-        checks['native_acceptance.dependency_manifest'] += fixture.get('dependency_manifest_digest') != expected
+        checks['native_acceptance.dependency_manifest'] += manifest_digest != expected
     return checks
 
 
-def evidence_summary(db):
+def evidence_summary(db,progress=lambda **event:None):
     # Reports exposure rather than silently declaring missing/conflicted evidence
     # acceptable. This is a reconciliation, not a new native-acceptance algorithm.
     result = {}
     queries = {
       'invalidated_observations':'SELECT count(*) FROM observation_invalidations',
-      'missing_payloads':"SELECT count(*) FROM observation_payloads p WHERE json_extract(p.data,'$.availability')='missing'",
+      'missing_payloads':"SELECT count(*) FROM observation_payloads p WHERE p.availability='missing'",
       'observations_without_payload':f'SELECT count(*) FROM observations o WHERE NOT EXISTS(SELECT 1 FROM observation_payloads p WHERE {eq("o","p",["observation_id"])})',
-      'publication_attention':"SELECT count(*) FROM publications p WHERE json_extract(p.data,'$.state') IN ('blocked','ownership-lost')",
-      'historical_imports_incomplete':"SELECT count(*) FROM imports i WHERE coalesce(json_extract(i.data,'$.limitations.artifact_history_complete'),0)=0",
-      'batches_requiring_refresh_or_conflicted':"SELECT count(*) FROM native_batches b WHERE json_extract(b.data,'$.state') IN ('awaiting-refresh','conflicted')",
+      'publication_attention':"SELECT count(*) FROM publications p WHERE p.state IN ('blocked','ownership-lost')",
+      'historical_imports_incomplete':"SELECT count(*) FROM imports i WHERE coalesce(json_extract(i.limitations,'$.artifact_history_complete'),0)=0",
+      'batches_requiring_refresh_or_conflicted':"SELECT count(*) FROM native_batches b WHERE b.state IN ('awaiting-refresh','conflicted')",
       'trusted_conflicting_variants':f'''SELECT count(*) FROM (SELECT {col('o','provenance_id')},{col('o','fixture_id')},{col('o','variant')}
         FROM observations o JOIN runs r ON {eq('o','r',['run_id'])} WHERE {col('r','trust_class')}='trusted'
         AND NOT EXISTS(SELECT 1 FROM observation_invalidations i WHERE {eq('o','i',['observation_id'])})
@@ -309,10 +346,12 @@ def evidence_summary(db):
         HAVING count(DISTINCT json_array({col('o','outcome')},{col('o','phase')},{col('o','observed_error_type')}))>1)''',
     }
     for k, query in queries.items():
+        progress(stage='evidence',check=k)
         result[k] = db.execute(query).fetchone()[0]
     imports = []
-    for (data,) in db.execute('SELECT data FROM imports ORDER BY key'):
-        row = json.loads(data)
+    for import_id,source_schema,expected_counts,imported_counts,limitations in db.execute('SELECT import_id,source_schema,expected_counts,imported_counts,limitations FROM imports ORDER BY key'):
+        progress(stage='import-parity')
+        row=dict(import_id=import_id,source_schema=source_schema,expected_counts=json.loads(expected_counts),imported_counts=json.loads(imported_counts),limitations=json.loads(limitations))
         mapped, uploaded = db.execute(f'''SELECT count(*),count({col('o','observation_id')}) FROM import_records m
           LEFT JOIN observations o ON {col('o','observation_id')}={col('m','entity_id')}
           WHERE {col('m','import_id')}=? AND {col('m','entity_kind')}='observation' ''',(row['import_id'],)).fetchone()
@@ -334,8 +373,8 @@ def join_history(db, manifest, repository_name):
             uri = f'github-actions:{repository_name}/{artifact["workflow"]}/{artifact["run_id"]}/{artifact["artifact_id"]}'
             if source['source_uri'] != uri:
                 raise ValueError('History source attribution mismatch')
-            matches = db.execute("""SELECT DISTINCT json_extract(data,'$.import_id') FROM legacy_control_records
-              WHERE json_extract(data,'$.source_table')='artifact_source' AND json_extract(data,'$.document.uri')=?""",(uri,)).fetchall()
+            matches = db.execute("""SELECT DISTINCT import_id FROM legacy_control_records
+              WHERE source_table='artifact_source' AND json_extract(document,'$.uri')=?""",(uri,)).fetchall()
             # Every distinct archive entry remains visible even when source bytes
             # deduplicate to one immutable import ID (62 entries != 61 imports).
             sources.append({'source_key_sha256':hashlib.sha256(uri.encode()).hexdigest(),
@@ -351,7 +390,7 @@ def join_history(db, manifest, repository_name):
             'archive_preservation_verified':False,'history_complete':False}
 
 
-def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=None, use_stored_history=False, seconds=None):
+def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=None, use_stored_history=False, seconds=None, progress=lambda **event:None):
     if seconds is not None and seconds<=0:raise ValueError('Reconciliation deadline must be positive')
     deadline=time.monotonic()+seconds if seconds is not None else None
     def check_deadline():
@@ -360,26 +399,31 @@ def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=No
     with tempfile.TemporaryDirectory(prefix='test262-reconcile-',dir=scratch) as directory, \
          closing(sqlite3.connect(Path(directory)/'index.sqlite')) as db:
         db.execute('PRAGMA temp_store=FILE')
-        db.execute('PRAGMA cache_size=-8192')
+        db.execute('PRAGMA cache_size=-262144')
         if deadline is not None:
             db.set_progress_handler(lambda:int(time.monotonic()>=deadline),10000)
-        receipt = load_export(db,path,expected,check_deadline)
-        refs, external = relationships(db)
-        db.execute("CREATE INDEX import_mapping ON import_records(json_extract(data,'$.import_id'),json_extract(data,'$.entity_kind'))")
-        checks = semantics(db)
-        evidence = evidence_summary(db)
+        receipt = load_export(db,path,expected,check_deadline,progress)
+        refs, external = relationships(db,progress)
+        progress(stage='query-indexes')
+        db.execute('CREATE INDEX import_mapping ON import_records(import_id,entity_kind)')
+        db.execute('CREATE INDEX source_records ON legacy_control_records(source_table)')
+        db.execute('CREATE INDEX dependency_fixture ON fixture_dependencies(fixture_id)')
+        checks = semantics(db,progress)
+        evidence = evidence_summary(db,progress)
         tables = {}
         root = hashlib.sha256()
         # Snapshot token/as_of are receipt metadata, not logical database content.
         root.update((logical_json({k:receipt[k] for k in ('repository_id','epoch','schema','api')})+'\n').encode())
         for table in sorted(EXPORT_TABLES):
             check_deadline()
+            progress(stage='logical-digest',table=table)
             digest = hashlib.sha256()
             for (row_hash,) in db.execute(f'SELECT digest FROM {table} ORDER BY digest,key'):
-                digest.update((row_hash+'\n').encode())
+                digest.update(row_hash.hex().encode()+b'\n')
             tables[table] = {'rows':receipt['counts'][table],'logical_sha256':digest.hexdigest(),
                              'relationship_failures':sum(n for k,n in refs.items() if k.startswith(table+'.'))}
             root.update((logical_json([table,tables[table]['rows'],digest.hexdigest()])+'\n').encode())
+        progress(stage='history')
         history = (join_history(db,manifest,repository_name) if manifest is not None else stored_history(db) if use_stored_history
                    else {'state':'not_supplied','archive_preservation_verified':False})
         return {'report_schema':1,'logical_digest_version':1,'export':receipt,'tables':tables,

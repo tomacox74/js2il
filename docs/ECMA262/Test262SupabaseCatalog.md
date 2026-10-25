@@ -1444,7 +1444,7 @@ archive locations or DSNs are emitted into the reconciliation report.
 
 A temporary SQLite file indexes the verified rows on private disk and is removed
 when processing ends. It is disposable working storage, never shared authority.
-Memory is bounded by the record limit (32 MiB), SQLite's 8 MiB page cache and
+Memory is bounded by the record limit (32 MiB), SQLite's 256 MiB page cache and
 small report structures; disk must fit the source rows, indexes and sort workspace.
 This offline workload has no claimed production runtime or interactive SLO.
 It is separate from the export's 1,800-second bound. Do not repeat the completed
@@ -1579,3 +1579,45 @@ verifier's manifest join remains useful. Retain the reviewed receipt privately
 beyond Actions expiration; do not publish live database/permission metadata into
 git. Existing performance-cadence and scoped permission receipts from #2341 remain
 separate compatibility evidence.
+
+
+### Offline processing scale and failure receipts
+
+The first opt-in run completed its export but failed later with an offline
+`OperationalError` after approximately the reconciliation deadline. That older
+receipt did not retain a stage, so it cannot establish which offline operation
+exceeded the bound. Do not treat the completed export or reporter job as proof
+of completed semantic acceptance.
+
+The verifier now stages only typed relationship/semantic fields plus the full
+canonical row digest and primary identity. Unread payloads and uninterpreted
+legacy-control documents are hashed before being discarded from the temporary
+index. Every exported field still contributes to logical digest version 1;
+this changes working storage, not comparison semantics or evidence policy.
+Append loading defers uniqueness indexes to sorted passes, checks still reject
+duplicate identities, and covering indexes serve relationship lookups without
+repeated JSON parsing. SQLite's page cache is bounded at 256 MiB. The 30-minute
+offline deadline and existing export bound remain unchanged.
+
+Progress events contain stage/table/check names, row counts and elapsed times,
+never source records or exception text. An offline failure now preserves the
+independently verified export receipt and records safe stage/exception metadata
+with `reconciliation.verified=false`. The temporary input and index are still
+removed; retaining their receipt is not retaining their payload. A retry must
+produce a new verified snapshot unless an original input was independently kept.
+
+CI exercises a deterministic synthetic workload with 252,203 rows across large
+eligibility, registration and legacy-control relations and retains its timing,
+counts and digest alongside the PostgreSQL report. A larger operator probe is:
+
+```sh
+PYTHONPATH=. python tests/test262/central/reconciliation_scale.py \
+  --fixtures 53432 --output /private/synthetic-scale
+```
+
+This synthesizes approximately the live row-count scale using no database or
+production records. It is an offline performance/consistency test, not a
+production acceptance receipt, archive proof or guaranteed live runtime. Review
+its stage timings separately from export/network latency. After merge, the
+reviewed protected opt-in run still needs a passing live reconciliation receipt
+before closing #2342.

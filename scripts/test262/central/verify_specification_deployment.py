@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
+import time
 
 from .client import Client, EXPORT_TABLES
 
@@ -60,9 +61,9 @@ def verify_export(path, expected):
     return dict(header, **footer)
 
 
-def reconcile_export(path, receipt):
+def reconcile_export(path, receipt, progress=lambda **event:None):
     from .reconciliation import reconcile
-    return reconcile(path,receipt,use_stored_history=True,seconds=30*60)
+    return reconcile(path,receipt,use_stored_history=True,seconds=30*60,progress=progress)
 
 
 def coordinator(dsn, settings, *, reconcile_snapshot=False):
@@ -96,12 +97,26 @@ def coordinator(dsn, settings, *, reconcile_snapshot=False):
             receipt = verify_export(path, expected)
             if receipt != exported:
                 raise ValueError('Exporter receipt mismatch')
-            reconciliation = reconcile_export(path,receipt) if reconcile_snapshot else None
-        return {'verified': reconciliation['verified'] if reconciliation is not None else True, 'project_reference': project_reference(settings),
+            result = {'verified':True, 'project_reference': project_reference(settings),
                 'bounded_annotation_rows': len(result['rows']), 'raw_insert_denied': True,
                 'foreign_repository_read_empty': True, 'export': receipt,
                 'export_transport': client.export_transport,
-                'payload_retained': False, **({'reconciliation':reconciliation} if reconciliation is not None else {})}
+                'payload_retained': False}
+            if reconcile_snapshot:
+                started=time.monotonic();diagnostic={'stage':'initializing'}
+                def progress(**event):
+                    diagnostic.clear();diagnostic.update(event,elapsed_seconds=round(time.monotonic()-started,3))
+                    print('Reconciliation '+json.dumps(diagnostic,sort_keys=True),flush=True)
+                try:
+                    result['reconciliation']=reconcile_export(path,receipt,progress=progress)
+                except Exception as error:
+                    # Retain the independently verified export receipt and safe
+                    # stage/exception metadata even if offline processing fails.
+                    result['reconciliation']={'verified':False,'error_class':type(error).__name__,
+                      'deadline_exceeded':time.monotonic()-started>=30*60,
+                      'diagnostics':dict(diagnostic,elapsed_seconds=round(time.monotonic()-started,3))}
+                result['verified']=result['reconciliation']['verified']
+        return result
     finally:
         client.close()
 
