@@ -34,11 +34,15 @@ jobs:
         env:
           TEST262_TEST_DSN: postgresql://postgres:disposable-test-password@localhost:5432/catalogue_tests
           TEST262_RECONCILIATION_REPORT: artifacts/test262/reconciliation-disposable.json
+      - name: Exercise offline reconciliation at synthetic scale
+        run: PYTHONPATH=. python tests/test262/central/reconciliation_scale.py --output artifacts/test262/reconciliation-scale
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test262-reconciliation-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/test262/reconciliation-disposable.json
+          path: |
+            artifacts/test262/reconciliation-disposable.json
+            artifacts/test262/reconciliation-scale/scale-report.json
           if-no-files-found: warn
           retention-days: 90
       - uses: actions/setup-dotnet@v5

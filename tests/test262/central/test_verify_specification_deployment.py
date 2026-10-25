@@ -61,7 +61,7 @@ class DeploymentReceiptTests(unittest.TestCase):
 
 
 class CoordinatorReconciliationTests(unittest.TestCase):
-    def test_opt_in_uses_same_temporary_export_and_preserves_failed_acceptance(self):
+    def client(self):
         from contextlib import nullcontext
         import os
         from unittest.mock import Mock, patch
@@ -78,6 +78,13 @@ class CoordinatorReconciliationTests(unittest.TestCase):
         def export(path,seconds=None):
             paths.append(path);return write_export(path,frozen())
         client.export.side_effect=export
+        return client,paths
+
+    def test_opt_in_uses_same_temporary_export_and_preserves_failed_acceptance(self):
+        import os
+        from unittest.mock import patch
+        from scripts.test262.central.verify_specification_deployment import coordinator
+        client,paths=self.client()
         with patch.dict(os.environ,dict(AUTHORITY_EPOCH='2',REPOSITORY_ID='repo',PRODUCER_ID='producer')), \
              patch('scripts.test262.central.verify_specification_deployment.Client',return_value=client):
             result=coordinator('unused',{'host':'db.abcdefghijklmnopqrst.supabase.co'},reconcile_snapshot=True)
@@ -87,6 +94,26 @@ class CoordinatorReconciliationTests(unittest.TestCase):
         self.assertFalse(result['reconciliation']['history']['attribution_complete'])
         self.assertFalse(result['payload_retained']);self.assertFalse(paths[0].exists())
         client.export.assert_called_once();client.close.assert_called_once()
+
+    def test_offline_error_preserves_verified_export_and_safe_stage(self):
+        import os,sqlite3
+        from unittest.mock import patch
+        from scripts.test262.central.verify_specification_deployment import coordinator
+        client,paths=self.client()
+        def fail(path,receipt,progress):
+            self.assertTrue(path.exists())
+            progress(stage='relationships',table='registrations')
+            raise sqlite3.OperationalError('private source payload must not appear')
+        with patch.dict(os.environ,dict(AUTHORITY_EPOCH='2',REPOSITORY_ID='repo',PRODUCER_ID='producer')), \
+             patch('scripts.test262.central.verify_specification_deployment.Client',return_value=client), \
+             patch('scripts.test262.central.verify_specification_deployment.reconcile_export',side_effect=fail):
+            result=coordinator('unused',{'host':'db.abcdefghijklmnopqrst.supabase.co'},reconcile_snapshot=True)
+        self.assertFalse(result['verified']);self.assertTrue(result['export']['sha256'])
+        self.assertEqual(result['reconciliation']['error_class'],'OperationalError')
+        self.assertEqual(result['reconciliation']['diagnostics']['stage'],'relationships')
+        self.assertFalse(result['reconciliation']['deadline_exceeded'])
+        self.assertNotIn('private source',json.dumps(result))
+        self.assertFalse(paths[0].exists());client.close.assert_called_once()
 
 
 if __name__ == '__main__':
