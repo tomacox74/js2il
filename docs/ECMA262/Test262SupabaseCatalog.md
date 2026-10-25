@@ -664,8 +664,9 @@ that separately during the pilot; the proposed <5% goal is not an observed basel
 Configure protected environment `test262-catalogue-backup`: catalogue-only backup DSN,
 `TEST262_BACKUP_S3_URI` outside the Supabase project, `TEST262_BACKUP_KMS_KEY`,
 `TEST262_BACKUP_AWS_ROLE` (GitHub OIDC-bound) and `TEST262_BACKUP_AWS_REGION`. Enable bucket
-versioning/Object Lock and independently enforce retention (daily recovery snapshots,
-long-lived historical archives; no automatic compact-evidence purge). The workflow uses
+versioning/Object Lock and independently verify the existing finite retention for daily
+recovery snapshots and selected historical archives. Long-term class horizons remain
+owner decisions under #2343, not an approved indefinite policy. The workflow uses
 PostgreSQL 17 `pg_dump`, an exported MVCC snapshot shared with exact table/view counts,
 SHA-256 manifests and KMS-encrypted off-project objects. It never dumps the performance
 schema. Client tools receive the DSN as discrete libpq environment variables, never a
@@ -716,6 +717,12 @@ all restored credential bindings, increments epoch and leaves authority shadow. 
 the drill report off-project; the retained-restore workflow supplies recurring disposable verification. Credentials and
 role memberships must be reprovisioned explicitly; restoring a dump must not reactivate
 workers. A backup job's successful upload is not proof of a completed restore drill.
+
+See [retention and recovery acceptance](Test262Recovery.md) for the proposed retention
+classes/objectives, coverage ownership and cadence, recovery-point/isolated-duration
+measurements, retained sanitized reports, and operator-approved rehearsal/cutover/rollback
+gates. The existing hourly monitor also produces a bounded metadata-only recovery
+coverage inventory; unknown archive/storage proof is never treated as preservation.
 
 ## Validation
 

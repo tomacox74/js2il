@@ -53,7 +53,7 @@ def create_snapshot(args, progress=None):
         db.execute("SET LOCAL statement_timeout='10min'")
         if progress:
             progress('snapshot.export')
-        token=db.execute('SELECT pg_export_snapshot()').fetchone()[0]
+        token,snapshot_started_at=db.execute('SELECT pg_export_snapshot(), transaction_timestamp()').fetchone()
         if progress:
             progress('snapshot.dump')
         run(['pg_dump','--snapshot='+token,'--format=custom','--no-owner','--schema=test262','--schema=test262_reporting','--file',str(archive)],env)
@@ -71,7 +71,8 @@ def create_snapshot(args, progress=None):
                 progress('snapshot.view-count.'+name)
             view_counts[name]=db.execute('SELECT count(*) FROM test262_reporting."'+name+'"').fetchone()[0]
     digest=hashlib.sha256(archive.read_bytes()).hexdigest()
-    manifest={'sha256':digest,'contract':{k:str(v) if hasattr(v,'isoformat') else v for k,v in contract.items()},'row_counts':counts,'view_counts':view_counts,
+    manifest={'sha256':digest,'snapshot_started_at':snapshot_started_at.isoformat(),
+              'contract':{k:str(v) if hasattr(v,'isoformat') else v for k,v in contract.items()},'row_counts':counts,'view_counts':view_counts,
               'roles':['test262_ingest','test262_coordinator','test262_reporter'],'contains_performance_data':False}
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     return archive,output/'manifest.json'
@@ -79,13 +80,14 @@ def create_snapshot(args, progress=None):
 
 def backup(args):
     from datetime import datetime, timezone
-    from .retained_objects import destination, verify_bucket, verify_object
+    from .retained_objects import destination, verify_bucket, verify_object, preserve_report, public_report
     output=Path(args.output);output.mkdir(parents=True,exist_ok=True)
     report_path=output/'backup-report.json'
     report={'schema_version':1,'backup_verified':False,'stage':'snapshot','objects':{},
             'contains_performance_data':False}
     try:
         archive,manifest=create_snapshot(args, progress=lambda stage: report.update(stage=stage))
+        report['snapshot_started_at']=json.loads(manifest.read_text()).get('snapshot_started_at')
         if not args.destination:
             return
         if not args.kms_key:
@@ -112,12 +114,7 @@ def backup(args):
         report_path.write_text(json.dumps(report,indent=2)+'\n')
         # Only publish a discoverable receipt after both exact-version readbacks pass.
         key=prefix+'/backup-report.json'
-        s3.upload_file(str(report_path),bucket,key,ExtraArgs=extra)
-        with report_path.open('rb') as stream:
-            pinned=hashlib.file_digest(stream,'sha256').hexdigest()
-        receipt=verify_object(s3,bucket,key,args.kms_key)
-        if receipt['sha256']!=pinned:
-            raise ValueError('Published backup receipt differs')
+        receipt=preserve_report(s3,bucket,key,args.kms_key,report_path)
         report['receipt']=dict(receipt,key=key)
         print(json.dumps({'backup_verified':True,'receipt_version':receipt['version_id']}))
     except Exception as error:
@@ -126,7 +123,7 @@ def backup(args):
         raise
     finally:
         report.setdefault('checked_at',datetime.now(timezone.utc).isoformat())
-        report_path.write_text(json.dumps(report,indent=2)+'\n')
+        report_path.write_text(json.dumps(public_report(report),indent=2)+'\n')
 
 
 def restore(args):
