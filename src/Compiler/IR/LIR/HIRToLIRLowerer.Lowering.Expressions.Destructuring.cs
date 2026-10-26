@@ -110,6 +110,26 @@ public sealed partial class HIRToLIRLowerer
         string? sourceNameForError,
         PreparedDestructuringTarget? preparedTarget)
     {
+        if (!_isGenerator && NeedsSynchronousExpressionProtection)
+        {
+            var start = _methodBodyIR.Instructions.Count;
+            _generatorExpressionProtectionDepth++;
+            try
+            {
+                if (!TryLowerDestructuringPattern(pattern, sourceValue, writeMode, sourceNameForError, preparedTarget))
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _generatorExpressionProtectionDepth--;
+            }
+            // Route exceptions only after destructuring's CLR iterator-close handlers have unwound.
+            ProtectGeneratorExpression(start);
+            return true;
+        }
+
         sourceValue = EnsureObject(sourceValue);
 
         switch (pattern)

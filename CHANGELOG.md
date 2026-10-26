@@ -16,6 +16,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   class heritage and TDZ, built-in subclass construction, static initialization
   and async super semantics. Support decorators on noncomputed public elements;
   computed/private decorated elements remain unsupported.
+- fix(compiler): unwind destructuring iterator-close handlers before routing
+  async-loop exceptions, preserve prepared constructor property names, and
+  avoid private-element restrictions for classes without private methods.
 - docs(ecma262): align section 9 environment, private-name, realm, execution
   context, agent and weak-reference coverage with the current implementation.
   Retain the missing agent-wide asynchronous module evaluation counter as an

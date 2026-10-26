@@ -20,8 +20,8 @@ public partial class RuntimeServices
         return true;
     }
 
-    public static object? GetPreparedDynamicFunctionConstructor(object receiver)
-        => ObjectRuntime.GetItem(receiver, "Function");
+    public static object? GetPreparedDynamicFunctionConstructor(object receiver, string propertyName)
+        => ObjectRuntime.GetItem(receiver, propertyName);
 
     public static object? ConstructPreparedDynamicFunction(
         object? constructor,

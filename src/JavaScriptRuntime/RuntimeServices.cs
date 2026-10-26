@@ -2132,14 +2132,18 @@ public partial class RuntimeServices
 
     private static void InstallClassPrivateMethods(object instance, JsClassConstructorObject owner)
     {
-        ObjectRuntime.EnsureCanAddPrivateElement(instance);
+        var hasPrivateMethods = owner.Type.GetMethods(BindingFlags.Instance | BindingFlags.Public
+            | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Any(method => method.Name.StartsWith("__jroc_priv_", StringComparison.Ordinal));
+        if (hasPrivateMethods)
+        {
+            ObjectRuntime.EnsureCanAddPrivateElement(instance);
+        }
         var brand = _classInstancePrivateBrands.GetOrCreateValue(instance);
         lock (brand.Constructors)
         {
             if (!brand.Constructors.Add(owner)
-                && owner.Type.GetMethods(BindingFlags.Instance | BindingFlags.Public
-                    | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-                    .Any(method => method.Name.StartsWith("__jroc_priv_", StringComparison.Ordinal)))
+                && hasPrivateMethods)
             {
                 throw new TypeError("Cannot initialize private methods more than once");
             }
