@@ -14,8 +14,11 @@ PostgreSQL 17 recovery: 267,160 fixtures, 213,728 annotations, shadow authority,
 disabled worker bindings, `production_cutover=false`, finite COMPLIANCE retention
 through November 27, 2026. They do not prove current backup freshness, indefinite
 retention, complete archives, measured service recovery objectives or production rollback.
-#2342 separately accepted its coherent snapshot; **11 unavailable historical gaps**
-remained at that snapshot. #2242 retains the original gap ledger. Never infer
+#2342 separately accepted its coherent snapshot. On October 26 the owner accepted
+the [41-container preservation ledger](evidence/historical-retention-ledger-2242.json)
+and its **11 original historical gaps**, closed #2242 and reopened #2343 for ongoing
+retention/verification. All 41 containers have dated exact-version proofs; that is
+not an all-history/all-log completeness claim. Never infer
 `history_complete=true` from this document, a green workflow or a coverage report.
 
 | Owner decision required | Concrete recommendation | Evidence needed before acceptance |
@@ -38,14 +41,14 @@ assign the accountable operator and backup before adopting the proposals.
 | --- | --- | --- |
 | Database dump and count/contract manifest | Daily 03:40 UTC `test262-central-backup.yml`; catalogue-only snapshot, no performance data | Backup operator, #2343; verify each exact immutable version/KMS/lock/readback and newest receipt; #2341 monitors backup age |
 | Backup receipt | Published off-project only after dump and manifest readbacks; private retained receipt preserves storage identities | Backup operator, #2343; daily retrieval and retention checks; finite retention must not be mistaken for indefinite approval |
-| Isolated restore report | Sunday 05:10 UTC `test262-retained-restore.yml`; master-only protected environment, no production DSN | Recovery operator, #2343; proposed code addition retains sanitized success/failure reports under existing finite Object Lock policy; verify first post-merge receipt without repeating old milestones |
-| Original history archives and import/recovery reports | Reviewed `cutover-evidence.json` and existing preserving workflow cover selected eight artifacts/final five recoveries only | Archive operator, #2242; reconcile original ledger and exact versions/hashes; keep unavailable/expired/failed/unpreserved distinct |
-| Failed/partial-run outboxes and useful supervisor logs | Existing central recovery artifacts and acknowledged outboxes; not a complete independently retained archive | Archive operator, #2242/#2343; preserve before Actions expiry, check SQLite/WAL integrity, hashes and acknowledgements; inventory absent/unrecoverable originals rather than rerunning fixtures/imports |
+| Isolated restore report | Sunday 05:10 UTC `test262-retained-restore.yml`; master-only protected environment, no production DSN; merged tooling retains sanitized success/failure reports under existing finite Object Lock | Recovery operator, #2343; verify the first scheduled receipt from that implementation, including its self-version and measurements, without repeating old milestones |
+| Original history archives and import/recovery reports | Owner-accepted 41-container ledger: eight earlier proofs plus 33 newly preserved original recovery ZIPs, 4,348,851,849 bytes total | Archive operator, #2343; exact-version metadata and retrieval checks, finite-lock review and approved longer-term protection; #2242's accepted scope is closed |
+| Failed/partial-run outboxes and useful supervisor logs | The accepted frozen inventory covers its required recovery containers, including incomplete original reports; it is not an all-log inventory | Archive operator, #2343 with #2341; preserve useful new failures before expiry under an approved policy; do not reopen original gaps or rerun fixtures/imports to manufacture missing history |
 | Verification, reconciliation and drill compact records | Git/issue acceptance records, backup receipts, retained restore reports; sanitized #2342 record in #2397 | Evidence owner, #2343; per acceptance/drill and retention review; Git is a selected compact mirror, not raw archive proof |
 | Operational samples and CI/verbose logs | Existing hourly #2341 monitor; 90-day Actions reports; release/manual performance cadence | Monitoring owner, #2341; proposed 180-day/archive policy not deployed; first successful sample and notification policy remain separate gates |
 
 The metadata-only `recovery_coverage` command reuses the existing bounded workflow
-receipt reader and reviewed archive manifest. The existing hourly monitor runs it
+receipt reader and digest-pinned accepted 41-container ledger. The existing hourly monitor runs it
 without database/object-store credentials; it introduces no second scheduler,
 backup system, alerts or notification policy:
 
@@ -55,19 +58,95 @@ python -m scripts.test262.central.recovery_coverage --output /private/recovery-c
 
 It reports latest failed/incomplete runs separately from older successful receipts,
 unavailable/expired/invalid receipt proof, stale verification and recorded expired
-object locks. It reads original-archive **metadata only**, distinguishes
-unavailable/expired/mismatched metadata, and never substitutes metadata availability
-for byte/digest/readback or independent storage proof. The existing reviewed set is
-not an all-archive/all-log inventory. No fallback to older green evidence clears a
-newer failure. Unknown proof remains unknown. Persist useful sanitized snapshots in
+object locks. Schema 2 includes all 41 dated archive proofs, their earliest recorded
+deadline and protection beyond frozen Actions expiry still unproven under those
+proofs. It does not re-inventory Actions sources or assert a fresh S3 observation;
+historical acceptance and current protection are separate fields. Ongoing findings
+belong to #2343, not closed #2242. This is not an all-archive/all-log inventory.
+No fallback to older green evidence clears a newer failure. Unknown proof remains
+unknown. Persist useful sanitized snapshots in
 the existing issue/Git ledger; protect raw diagnostics and storage locations.
 
-The **36h backup-age monitor threshold** belongs to #2341; it is not the proposed
+The adopted **36h backup-age monitor threshold** belongs to #2341; it is not the proposed
 24h RPO. An eight-day drill review window detects a missed weekly verification
 without claiming a recovery guarantee. Coverage reports do not access S3 or prove
 that a historical lock/readback is still valid. The owning operator must check
 exact retained versions, retrieval/decryption and deadlines, including reports,
 before expiry. Missing first receipts or unarchived logs remain acceptance gaps.
+
+## Read-only retention audit
+
+Select **`operation=audit-retention` explicitly** in
+`test262-cutover-evidence.yml` on master. The existing protected environment and
+OIDC role are reused under an intersecting temporary session policy limited to
+bucket versioning, Object Lock, lifecycle and encryption reads, plus versioned
+object metadata/retention. It grants no storage writes, listing or KMS decryption,
+and changes no persistent permissions. S3 uses `GetObjectVersion` for both
+versioned HEAD and GET; it is not a HEAD-only IAM permission. The reviewed audit
+calls only HEAD/retention and never GETs a payload. The workflow's other operations
+retain their separate guards; do not dispatch the default preservation operation.
+
+The audit authenticates the accepted ledger and preservation evidence before any
+S3 read, then checks the **41 exact archive versions plus the new receipt's exact
+self-version** using HEAD and GetObjectRetention, never an unversioned/latest
+object. It compares length, configured KMS identity, COMPLIANCE mode, current and
+unshortened deadlines and known Actions expiry. Earlier byte hashes remain pinned
+expectations, **not freshly verified hashes**. The private original eight-object
+receipt still has no recorded self-version and remains explicitly unassessed.
+
+Four independent configuration observations distinguish absent lifecycle
+configuration from denied/invalid reads. Sanitized lifecycle rules retain only
+enabled state, conservative destination-prefix overlap, expiration/noncurrent
+expiration settings and transition counts. Rule IDs, prefixes, tags, keys, KMS/role
+identifiers and raw diagnostics are not published. Tag/size conditions are
+unassessed; transitions alone are not deletions. No lifecycle configuration is
+not an indefinite-retention guarantee, and expired locks do not prove deletion.
+IAM/KMS grants, replicas and restricted log contents are outside this audit.
+
+Denied/invalid reads remain incomplete, independent reads continue, and the job
+retains its sanitized partial report with a failing exit. Fresh exact-version
+metadata findings take precedence over dated archive deadline findings in the
+audit; the immutable historical ledger and nested historical coverage are not
+rewritten. Existing backup/restore receipt collection uses GitHub only: no export,
+restore, import, fixture workload, database access or notification is triggered.
+Retain an authenticated public audit projection in Git before the 90-day Actions
+copy expires; that mirror is not an independently locked raw receipt.
+
+## Draft policy and accountable-owner decision
+
+**Not adopted or implemented.** The following makes the remaining decision
+concrete; merge authorization does not authorize irreversible lock extensions,
+permission changes, new storage classes or notification routing. Existing daily
+backups, weekly isolated verification and hourly dashboard-first monitoring stay
+unchanged. The adopted #2341 dashboard warnings remain active with notifications
+paused; no new alert destination or service-recovery objective is selected here.
+
+| Class | Proposed horizon and verification | Accountable role / approval still required |
+| --- | --- | --- |
+| Irreplaceable original archives and recovery containers | Retain indefinitely as an organizational policy, with explicitly approved finite COMPLIANCE windows and renewal rather than an invented infinite S3 lock; weekly pinned metadata review and monthly approved exact-version hash/decrypt verification | Archive operator and independent verifier, #2343; assign primary/backup, budget, retrieval access and renewal responsibility |
+| Compact provenance, receipts and accepted gap decisions | Indefinite sanitized Git mirror plus independently retrievable exact-version originals where available; capture each acceptance/drill and review receipt self-retention with its payload | Evidence owner, #2343; approve long-term destination/immutability and resolve the private original receipt's unknown self-version without assuming it lost |
+| Catalogue dumps and manifests | Keep the existing daily backup and at least 35-day COMPLIANCE floor; review newest exact versions/receipt daily and weekly disposable verification; longer recovery/history horizon requires a separate decision | Backup/recovery operator, #2343; approve RPO/RTO and data-loss/replay boundaries; a daily schedule is not an RPO guarantee |
+| Isolated verification reports | Retain each sanitized success/failure report under the approved evidence horizon; verify first scheduled post-implementation self-version and measured snapshot/restore fields | Recovery operator plus independent verifier, #2343; lack of those fields in an older scheduled receipt is unknown, not zero recovery time |
+| Useful failed/partial outboxes and restricted diagnostics | Archive useful original evidence before Actions expiry with hashes, provenance and access classification; do not archive credentials or indiscriminately duplicate raw logs | Archive/monitoring operators, #2343/#2341; define useful contents, redaction, retrieval and deletion criteria |
+| Verbose disposable logs | Proposed 180-day hot retention, then useful hashed archival; current Actions convenience remains 90 days | Monitoring owner, #2341 with #2343; approve cost, access, archive/delete criteria and a supported destination before changing retention |
+
+**Immediate finite-horizon proposal:** approve protection of the 41 archive
+versions and the new receipt through **2027-04-30 UTC**, comfortably beyond their
+known January source/report Actions expirations. This is a proposed common horizon,
+not an extension already performed or permission to create replacements. Unknown
+source expiry remains unknown. Prefer protecting the accepted exact versions;
+verify effective lifecycle and permissions first, record every resulting version,
+deadline and receipt, then decide the longer-term renewal policy separately.
+Existing archive locks start expiring **November 12, 2026 UTC**; later archive and
+new-receipt locks expire **November 30**. Review before those deadlines, not after
+source Actions expiry. Their expiry is not a deletion prediction.
+
+For approval, record the named primary/backup and independent verifier, accepted
+horizons/cost, renewal lead time and access separation. Coordinate warning thresholds
+and notification destinations with #2341; do not treat a report finding as a
+delivered alert. Proposed service **RPO <=24h / RTO <=4h** remain separate decisions.
+Any new recovery/failure-injection rehearsal needs scoped approval of disposable
+targets, data, phases and cleanup; production cutover/rollback remains gated below.
 
 ## Recovery measurements and isolated rehearsal
 
@@ -162,8 +241,8 @@ Do not publish a cutover command or replace a DSN as a shortcut around these gat
 
 ## Remaining acceptance gates
 
-#2343 stays open for owner policy/role assignments, #2242's independently verified
-archive/gap coverage, first post-review retained measurement/report verification,
+#2343 stays open for owner policy/role assignments, longer-term protection of the
+accepted 41-container ledger, first post-review retained measurement/report verification,
 actual backup/log coverage and retrieval, approved/measured RPO/RTO, and an
 operator-approved synthetic cutover/rollback rehearsal. #2341 owns alert deployment
 and monitoring acceptance. Existing 11 conflicted/refresh batches and one publication
@@ -184,3 +263,6 @@ copy was **not assessed**. This is a retrieval/verification handoff to #2242, no
 new claim of irretrievable history, a change to its 11-gap ledger, or evidence that
 the previously retained copy disappeared. All independent archive availability,
 current S3 readback and broader log coverage remain outside this observation.
+This October 25 record remains unchanged as historical evidence. The later
+owner-accepted October 26 ledger supersedes its selected-eight coverage handoff;
+ongoing retention belongs to #2343, and #2242 remains closed.

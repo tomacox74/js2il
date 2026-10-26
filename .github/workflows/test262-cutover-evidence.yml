@@ -3,13 +3,14 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Preserve reviewed evidence/recovery ZIPs, verify an exact version, or discover metadata
+        description: Preserve evidence, verify a version, discover metadata, or audit retention read-only
         type: choice
         options:
           - preserve
           - preserve-recovery
           - verify-retained
           - discover-retained
+          - audit-retention
         default: preserve
       artifact_id:
         description: Existing retained artifact ID for verify-retained (no upload or import)
@@ -50,7 +51,7 @@ jobs:
           RECOVERY_AUTHORIZATION: ${{ inputs.recovery_authorization }}
         run: |
           case "$OPERATION" in
-            preserve|verify-retained|discover-retained) ;;
+            preserve|verify-retained|discover-retained|audit-retention) ;;
             preserve-recovery)
               if [ "$RECOVERY_AUTHORIZATION" != "preserve-33-recovery-archives" ]; then
                 echo "::error::Explicit authorization for the 33 recovery archives is required"; exit 1
@@ -67,6 +68,8 @@ jobs:
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:ListBucketVersions","s3:GetObjectVersion","s3:GetObjectRetention"],"Resource":"*"}]}' ||
             inputs.operation == 'preserve-recovery' &&
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:PutObject","s3:GetObjectVersion","s3:GetObjectRetention","kms:GenerateDataKey","kms:Decrypt"],"Resource":"*"}]}' ||
+            inputs.operation == 'audit-retention' &&
+            '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetLifecycleConfiguration","s3:GetEncryptionConfiguration","s3:GetObjectVersion","s3:GetObjectRetention"],"Resource":"*"}]}' ||
             inputs.operation == 'verify-retained' &&
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetObjectVersion","s3:GetObjectRetention","kms:Decrypt"],"Resource":"*"}]}' || '' }}
       - name: Verify reports/outboxes and retain original evidence in encrypted S3
@@ -107,6 +110,15 @@ jobs:
         run: |
           python -m scripts.test262.central.retained_discovery \
             --output /tmp/test262-cutover-report/retained-discovery-report.json
+      - name: Audit retention configuration and pinned metadata without payload reads or writes
+        if: inputs.operation == 'audit-retention'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
+          TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+        run: |
+          python -m scripts.test262.central.retention_audit \
+            --output /tmp/test262-cutover-report/retention-audit-report.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
