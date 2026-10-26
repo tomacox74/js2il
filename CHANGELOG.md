@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.34 - 2026-10-26
+
 - test262: resolve the remaining 154 class-statement, await-using and
   async-function results with 149 verified passing cases and explicit exclusions
   for three eval dependencies and two obsolete nonextensible-private proposals.
@@ -35,14 +39,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and make cwd/socket-option assertions independent of OS path aliases and native
   boolean encodings. CLI help no longer invokes an interactive renderer under
   redirected output, and synchronous Atomics waits enforce a monotonic timeout.
-
 - tooling(node): add a provenance-backed first public-API corpus with 19 original
   path, buffer, events and CommonJS/ESM scenarios, 32 pinned upstream discovery
   leads, explicit applicability/eligibility triage and offline-verified retained
   first-slice reports. Preserve known product gaps, raw diagnostic bytes and
   independent fixture/target/attempt identities without claiming whole-Node
   compatibility or introducing catalogue infrastructure.
-
 - tooling(node): extend the differential harness with opt-in pinned-reference,
   public-CLI execution evidence, isolated bounded processes, typed observable
   comparisons and immutable offline bundles. Preserve paired observations and
