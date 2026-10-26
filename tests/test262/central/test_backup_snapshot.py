@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -23,8 +24,8 @@ class BackupSnapshotTests(unittest.TestCase):
                 queries.append(query)
                 if query.startswith('SET '):
                     return self
-                if query == 'SELECT pg_export_snapshot()':
-                    return SimpleNamespace(fetchone=lambda: ('snapshot-identity',))
+                if query == 'SELECT pg_export_snapshot(), transaction_timestamp()':
+                    return SimpleNamespace(fetchone=lambda: ('snapshot-identity', datetime(2026, 10, 25, tzinfo=timezone.utc)))
                 if 'to_jsonb' in query:
                     return SimpleNamespace(fetchone=lambda: ({'minimum_writer_epoch': 2},))
                 if 'FROM pg_tables' in query:
@@ -46,7 +47,9 @@ class BackupSnapshotTests(unittest.TestCase):
             archive, manifest_path = backup.create_snapshot(SimpleNamespace(output=directory), progress.append)
             manifest = json.loads(manifest_path.read_text())
             self.assertEqual(queries[:3], ['SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
-                                          "SET LOCAL statement_timeout='10min'", 'SELECT pg_export_snapshot()'])
+                                          "SET LOCAL statement_timeout='10min'",
+                                          'SELECT pg_export_snapshot(), transaction_timestamp()'])
+            self.assertEqual(manifest['snapshot_started_at'], '2026-10-25T00:00:00+00:00')
             self.assertIn('--snapshot=snapshot-identity', dump.call_args.args[0])
             self.assertEqual(manifest['row_counts'], {'fixtures': 53432, 'fixture_specification_metadata': 0})
             self.assertEqual(manifest['view_counts'], {'v_historical_candidates': 42,
