@@ -1,4 +1,4 @@
-"""Read-only, bounded backup/restore and reviewed archive availability inventory.
+"""Read-only backup/restore coverage and accepted historical retention deadlines.
 
 No database, object-store access, downloads of original archives, fixture execution,
 notification delivery or policy adoption. Unknown independently retained coverage
@@ -9,10 +9,19 @@ from datetime import datetime, timezone
 import json
 import hashlib
 from pathlib import Path
-import subprocess
 
-from .cutover_evidence import DEFAULT_MANIFEST, REPOSITORY, load_manifest
+from .cutover_evidence import REPOSITORY
 from .monitoring import collect_check, github
+
+LEDGER = Path(__file__).resolve().parents[3] / 'docs/ECMA262/evidence/historical-retention-ledger-2242.json'
+LEDGER_SHA256 = '5b1f6081dc7b5e61229a1be44bca4afc43889b735d6f5201e32c3022c8132be4'
+
+
+def load_ledger(path=LEDGER):
+    raw = Path(path).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != LEDGER_SHA256:
+        raise ValueError('Accepted historical retention ledger digest differs')
+    return json.loads(raw)
 
 
 def assess(checks, now):
@@ -49,41 +58,41 @@ def collect(fetch=github, now=None):
     now = now or datetime.now(timezone.utc)
     if now.tzinfo is None:
         raise ValueError('Coverage time requires a timezone')
-    config, pins, _, manifest_sha = load_manifest(DEFAULT_MANIFEST)
+    ledger = load_ledger()
     checks = {kind: collect_check(REPOSITORY, kind, fetch) for kind in ('backup', 'restore')}
     findings = assess(checks, now)
     archives = []
-    for artifact_id, expected in pins.items():
-        state = 'unavailable'
-        try:
-            meta = fetch(f'repos/{REPOSITORY}/actions/artifacts/{artifact_id}')
-            if type(meta.get('expired')) is not bool:
-                raise ValueError('Artifact expiration state is missing')
-            if meta['id'] != artifact_id or meta['digest'] != 'sha256:'+expected:
-                state = 'metadata_mismatch'
-            elif meta.get('expired') is True:
-                state = 'expired'
-            else:
-                expiration = datetime.fromisoformat(meta['expires_at'].replace('Z', '+00:00'))
-                if expiration.tzinfo is None:
-                    raise ValueError('Artifact expiration requires timezone')
-                state = 'expired' if expiration <= now else 'metadata_available'
-        except (ValueError, KeyError, TypeError, subprocess.SubprocessError):
-            # Only GitHub metadata is queried; no fallback asserts object-store coverage.
-            state = 'unavailable'
-        archives.append({'artifact_id': artifact_id, 'sha256': expected,
-                         'actions_state': state, 'independent_archive_state': 'not_assessed'})
-        if state != 'metadata_available':
-            findings.append({'artifact_id': artifact_id, 'code': 'original_actions_archive_'+state,
-                             'state': 'unknown' if state == 'unavailable' else 'attention',
-                             'owner_issue': 2242})
+    for row in ledger['archives']:
+        artifact_id = row['artifact_id']
+        deadline = datetime.fromisoformat(row['object']['retain_until'])
+        expiration = row['actions_expires_at_from_frozen_inventory']
+        archives.append({
+            'artifact_id': artifact_id, 'sha256': row['original_zip_sha256'],
+            'actions_state': 'not_assessed',
+            'independent_archive_state': 'historical_exact_version_proof',
+            'recorded_verified_at': row['verification']['checked_at'],
+            'recorded_retain_until': deadline.isoformat(),
+            'recorded_lock_state': 'deadline_elapsed' if deadline <= now else 'deadline_future'})
+        if deadline <= now:
+            findings.append({'artifact_id': artifact_id, 'code': 'recorded_archive_lock_expired',
+                             'state': 'attention', 'owner_issue': 2343})
+        if not expiration or deadline <= datetime.fromisoformat(expiration.replace('Z', '+00:00')):
+            findings.append({
+                'artifact_id': artifact_id,
+                'code': 'historical_archive_protection_beyond_actions_expiry_unproven',
+                'state': 'attention', 'owner_issue': 2343})
     return {
-        'schema_version': 1, 'checked_at': now.isoformat(), 'repository': REPOSITORY,
+        'schema_version': 2, 'checked_at': now.isoformat(), 'repository': REPOSITORY,
         'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        'scope': 'Latest bounded workflow receipts and existing reviewed artifact manifest only',
+        'scope': 'Latest bounded workflow receipts and owner-accepted 41-container historical ledger',
         'database_access': False, 'object_store_access': False, 'notifications_enabled': False,
         'history_complete': False, 'archive_preservation_verified': False,
-        'manifest_scope': config['scope'], 'manifest_sha256': manifest_sha,
+        'accepted_historical_container_coverage': True,
+        'accepted_historical_gap_count': len(ledger['original_gap_ledger']),
+        'ledger_sha256': LEDGER_SHA256,
+        'summary': {'required_container_count': len(archives),
+                    'earliest_recorded_lock_deadline': min(
+                        row['recorded_retain_until'] for row in archives)},
         'checks': checks, 'archives': archives, 'findings': findings,
         'limits': [
             'GitHub metadata availability is not a download, original byte rehash or independent archive proof.',
@@ -91,7 +100,8 @@ def collect(fetch=github, now=None):
             '36h backup monitoring threshold is not the proposed 24h RPO.',
             'Eight-day drill review window is a reporting check, not an adopted recovery objective.',
             'Successful isolated restore timing is not full-service RTO.',
-            'Useful failed outboxes, remaining original archives and logs require the #2242 coverage ledger.',
+            'The owner accepted the frozen 41-container/11-gap scope under closed #2242.',
+            'Source Actions metadata is not re-inventoried; current retention and useful log coverage belong to #2343.',
             'No policy adoption or all-history/all-log completeness is implied.']}
 
 
