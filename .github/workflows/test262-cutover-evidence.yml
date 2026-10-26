@@ -3,11 +3,12 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Preserve reviewed archives, or only read back an already retained exact version
+        description: Preserve, verify an exact retained version, or discover unmatched candidate metadata
         type: choice
         options:
           - preserve
           - verify-retained
+          - discover-retained
         default: preserve
       artifact_id:
         description: Existing retained artifact ID for verify-retained (no upload or import)
@@ -43,7 +44,7 @@ jobs:
           OPERATION: ${{ inputs.operation }}
         run: |
           case "$OPERATION" in
-            preserve|verify-retained) ;;
+            preserve|verify-retained|discover-retained) ;;
             *) echo "::error::Unsupported evidence operation"; exit 1 ;;
           esac
       - uses: aws-actions/configure-aws-credentials@v6
@@ -51,7 +52,9 @@ jobs:
           role-to-assume: ${{ vars.TEST262_BACKUP_AWS_ROLE }}
           aws-region: ${{ vars.TEST262_BACKUP_AWS_REGION }}
           inline-session-policy: >-
-            ${{ inputs.operation == 'verify-retained' &&
+            ${{ inputs.operation == 'discover-retained' &&
+            '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:ListBucketVersions","s3:GetObjectVersion","s3:GetObjectRetention"],"Resource":"*"}]}' ||
+            inputs.operation == 'verify-retained' &&
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetObjectVersion","s3:GetObjectRetention","kms:Decrypt"],"Resource":"*"}]}' || '' }}
       - name: Verify reports/outboxes and retain original evidence in encrypted S3
         if: inputs.operation == 'preserve'
@@ -72,6 +75,14 @@ jobs:
         run: |
           python -m scripts.test262.central.retained_evidence \
             --artifact-id "$ARTIFACT_ID" --output /tmp/test262-cutover-report/retained-verification-report.json
+      - name: Discover unmatched retained archive candidates without payload reads or writes
+        if: inputs.operation == 'discover-retained'
+        env:
+          TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
+          TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+        run: |
+          python -m scripts.test262.central.retained_discovery \
+            --output /tmp/test262-cutover-report/retained-discovery-report.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:

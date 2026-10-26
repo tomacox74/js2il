@@ -158,10 +158,14 @@ class RetainedEvidenceTests(unittest.TestCase):
         self.assertIn("if: inputs.operation == 'verify-retained'",workflow)
         self.assertIn('Unsupported evidence operation',workflow)
         import re
-        policy=json.loads(re.search(r"'(\{\"Version\".*?\})' \|\|",workflow).group(1))
+        policies=[json.loads(raw) for raw in re.findall(r"'(\{\"Version\".*?\})' \|\|",workflow)]
+        policy=policies[-1]
         actions=set(policy['Statement'][0]['Action'])
         self.assertEqual(actions,{'s3:GetBucketVersioning','s3:GetBucketObjectLockConfiguration',
                                  's3:GetObjectVersion','s3:GetObjectRetention','kms:Decrypt'})
+        self.assertIn("if: inputs.operation == 'discover-retained'",workflow)
+        self.assertEqual(set(policies[0]['Statement'][0]['Action']),
+                         {'s3:ListBucketVersions','s3:GetObjectVersion','s3:GetObjectRetention'})
 
 
 if __name__=='__main__':
