@@ -699,10 +699,11 @@ set, independently verifies source hashes/import mappings/outbox acknowledgement
 reports, and reads back every preserved encrypted Object Lock version plus its report.
 The default manifest retains the original eight cutover artifacts and the last five source
 recoveries; it is an explicitly selected scope, not the entire import/recovery archive
-inventory. The #2242 inventory below now identifies all 62 original source ZIP/SQLite pairs
-inside the retained discovery container, but only three of 36 import/recovery containers
-have identified independent-retention proofs. Further historical evidence retention remains
-tracked in #2230/#2242; archive retention horizons require a separate long-term policy.
+inventory. The frozen #2242 inventory below identifies all 62 original source ZIP/SQLite
+pairs inside the retained discovery container. At its observation, only three of 36
+import/recovery containers had identified independent-retention proofs; the subsequent
+33-container preservation and reconciled ledger below now cover all 41 required containers.
+Further retention horizons remain a separate long-term policy decision.
 The manifest cannot set `history_complete=true` while the known gaps remain.
 
 ### Discovering unmatched retained candidates (#2242)
@@ -802,14 +803,14 @@ report hash, inventory hash, all 33 source pins and timestamps were checked. The
 preservation and full-payload readback steps were skipped. No payload read/decrypt,
 S3 upload, import, restore, fixture execution or agent-managed permission change occurred.
 
-The listing-access blocker is resolved **for this successful run**. The substantive
-retention gap is not: no candidate was identified under the **configured prefix and
+The listing-access blocker was resolved **for this successful run**. At that observation,
+the substantive retention gap remained: no candidate was identified under the **configured prefix and
 recognized run-attempt/artifact ZIP layout** at that observation. This does not rule out
 copies in other prefixes, layouts, buckets or providers, and is not evidence of global
 absence or irretrievable loss. `full_archive_coverage_verified=false` and
 `history_complete=false`; the 11 original source gaps remain unchanged.
 
-The next owner decision is whether to provide an independently retained inventory
+The next owner decision at that observation was whether to provide an independently retained inventory
 from another location, authorize a separately reviewed discovery scope, or authorize
 preservation of the 33 source recovery archives still lacking retained-copy proof.
 Any preservation must retain each original ZIP, including partial failed outboxes and
@@ -869,6 +870,54 @@ still have reached S3. Automatic SDK retries are disabled for this operation.
 Reconcile partial results before any retry rather than
 duplicating uploads blindly. Existing eight-object proofs, finite November 12
 deadlines and the eleven original source gaps remain unchanged.
+
+#### Verified recovery preservation and scoped ledger — October 26, 2026
+
+Owner-authorized [run 40393597860](https://github.com/tomacox74/js2il/actions/runs/40393597860),
+attempt 1, completed successfully on merged master
+`8f37ec656a3e06f95b52a57221253014b69203f3` after #2405 passed its required checks.
+Only the guarded recovery-preservation step ran; legacy preservation, read-only
+selected-object verification and metadata discovery were skipped.
+
+The [authenticated sanitized receipt](evidence/retained-recovery-preservation-40393597860.json)
+records **33/33 original ZIPs, 68,135,697 bytes**, with exact returned upload-version
+readbacks matching source SHA-256/length, configured KMS identity and current
+COMPLIANCE locks. The retained report itself also passed full exact-version readback:
+**32,367 bytes**, SHA-256
+`61d0fff3c0f96feadcdb3a4fa948b1bfd7fbd0032f38e8e4febb9179df3bfd42`,
+protected through **November 30, 2026 UTC**. Its exact pre-receipt document is embedded
+in the outer receipt, so the retained bytes can be reconstructed without a circular
+self-hash claim. The Actions ZIP digest/length, source/run/attempt/job and guarded
+steps, original report hash, embedded retained-report hash, all source pins and
+timestamps were independently checked before retaining this public projection.
+
+The [historical retention ledger](evidence/historical-retention-ledger-2242.json)
+reconciles the frozen inventory without rewriting it:
+
+| Scoped disposition | Verified coverage |
+|---|---|
+| Required containers | **41/41**, no unmatched required container |
+| Earlier selected-object readbacks | **8 reused**, no re-upload or lock extension |
+| Newly preserved recovery containers | **33**, including all four incomplete reports |
+| Outboxes and WAL/SHM members | Original ZIP bytes unchanged; no new acknowledgements or SQLite checks |
+| Original `no catalogue artifact` gaps | **11**, retained verbatim |
+| Raw original private preservation receipt | Its own retained version remains unproven; authenticated sanitized Git projection remains durable |
+
+`required_container_coverage_verified=true` refers only to these **41 frozen required
+containers at their respective recorded observation times**. Full-history/archive
+claims remain false; planning-only artifacts and no-artifact runs retain their frozen
+separate dispositions. No imports, restores, production fixture workload, permission
+change or retention-policy change occurred.
+
+**Finite retention is still a separate limitation.** The earlier eight locks start
+expiring **November 12**, and the 33 new archive locks expire **November 30**. These lock
+deadlines do not cover the later known Actions source expirations; the ledger records
+that comparison per container rather than claiming protection beyond Actions expiry.
+An expired COMPLIANCE lock is not evidence that an object was deleted, but neither
+object lifecycle behavior nor indefinite retention is inferred. Ongoing horizons,
+ownership and verification cadence belong to #2343; coherent reconciliation stays with
+#2342. The closed status of those tracking issues is not approval of an unadopted policy.
+No retention extension or policy change is authorized by this preservation result.
 
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
