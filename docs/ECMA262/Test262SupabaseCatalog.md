@@ -25,8 +25,10 @@ Verify the live scoped API contract and selected target before each authorized r
 do not hardcode a saved epoch as future authority or replay cutover during porting.
 
 Historical import parity covers 62 recoverable entries; 11 unavailable archive gaps
-keep `history_complete=false`. Complete long-term artifact retention and client
-run/budget/publication lifecycle bookkeeping remain follow-ups in #2230/#2242.
+keep `history_complete=false`. The owner accepted #2242's 41-container preservation
+ledger and historical gap handoff on October 26, 2026. Longer-term retention and
+verification belong to reopened #2343; client run/budget/publication lifecycle
+bookkeeping remains a separate follow-up under #2230.
 The repository CI applies both migrations to empty PostgreSQL 17 and tests
 concurrent claims/budgets, privilege isolation and native evidence invariants.
 
@@ -916,8 +918,28 @@ that comparison per container rather than claiming protection beyond Actions exp
 An expired COMPLIANCE lock is not evidence that an object was deleted, but neither
 object lifecycle behavior nor indefinite retention is inferred. Ongoing horizons,
 ownership and verification cadence belong to #2343; coherent reconciliation stays with
-#2342. The closed status of those tracking issues is not approval of an unadopted policy.
+#2342. Owner acceptance of the historical ledger does not approve an unadopted policy.
 No retention extension or policy change is authorized by this preservation result.
+
+#### Owner-accepted historical handoff — October 26, 2026
+
+The owner explicitly accepted the **41-container preservation ledger and 11 documented
+historical gaps**, authorized closure of #2242 for that bounded historical scope, and
+instructed that **#2343 be reopened for longer-term retention and verification**.
+The [accepted ledger](evidence/historical-retention-ledger-2242.json), SHA-256
+`5b1f6081dc7b5e61229a1be44bca4afc43889b735d6f5201e32c3022c8132be4`,
+and its underlying receipts remain unchanged.
+
+The acceptance records on #2242 and #2230 distinguish completed historical preservation
+from #2343's outstanding policy, horizon and verification-cadence decisions. The owner
+acknowledged the **November 12/30 lock deadlines** and that protection beyond Actions
+source expiry remains **unproven**. Lock expiry is not object deletion. Neither
+full-history completeness nor indefinite retention, lifecycle behavior or approved
+RPO/RTO targets are inferred. #2342's accepted reconciliation was not rerun.
+
+This handoff authorizes no new storage operation, retention extension, permission
+change, import, restore or production fixture execution. Future work under #2343
+requires its own scoped decisions and authorization.
 
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
@@ -953,9 +975,10 @@ Keep `historical_receipt_verified` separate from `selected_object_verified`.
 The verification report allowlists public object version/digest/retention fields;
 bucket/prefix/object keys, KMS identifiers, private database identities and audits
 are not copied into it. Retain its sanitized result and exact-SHA/run provenance
-in the existing issue/Git ledger before Actions expiry. Neither success flag covers
-every original archive or useful failed outbox; #2242 remains open for the broader
-ledger, and #2343 retains ongoing retention/recovery ownership.
+in the existing issue/Git ledger before Actions expiry. Neither selected-object success
+flag alone covers every original archive or useful failed outbox. The subsequent
+41-container ledger supplies the separately accepted historical coverage; #2343
+retains ongoing retention/recovery ownership.
 
 ### Frozen historical archive inventory (#2242)
 
@@ -1102,11 +1125,12 @@ python3 -m scripts.test262.central.retained_readbacks \
   --output /private/new-readback-ledger.json
 ```
 
-#2242 remains open for the unmatched containers and final retention/gap handoff.
-The handoff on #2343 is recorded although that issue is closed; closure is not evidence
-of retention-policy approval or preservation of the unmatched archives. No new upload,
-import, restore, fixture execution, authority transition or storage/IAM policy change
-is authorized by these receipts.
+At this selected-set observation, 33 recovery containers were still unmatched. Their
+subsequent preservation and the owner-accepted 41-container ledger above resolve that
+historical coverage/handoff scope. Reopened #2343 owns ongoing retention and verification;
+the accepted handoff is not approval of a retention policy. No new upload, import,
+restore, fixture execution, authority transition or storage/IAM policy change is
+authorized by these selected-set receipts.
 
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
 
@@ -2038,7 +2062,9 @@ Missing receipts, orphan receipts, conflicting gap lists and absent/invalid
 manifest attribution fail this mode. Source/archive hashes are retained receipt
 claims, not new reads of original archive bytes. This mode explicitly records
 `original_manifest_inspected=false`, `archive_preservation_verified=false` and
-`history_complete=false`; #2242/#2343 retain those independent obligations.
+`history_complete=false`. The separately accepted #2242 preservation ledger supplies
+historical archive coverage; #2343 owns ongoing retention and verification. This
+stored-ledger mode does not itself verify those independent archive proofs.
 
 The original 4 GB archive need not be downloaded just to establish this stored
 attribution join. If the original manifest is separately available, the standalone
