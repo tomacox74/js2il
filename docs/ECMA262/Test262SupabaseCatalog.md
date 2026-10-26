@@ -748,6 +748,44 @@ Unfinished listings leave rows `not_assessed`; they never manufacture absence fi
 Do not broaden the existing role/bucket/KMS policy on denial. Retain sanitized success
 or failure results and exact-SHA/run provenance outside Actions expiration after the run.
 
+#### Live discovery access gate — October 26, 2026
+
+The first authorized metadata-only discovery
+[run 40385997470](https://github.com/tomacox74/js2il/actions/runs/40385997470), attempt 1,
+used merged master `a3acf2307df96176a9ad6e6c9c9956ed3ab344bd`. It failed with
+**`AccessDenied` at `ListObjectVersions` before the first page**. AWS role assumption
+succeeded, but that does not imply effective permission to list versions. The sanitized
+report does not identify which policy layer denied access; no private permission audit
+is published or inferred.
+
+The [durable sanitized denial receipt](evidence/retained-discovery-denial-40385997470.json)
+records the exact revision/run/attempt/job, downloaded artifact ZIP SHA-256, original
+report SHA-256, Actions expiration and execution guards. Its embedded report bytes can
+be reconstructed as UTF-8 `json.dumps(report, indent=2) + "\n"` and checked against
+`report_sha256`. The receipt ZIP was independently downloaded and its digest/length
+matched to Actions metadata before this record was generated.
+
+| Observed field | Result |
+|---|---|
+| `listing_complete` / `discovery_complete` | Both `false` |
+| `pages_read` / `entries_scanned` | Both `0` |
+| Unmatched recovery archives | All **33 `not_assessed`**, no candidates returned |
+| Preservation / payload-readback steps | Both skipped |
+| Payload reads / S3 changes / database access | All `false` |
+
+This is an explicit access gate, **not proof that the 33 objects are absent**. Do not
+repeat the same denied request, broaden the search or change role/bucket/KMS policies
+without a separate operator decision. Existing eight-object full readback evidence,
+the 11 original gaps and finite November 12 lock deadlines are unchanged.
+
+To proceed, an operator can provide an authorized read-only inventory scoped to the
+configured cutover-evidence prefix/layout and 33 artifact IDs, including observation
+time, pagination/completeness and exact version/length/retention metadata, or resolve
+effective access through their approved change process and explicitly authorize a new
+run. Storage locations and policy diagnostics remain private. Supplied metadata still
+does not verify payload digests; candidate copies require a separate exact-version
+readback decision. No new preservation upload is authorized by resolving this gate.
+
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
 availability. It uses a read/decrypt-only AWS session policy intersected with the
