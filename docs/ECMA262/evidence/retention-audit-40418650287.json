@@ -1,0 +1,1949 @@
+{
+  "schema_version": 1,
+  "repository": "tomacox74/js2il",
+  "assembled_at": "2026-10-26T23:17:44.785682+00:00",
+  "operation": "audit-retention",
+  "run_id": 40418650287,
+  "run_attempt": 1,
+  "source_revision": "8aefbe00c59d2547c953c4aa19f6e1722d3e5206",
+  "run_conclusion": "failure",
+  "created_at": "2026-10-26T23:16:50Z",
+  "completed_at": "2026-10-26T23:17:30Z",
+  "job_id": 121907194466,
+  "execution_guards": {
+    "Validate reviewed operation": "success",
+    "Verify reports/outboxes and retain original evidence in encrypted S3": "skipped",
+    "Preserve the 33 original recovery ZIPs without imports or policy changes": "skipped",
+    "Read back one existing retained archive without writes": "skipped",
+    "Discover unmatched retained archive candidates without payload reads or writes": "skipped",
+    "Audit retention configuration and pinned metadata without payload reads or writes": "failure"
+  },
+  "actions_artifact": {
+    "artifact_id": 12696039804,
+    "size_in_bytes": 8445,
+    "zip_sha256": "05d039170a0e03fdc557ed93e08a49468315873719839595585c68124c549b00",
+    "expires_at": "2027-01-24T23:16:51Z"
+  },
+  "report_sha256": "26502d648b3254842e399e82daae433cede1fb8c0879168a05d0e2172f7e0c47",
+  "report": {
+    "schema_version": 1,
+    "repository": "tomacox74/js2il",
+    "operation": "audit-retention",
+    "started_at": "2026-10-26T23:17:09.645889+00:00",
+    "checked_at": "2026-10-26T23:17:21.197748+00:00",
+    "audit_complete": false,
+    "object_metadata_verified": true,
+    "configuration_reads_complete": false,
+    "database_access": false,
+    "object_store_access": true,
+    "object_store_writes": false,
+    "payload_reads": false,
+    "payload_digest_verified": false,
+    "notifications_enabled": false,
+    "policy_changes": false,
+    "imports": false,
+    "restores": false,
+    "fixture_execution": false,
+    "retention_policy_adopted": false,
+    "collector_sha256": "60847af07588e8fa8de7c1ee12c888ebddfa55c45431c71110d3cc2449ff22f5",
+    "limits": [
+      "This is a bounded configuration/metadata observation, not a payload digest or decrypt test.",
+      "Configuration read denial is unknown, not absence or adequate retention.",
+      "Lifecycle prefix overlap is conservative; object tags and size selectors are not evaluated.",
+      "No lifecycle rule does not guarantee indefinite protection or an adopted retention policy.",
+      "Lock expiry is not evidence that an object was deleted.",
+      "The original private eight-object receipt has no recorded self-version; it is not assessed.",
+      "IAM/KMS policies, replica destinations and all-history/all-log coverage are not audited.",
+      "Workflow receipts are authenticated historical assertions, not new backups or restore drills."
+    ],
+    "source_revision": "8aefbe00c59d2547c953c4aa19f6e1722d3e5206",
+    "run_id": 40418650287,
+    "run_attempt": 1,
+    "ledger_sha256": "5b1f6081dc7b5e61229a1be44bca4afc43889b735d6f5201e32c3022c8132be4",
+    "preservation_sha256": "4e5b1c4590ec3325c6bebd39d9a5001d2ebf9a72a858aef8e6d1e94762901530",
+    "original_private_receipt_self_version": "unrecorded_not_assessed",
+    "stage": "incomplete",
+    "metadata_reference_at": "2026-10-26T23:17:09.901726+00:00",
+    "configuration": {
+      "versioning": {
+        "state": "observed",
+        "enabled": true,
+        "mfa_delete": "Disabled"
+      },
+      "object_lock": {
+        "state": "observed",
+        "enabled": true,
+        "default_mode": "COMPLIANCE",
+        "default_days": 35
+      },
+      "lifecycle": {
+        "state": "unavailable",
+        "error_class": "AccessDenied",
+        "aws_error_code": "AccessDenied"
+      },
+      "encryption": {
+        "state": "observed",
+        "algorithms": [
+          "aws:kms"
+        ],
+        "configured_kms_identity_matches_exactly": true
+      }
+    },
+    "objects": [
+      {
+        "kind": "archive",
+        "artifact_id": 11293700607,
+        "version_id": "3rnBAtZ3dVjV2z83u7NNyJlx1OcTDRH0",
+        "expected_sha256": "ee392023313476cca2291b270038e174892b01e1c35a5b14b696d33651dad059",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 4279618183,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:08:36.931000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11296419607,
+        "version_id": "x0mDdWrIndkoSPRo9PPMBuPqYtHzRCeH",
+        "expected_sha256": "555a79ae8face43b5cce25c83287a53069c8e3b3edbcfe3cc85becdd3a724334",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 487597,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:44.829000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11305023882,
+        "version_id": "5wGfOU1o7Ha0qFOEPW8TWWf7.BT8L.Gd",
+        "expected_sha256": "fb713aa5631c29c4565a72295e858d94cdce62e85b988b9fca87ff5d9dc98b82",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 668914,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:45.810000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11310073133,
+        "version_id": "nnOXBMceMLWv0tjVthphdCY.m6P3Z17L",
+        "expected_sha256": "ea130ebe371b06ed380b02fa107aa2123ea347d571b86356e33b7f2311edf90c",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1383000,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:46.324000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11313014614,
+        "version_id": "CmD4isF6X1ZR4cC41eDxhHUroPwpE3Oa",
+        "expected_sha256": "d811d27d04227c5b2755c9932726467f23ded039e8eea13adf0406ab8abcd749",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3702584,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:46.859000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11315606252,
+        "version_id": "NmIY2BnegOQaKV5pMNYcLYZgYcPH7MPi",
+        "expected_sha256": "d226d92eb1fd0baec93a367348e9a854e22ce931d2f513d09e0e71963fe01a1f",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1852251,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:47.451000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11316103861,
+        "version_id": "DPuTSA.20A9mYqyuon6WWF3otwvP58aD",
+        "expected_sha256": "d53c8c0c0bf08f1058fb877e1efc81bf25e86cb79ff0309b11414a14925a3694",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1851753,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:47.876000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11321324199,
+        "version_id": "LbdHueeoldiGQnOFRPTlKiULxL.kU2Ms",
+        "expected_sha256": "973dce3bef56e716c463eae7e38bd64b376daa7257c243751a75db51f16bd4e3",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3596742,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:48.313000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11321486232,
+        "version_id": "pzB1RMcD.rfQkh80UqPgDnfMTOcUQtmP",
+        "expected_sha256": "f0396a6a298a96bd05541588d353cc7df4625a7263db60da6620230d9b52ab7d",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3636112,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:48.985000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11323407829,
+        "version_id": "461EhtxrtXMm2VReJcxlHCpBwz7ge_MU",
+        "expected_sha256": "6051c684cd06d535c9e756edd9f74b096c4287a8f39ff09eea4c3ee3623aee3b",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3545153,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:49.548000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11324464483,
+        "version_id": "4niEpC4SaCQ9GR86JOiZcdFe9Tk1a5fx",
+        "expected_sha256": "20f5c3297a9d743b763978e853ac746e32b0cbf9df563e8e1b26c0099393cbe9",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3494258,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:50.185000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11326553866,
+        "version_id": "e_Hwy61DnNIueFcDcgM4AmUWb_YK9OIm",
+        "expected_sha256": "07bb7489bb74a4f8a20b1ce3194f9a97e7e3c236ecd7e1e75eba4ed15b32eb55",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3532680,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:50.930000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11327558672,
+        "version_id": "8GqXdvXKCATSdvp8tCKO62C4.qOxw_kV",
+        "expected_sha256": "0ffaa37e887646030b8ad66e93592a97625808fd05a2651ff0648f4de22dd92d",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3389459,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:51.883000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11331221273,
+        "version_id": "a3ksS7Ly3fjx4txyRCFh1VKF.hszKBqM",
+        "expected_sha256": "d4b1b0dad4160301486f66ecaf0679b00f079c9b8514f75bd629c982660f008d",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3429898,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:52.947000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11332549788,
+        "version_id": "LgyvOTYBtlqNXT48yygZYrhxJ3qsFj1g",
+        "expected_sha256": "65133a0ff5a179022a3293aaefc33c6fb933525cc9a083c2256a98ee853a7949",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3375808,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:54.224000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11335432011,
+        "version_id": "TRsFNvFxNFUMQANEKSABhDosOljJinZv",
+        "expected_sha256": "a76ce82930f074302d00a0f7f7ae4c04e8fcfe904e4690b0930633aec66a1e20",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3179169,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:55.588000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11337044860,
+        "version_id": "vCNpg.hsuvfYTmYkDIWXUzZZmHQmaHPF",
+        "expected_sha256": "b01a2019b0a69d0c79e1782a81f4f57b12c5ad14ebd3f1dac8c48f89213b46d1",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1621470,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:56.972000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11341560967,
+        "version_id": "0e190Nuw2Z1QbLnrfvetUP_GdTW675YZ",
+        "expected_sha256": "96fbf9357fe02cad95992674cbd92b7d0f5d290470da275d899f42f24b46d54a",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2886499,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:57.807000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11343860624,
+        "version_id": "qox71wEGS3EeS0zPWOy7Tl85vtKHgJj.",
+        "expected_sha256": "6bbbd5299ee333507753c5aad854172c8e1419199e3726e94a7c53f05870cad1",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 3000085,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:13:59.010000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11347660942,
+        "version_id": "kgol9yDONfN1RD8umxRjpP8EapusfFPg",
+        "expected_sha256": "1c861e73f5028cad8f1bfaab33943d570299eecea5c8102d43f884fcfd133a4b",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2800797,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:00.199000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11349863035,
+        "version_id": "CgJ3V8PefGPDy4_VMZ44Vpx2ljzJ7BUQ",
+        "expected_sha256": "d76d3dd70273b507470c5a09a29d7634efee80a739bae1155e426efacae99dd6",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2762602,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:01.267000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11353138034,
+        "version_id": "a1wRUtilI2xzPoLu..rfSe5ixXQGl613",
+        "expected_sha256": "e56a2bab7a4632e229ead4d918ad2b1cb4eff4e659b9809cc35a049f02a34aed",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2723223,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:02.316000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11356885630,
+        "version_id": "Qfqd8Z11CCVftYlyCoSsKwj_mJfax4j_",
+        "expected_sha256": "e96d3466ebad1f270e0fbb7c3a7e23080dc974367a211af13b0b04af9c2078f1",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2456578,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:03.304000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11360340517,
+        "version_id": "SARjpZXkZPmoyZBiSD1lIJsAMbcJYtmX",
+        "expected_sha256": "cb742f50f04645cee63d1baf410813066ebcc0ffad67a4f0eb54604f9eb37e96",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 2073616,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:04.333000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11361999762,
+        "version_id": "OKucfrQnduoIeeFQo500CKBI30SDB86J",
+        "expected_sha256": "82645e2904072ea94622ba448b3680a383cc9a9b6b9be6eecae5445040f85a29",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1887043,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:05.302000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11365479467,
+        "version_id": "Zp_xIX72fsAp6aUwT738VhzYvHKyhB22",
+        "expected_sha256": "5700c8560a593e055c5abbaca15a3c770b1e154730fed5cb88ed5f86137d059a",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1252887,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:06.125000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11372535588,
+        "version_id": "qs2IzCnNHgGxe8YMW52fcD9RK9q4smLk",
+        "expected_sha256": "0827acba7b601bede5b71bb1af40c1a10e1f6897c48fab1bf317f913efeca1f9",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 972711,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:07.339000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11374999931,
+        "version_id": "W.J2br9WuC.EfUIUsVSAkTgTVAUm1QOZ",
+        "expected_sha256": "666be6e762e0a802f56687be4a1c7bf81e7be97647f38ce78ec4871c7b12ade6",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 573431,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:08.150000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11381300274,
+        "version_id": "Kn1MKZ2V5Ao0a1ZHAZFlbpXqt8aVBuZw",
+        "expected_sha256": "ab1c3ecf88cea43618a7fb3b8ba838647712fb17b61b052d08711a9f48da49ca",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 343465,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:08.531000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11384521874,
+        "version_id": "zjCWbyPCgg9LZxKmmKSMJSjgVO1xeMVH",
+        "expected_sha256": "b651864241d238f3465ab306419744acba619f278ba46995891ffc11c93d23c5",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 154585,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:08.889000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11386604548,
+        "version_id": "_.Fph1RjA1yTLDQ60rIVaOLaPCAkXVOZ",
+        "expected_sha256": "201289488bed5cfd76635b66a22b387b42183c75b16f12bc2a40988838a47d47",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1711,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:09.243000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11393954880,
+        "version_id": "CR2JIHjCJ_KVgmfUQPtVf5qCfdgiiSyO",
+        "expected_sha256": "b572b19e351f1fd971337533f83bec9c08e54c78517206e13970d0d4efe3161f",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 666523,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:09.603000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11506415578,
+        "version_id": "QuvuDeRHs77tEdFjHULAF3.8myevkwSI",
+        "expected_sha256": "0152b98692d80824b26f389e7456f9ffeae084a104e4c382f20963e279d86f0b",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 453767,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:09.969000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11507991354,
+        "version_id": "lKC3svmn.NT6X2PS0taBtNzWlH7cd6Bu",
+        "expected_sha256": "4f47b606fa64f7347417bba361ccd7ee56c7ac4c9e910e96c9f2b4daa2f3d7e7",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 379326,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:10.349000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11510693007,
+        "version_id": "1_o8u8ieS05YUIEHCzxeq6TUL_O8sX3K",
+        "expected_sha256": "da15aee0a42498eb5b7f439e198991d9ac84e555e1fc15714cc3f5ca81d04268",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 194634,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:31.228000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11513473147,
+        "version_id": ".0A_uytG4HiqAzIr_1p.6DXZ0JRvAc_J",
+        "expected_sha256": "f3caca577d57e6d4ff8d45131e6133ae9ab7dee4feaf01427fb2a560b640f516",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 194464,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:36.579000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11515534653,
+        "version_id": "jYPO0xhuZ.KTTKO0J03B8t7ds7mQ8.8q",
+        "expected_sha256": "130857077a60584ecdac2b11c0505a49bc2b6f23765a6459a963752ff3a7fe75",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 97829,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:40.009000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11522307991,
+        "version_id": "oNXWibb73dD9Gdy7voeuoxMVy4mLbv9S",
+        "expected_sha256": "78a37b888450ea81bc7cf6c628dc0197bfb1951b279bff014bce0a19d2a00eba",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 225825,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:52.326000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": null
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11522581310,
+        "version_id": "p8gaP0XFCzQ0qWRJHJTUL2XPmxXbQkZ_",
+        "expected_sha256": "c6f23b70175328cabfe0260195739eec631261ce84a1b9209cf7013ee4994631",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 1278,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:42.697000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11523056094,
+        "version_id": "xB62O7y8MA5IaNKBNPwWafye8CrUKA0V",
+        "expected_sha256": "53fe23bd6e6069ce6228883a6dd26a4f91232423a6794b7c940f96e2008299be",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 189107,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:48.982000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11523270256,
+        "version_id": "2nws8VarXFe4mNj3W5tqldvZ0gDKWNg3",
+        "expected_sha256": "63c3af412e252b597c838bfa98ddb03bfb9b7310906cdfd58c43ea32ce89ede7",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 194832,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-12T02:13:45.533000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      },
+      {
+        "kind": "preservation_receipt",
+        "version_id": "1OfBQkTAEhYjkGHsz1j17zEMkYvtlTzu",
+        "expected_sha256": "61d0fff3c0f96feadcdb3a4fa948b1bfd7fbd0032f38e8e4febb9179df3bfd42",
+        "metadata_verified": true,
+        "payload_digest_verified": false,
+        "state": "observed",
+        "content_length": 32367,
+        "encryption": "aws:kms",
+        "retain_until": "2026-11-30T20:14:10.735000+00:00",
+        "lock_mode": "COMPLIANCE",
+        "version_matches": true,
+        "length_matches": true,
+        "kms_identity_matches": true,
+        "prior_lock_not_shortened": true,
+        "compliance_lock_current": true,
+        "covers_frozen_actions_expiry": false
+      }
+    ],
+    "coverage_collection_complete": true,
+    "coverage": {
+      "schema_version": 2,
+      "checked_at": "2026-10-26T23:17:09.901726+00:00",
+      "repository": "tomacox74/js2il",
+      "collector_sha256": "d8bb875ce52ada3624c1f1a232e4b850e7055696ea8495b984e285ffadb9d830",
+      "scope": "Latest bounded workflow receipts and owner-accepted 41-container historical ledger",
+      "database_access": false,
+      "object_store_access": false,
+      "notifications_enabled": false,
+      "history_complete": false,
+      "archive_preservation_verified": false,
+      "accepted_historical_container_coverage": true,
+      "accepted_historical_gap_count": 11,
+      "ledger_sha256": "5b1f6081dc7b5e61229a1be44bca4afc43889b735d6f5201e32c3022c8132be4",
+      "summary": {
+        "required_container_count": 41,
+        "earliest_recorded_lock_deadline": "2026-11-12T02:08:36.931000+00:00"
+      },
+      "checks": {
+        "backup": {
+          "fetch_state": "observed",
+          "latest_run_id": 40266462184,
+          "latest_attempt": 1,
+          "latest_state": "completed",
+          "latest_conclusion": "success",
+          "latest_finished_at": "2026-10-26T03:59:31Z",
+          "success_run_id": 40266462184,
+          "success_attempt": 1,
+          "success_finished_at": "2026-10-26T03:59:31Z",
+          "source_revision": "a9983076b547cf1e3fb8753bf5845dc1878d1cd2",
+          "artifact_id": 12626508450,
+          "artifact_sha256": "e8749c50d2c4e58b1c623062b544a5e0569b5744c66ff1bae10921dcff70dd8c",
+          "receipt_verified": true,
+          "retention_verified": true,
+          "retention_until": "2026-11-30T03:59:08.042000+00:00",
+          "receipt_checked_at": "2026-10-26T03:59:27.239292+00:00"
+        },
+        "restore": {
+          "fetch_state": "observed",
+          "latest_run_id": 40165197393,
+          "latest_attempt": 1,
+          "latest_state": "completed",
+          "latest_conclusion": "success",
+          "latest_finished_at": "2026-10-25T05:24:09Z",
+          "success_run_id": 40165197393,
+          "success_attempt": 1,
+          "success_finished_at": "2026-10-25T05:24:09Z",
+          "source_revision": "e7fc19954e91dce9d8b905757787f9dbe943e056",
+          "artifact_id": 12588505711,
+          "artifact_sha256": "5a990413644e8466bf8fdd3f6e5c49734e6c0077411724b18fca778fec289480",
+          "receipt_verified": true,
+          "retention_verified": true,
+          "retention_until": "2026-11-29T03:54:23.569000+00:00",
+          "receipt_checked_at": "2026-10-25T05:24:04.360904+00:00"
+        }
+      },
+      "archives": [
+        {
+          "artifact_id": 11293700607,
+          "sha256": "ee392023313476cca2291b270038e174892b01e1c35a5b14b696d33651dad059",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:35:24.488850+00:00",
+          "recorded_retain_until": "2026-11-12T02:08:36.931000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11296419607,
+          "sha256": "555a79ae8face43b5cce25c83287a53069c8e3b3edbcfe3cc85becdd3a724334",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:45.777401+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:44.829000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11305023882,
+          "sha256": "fb713aa5631c29c4565a72295e858d94cdce62e85b988b9fca87ff5d9dc98b82",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:46.287882+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:45.810000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11310073133,
+          "sha256": "ea130ebe371b06ed380b02fa107aa2123ea347d571b86356e33b7f2311edf90c",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:46.825105+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:46.324000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11313014614,
+          "sha256": "d811d27d04227c5b2755c9932726467f23ded039e8eea13adf0406ab8abcd749",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:47.417901+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:46.859000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11315606252,
+          "sha256": "d226d92eb1fd0baec93a367348e9a854e22ce931d2f513d09e0e71963fe01a1f",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:47.844192+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:47.451000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11316103861,
+          "sha256": "d53c8c0c0bf08f1058fb877e1efc81bf25e86cb79ff0309b11414a14925a3694",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:48.279847+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:47.876000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11321324199,
+          "sha256": "973dce3bef56e716c463eae7e38bd64b376daa7257c243751a75db51f16bd4e3",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:48.940860+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:48.313000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11321486232,
+          "sha256": "f0396a6a298a96bd05541588d353cc7df4625a7263db60da6620230d9b52ab7d",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:49.513820+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:48.985000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11323407829,
+          "sha256": "6051c684cd06d535c9e756edd9f74b096c4287a8f39ff09eea4c3ee3623aee3b",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:50.152290+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:49.548000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11324464483,
+          "sha256": "20f5c3297a9d743b763978e853ac746e32b0cbf9df563e8e1b26c0099393cbe9",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:50.896209+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:50.185000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11326553866,
+          "sha256": "07bb7489bb74a4f8a20b1ce3194f9a97e7e3c236ecd7e1e75eba4ed15b32eb55",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:51.846313+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:50.930000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11327558672,
+          "sha256": "0ffaa37e887646030b8ad66e93592a97625808fd05a2651ff0648f4de22dd92d",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:52.915044+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:51.883000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11331221273,
+          "sha256": "d4b1b0dad4160301486f66ecaf0679b00f079c9b8514f75bd629c982660f008d",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:54.190403+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:52.947000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11332549788,
+          "sha256": "65133a0ff5a179022a3293aaefc33c6fb933525cc9a083c2256a98ee853a7949",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:55.554774+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:54.224000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11335432011,
+          "sha256": "a76ce82930f074302d00a0f7f7ae4c04e8fcfe904e4690b0930633aec66a1e20",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:56.940232+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:55.588000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11337044860,
+          "sha256": "b01a2019b0a69d0c79e1782a81f4f57b12c5ad14ebd3f1dac8c48f89213b46d1",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:57.774966+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:56.972000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11341560967,
+          "sha256": "96fbf9357fe02cad95992674cbd92b7d0f5d290470da275d899f42f24b46d54a",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:13:58.977636+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:57.807000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11343860624,
+          "sha256": "6bbbd5299ee333507753c5aad854172c8e1419199e3726e94a7c53f05870cad1",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:00.165587+00:00",
+          "recorded_retain_until": "2026-11-30T20:13:59.010000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11347660942,
+          "sha256": "1c861e73f5028cad8f1bfaab33943d570299eecea5c8102d43f884fcfd133a4b",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:01.235218+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:00.199000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11349863035,
+          "sha256": "d76d3dd70273b507470c5a09a29d7634efee80a739bae1155e426efacae99dd6",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:02.283983+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:01.267000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11353138034,
+          "sha256": "e56a2bab7a4632e229ead4d918ad2b1cb4eff4e659b9809cc35a049f02a34aed",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:03.271872+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:02.316000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11356885630,
+          "sha256": "e96d3466ebad1f270e0fbb7c3a7e23080dc974367a211af13b0b04af9c2078f1",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:04.301156+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:03.304000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11360340517,
+          "sha256": "cb742f50f04645cee63d1baf410813066ebcc0ffad67a4f0eb54604f9eb37e96",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:05.269828+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:04.333000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11361999762,
+          "sha256": "82645e2904072ea94622ba448b3680a383cc9a9b6b9be6eecae5445040f85a29",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:06.092559+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:05.302000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11365479467,
+          "sha256": "5700c8560a593e055c5abbaca15a3c770b1e154730fed5cb88ed5f86137d059a",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:07.280191+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:06.125000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11372535588,
+          "sha256": "0827acba7b601bede5b71bb1af40c1a10e1f6897c48fab1bf317f913efeca1f9",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:08.116342+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:07.339000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11374999931,
+          "sha256": "666be6e762e0a802f56687be4a1c7bf81e7be97647f38ce78ec4871c7b12ade6",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:08.497269+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:08.150000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11381300274,
+          "sha256": "ab1c3ecf88cea43618a7fb3b8ba838647712fb17b61b052d08711a9f48da49ca",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:08.855069+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:08.531000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11384521874,
+          "sha256": "b651864241d238f3465ab306419744acba619f278ba46995891ffc11c93d23c5",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:09.207753+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:08.889000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11386604548,
+          "sha256": "201289488bed5cfd76635b66a22b387b42183c75b16f12bc2a40988838a47d47",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:09.569892+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:09.243000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11393954880,
+          "sha256": "b572b19e351f1fd971337533f83bec9c08e54c78517206e13970d0d4efe3161f",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:09.936121+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:09.603000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11506415578,
+          "sha256": "0152b98692d80824b26f389e7456f9ffeae084a104e4c382f20963e279d86f0b",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:10.315275+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:09.969000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11507991354,
+          "sha256": "4f47b606fa64f7347417bba361ccd7ee56c7ac4c9e910e96c9f2b4daa2f3d7e7",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T20:14:10.700090+00:00",
+          "recorded_retain_until": "2026-11-30T20:14:10.349000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11510693007,
+          "sha256": "da15aee0a42498eb5b7f439e198991d9ac84e555e1fc15714cc3f5ca81d04268",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:36:06.084685+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:31.228000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11513473147,
+          "sha256": "f3caca577d57e6d4ff8d45131e6133ae9ab7dee4feaf01427fb2a560b640f516",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:36:54.041497+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:36.579000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11515534653,
+          "sha256": "130857077a60584ecdac2b11c0505a49bc2b6f23765a6459a963752ff3a7fe75",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:37:42.191833+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:40.009000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11522307991,
+          "sha256": "78a37b888450ea81bc7cf6c628dc0197bfb1951b279bff014bce0a19d2a00eba",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T00:50:06.027564+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:52.326000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11522581310,
+          "sha256": "c6f23b70175328cabfe0260195739eec631261ce84a1b9209cf7013ee4994631",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:38:24.893595+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:42.697000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11523056094,
+          "sha256": "53fe23bd6e6069ce6228883a6dd26a4f91232423a6794b7c940f96e2008299be",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:39:57.764451+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:48.982000+00:00",
+          "recorded_lock_state": "deadline_future"
+        },
+        {
+          "artifact_id": 11523270256,
+          "sha256": "63c3af412e252b597c838bfa98ddb03bfb9b7310906cdfd58c43ea32ce89ede7",
+          "actions_state": "not_assessed",
+          "independent_archive_state": "historical_exact_version_proof",
+          "recorded_verified_at": "2026-10-26T07:39:11.212249+00:00",
+          "recorded_retain_until": "2026-11-12T02:13:45.533000+00:00",
+          "recorded_lock_state": "deadline_future"
+        }
+      ],
+      "findings": [
+        {
+          "artifact_id": 11293700607,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11296419607,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11305023882,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11310073133,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11313014614,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11315606252,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11316103861,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11321324199,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11321486232,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11323407829,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11324464483,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11326553866,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11327558672,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11331221273,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11332549788,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11335432011,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11337044860,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11341560967,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11343860624,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11347660942,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11349863035,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11353138034,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11356885630,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11360340517,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11361999762,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11365479467,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11372535588,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11374999931,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11381300274,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11384521874,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11386604548,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11393954880,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11506415578,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11507991354,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11510693007,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11513473147,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11515534653,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11522307991,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11522581310,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11523056094,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        },
+        {
+          "artifact_id": 11523270256,
+          "code": "historical_archive_protection_beyond_actions_expiry_unproven",
+          "state": "attention",
+          "owner_issue": 2343
+        }
+      ],
+      "limits": [
+        "GitHub metadata availability is not a download, original byte rehash or independent archive proof.",
+        "Receipt timestamps and lock deadlines are historical assertions, not fresh object-store readbacks.",
+        "36h backup monitoring threshold is not the proposed 24h RPO.",
+        "Eight-day drill review window is a reporting check, not an adopted recovery objective.",
+        "Successful isolated restore timing is not full-service RTO.",
+        "The owner accepted the frozen 41-container/11-gap scope under closed #2242.",
+        "Source Actions metadata is not re-inventoried; current retention and useful log coverage belong to #2343.",
+        "No policy adoption or all-history/all-log completeness is implied."
+      ]
+    },
+    "findings": [
+      {
+        "kind": "lifecycle",
+        "code": "configuration_read_unavailable",
+        "state": "unknown",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11293700607,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11296419607,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11305023882,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11310073133,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11313014614,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11315606252,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11316103861,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11321324199,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11321486232,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11323407829,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11324464483,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11326553866,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11327558672,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11331221273,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11332549788,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11335432011,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11337044860,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11341560967,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11343860624,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11347660942,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11349863035,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11353138034,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11356885630,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11360340517,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11361999762,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11365479467,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11372535588,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11374999931,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11381300274,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11384521874,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11386604548,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11393954880,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11506415578,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11507991354,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11510693007,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11513473147,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11515534653,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11522307991,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11522581310,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11523056094,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "archive",
+        "artifact_id": 11523270256,
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      },
+      {
+        "kind": "preservation_receipt",
+        "code": "protection_beyond_actions_expiry_unproven",
+        "state": "attention",
+        "owner_issue": 2343
+      }
+    ],
+    "summary": {
+      "archive_count": 41,
+      "pinned_object_count": 42,
+      "metadata_verified_count": 42,
+      "earliest_observed_lock_deadline": "2026-11-12T02:08:36.931000+00:00"
+    }
+  },
+  "existing_receipts_observed_at": "2026-10-26T22:58:30.616825+00:00",
+  "existing_scheduled_receipts": {
+    "backup": {
+      "workflow": "test262-central-backup.yml",
+      "check": {
+        "fetch_state": "observed",
+        "latest_run_id": 40266462184,
+        "latest_attempt": 1,
+        "latest_state": "completed",
+        "latest_conclusion": "success",
+        "latest_finished_at": "2026-10-26T03:59:31Z",
+        "success_run_id": 40266462184,
+        "success_attempt": 1,
+        "success_finished_at": "2026-10-26T03:59:31Z",
+        "source_revision": "a9983076b547cf1e3fb8753bf5845dc1878d1cd2",
+        "artifact_id": 12626508450,
+        "artifact_sha256": "e8749c50d2c4e58b1c623062b544a5e0569b5744c66ff1bae10921dcff70dd8c",
+        "receipt_verified": true,
+        "retention_verified": true,
+        "retention_until": "2026-11-30T03:59:08.042000+00:00",
+        "receipt_checked_at": "2026-10-26T03:59:27.239292+00:00"
+      },
+      "report_sha256": "1116ddf8075a1fcdcaeeeb589d1d8fd9a7ad6e561e91216b47f5e5964533cea6",
+      "measurements": {
+        "checked_at": "2026-10-26T03:59:27.239292+00:00",
+        "snapshot_started_at": "2026-10-26T03:56:21.209125+00:00"
+      },
+      "fresh_s3_readback": false
+    },
+    "restore": {
+      "workflow": "test262-retained-restore.yml",
+      "check": {
+        "fetch_state": "observed",
+        "latest_run_id": 40165197393,
+        "latest_attempt": 1,
+        "latest_state": "completed",
+        "latest_conclusion": "success",
+        "latest_finished_at": "2026-10-25T05:24:09Z",
+        "success_run_id": 40165197393,
+        "success_attempt": 1,
+        "success_finished_at": "2026-10-25T05:24:09Z",
+        "source_revision": "e7fc19954e91dce9d8b905757787f9dbe943e056",
+        "artifact_id": 12588505711,
+        "artifact_sha256": "5a990413644e8466bf8fdd3f6e5c49734e6c0077411724b18fca778fec289480",
+        "receipt_verified": true,
+        "retention_verified": true,
+        "retention_until": "2026-11-29T03:54:23.569000+00:00",
+        "receipt_checked_at": "2026-10-25T05:24:04.360904+00:00"
+      },
+      "report_sha256": "6f1d946be2ca8b522252d7f5b39147f619480df95162dca83d94c00d8d414bfd",
+      "measurements": {
+        "checked_at": "2026-10-25T05:24:04.360904+00:00"
+      },
+      "fresh_s3_readback": false
+    }
+  },
+  "limits": [
+    "The Git projection authenticates the Actions report; no S3 report upload was authorized or performed.",
+    "Exact-version metadata is fresh; pinned archive byte hashes were not rehashed or decrypted.",
+    "The existing scheduled receipts are separate historical observations, not new recovery workloads.",
+    "The older weekly restore lacks new self-report and recovery-timing fields; acceptance remains pending.",
+    "No retention horizon, policy, permission, recovery objective or notification routing was adopted."
+  ]
+}
