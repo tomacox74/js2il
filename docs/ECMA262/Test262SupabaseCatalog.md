@@ -1414,6 +1414,61 @@ the chosen dashboard-first policy; do not route notifications to an invented add
 
 ## Offline export reconciliation (#2342)
 
+### Accepted snapshot and compact evidence
+
+[Verification run 40181091117](https://github.com/tomacox74/js2il/actions/runs/40181091117),
+attempt 1, succeeded for both jobs on source
+`e7fc19954e91dce9d8b905757787f9dbe943e056`. The coordinator opted into
+reconciliation: **32 tables / 13,178,203 records**, **48 relationship** and
+**18 semantic** checks, all zero failures. Its last offline progress event
+(`history`) was at **283.082 seconds**, within the 1,800-second processing
+budget; this is not an interactive query SLO.
+
+The [sanitized compact record](evidence/reconciliation-40181091117.json) and
+[source pins](evidence/reconciliation-40181091117-pins.json) preserve the
+snapshot, table digests, checks and warning counts in versioned Git, independently
+of the original Actions artifacts' January 23, 2027 expiry. The acceptance
+summary and digests are also mirrored to #2342's existing issue ledger. This selected compact
+evidence preservation does not approve indefinite retention, retain the full
+export, or verify historical archive preservation.
+
+| #2342 acceptance | Evidence and exact boundary |
+| --- | --- |
+| Single-snapshot semantic reconciliation | Retained live record above; every exported table and defined relationship/check is present. Nonexported tables remain outside the contract. |
+| Deterministic logical comparison | #2390 and #2394 frozen-input/reverse-serialization, numeric and field-mutation tests; logical version 1 is preserved. Exact stream `sha256`, whole-file `file_sha256` and `logical_sha256` are distinct fields, not interchangeable hashes. |
+| Concurrent ingestion/scope isolation | PostgreSQL 17 test `test_bulk_export_snapshot_deadline_and_portal_cleanup`, scope-parity tests and [CI 40139543154](https://github.com/tomacox74/js2il/actions/runs/40139543154); the late provenance/run/observation chain and budget are excluded from the original snapshot and visible afterward. #2394 [CI 40163686943](https://github.com/tomacox74/js2il/actions/runs/40163686943) retains the scaled implementation's regressions. |
+| Historical handoff | Stored receipts attribute **62 source entries to 61 distinct imports**, with no ambiguous/unmatched/orphan entries; recorded original-manifest SHA matches the existing cutover manifest. **11 unavailable gaps** remain, `history_complete=false`, `original_manifest_inspected=false`, and `archive_preservation_verified=false`. #2242 owns original-archive coverage. |
+| Scoped performance compatibility/cadence | Reuse #2341's scoped performance-panel evidence and #2389's release/manual cadence and compatibility validation. Private permission audits are not republished. This does not establish newer or continuous ingestion, retrospective row equality, or complete #2341 monitoring acceptance. |
+| Retained receipts and reproduction | Versioned sanitized record plus issue ledger, pinned ZIPs and offline verification command below. Private identities, permission audits and individual import identities are excluded; original payloads are not republished. |
+
+The live record also reports **11 batches requiring refresh or marked conflicted**
+and **one publication requiring attention**. These are unresolved operational
+warnings owned by #2332/#2344, not failed reconciliation relationships. No repair,
+publication, refund, authority change or additional execution follows from this
+acceptance. #2343 owns ongoing retention and recovery decisions.
+
+To independently verify the already-produced receipt ZIPs (no database or S3
+access, export, fixture execution or publication):
+
+```sh
+gh api repos/tomacox74/js2il/actions/artifacts/12594876207/zip > /private/coordinator.zip
+gh api repos/tomacox74/js2il/actions/artifacts/12593334632/zip > /private/reporter.zip
+python -m scripts.test262.central.acceptance_receipt \
+  --pins docs/ECMA262/evidence/reconciliation-40181091117-pins.json \
+  --coordinator /private/coordinator.zip --reporter /private/reporter.zip \
+  --output /private/sanitized-reconciliation.json
+cmp /private/sanitized-reconciliation.json docs/ECMA262/evidence/reconciliation-40181091117.json
+```
+
+Keep downloaded originals private: they contain database/project identity and
+permission-audit fields. The offline command checks both ZIP pins, source and
+snapshot agreement, counts/check coverage, the version-1 logical root from
+per-table digests, historical parity and the stored ledger handoff. It does not
+reread the discarded 13-million-row export or independently recompute table
+digests. Source jobs did that while the payload existed. After Actions expiry,
+reproduction requires independently available originals; the public compact
+record remains evidence, not a replacement full snapshot or archive.
+
 Use `scripts.test262.central.reconciliation` against an **existing** export from
 `Client.export`, with its independently retained receipt. This consumes the
 32-table logical export contract; it does not introduce another exporter, read
