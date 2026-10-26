@@ -12,6 +12,11 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerExpressionDiscardResult(HIRExpression expression)
     {
+        if (NeedsSynchronousExpressionProtection)
+        {
+            return TryLowerExpression(expression, out _);
+        }
+
         // Expression statements and for-loop update clauses do not consume the expression result.
         // Special-case update expressions so we can avoid materializing the postfix return value
         // (which otherwise becomes a dead box/pop sequence in the generated IL).
@@ -114,11 +119,7 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        if (_isGenerator && !_isAsync
-            && _generatorTryCatchFinallyStack.Count > 0
-            && _generatorExpressionProtectionDepth == 0
-            && !HasActiveSynchronousExceptionHandler
-            && CountYieldExpressionsInExpression(expression) == 0)
+        if (NeedsSynchronousExpressionProtection)
         {
             var start = _methodBodyIR.Instructions.Count;
             _generatorExpressionProtectionDepth++;
@@ -437,6 +438,31 @@ public sealed partial class HIRToLIRLowerer
             case HIRAssignmentExpression assignExpr:
                 return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
 
+            case HIRClassElementDecoratorsExpression elementDecorators:
+                return TryLowerClassElementDecorators(elementDecorators, out resultTempVar);
+
+            case HIRApplyClassElementDecoratorsExpression applyElementDecorators:
+                if (!TryLowerExpression(new HIRUserClassTypeExpression(applyElementDecorators.RegistryClassName), out var decoratedOwner))
+                {
+                    resultTempVar = default;
+                    return false;
+                }
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.ApplyClassElementDecorators),
+                    [EnsureObject(decoratedOwner)], resultTempVar, [typeof(object)]));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
+            case HIRClassNameTDZExpression classNameTdz:
+                var classNameTdzTemp = CreateStringConstant(classNameTdz.Name);
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.ThrowClassNameTDZ),
+                    [classNameTdzTemp], resultTempVar, [typeof(string)]));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
             case HIRThrowTypeErrorExpression throwTypeErrorExpr:
                 _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError(throwTypeErrorExpr.Message));
                 resultTempVar = CreateTempVariable();
@@ -525,6 +551,14 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
+                if (UsesInstancePrivateField(privateReceiverStore.RegistryClassName, privateReceiverStore.FieldName))
+                {
+                    resultTempVar = EmitPrivateFieldOperation(
+                        nameof(JavaScriptRuntime.RuntimeServices.SetClassPrivateField),
+                        privateReceiverStore.RegistryClassName, privateReceiverStore.FieldName,
+                        privateStoreReceiver, privateStoreValue);
+                    return true;
+                }
                 _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
                     privateReceiverStore.RegistryClassName,
                     privateReceiverStore.FieldName,
@@ -677,26 +711,24 @@ public sealed partial class HIRToLIRLowerer
                 else if (privateLogicalAssignment.FieldName
                     is { } fieldName)
                 {
-                    privateCurrentValue = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(
-                        new LIRLoadPrivateReceiverField(
-                            privateLogicalAssignment
-                                .RegistryClassName,
-                            fieldName,
-                            privateReceiver,
-                            privateCurrentValue));
-                    DefineTempStorage(
-                        privateCurrentValue,
-                        GetPreferredFieldReadStorage(
+                    if (UsesInstancePrivateField(privateLogicalAssignment.RegistryClassName, fieldName))
+                    {
+                        privateCurrentValue = EmitPrivateFieldOperation(
+                            nameof(JavaScriptRuntime.RuntimeServices.GetClassPrivateField),
+                            privateLogicalAssignment.RegistryClassName, fieldName, privateReceiver);
+                    }
+                    else
+                    {
+                        privateCurrentValue = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRLoadPrivateReceiverField(
+                            privateLogicalAssignment.RegistryClassName, fieldName,
+                            privateReceiver, privateCurrentValue));
+                        DefineTempStorage(privateCurrentValue, GetPreferredFieldReadStorage(
                             _classRegistry != null
-                            && _classRegistry
-                                .TryGetPrivateFieldClrType(
-                                    privateLogicalAssignment
-                                        .RegistryClassName,
-                                    fieldName,
-                                    out var privateFieldType)
-                                ? privateFieldType
-                                : typeof(object)));
+                            && _classRegistry.TryGetPrivateFieldClrType(
+                                privateLogicalAssignment.RegistryClassName, fieldName, out var privateFieldType)
+                                ? privateFieldType : typeof(object)));
+                    }
                 }
                 else
                 {
@@ -822,13 +854,19 @@ public sealed partial class HIRToLIRLowerer
                 else if (privateLogicalAssignment.FieldName
                     is { } writableFieldName)
                 {
-                    _methodBodyIR.Instructions.Add(
-                        new LIRStorePrivateReceiverField(
-                            privateLogicalAssignment
-                                .RegistryClassName,
-                            writableFieldName,
-                            privateReceiver,
-                            privateAssignedValue));
+                    if (UsesInstancePrivateField(privateLogicalAssignment.RegistryClassName, writableFieldName))
+                    {
+                        EmitPrivateFieldOperation(
+                            nameof(JavaScriptRuntime.RuntimeServices.SetClassPrivateField),
+                            privateLogicalAssignment.RegistryClassName, writableFieldName,
+                            privateReceiver, privateAssignedValue);
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
+                            privateLogicalAssignment.RegistryClassName, writableFieldName,
+                            privateReceiver, privateAssignedValue));
+                    }
                 }
                 else
                 {
@@ -1393,7 +1431,7 @@ public sealed partial class HIRToLIRLowerer
                     return TryLowerDecoratedClass(initializedUserClassType, out resultTempVar);
                 }
 
-                if (TryLowerNamedClassExpressionInitialization(initializedUserClassType, out resultTempVar))
+                if (TryLowerNamedClassInitialization(initializedUserClassType, out resultTempVar))
                 {
                     return true;
                 }
@@ -1428,7 +1466,8 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerClassConstructorObject(
                             initializedUserClassType.RegistryClassName,
                             initializedUserClassType.ClassScope,
-                            out resultTempVar)
+                            out resultTempVar,
+                            freshIdentity: true)
                         && !TryLowerFreshClassConstructorFallback(
                             initializedUserClassType.RegistryClassName,
                             initializedUserClassType.ClassScope,
@@ -1659,6 +1698,13 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (UsesInstancePrivateField(access.RegistryClassName, access.FieldName))
+        {
+            resultTempVar = EmitPrivateFieldOperation(
+                nameof(JavaScriptRuntime.RuntimeServices.GetClassPrivateField),
+                access.RegistryClassName, access.FieldName, receiver);
+            return true;
+        }
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRLoadPrivateReceiverField(
             access.RegistryClassName, access.FieldName, receiver, resultTempVar));
@@ -1670,12 +1716,11 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerNamedClassExpressionInitialization(HIRInitializedUserClassTypeExpression initializedUserClassType, out TempVariable resultTempVar)
+    private bool TryLowerNamedClassInitialization(HIRInitializedUserClassTypeExpression initializedUserClassType, out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
-        if (!initializedUserClassType.IsClassExpression
-            || string.IsNullOrWhiteSpace(initializedUserClassType.ExplicitName)
+        if (string.IsNullOrWhiteSpace(initializedUserClassType.ExplicitName)
             || !initializedUserClassType.ClassScope.Bindings.TryGetValue(
                 initializedUserClassType.ExplicitName,
                 out var classNameBinding))
@@ -1733,7 +1778,7 @@ public sealed partial class HIRToLIRLowerer
                     CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
             }
 
-            if (!TryLowerClassConstructorObject(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
+            if (!TryLowerClassConstructorObject(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue, freshIdentity: true))
             {
                 return false;
             }
@@ -1804,7 +1849,7 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-    private bool TryLowerClassConstructorObject(string registryClassName, Scope classScope, out TempVariable resultTempVar)
+    private bool TryLowerClassConstructorObject(string registryClassName, Scope classScope, out TempVariable resultTempVar, bool freshIdentity = false)
     {
         if (_classInitializationOwnerTempsByRegistryName.TryGetValue(registryClassName, out resultTempVar))
         {
@@ -1860,10 +1905,12 @@ public sealed partial class HIRToLIRLowerer
             Result: resultTempVar,
             ClassConstructorType: typeTemp,
             ClassConstructorLength: minParamCount,
-            IsFreshClassConstructor: classScope.ClassSemantics?.IsExpression == true));
+            IsFreshClassConstructor: freshIdentity || classScope.ClassSemantics?.IsExpression == true));
         DefineTempStorage(
             resultTempVar,
             GetMaterializedCallableStorage(callableId));
+        if (freshIdentity || classScope.ClassSemantics?.IsExpression == true)
+            AttachClassLexicalPrivateBrand(classScope, resultTempVar);
 
         return true;
     }
@@ -1924,6 +1971,7 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(
             resultTempVar,
             GetMaterializedCallableStorage(callableId));
+        AttachClassLexicalPrivateBrand(classScope, resultTempVar);
         return true;
     }
 

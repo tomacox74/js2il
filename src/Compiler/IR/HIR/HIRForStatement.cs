@@ -44,6 +44,7 @@ public sealed class HIRForStatement : HIRStatement
     /// Optional label name (e.g. label: for (...) { ... }).
     /// </summary>
     public string? Label { get; }
+    public HIRResourceKind ResourceKind { get; init; }
 
     public HIRBitsetCountPattern? BitsetCountPattern { get; init; }
 

@@ -23,8 +23,9 @@ public sealed partial class HIRToLIRLowerer
             callee = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
                 nameof(JavaScriptRuntime.RuntimeServices.GetPreparedDynamicFunctionConstructor),
-                [receiver],
-                callee));
+                [receiver, CreateStringConstant(property.PropertyName)],
+                callee,
+                [typeof(object), typeof(string)]));
             DefineTempStorage(callee, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
         else

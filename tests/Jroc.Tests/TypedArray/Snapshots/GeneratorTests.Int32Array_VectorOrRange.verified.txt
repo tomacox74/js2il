@@ -321,7 +321,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 90 (0x5a)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -332,27 +332,29 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Int32Array_VectorOrRange/VectorMask::_scopes
-			IL_0015: ldarg.2
-			IL_0016: ldc.r8 0.0
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnsignedRightShift(object, object)
-			IL_0029: stloc.1
-			IL_002a: ldarg.0
-			IL_002b: ldloc.1
-			IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0031: stfld float64 Modules.Int32Array_VectorOrRange/VectorMask::end
-			IL_0036: ldarg.0
-			IL_0037: ldc.r8 20
-			IL_0040: box [System.Runtime]System.Double
-			IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-			IL_004a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Int32Array_VectorOrRange/VectorMask::words
-			IL_004f: ret
+			IL_0007: ldtoken Modules.Int32Array_VectorOrRange/VectorMask
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Int32Array_VectorOrRange/VectorMask::_scopes
+			IL_001f: ldarg.2
+			IL_0020: ldc.r8 0.0
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnsignedRightShift(object, object)
+			IL_0033: stloc.1
+			IL_0034: ldarg.0
+			IL_0035: ldloc.1
+			IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003b: stfld float64 Modules.Int32Array_VectorOrRange/VectorMask::end
+			IL_0040: ldarg.0
+			IL_0041: ldc.r8 20
+			IL_004a: box [System.Runtime]System.Double
+			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_0054: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Int32Array_VectorOrRange/VectorMask::words
+			IL_0059: ret
 		} // end of method VectorMask::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -689,7 +691,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 141 (0x8d)
+			// Code size: 151 (0x97)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -699,40 +701,42 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::_scopes
-			IL_0015: ldarg.0
-			IL_0016: ldc.r8 6
-			IL_001f: stfld float64 Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::end
-			IL_0024: ldc.i4.6
-			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_002a: dup
-			IL_002b: ldc.r8 0.0
-			IL_0034: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0039: dup
-			IL_003a: ldc.r8 0.0
-			IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0048: dup
-			IL_0049: ldc.r8 0.0
-			IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0057: dup
-			IL_0058: ldc.r8 0.0
-			IL_0061: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0066: dup
-			IL_0067: ldc.r8 0.0
-			IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0075: dup
-			IL_0076: ldc.r8 0.0
-			IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
-			IL_0084: stloc.1
-			IL_0085: ldarg.0
-			IL_0086: ldloc.1
-			IL_0087: stfld object Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::words
-			IL_008c: ret
+			IL_0007: ldtoken Modules.Int32Array_VectorOrRange/OrdinaryArrayMask
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::_scopes
+			IL_001f: ldarg.0
+			IL_0020: ldc.r8 6
+			IL_0029: stfld float64 Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::end
+			IL_002e: ldc.i4.6
+			IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0034: dup
+			IL_0035: ldc.r8 0.0
+			IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_0043: dup
+			IL_0044: ldc.r8 0.0
+			IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_0052: dup
+			IL_0053: ldc.r8 0.0
+			IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_0061: dup
+			IL_0062: ldc.r8 0.0
+			IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_0070: dup
+			IL_0071: ldc.r8 0.0
+			IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_007f: dup
+			IL_0080: ldc.r8 0.0
+			IL_0089: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::AddNumber(float64)
+			IL_008e: stloc.1
+			IL_008f: ldarg.0
+			IL_0090: ldloc.1
+			IL_0091: stfld object Modules.Int32Array_VectorOrRange/OrdinaryArrayMask::words
+			IL_0096: ret
 		} // end of method OrdinaryArrayMask::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -1153,7 +1157,7 @@
 		IL_0032: ldloc.s 19
 		IL_0034: ldc.i4.1
 		IL_0035: conv.r8
-		IL_0036: ldc.i4.0
+		IL_0036: ldc.i4.1
 		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_003c: castclass Modules.Int32Array_VectorOrRange/VectorMask/Scope_ctor/FunctionObject
 		IL_0041: stloc.s 21
@@ -1719,7 +1723,7 @@
 		IL_06c3: ldloc.s 19
 		IL_06c5: ldc.i4.0
 		IL_06c6: conv.r8
-		IL_06c7: ldc.i4.0
+		IL_06c7: ldc.i4.1
 		IL_06c8: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_06cd: castclass Modules.Int32Array_VectorOrRange/OrdinaryArrayMask/Scope_ctor/FunctionObject
 		IL_06d2: stloc.s 38

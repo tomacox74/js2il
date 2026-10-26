@@ -29,7 +29,11 @@ public abstract class JsClassConstructorObject : JsFunctionObject
 
     internal JsClassConstructorObject? PrivateBrandBaseConstructor { get; set; }
 
+    internal JsClassConstructorObject? LexicalPrivateBrandOwner { get; set; }
+
     internal Dictionary<string, string> ComputedFieldKeys { get; } = new(StringComparer.Ordinal);
+    internal List<RuntimeServices.ClassElementDecoration> ElementDecorations { get; } = new();
+    internal List<object> InstanceDecoratorInitializers { get; } = new();
 
     internal void Initialize(
         Type type,

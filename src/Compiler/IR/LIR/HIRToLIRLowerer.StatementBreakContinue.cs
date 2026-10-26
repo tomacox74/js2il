@@ -16,7 +16,8 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex))
+        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex)
+            || TryEmitAbruptThroughAsyncFinally(target, matchedAbsoluteIndex))
         {
             return true;
         }
@@ -40,7 +41,8 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex))
+        if (TryEmitAbruptThroughSyncFinally(target, matchedAbsoluteIndex)
+            || TryEmitAbruptThroughAsyncFinally(target, matchedAbsoluteIndex))
         {
             return true;
         }

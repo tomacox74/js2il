@@ -13,7 +13,8 @@ public sealed record ClassSemantics(
     string? BaseClassRegistryName = null,
     string? BaseIntrinsicName = null,
     bool RequiresParentScopes = false,
-    bool HasClassDecorators = false);
+    bool HasClassDecorators = false,
+    bool HasElementDecorators = false);
 
 /// <summary>
 /// AST-independent facts required to target a generated class method.

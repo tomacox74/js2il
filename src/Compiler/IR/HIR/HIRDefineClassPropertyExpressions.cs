@@ -38,6 +38,8 @@ public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
     public HIRExpression Key { get; init; }
     public HIRExpression Value { get; init; }
     public bool IsField { get; init; }
+    public string? DecoratedFieldOwner { get; init; }
+    public string? DecoratedFieldName { get; init; }
 }
 
 public sealed class HIRRefreshClassConstructorDescriptorsExpression : HIRExpression

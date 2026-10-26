@@ -197,16 +197,24 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadArgument(0);
                         ilEncoder.Branch(ILOpCode.Beq, directStore);
 
-                        ilEncoder.Ldstr(_metadataBuilder, storeInstanceField.FieldName);
-                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
-                        var defineClassField = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
-                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(defineClassField);
-                        ilEncoder.OpCode(ILOpCode.Pop);
-                        ilEncoder.Branch(ILOpCode.Br, done);
+                        if (storeInstanceField.PropertyAlreadyDefined)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                            ilEncoder.Branch(ILOpCode.Br, done);
+                        }
+                        else
+                        {
+                            ilEncoder.Ldstr(_metadataBuilder, storeInstanceField.FieldName);
+                            EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                            var defineClassField = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
+                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(defineClassField);
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                            ilEncoder.Branch(ILOpCode.Br, done);
+                        }
 
                         ilEncoder.MarkLabel(directStore);
                         ilEncoder.OpCode(ILOpCode.Castclass);

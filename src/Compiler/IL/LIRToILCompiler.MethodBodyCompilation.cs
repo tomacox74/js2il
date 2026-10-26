@@ -104,10 +104,15 @@ internal sealed partial class LIRToILCompiler
             if (!methodDescriptor.IsDerivedConstructor)
             {
                 ilEncoder.LoadArgument(0);
+                ilEncoder.OpCode(ILOpCode.Ldtoken);
+                ilEncoder.Token(methodDescriptor.ClassOwnerType);
+                ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
+                    typeof(Type), nameof(Type.GetTypeFromHandle),
+                    parameterTypes: new[] { typeof(RuntimeTypeHandle) }));
                 ilEncoder.Call(_memberRefRegistry.GetOrAddMethod(
                     typeof(JavaScriptRuntime.RuntimeServices),
                     nameof(JavaScriptRuntime.RuntimeServices.InitializeConstructedClassPrototype),
-                    parameterTypes: new[] { typeof(object) }));
+                    parameterTypes: new[] { typeof(object), typeof(Type) }));
             }
         }
 

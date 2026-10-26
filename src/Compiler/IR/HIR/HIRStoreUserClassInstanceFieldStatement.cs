@@ -14,4 +14,5 @@ public sealed class HIRStoreUserClassInstanceFieldStatement : HIRStatement
     public required bool IsPrivateField { get; init; }
     public required HIRExpression Value { get; init; }
     public SourceLocation? Location { get; init; }
+    public bool HasDecorators { get; init; }
 }

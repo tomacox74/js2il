@@ -705,20 +705,22 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 27 (0x1b)
+			// Code size: 37 (0x25)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldarg.1
-			IL_000e: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
-			IL_0013: ldarg.0
-			IL_0014: ldarg.2
-			IL_0015: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
-			IL_001a: ret
+			IL_0007: ldtoken Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldarg.1
+			IL_0018: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
+			IL_001d: ldarg.0
+			IL_001e: ldarg.2
+			IL_001f: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
+			IL_0024: ret
 		} // end of method Person::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -836,7 +838,7 @@
 		IL_002e: ldloc.2
 		IL_002f: ldc.i4.2
 		IL_0030: conv.r8
-		IL_0031: ldc.i4.0
+		IL_0031: ldc.i4.1
 		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0037: castclass Modules.CommonJS_Export_ClassWithConstructor_Lib/Person/Scope_ctor/FunctionObject
 		IL_003c: stloc.s 4

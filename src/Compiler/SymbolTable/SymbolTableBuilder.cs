@@ -706,7 +706,12 @@ namespace Jroc.SymbolTables
             Node calleeId,
             IEnumerable<Node> arguments)
         {
-            if (!DynamicFunctionSupport.IsFunctionConstructorCandidate(calleeId))
+            Node? ResolveDynamicSource(string name)
+            {
+                var declaration = TryResolveBinding(currentScope, name)?.DeclarationNode;
+                return declaration is VariableDeclarator variable ? variable.Init : declaration;
+            }
+            if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(calleeId, ResolveDynamicSource, out var generator))
             {
                 return;
             }
@@ -733,7 +738,8 @@ namespace Jroc.SymbolTables
                     loc.Column,
                     out var parsedFunctionExpr,
                     out _,
-                    createFactory: true)
+                    createFactory: true,
+                    generator: generator)
                 || parsedFunctionExpr == null)
             {
                 return;
@@ -1768,7 +1774,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
-                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Const,
                                 _ => BindingKind.Var
                             };
 
@@ -1828,7 +1834,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
-                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Const,
                                 _ => BindingKind.Var
                             };
 
@@ -1905,7 +1911,7 @@ namespace Jroc.SymbolTables
                                 VariableDeclarationKind.Var => BindingKind.Var,
                                 VariableDeclarationKind.Let => BindingKind.Let,
                                 VariableDeclarationKind.Const => BindingKind.Const,
-                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
+                                VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Const,
                                 _ => BindingKind.Var
                             };
 
@@ -2316,7 +2322,8 @@ namespace Jroc.SymbolTables
                     // captured loop-head bindings can be materialized per iteration.
                     var forScope = currentScope;
                     if (forStmt.Init is VariableDeclaration forInitDecl &&
-                        (forInitDecl.Kind == VariableDeclarationKind.Let || forInitDecl.Kind == VariableDeclarationKind.Const))
+                        (forInitDecl.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const
+                            or VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing))
                     {
                         var loc = forInitDecl.Location.Start;
                         var forScopeName = $"For_L{loc.Line}C{loc.Column}";
@@ -2361,7 +2368,7 @@ namespace Jroc.SymbolTables
                             VariableDeclarationKind.Var => BindingKind.Var,
                             VariableDeclarationKind.Let => BindingKind.Let,
                             VariableDeclarationKind.Const => BindingKind.Const,
-                            VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
+                            VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Const,
                             _ => BindingKind.Var
                         };
 
@@ -3585,6 +3592,10 @@ namespace Jroc.SymbolTables
             if (node is AwaitExpression or YieldExpression)
             {
                 count = 1;
+            }
+            if (node is VariableDeclaration { Kind: VariableDeclarationKind.AwaitUsing })
+            {
+                count++;
             }
             if (isAsyncGenerator && node is ReturnStatement { Argument: not null })
             {

@@ -342,14 +342,26 @@ public sealed class ClassDecoratorTests
     [InlineData("class C { @decorate method() {} }")]
     [InlineData("class C { @decorate static method() {} }")]
     [InlineData("class C { @decorate get value() {} }")]
+    [InlineData("class C { @decorate set value(value) {} }")]
     [InlineData("class C { @decorate value; }")]
+    public void AcceptsNoncomputedPublicElementDecorators(string source)
+    {
+        var parser = new JavaScriptParser();
+        var ast = parser.ParseJavaScript(source, "element-decorator.js");
+        var validation = new JavaScriptAstValidator().Validate(ast);
+        Assert.True(validation.IsValid);
+        Assert.Empty(validation.Errors);
+    }
+
+    [Theory]
     [InlineData("class C { @decorate #value; }")]
+    [InlineData("class C { @decorate #method() {} }")]
     public void RejectsUnimplementedElementDecorators(string source)
     {
         var parser = new JavaScriptParser();
         var ast = parser.ParseJavaScript(source, "element-decorator.js");
         var validation = new JavaScriptAstValidator().Validate(ast);
         Assert.False(validation.IsValid);
-        Assert.Contains(validation.Errors, error => error.Contains("Class element decorators"));
+        Assert.Contains(validation.Errors, error => error.Contains("Decorators on computed or private class elements"));
     }
 }

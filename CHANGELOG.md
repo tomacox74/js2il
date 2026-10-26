@@ -6,6 +6,19 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: resolve the remaining 154 class-statement, await-using and
+  async-function results with 149 verified passing cases and explicit exclusions
+  for three eval dependencies and two obsolete nonextensible-private proposals.
+- feat(resources): implement lexical using/await-using lifetimes, reverse
+  disposal, asynchronous ordering and suppressed errors across abrupt completion.
+  Preserve callable resources and cleanup after exceptions across await/yield.
+- fix(classes): preserve private-element ownership, initialization and brands,
+  class heritage and TDZ, built-in subclass construction, static initialization
+  and async super semantics. Support decorators on noncomputed public elements;
+  computed/private decorated elements remain unsupported.
+- fix(compiler): unwind destructuring iterator-close handlers before routing
+  async-loop exceptions, preserve prepared constructor property names, and
+  avoid private-element restrictions for classes without private methods.
 - docs(ecma262): align section 9 environment, private-name, realm, execution
   context, agent and weak-reference coverage with the current implementation.
   Retain the missing agent-wide asynchronous module evaluation counter as an

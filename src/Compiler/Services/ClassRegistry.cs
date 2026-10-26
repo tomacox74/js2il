@@ -37,7 +37,7 @@ namespace Jroc.Services
         private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount, IReadOnlyList<Type?> ParameterClrTypes)>> _methods = new(StringComparer.Ordinal);
         private readonly Dictionary<string, HashSet<string>> _generatorMethods =
             new(StringComparer.Ordinal);
-        private readonly HashSet<MethodDefinitionHandle> _methodsRequiringSuperContext = new();
+        private readonly HashSet<MethodDefinitionHandle> _methodsRequiringInvocationContext = new();
 
         public void RegisterStorageConstructor(string className, MethodDefinitionHandle constructor, EntityHandle baseType, Type? intrinsicBaseType)
             => _storageConstructors.Add(className, (constructor, baseType, intrinsicBaseType));
@@ -45,8 +45,11 @@ namespace Jroc.Services
         public (MethodDefinitionHandle Constructor, EntityHandle BaseType, Type? IntrinsicBaseType) GetStorageConstructor(string className)
             => _storageConstructors[className];
 
-        public void RequireMethodSuperContext(MethodDefinitionHandle method)
-            => _methodsRequiringSuperContext.Add(method);
+        public void RequireMethodInvocationContext(MethodDefinitionHandle method)
+            => _methodsRequiringInvocationContext.Add(method);
+
+        public bool RequiresMethodInvocationContext(MethodDefinitionHandle method)
+            => _methodsRequiringInvocationContext.Contains(method);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -496,7 +499,7 @@ namespace Jroc.Services
                 {
                     continue;
                 }
-                if (_methodsRequiringSuperContext.Contains(info.Method))
+                if (_methodsRequiringInvocationContext.Contains(info.Method))
                 {
                     return false;
                 }

@@ -139,7 +139,8 @@ public sealed partial class HIRToLIRLowerer
                 out var declaredClassSemantics))
         {
             if (declaredClassSemantics.IsExpression
-                || declaredClassSemantics.HasClassDecorators)
+                || declaredClassSemantics.HasClassDecorators
+                || declaredClassSemantics.IsDerived)
             {
                 return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
             }
@@ -445,9 +446,11 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
             }
 
-            if (newExpr.Arguments.Count > 3)
+            if (newExpr.Arguments.Count > 3
+                || intrinsicType.GetConstructor(
+                    Enumerable.Repeat(typeof(object), newExpr.Arguments.Count).ToArray()) is null)
             {
-                return false;
+                return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
             }
 
             var argTemps = new List<TempVariable>(newExpr.Arguments.Count);

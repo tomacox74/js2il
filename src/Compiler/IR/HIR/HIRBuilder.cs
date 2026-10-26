@@ -192,7 +192,7 @@ public static class HIRBuilder
                 return true;
             }
 
-            var builder = new HIRMethodBuilder(classScope);
+            var builder = new HIRMethodBuilder(classScope) { _classHeritageScope = classScope };
             return builder.TryParseExpressionForPrologue(superClass, out superClassExpression)
                 && superClassExpression != null;
         }
@@ -206,84 +206,6 @@ public static class HIRBuilder
             var name = classScope.DotNetTypeName ?? classScope.Name;
             return $"{ns}.{name}";
         }
-
-        static int FindInitializerInsertionIndexForDerivedConstructor(
-            IReadOnlyList<HIRStatement> bodyStatements,
-            IReadOnlyList<HIRStatement> initStatements)
-        {
-            for (int i = 0; i < bodyStatements.Count; i++)
-            {
-                if (bodyStatements[i] is HIRExpressionStatement expressionStatement
-                    && expressionStatement.Expression is HIRCallExpression callExpression
-                    && callExpression.Callee is HIRSuperExpression)
-                {
-                    return i;
-                }
-            }
-
-            if (!HasOnlyScopesInitialization(initStatements))
-            {
-                return -1;
-            }
-
-            for (int i = 0; i < bodyStatements.Count; i++)
-            {
-                if (StatementContainsDirectSuperCall(bodyStatements[i]))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        static bool HasOnlyScopesInitialization(IReadOnlyList<HIRStatement> initStatements)
-            => initStatements.Count > 0
-            && initStatements.All(statement =>
-                statement is HIRStoreUserClassInstanceFieldStatement instanceFieldStore
-                && instanceFieldStore.IsPrivateField
-                && string.Equals(instanceFieldStore.FieldName, "_scopes", StringComparison.Ordinal));
-
-        static bool StatementContainsDirectSuperCall(HIRStatement statement)
-            => statement switch
-            {
-                HIRExpressionStatement expressionStatement => ExpressionContainsDirectSuperCall(expressionStatement.Expression),
-                HIRBlock block => block.Statements.Any(StatementContainsDirectSuperCall),
-                HIRTryStatement tryStatement => StatementContainsDirectSuperCall(tryStatement.TryBlock),
-                _ => false
-            };
-
-        static bool ExpressionContainsDirectSuperCall(HIRExpression expression)
-            => expression switch
-            {
-                HIRCallExpression callExpression => callExpression.Callee is HIRSuperExpression
-                    || ExpressionContainsDirectSuperCall(callExpression.Callee)
-                    || callExpression.Arguments.Any(ExpressionContainsDirectSuperCall),
-                HIROptionalCallExpression optionalCallExpression => ExpressionContainsDirectSuperCall(optionalCallExpression.Callee)
-                    || optionalCallExpression.Arguments.Any(ExpressionContainsDirectSuperCall),
-                HIRIndexAccessExpression indexAccessExpression => ExpressionContainsDirectSuperCall(indexAccessExpression.Object)
-                    || ExpressionContainsDirectSuperCall(indexAccessExpression.Index),
-                HIROptionalIndexAccessExpression optionalIndexAccessExpression => ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Object)
-                    || ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Index),
-                HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
-                HIROptionalPropertyAccessExpression optionalPropertyAccessExpression => ExpressionContainsDirectSuperCall(optionalPropertyAccessExpression.Object),
-                HIRChainExpression chainExpression =>
-                    (chainExpression.BaseExpression is HIRSuperExpression
-                        && chainExpression.Segments.FirstOrDefault()
-                            is HIRChainCallSegment)
-                    || ExpressionContainsDirectSuperCall(chainExpression.BaseExpression)
-                    || chainExpression.Segments.Any(segment => segment switch
-                    {
-                        HIRChainIndexSegment index =>
-                            ExpressionContainsDirectSuperCall(index.Index),
-                        HIRChainCallSegment call =>
-                            call.Arguments.Any(ExpressionContainsDirectSuperCall),
-                        _ => false
-                    }),
-                HIRArrowFunctionExpression arrowFunctionExpression =>
-                    arrowFunctionExpression.ContainsSuperConstructorCallInBody,
-                _ => false
-            };
 
         switch (node)
         {
@@ -504,7 +426,11 @@ public static class HIRBuilder
                                             new HIRThisExpression(),
                                             new HIRLiteralExpression(JavascriptType.String, literalFieldName),
                                             initExpr!,
-                                            isField: true)));
+                                            isField: true)
+                                        {
+                                            DecoratedFieldOwner = propertyDefinition.Decorators.Count > 0 ? registryClassName : null,
+                                            DecoratedFieldName = literalFieldName
+                                        }));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
@@ -519,16 +445,12 @@ public static class HIRBuilder
                                 }
                                 else if (propertyDefinition.Key is Identifier pid)
                                 {
-                                    if (propertyDefinition.Value == null)
-                                    {
-                                        break;
-                                    }
-
                                     ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                                     {
                                         RegistryClassName = registryClassName,
                                         FieldName = pid.Name,
                                         IsPrivateField = false,
+                                        HasDecorators = propertyDefinition.Decorators.Count > 0,
                                         Value = initExpr!,
                                         Location = SourceLocation.FromNode(propertyDefinition)
                                     });
@@ -546,6 +468,9 @@ public static class HIRBuilder
                         Parameters = parameterPatterns,
                         SuperClassExpression = superClassExpression,
                         Body = new HIRBlock(ctorStatements)
+                        {
+                            ResourceKind = HIRMethodBuilder.GetResourceKind(ctorStatements)
+                        }
                     };
 
                     return true;
@@ -680,7 +605,11 @@ public static class HIRBuilder
                                             new HIRThisExpression(),
                                             new HIRLiteralExpression(JavascriptType.String, literalFieldName),
                                             initExpr!,
-                                            isField: true)));
+                                            isField: true)
+                                        {
+                                            DecoratedFieldOwner = propertyDefinition.Decorators.Count > 0 ? registryClassName : null,
+                                            DecoratedFieldName = literalFieldName
+                                        }));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
@@ -695,16 +624,12 @@ public static class HIRBuilder
                                 }
                                 else if (propertyDefinition.Key is Identifier pid)
                                 {
-                                    if (propertyDefinition.Value == null)
-                                    {
-                                        break;
-                                    }
-
                                     initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                                     {
                                         RegistryClassName = registryClassName,
                                         FieldName = pid.Name,
                                         IsPrivateField = false,
+                                        HasDecorators = propertyDefinition.Decorators.Count > 0,
                                         Value = initExpr!,
                                         Location = SourceLocation.FromNode(propertyDefinition)
                                     });
@@ -733,21 +658,7 @@ public static class HIRBuilder
                         initStatements.RemoveAt(0);
                     }
 
-                    if (isDerivedConstructor && initStatements.Count > 0)
-                    {
-                        var superCallIndex = FindInitializerInsertionIndexForDerivedConstructor(bodyStatements, initStatements);
-
-                        if (superCallIndex < 0)
-                        {
-                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
-                                "HIR parse failed to locate a usable super() evaluation point for derived constructor initialization");
-                            method = null!;
-                            return false;
-                        }
-
-                        bodyStatements.InsertRange(superCallIndex + 1, initStatements);
-                    }
-                    else
+                    if (!isDerivedConstructor)
                     {
                         bodyStatements.InsertRange(0, initStatements);
                     }
@@ -925,7 +836,11 @@ public static class HIRBuilder
                                             new HIRThisExpression(),
                                             new HIRLiteralExpression(JavascriptType.String, literalFieldName),
                                             initExpr!,
-                                            isField: true)));
+                                            isField: true)
+                                        {
+                                            DecoratedFieldOwner = propertyDefinition.Decorators.Count > 0 ? registryClassName : null,
+                                            DecoratedFieldName = literalFieldName
+                                        }));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
@@ -940,16 +855,12 @@ public static class HIRBuilder
                                 }
                                 else if (propertyDefinition.Key is Identifier pid)
                                 {
-                                    if (propertyDefinition.Value == null)
-                                    {
-                                        break;
-                                    }
-
                                     initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                                     {
                                         RegistryClassName = registryClassName,
                                         FieldName = pid.Name,
                                         IsPrivateField = false,
+                                        HasDecorators = propertyDefinition.Decorators.Count > 0,
                                         Value = initExpr!,
                                         Location = SourceLocation.FromNode(propertyDefinition)
                                     });
@@ -976,22 +887,7 @@ public static class HIRBuilder
                         initStatements.RemoveAt(0);
                     }
 
-                    if (isDerivedConstructor && initStatements.Count > 0)
-                    {
-                        // Insert instance initializers after the earliest usable super() evaluation.
-                        var superCallIndex = FindInitializerInsertionIndexForDerivedConstructor(bodyStatements, initStatements);
-
-                        if (superCallIndex < 0)
-                        {
-                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
-                                "HIR parse failed to locate a usable super() evaluation point for derived constructor initialization");
-                            method = null!;
-                            return false;
-                        }
-
-                        bodyStatements.InsertRange(superCallIndex + 1, initStatements);
-                    }
-                    else
+                    if (!isDerivedConstructor)
                     {
                         bodyStatements.InsertRange(0, initStatements);
                     }
@@ -1110,6 +1006,7 @@ partial class HIRMethodBuilder
     readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
     readonly JavaScriptParser _parser = new();
     string? _staticThisRegistryClassName;
+    internal Scope? _classHeritageScope;
     int _activeWithDepth;
 
     public HIRMethodBuilder(
@@ -1337,7 +1234,7 @@ partial class HIRMethodBuilder
         var arguments = siteNode is CallExpression callSite
             ? callSite.Arguments.Cast<Node>()
             : ((NewExpression)siteNode).Arguments.Cast<Node>();
-        if (!DynamicFunctionSupport.IsFunctionConstructorCandidate(callee)
+        if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(callee, ResolveInitializer, out _)
             || !DynamicFunctionSupport.TryGetStaticStringArguments(
                 arguments,
                 ResolveInitializer,
@@ -1395,7 +1292,7 @@ partial class HIRMethodBuilder
             {
                 if (scope.Bindings.TryGetValue(name, out var binding))
                 {
-                    return (binding.DeclarationNode as VariableDeclarator)?.Init;
+                    return binding.DeclarationNode is VariableDeclarator variable ? variable.Init : binding.DeclarationNode;
                 }
             }
             return null;
@@ -1962,6 +1859,7 @@ partial class HIRMethodBuilder
         var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
         var prototypeTypeExpr = new HIRPropertyAccessExpression(classTypeExpr, "prototype");
         var staticInitializers = new List<HIRStatement>();
+        var hasElementDecorators = false;
         var omitEagerMetadata = classNode is ClassDeclaration classDeclaration
             && CanOmitEagerClassMetadata(classDeclaration)
             && !classBody.Body.OfType<MethodDefinition>().Any(method => method.Key is PrivateIdentifier);
@@ -1974,6 +1872,13 @@ partial class HIRMethodBuilder
         {
             foreach (var element in classBody.Body)
             {
+                if (!TryBuildClassElementDecoratorPreparation(element, registryClassName, out var preparation))
+                    return false;
+                if (preparation != null)
+                {
+                    statements.Add(new HIRExpressionStatement(preparation));
+                    hasElementDecorators = true;
+                }
                 switch (element)
                 {
                     case PropertyDefinition instanceField when !instanceField.Static
@@ -2059,7 +1964,11 @@ partial class HIRMethodBuilder
                                     classTypeExpr,
                                     new HIRLiteralExpression(JavascriptType.String, literalStaticFieldName),
                                     hirValue!,
-                                    isField: true)));
+                                    isField: true)
+                                {
+                                    DecoratedFieldOwner = propertyDefinition.Decorators.Count > 0 ? registryClassName : null,
+                                    DecoratedFieldName = literalStaticFieldName
+                                }));
                             break;
                         }
 
@@ -2081,6 +1990,7 @@ partial class HIRMethodBuilder
                                 RegistryClassName = registryClassName,
                                 FieldName = pid.Name,
                                 IsPrivateField = false,
+                                HasDecorators = propertyDefinition.Decorators.Count > 0,
                                 Value = hirValue!,
                                 Location = SourceLocation.FromNode(propertyDefinition)
                             });
@@ -2219,7 +2129,10 @@ partial class HIRMethodBuilder
                             }
                             staticInitializers.Add(new HIRBlock(
                                 staticBlockStatements,
-                                GetMaterializedBlockScopeName(staticBlockScope)));
+                                GetMaterializedBlockScopeName(staticBlockScope))
+                            {
+                                ResourceKind = GetResourceKind(staticBlockStatements)
+                            });
                         }
                         finally
                         {
@@ -2231,6 +2144,8 @@ partial class HIRMethodBuilder
             }
 
             classNameBindingInsertIndex = statements.Count;
+            if (hasElementDecorators)
+                statements.Add(new HIRExpressionStatement(new HIRApplyClassElementDecoratorsExpression(registryClassName)));
             statements.AddRange(staticInitializers);
             return true;
         }
@@ -2242,7 +2157,7 @@ partial class HIRMethodBuilder
     }
 
     private static Scope GetClassElementEvaluationScope(Scope classScope)
-        => classScope.Parent ?? classScope;
+        => classScope;
 
     private HIRMethodBuilder CreateClassElementEvaluationBuilder(Scope classScope, string? staticThisRegistryClassName = null)
     {
@@ -2713,7 +2628,10 @@ partial class HIRMethodBuilder
 
     internal HIRBlock CreateMethodBodyBlock(List<HIRStatement> statements)
     {
-        return new HIRBlock(statements, GetMaterializedBlockScopeName(_currentScope));
+        return new HIRBlock(statements, GetMaterializedBlockScopeName(_currentScope))
+        {
+            ResourceKind = GetResourceKind(statements)
+        };
     }
 
     public bool TryParseParameters(in NodeList<Node> parameters, [NotNullWhen(true)] out IReadOnlyList<HIRPattern>? hirParameters)
@@ -2755,7 +2673,7 @@ partial class HIRMethodBuilder
                     {
                         return false;
                     }
-                    declStatements.Add(declHir!);
+                    declStatements.Add(MarkResourceDeclaration(declHir!, declStmt.Kind));
                 }
                 // If single declaration, return it directly; otherwise wrap in block
                 hirStatement = declStatements.Count == 1
@@ -2823,7 +2741,10 @@ partial class HIRMethodBuilder
                 _currentScope = previousScope;
                 hirStatement = new HIRBlock(
                     blockStatements,
-                    GetMaterializedBlockScopeName(blockScope));
+                    GetMaterializedBlockScopeName(blockScope))
+                {
+                    ResourceKind = GetResourceKind(blockStatements)
+                };
                 return true;
 
             case FunctionDeclaration:
@@ -2882,7 +2803,7 @@ partial class HIRMethodBuilder
                         }
                         else
                         {
-                            var heritageBuilder = new HIRMethodBuilder(classScope);
+                            var heritageBuilder = new HIRMethodBuilder(classScope) { _classHeritageScope = classScope };
                             if (!heritageBuilder.TryParseExpressionForPrologue(
                                     heritageExpression,
                                     out cdSuperClass)
@@ -2895,6 +2816,18 @@ partial class HIRMethodBuilder
 
                     // Exported class bindings must be materialized eagerly so their export cell is written
                     // (the lazy-metadata optimization would otherwise never assign the binding).
+                    if (cdClassName != null
+                        && classScope.Bindings.TryGetValue(cdClassName, out var innerClassBinding)
+                        && innerClassBinding.IsCaptured)
+                    {
+                        var innerInitialization = new HIRInitializedUserClassTypeExpression(
+                            GetRegistryClassName(classScope), classScope, [], cdSuperClass,
+                            explicitName: cdClassName);
+                        staticInitStatements.Insert(
+                            classNameBindingInsertIndex >= 0 ? classNameBindingInsertIndex : staticInitStatements.Count,
+                            new HIRVariableDeclaration(new Symbol(innerClassBinding), innerInitialization));
+                        hasInitialization = true;
+                    }
                     if (_currentScope?.Bindings.TryGetValue(cdBindingName, out var cdClassBinding) == true
                         && (hasInitialization
                             || !CanOmitEagerClassMetadata(classDecl)
@@ -2983,7 +2916,8 @@ partial class HIRMethodBuilder
                     // not the ForStatement itself.
                     Scope? forScope = null;
                     if (forStmt.Init is VariableDeclaration forInitDecl
-                        && (forInitDecl.Kind == VariableDeclarationKind.Let || forInitDecl.Kind == VariableDeclarationKind.Const))
+                        && forInitDecl.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const
+                            or VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing)
                     {
                         forScope = FindChildScopeForAstNode(forInitDecl);
                     }
@@ -3009,7 +2943,7 @@ partial class HIRMethodBuilder
                                     _currentScope = previousForScope;
                                     return false;
                                 }
-                                forDeclStatements.Add(declHir!);
+                                forDeclStatements.Add(MarkResourceDeclaration(declHir!, varDecl.Kind));
                             }
                             forInitStmt = forDeclStatements.Count == 1
                                 ? forDeclStatements[0]
@@ -3058,6 +2992,7 @@ partial class HIRMethodBuilder
                     _currentScope = previousForScope;
                     hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!)
                     {
+                        ResourceKind = forInitStmt is null ? HIRResourceKind.None : GetResourceKind([forInitStmt]),
                         BitsetCountPattern = TryRecognizeBitsetCount(forStmt),
                         Int32ArrayVectorOrPattern = TryRecognizeInt32ArrayVectorOr(forStmt),
                         Int32ArrayLocalVectorOrPattern = TryRecognizeInt32ArrayLocalVectorOr(forStmt)
@@ -3074,7 +3009,7 @@ partial class HIRMethodBuilder
                         VariableDeclarationKind.Var => BindingKind.Var,
                         VariableDeclarationKind.Let => BindingKind.Let,
                         VariableDeclarationKind.Const => BindingKind.Const,
-                        VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Let,
+                        VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing => BindingKind.Const,
                         _ => BindingKind.Var
                     };
 
@@ -3216,7 +3151,12 @@ partial class HIRMethodBuilder
                     }
 
                     _currentScope = previousForOfScope;
-                    hirStatement = new HIRForOfStatement(targetPattern!, isDeclaration, declarationKind, forOfStmt.Await, loopHeadBindings, iterableExpr!, bodyStmt!);
+                    hirStatement = new HIRForOfStatement(targetPattern!, isDeclaration, declarationKind, forOfStmt.Await, loopHeadBindings, iterableExpr!, bodyStmt!)
+                    {
+                        ResourceKind = forOfStmt.Left is VariableDeclaration resourceDeclaration
+                            ? GetResourceKind(resourceDeclaration.Kind)
+                            : HIRResourceKind.None
+                    };
                     return true;
                 }
 
@@ -3416,8 +3356,14 @@ partial class HIRMethodBuilder
 
                     hirStatement = labeledBody switch
                     {
-                        HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
-                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.IsDeclaration, forOfStmt.DeclarationKind, forOfStmt.IsAwait, forOfStmt.LoopHeadBindings, forOfStmt.Iterable, forOfStmt.Body, labelName),
+                        HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName)
+                        {
+                            ResourceKind = forStmt.ResourceKind
+                        },
+                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.IsDeclaration, forOfStmt.DeclarationKind, forOfStmt.IsAwait, forOfStmt.LoopHeadBindings, forOfStmt.Iterable, forOfStmt.Body, labelName)
+                        {
+                            ResourceKind = forOfStmt.ResourceKind
+                        },
                         HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.IsDeclaration, forInStmt.DeclarationKind, forInStmt.LoopHeadBindings, forInStmt.Enumerable, forInStmt.Body, labelName),
                         HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
                         HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),
@@ -4006,7 +3952,7 @@ partial class HIRMethodBuilder
                 return true;
 
             case Super:
-                hirExpr = new HIRSuperExpression();
+                hirExpr = new HIRSuperExpression(_staticThisRegistryClassName);
                 return true;
 
             case MetaProperty metaProp:
@@ -4260,6 +4206,15 @@ partial class HIRMethodBuilder
                     argExprs,
                     stableDirectCallableTarget,
                     ResolveStaticClassMethodTarget(calleeExpr!));
+                if (calleeExpr is HIRSuperExpression)
+                {
+                    if (!TryBuildSuperCallInitializers(out var instanceInitializers))
+                        return false;
+                    hirExpr = new HIRCallExpression(calleeExpr, argExprs)
+                    {
+                        InstanceInitializers = instanceInitializers
+                    };
+                }
                 return true;
 
             case ImportExpression importExpr:
@@ -4440,6 +4395,12 @@ partial class HIRMethodBuilder
                 // FindSymbol always returns a Symbol; BindingKind.Global indicates an undeclared/ambient global.
                 // If the symbol is user-declared (var/let/const/function), it shadows any global constant.
                 var symbol = _currentScope.FindSymbol(identifierExpr.Name);
+                if (_classHeritageScope != null
+                    && ReferenceEquals(symbol.BindingInfo.DeclaringScope, _classHeritageScope))
+                {
+                    hirExpr = new HIRClassNameTDZExpression(identifierExpr.Name);
+                    return true;
+                }
                 if (symbol.Kind != BindingKind.Global)
                 {
                     if (TryCreateClassExpressionNameValue(symbol, out var classExpressionNameValue))
@@ -4743,7 +4704,7 @@ partial class HIRMethodBuilder
                         }
                         else
                         {
-                            var heritageBuilder = new HIRMethodBuilder(classExprScope);
+                            var heritageBuilder = new HIRMethodBuilder(classExprScope) { _classHeritageScope = classExprScope };
                             if (!heritageBuilder.TryParseExpressionForPrologue(
                                     heritageExpression,
                                     out classExprSuperClass)
@@ -5425,7 +5386,8 @@ partial class HIRMethodBuilder
         // Fallback for `for (let/const ...)` loop-head scopes.
         // SymbolTableBuilder creates these with AstNode = init VariableDeclaration and name `For_L{line}C{col}`.
         if (astNode is VariableDeclaration decl
-            && (decl.Kind == VariableDeclarationKind.Let || decl.Kind == VariableDeclarationKind.Const))
+            && decl.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const
+                or VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing)
         {
             var loc = decl.Location.Start;
             var forName = $"For_L{loc.Line}C{loc.Column}";

@@ -11,6 +11,11 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerForStatement(HIRForStatement forStmt)
     {
+        if (forStmt.ResourceKind != HIRResourceKind.None)
+        {
+            var loop = new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, forStmt.Label);
+            return TryLowerResourceScope(loop, forStmt.ResourceKind);
+        }
         var lirInstructions = _methodBodyIR.Instructions;
 
         // For loop structure:

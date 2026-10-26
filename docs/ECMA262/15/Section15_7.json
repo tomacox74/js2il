@@ -5,7 +5,7 @@
   "title": "Class Definitions",
   "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
-  "intro": "JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. String- and numeric-literal class accessor names, string-literal field names, computed class field names, and computed method/accessor names are supported, including observable key coercion and duplicate accessor replacement. Broader class-field and exotic subclass edge cases remain limited.",
+  "intro": "JROC supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. String- and numeric-literal class accessor names, string-literal field names, computed class field names, and computed method/accessor names are supported, including observable key coercion and duplicate accessor replacement. Decorators support classes and noncomputed public methods, accessors, and fields. Computed/private decorated elements, computed/private auto-accessors, decorated auto-accessors, and general runtime source evaluation remain unsupported.",
   "parent": {
     "clause": "15"
   },
@@ -114,6 +114,23 @@
   "support": {
     "entries": [
       {
+        "clause": "15.7",
+        "feature": "Complete pinned class-statement evidence",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/class/RemainingLanguageCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/RemainingLanguageCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/builtin-objects/String/RemainingLanguageCompletionExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/static-init-super-property.js",
+          "test/language/statements/class/static-init-arguments-methods.js",
+          "test/language/statements/class/subclass/builtin-objects/String/regular-subclassing.js",
+          "test/language/statements/class/decorator/syntax/valid/class-element-decorator-call-expr-identifier-reference.js"
+        ],
+        "notes": "All 4,367 applicable pinned class-statement cases have outcomes: 4,261 verified passing, 104 unsupported eval dependencies, and two unsupported nonextensible-applies-to-private proposal cases. Private elements follow ES2025 and Node.js semantics and are allowed on nonextensible objects. Coverage includes per-evaluation private identity, nested-class lexical private ownership, private initialization and reinitialization checks, heritage evaluation and TDZ, built-in subclasses, static super/arguments, async super receivers, and noncomputed public element decorators. Dynamic Function sources still require compile-time preparation. Results are branch-local native validation, not central trusted acceptance."
+      },
+      {
         "clause": "15.7.12",
         "feature": "Class static-block scope and class-definition coverage",
         "status": "Supported with Limitations",
@@ -131,7 +148,7 @@
           "test/language/statements/class/static-init-expr-new-target.js",
           "test/language/statements/class/static-init-scope-var-close.js"
         ],
-        "notes": "The class-definition follow-up registers 339 exact pinned fixtures: 265 verified passing cases across all 505 required native variants and 74 known unsupported eval cases. Coverage includes computed names, method restrictions, fields, subclass initialization, and class grammar. Each static block is its own var-hoisting boundary, including nested ordinary blocks; bindings do not leak into sibling static blocks. new.target is valid and evaluates to undefined in a static block and its lexical arrows, while ordinary nested functions retain their own new.target. Structural compiler guards cover scope ownership, validation, and callable boundaries. Private-brand lifecycle, inheritance, decorators, other static-block super/arguments cases, and two local metadata-parser gaps remain deferred. Results are branch-local native validation, not central trusted acceptance; this is not complete class-declaration conformance."
+        "notes": "The class-definition follow-up registers 339 exact pinned fixtures: 265 verified passing cases across all 505 required native variants and 74 known unsupported eval cases. Coverage includes computed names, method restrictions, fields, subclass initialization, and class grammar. Each static block is its own var-hoisting boundary, including nested ordinary blocks; bindings do not leak into sibling static blocks. new.target is valid and evaluates to undefined in a static block and its lexical arrows, while ordinary nested functions retain their own new.target. Structural compiler guards cover scope ownership, validation, and callable boundaries. The statement-corpus completion entry covers the previously deferred private-brand, inheritance, decorator, and static-block cases. Results are branch-local native validation, not central trusted acceptance."
       },
       {
         "clause": "15.7.13",
@@ -160,7 +177,7 @@
           "test/language/statements/class/elements/async-private-method-static/returns-async-arrow-returns-arguments-from-parent-function.js",
           "test/language/statements/class/elements/private-methods/prod-private-async-generator.js"
         ],
-        "notes": "Async class methods and elements have 400 additional verified passing Test262 results across all 790 required native variants. Coverage includes private/static async methods, async-generator delegation and promise rejection, default parameters, lexical arguments/new.target, restricted caller/arguments properties, and class-element names, separators, and private-member forms. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. Broader private-brand lifecycle and class-definition edge cases remain limited; this is not complete class-declaration conformance."
+        "notes": "Async class methods and elements have 400 additional verified passing Test262 results across all 790 required native variants. Coverage includes private/static async methods, async-generator delegation and promise rejection, default parameters, lexical arguments/new.target, restricted caller/arguments properties, and class-element names, separators, and private-member forms. All selected cases pass without product or native harness changes; none requires eval. Results are branch-local native validation, not central trusted acceptance. Further private-brand and class-definition evidence is documented in the statement-corpus completion entry."
       },
       {
         "clause": "15.7.13",
@@ -226,7 +243,7 @@
           "test/language/statements/class/elements/privatefieldset-typeerror-10.js",
           "test/language/statements/class/elements/privatefieldset-typeerror-11.js"
         ],
-        "notes": "Class-declaration elements have 309 additional verified passing Test262 results across all 618 required native variants and 30 known unsupported eval cases. Private field and accessor targets in destructuring and for-in/for-of loop heads use lexically resolved private metadata. Receiver evaluation precedes property access and rest copying; private-brand checks occur when storing, after getter side effects and defaults. Setter dispatch and readonly-member TypeErrors share ordinary private-assignment lowering. Existing iterator cleanup is retained. Coverage also includes private/public fields, computed names, private methods/accessors, initialization, and valid syntax. Class-definition details, private-brand lifecycle, private access in computed names, and indirect-super field initialization remain limited; this is not complete class-declaration conformance. Results are branch-local native validation, not central trusted acceptance."
+        "notes": "Class-declaration elements have 309 additional verified passing Test262 results across all 618 required native variants and 30 known unsupported eval cases. Private field and accessor targets in destructuring and for-in/for-of loop heads use lexically resolved private metadata. Receiver evaluation precedes property access and rest copying; private-brand checks occur when storing, after getter side effects and defaults. Setter dispatch and readonly-member TypeErrors share ordinary private-assignment lowering. Existing iterator cleanup is retained. Coverage also includes private/public fields, computed names, private methods/accessors, initialization, and valid syntax. Further private-brand, computed-name, and indirect-super initialization results are documented in the statement-corpus completion entry. Results are branch-local native validation, not central trusted acceptance."
       },
       {
         "clause": "15.7.10",
@@ -263,7 +280,7 @@
         "testScripts": [
           "tests/Jroc.Tests/ClassDecoratorTests.cs"
         ],
-        "notes": "Class decorator expressions are evaluated in source order before heritage. Computed keys and method definitions precede reverse-order class decorator application, which occurs before static fields and blocks. Each decorator receives a fresh kind/name/addInitializer context; an anonymous class without an inferred name has an undefined context name. Callable replacement values are supported through ordinary runtime call/construct interfaces, while source-named class lexical bindings continue to refer to the original class. Added initializers run in registration order after static initialization with the final class as their receiver. Abrupt decoration prevents static initialization, and abrupt static initialization prevents the extra initializers. Noncallable decorators, replacements, and initializer callbacks throw TypeError; addInitializer is invalid once its decorator returns. Element decorators (including decorated auto-accessors) are explicitly rejected rather than silently omitted. Decorator metadata is not implemented."
+        "notes": "Class decorator expressions are evaluated in source order before heritage. Computed keys and method definitions precede reverse-order class decorator application, which occurs before static fields and blocks. Each decorator receives a fresh kind/name/addInitializer context; an anonymous class without an inferred name has an undefined context name. Callable replacement values are supported through ordinary runtime call/construct interfaces, while source-named class lexical bindings continue to refer to the original class. Added initializers run in registration order after static initialization with the final class as their receiver. Abrupt decoration prevents static initialization, and abrupt static initialization prevents the extra initializers. Noncallable decorators, replacements, and initializer callbacks throw TypeError; addInitializer is invalid once its decorator returns. Noncomputed public method/accessor/field decorators support replacement functions, field transformations, and extra initializers. Computed/private element decorators and decorated auto-accessors are explicitly rejected rather than silently omitted. Decorator metadata is not implemented."
       },
       {
         "clause": "15.7.13",

@@ -16,6 +16,20 @@ This report provides detailed Test262 conformance evidence for the current devel
 
 Counts are unique, standalone Test262 files. Strict and non-strict execution variants are not counted separately.
 
+Class statements, await-using, and async-function statements now have outcomes
+for every applicable pinned case. The remaining 154 results comprise 149 verified
+passing cases, three unsupported eval dependencies, and two obsolete
+`nonextensible-applies-to-private` proposal cases. ES2025 and Node.js permit
+private elements on nonextensible objects; those two contrary proposal tests
+remain explicitly excluded rather than changing compatible runtime behavior.
+Native validation covers every required variant of the three supported
+corpora. Catalogue reporting remains unavailable, so this is branch-local
+evidence, not central trusted acceptance.
+
+Overall and language totals now sum the published component rows. This also
+corrects earlier inconsistent rollups; it does not reclassify a product failure
+as passing or carry forward unaccounted passing results.
+
 Array and Date now have verified passing results for all applicable tests at the
 pinned revision. String's remaining twelve known-unsupported cases require eval.
 All newly verified cases passed every required native execution variant on the
@@ -200,9 +214,9 @@ Class-declaration elements have 309 additional verified passing results
 across all 618 required native variants and 30 known unsupported eval cases.
 Coverage includes field and private-member forms,
 computed names, initialization, valid syntax, and private assignment targets
-in destructuring and loop heads. Class-definition details, private-brand
-lifecycle, private access in computed names, and field initialization through
-indirect super calls remain limited; this is not complete class conformance.
+in destructuring and loop heads. Subsequent completion results below cover
+additional private-brand, computed-name, and indirect-super initialization
+semantics; eval and the documented decorator limitations remain unsupported.
 Catalogue reporting was unavailable, so these results are branch-local
 native validation, not central trusted acceptance.
 
@@ -238,16 +252,15 @@ initialization, and class grammar. Static-block var declarations now remain in
 their own block, and new.target is undefined in static blocks and their lexical
 arrows without changing ordinary nested functions.
 
-The complete remaining inventory contained 394 unregistered paths. This batch
-leaves 55 unregistered: 53 metadata-valid cases with other nonpassing baseline
-results, including one worker infrastructure failure, and two cases blocked by
-the local metadata parser. Private-brand lifecycle, inheritance, decorators, and
-other static-block edge cases remain deferred rather than skipped as passing.
-The class row retains six previously registered cases without published results;
-they are not counted as verified coverage. Selection and native validation are
-explicitly offline/branch-local because catalogue MCP tools were unavailable and
-the Data API rejected the reporting schema. These are not central trusted
-acceptance results.
+The follow-up completes the class-statement corpus with 4,261 verified passing
+cases, 104 unsupported eval dependencies, and two excluded obsolete proposal
+cases. It covers the previously deferred private-brand lifecycle, inheritance,
+built-in subclasses, static initialization, and noncomputed public element
+decorators. Computed/private decorated elements and decorated auto-accessors
+remain unsupported. Selection and native validation are explicitly
+offline/branch-local because catalogue MCP tools were unavailable and the Data
+API rejected the reporting schema. These are not central trusted acceptance
+results.
 
 Variable and with statements now have outcomes for all 359 applicable pinned
 cases: 163 verified variable-statement cases and 15 unsupported eval cases,
@@ -269,8 +282,8 @@ acceptance.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 21,908 | 443 | 1,292 | 23,643 | **92.66%** |
-| **Total** | 39,838 | 474 | 7,929 | 48,241 | **82.58%** |
+| Language syntax and semantics | 21,895 | 448 | 1,300 | 23,643 | **92.61%** |
+| **Total** | 39,825 | 479 | 7,937 | 48,241 | **82.55%** |
 
 ## Language Areas
 
@@ -301,7 +314,7 @@ acceptance.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 7,447 | 142 | 1,748 | 9,337 | **79.76%** |
+| `statements` | 8,895 | 177 | 265 | 9,337 | **95.27%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -383,12 +396,12 @@ acceptance.
 
 | Feature | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
-| `async-function` | 48 | 0 | 26 | 74 | **64.86%** |
+| `async-function` | 72 | 2 | 0 | 74 | **97.30%** |
 | `async-generator` | 300 | 1 | 0 | 301 | **99.67%** |
-| `await-using` | 27 | 0 | 67 | 94 | **28.72%** |
+| `await-using` | 93 | 1 | 0 | 94 | **98.94%** |
 | `block` | 21 | 0 | 0 | 21 | **100.00%** |
 | `break` | 19 | 0 | 1 | 20 | **95.00%** |
-| `class` | 4,202 | 104 | 61 | 4,367 | **96.22%** |
+| `class` | 4,261 | 106 | 0 | 4,367 | **97.57%** |
 | `const` | 134 | 1 | 1 | 136 | **98.53%** |
 | `continue` | 23 | 0 | 1 | 24 | **95.83%** |
 | `debugger` | 1 | 0 | 1 | 2 | **50.00%** |

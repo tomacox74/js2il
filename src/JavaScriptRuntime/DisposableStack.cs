@@ -76,11 +76,7 @@ public sealed class DisposableStack : JsObject
             throw new TypeError("DisposableStack.prototype.use requires an object");
         }
 
-        var callback = ObjectRuntime.GetProperty(value, Symbol.dispose.DebugId);
-        if (!CallableOperations.IsCallable(callback))
-        {
-            throw new TypeError("Disposable resource method is not callable");
-        }
+        var callback = DisposableResourceScope.GetDisposeMethod(value, false, out _);
 
         resources.Add(new DisposableResource(DisposalKind.Use, value, callback));
         return value;

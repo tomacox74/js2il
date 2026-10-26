@@ -101,7 +101,8 @@ public sealed class PrimitivePrototypeBuiltinAdapterRuntimeTests
                 ObjectRuntime.GetItem(globalObject, "Symbol"));
 
             Assert.True(BuiltinFunctionDelegates.IsReceiverAware(symbolAdapter.Target));
-            Assert.False(symbolAdapter.RequiresInvocationContext);
+            // Symbol must observe new.target to reject construction, not class heritage.
+            Assert.True(symbolAdapter.RequiresInvocationContext);
 
             var created = CallableOperations.Call1(symbolAdapter, null, "d");
             var symbol = Assert.IsType<JavaScriptRuntime.Symbol>(created);

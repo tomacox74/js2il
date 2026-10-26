@@ -253,14 +253,16 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 13 (0xd)
+			// Code size: 23 (0x17)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ret
+			IL_0007: ldtoken Modules.Generator_Inheritance_SuperIteratorMethod/Base
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ret
 		} // end of method Base::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -926,7 +928,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 509 (0x1fd)
+		// Code size: 433 (0x1b1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Inheritance_SuperIteratorMethod/Scope,
@@ -960,7 +962,7 @@
 		IL_002e: ldloc.2
 		IL_002f: ldc.i4.0
 		IL_0030: conv.r8
-		IL_0031: ldc.i4.0
+		IL_0031: ldc.i4.1
 		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0037: castclass Modules.Generator_Inheritance_SuperIteratorMethod/Base/FunctionObject
 		IL_003c: stloc.s 4
@@ -1021,7 +1023,7 @@
 		IL_00e1: ldloc.2
 		IL_00e2: ldc.i4.0
 		IL_00e3: conv.r8
-		IL_00e4: ldc.i4.0
+		IL_00e4: ldc.i4.1
 		IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_00ea: castclass Modules.Generator_Inheritance_SuperIteratorMethod/Derived/FunctionObject
 		IL_00ef: stloc.s 7
@@ -1067,51 +1069,27 @@
 		IL_016c: pop
 		IL_016d: ldloc.s 5
 		IL_016f: stloc.1
-		IL_0170: ldc.i4.1
-		IL_0171: newarr [System.Runtime]System.Object
-		IL_0176: dup
-		IL_0177: ldc.i4.0
-		IL_0178: ldloc.0
-		IL_0179: stelem.ref
-		IL_017a: stloc.2
-		IL_017b: ldloc.2
-		IL_017c: ldc.i4.0
-		IL_017d: newarr [System.Runtime]System.Object
-		IL_0182: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0187: ldloc.1
-		IL_0188: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-		IL_018d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-		IL_0192: newobj instance void Modules.Generator_Inheritance_SuperIteratorMethod/Derived::.ctor(object[])
-		IL_0197: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-		IL_019c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_01a1: dup
-		IL_01a2: ldloc.1
-		IL_01a3: ldstr "prototype"
-		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-		IL_01ad: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_01b2: ldnull
-		IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01b8: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_01bd: ldc.i4.1
-		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveClassConstructorResult(object, object, object, bool)
-		IL_01c3: stloc.s 5
-		IL_01c5: ldloc.s 5
-		IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01cc: volatile.
-		IL_01ce: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_01d3: brfalse IL_01e7
+		IL_0170: ldloc.1
+		IL_0171: dup
+		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_0177: stloc.s 5
+		IL_0179: ldloc.s 5
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0180: volatile.
+		IL_0182: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_0187: brfalse IL_019b
 
-		IL_01d8: ldstr "run"
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01e2: br IL_01fb
+		IL_018c: ldstr "run"
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_0196: br IL_01af
 
-		IL_01e7: ldstr "run"
-		IL_01ec: ldstr "Generator_Inheritance_SuperIteratorMethod:Modules.Generator_Inheritance_SuperIteratorMethod:__js_module_init__:35"
-		IL_01f1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_019b: ldstr "run"
+		IL_01a0: ldstr "Generator_Inheritance_SuperIteratorMethod:Modules.Generator_Inheritance_SuperIteratorMethod:__js_module_init__:34"
+		IL_01a5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+		IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_01fb: pop
-		IL_01fc: ret
+		IL_01af: pop
+		IL_01b0: ret
 	} // end of method Generator_Inheritance_SuperIteratorMethod::__js_module_init__
 
 } // end of class Modules.Generator_Inheritance_SuperIteratorMethod

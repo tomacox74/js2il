@@ -101,7 +101,7 @@ public class EnvironmentLayoutBuilder
 
         var ancestorScopes = new List<Scope>();
         
-        // Walk ancestors from parent to root. Named class expressions have a runtime lexical
+        // Walk ancestors from parent to root. Named classes have a runtime lexical
         // environment for their internal immutable name binding, so constructor values need to
         // capture the class scope itself as well as outer scopes.
         var current = IsRuntimeClassLexicalScope(scope)
@@ -113,7 +113,7 @@ public class EnvironmentLayoutBuilder
             // environment chain. Uncaptured block bindings lower to IL locals, so their blocks
             // do not have runtime instances.
             // Most class scopes don't have runtime scope instances — they're compiled as CLR types.
-            // Named class expressions are the exception because their internal class-name binding
+            // Named classes are the exception because their internal class-name binding
             // is stored in the class lexical environment.
             if (current.Kind == ScopeKind.Class && !IsRuntimeClassLexicalScope(current))
             {
@@ -158,8 +158,14 @@ public class EnvironmentLayoutBuilder
     }
 
     private static bool IsRuntimeClassLexicalScope(Scope scope)
-        => scope.AstNode is Acornima.Ast.ClassExpression { Id: Acornima.Ast.Identifier className }
-           && scope.Bindings.ContainsKey(className.Name);
+        => scope.AstNode switch
+        {
+            Acornima.Ast.ClassExpression { Id: Acornima.Ast.Identifier className }
+                => scope.Bindings.ContainsKey(className.Name),
+            Acornima.Ast.ClassDeclaration { Id: Acornima.Ast.Identifier className }
+                => scope.Bindings.TryGetValue(className.Name, out var binding) && binding.IsCaptured,
+            _ => false
+        };
 
     /// <summary>
     /// Builds the binding storage map for a callable.

@@ -94,18 +94,8 @@ public sealed class AsyncDisposableStack : JsObject
             throw new TypeError("AsyncDisposableStack.prototype.use requires an object");
         }
 
-        var callback = ObjectRuntime.GetProperty(value, Symbol.asyncDispose.DebugId);
-        var kind = DisposalKind.Use;
-        if (callback is null || callback is JsNull)
-        {
-            callback = ObjectRuntime.GetProperty(value, Symbol.dispose.DebugId);
-            kind = DisposalKind.SyncUse;
-        }
-
-        if (!CallableOperations.IsCallable(callback))
-        {
-            throw new TypeError("Disposable resource method is not callable");
-        }
+        var callback = DisposableResourceScope.GetDisposeMethod(value, true, out var syncFallback);
+        var kind = syncFallback ? DisposalKind.SyncUse : DisposalKind.Use;
 
         resources.Add(new DisposableResource(kind, value, callback));
         return value;

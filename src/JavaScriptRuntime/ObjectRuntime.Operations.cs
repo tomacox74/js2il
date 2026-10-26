@@ -2678,6 +2678,8 @@ namespace JavaScriptRuntime
                 {
                     try
                     {
+                        if (type == typeof(JavaScriptRuntime.Date))
+                            return AttachClassPrototype(JavaScriptRuntime.Date.Construct(callArgs));
                         if (constructionReceiver is not null)
                         {
                             return InvokeCompatibleConstructor();

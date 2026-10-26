@@ -269,17 +269,19 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 1
-			// Code size: 28 (0x1c)
+			// Code size: 38 (0x26)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.0
-			IL_000d: ldc.r8 0.0
-			IL_0016: stfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
-			IL_001b: ret
+			IL_0007: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.0
+			IL_0017: ldc.r8 0.0
+			IL_0020: stfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
+			IL_0025: ret
 		} // end of method Counter::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -529,7 +531,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 91 (0x5b)
+			// Code size: 101 (0x65)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -540,34 +542,36 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::_scopes
-			IL_0015: ldarg.1
-			IL_0016: ldc.i4.0
-			IL_0017: ldelem.ref
-			IL_0018: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope
-			IL_001d: ldfld object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::Counter
-			IL_0022: stloc.1
-			IL_0023: ldarg.0
-			IL_0024: ldc.i4.0
-			IL_0025: newarr [System.Runtime]System.Object
-			IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_002f: ldloc.1
-			IL_0030: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-			IL_0035: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::.ctor()
-			IL_003a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-			IL_003f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0044: dup
-			IL_0045: ldloc.1
-			IL_0046: ldstr "prototype"
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0050: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0055: stfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::counter
-			IL_005a: ret
+			IL_0007: ldtoken Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::_scopes
+			IL_001f: ldarg.1
+			IL_0020: ldc.i4.0
+			IL_0021: ldelem.ref
+			IL_0022: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope
+			IL_0027: ldfld object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::Counter
+			IL_002c: stloc.1
+			IL_002d: ldarg.0
+			IL_002e: ldc.i4.0
+			IL_002f: newarr [System.Runtime]System.Object
+			IL_0034: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_0039: ldloc.1
+			IL_003a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_003f: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::.ctor()
+			IL_0044: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0049: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_004e: dup
+			IL_004f: ldloc.1
+			IL_0050: ldstr "prototype"
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_005a: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_005f: stfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::counter
+			IL_0064: ret
 		} // end of method Calculator::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -721,7 +725,7 @@
 		IL_0030: ldloc.3
 		IL_0031: ldc.i4.0
 		IL_0032: conv.r8
-		IL_0033: ldc.i4.0
+		IL_0033: ldc.i4.1
 		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_0039: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter/Scope_ctor/FunctionObject
 		IL_003e: stloc.s 5

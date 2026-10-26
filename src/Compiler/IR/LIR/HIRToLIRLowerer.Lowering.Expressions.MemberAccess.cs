@@ -13,9 +13,9 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        if (propAccessExpr.Object is HIRSuperExpression)
+        if (propAccessExpr.Object is HIRSuperExpression super)
         {
-            if (!TryLowerSuperPropertyReference(null, propAccessExpr.PropertyName, read: true, out var reference))
+            if (!TryLowerSuperPropertyReference(null, propAccessExpr.PropertyName, read: true, out var reference, super.StaticOwnerRegistryClassName))
             {
                 return false;
             }

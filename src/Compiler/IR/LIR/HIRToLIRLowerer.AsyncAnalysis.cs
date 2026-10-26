@@ -16,7 +16,7 @@ public sealed partial class HIRToLIRLowerer
     /// </summary>
     private int CountAwaitExpressions(HIRBlock block)
     {
-        int count = 0;
+        int count = block.ResourceKind == HIRResourceKind.Async ? 1 : 0;
         foreach (var statement in block.Statements)
         {
             count += CountAwaitExpressionsInStatement(statement);
@@ -29,6 +29,9 @@ public sealed partial class HIRToLIRLowerer
         int count = 0;
         switch (statement)
         {
+            case HIRDisposeResourcesStatement disposal:
+                count += disposal.Kind == HIRResourceKind.Async ? 1 : 0;
+                break;
             case HIRExpressionStatement exprStmt:
                 count += CountAwaitExpressionsInExpression(exprStmt.Expression);
                 break;
@@ -50,11 +53,33 @@ public sealed partial class HIRToLIRLowerer
                 if (ifStmt.Alternate != null)
                     count += CountAwaitExpressionsInStatement(ifStmt.Alternate);
                 break;
+            case HIRLabeledStatement labeled:
+                count += CountAwaitExpressionsInStatement(labeled.Body);
+                break;
+            case HIRWithStatement withStatement:
+                count += CountAwaitExpressionsInExpression(withStatement.Object);
+                count += CountAwaitExpressionsInStatement(withStatement.Body);
+                break;
+            case HIRDoWhileStatement doWhile:
+                count += CountAwaitExpressionsInStatement(doWhile.Body);
+                count += CountAwaitExpressionsInExpression(doWhile.Test);
+                break;
+            case HIRSwitchStatement switchStatement:
+                count += CountAwaitExpressionsInExpression(switchStatement.Discriminant);
+                foreach (var @case in switchStatement.Cases)
+                {
+                    if (@case.Test is not null)
+                        count += CountAwaitExpressionsInExpression(@case.Test);
+                    foreach (var item in @case.Consequent)
+                        count += CountAwaitExpressionsInStatement(item);
+                }
+                break;
             case HIRWhileStatement whileStmt:
                 count += CountAwaitExpressionsInExpression(whileStmt.Test);
                 count += CountAwaitExpressionsInStatement(whileStmt.Body);
                 break;
             case HIRForStatement forStmt:
+                count += forStmt.ResourceKind == HIRResourceKind.Async ? 1 : 0;
                 if (forStmt.Init != null)
                     count += CountAwaitExpressionsInStatement(forStmt.Init);
                 if (forStmt.Test != null)
@@ -64,6 +89,7 @@ public sealed partial class HIRToLIRLowerer
                 count += CountAwaitExpressionsInStatement(forStmt.Body);
                 break;
             case HIRForOfStatement forOfStmt:
+                count += forOfStmt.ResourceKind == HIRResourceKind.Async ? 1 : 0;
                 // for-await-of has an implicit await on IteratorNext.
                 if (forOfStmt.IsAwait)
                 {

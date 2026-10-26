@@ -110,6 +110,26 @@ public sealed partial class HIRToLIRLowerer
         string? sourceNameForError,
         PreparedDestructuringTarget? preparedTarget)
     {
+        if (!_isGenerator && NeedsSynchronousExpressionProtection)
+        {
+            var start = _methodBodyIR.Instructions.Count;
+            _generatorExpressionProtectionDepth++;
+            try
+            {
+                if (!TryLowerDestructuringPattern(pattern, sourceValue, writeMode, sourceNameForError, preparedTarget))
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _generatorExpressionProtectionDepth--;
+            }
+            // Route exceptions only after destructuring's CLR iterator-close handlers have unwound.
+            ProtectGeneratorExpression(start);
+            return true;
+        }
+
         sourceValue = EnsureObject(sourceValue);
 
         switch (pattern)
@@ -457,6 +477,12 @@ public sealed partial class HIRToLIRLowerer
         {
             if (privateTarget.FieldName != null)
             {
+                if (UsesInstancePrivateField(privateTarget.RegistryClassName, privateTarget.FieldName))
+                {
+                    EmitPrivateFieldOperation(nameof(JavaScriptRuntime.RuntimeServices.SetClassPrivateField),
+                        privateTarget.RegistryClassName, privateTarget.FieldName, target.Object, valueToStore);
+                    return true;
+                }
                 _methodBodyIR.Instructions.Add(new LIRStorePrivateReceiverField(
                     privateTarget.RegistryClassName,
                     privateTarget.FieldName,

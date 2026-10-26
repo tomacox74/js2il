@@ -175,7 +175,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 37 (0x25)
+			// Code size: 47 (0x2f)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -184,16 +184,18 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldstr "C1"
-			IL_0018: ldarg.1
-			IL_0019: box [System.Runtime]System.Double
-			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0023: pop
-			IL_0024: ret
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C1
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldstr "C1"
+			IL_0022: ldarg.1
+			IL_0023: box [System.Runtime]System.Double
+			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002d: pop
+			IL_002e: ret
 		} // end of method C1::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -316,7 +318,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 43 (0x2b)
+			// Code size: 53 (0x35)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -325,18 +327,20 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldstr "C2"
-			IL_0018: ldarg.1
-			IL_0019: box [System.Runtime]System.Double
-			IL_001e: ldarg.2
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_0029: pop
-			IL_002a: ret
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C2
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldstr "C2"
+			IL_0022: ldarg.1
+			IL_0023: box [System.Runtime]System.Double
+			IL_0028: ldarg.2
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+			IL_0033: pop
+			IL_0034: ret
 		} // end of method C2::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -460,7 +464,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 67 (0x43)
+			// Code size: 77 (0x4d)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -469,34 +473,36 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldc.i4.4
-			IL_0014: newarr [System.Runtime]System.Object
-			IL_0019: dup
-			IL_001a: ldc.i4.0
-			IL_001b: ldstr "C3"
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.1
-			IL_0023: ldarg.1
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.2
-			IL_002c: ldarg.2
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: stelem.ref
-			IL_0033: dup
-			IL_0034: ldc.i4.3
-			IL_0035: ldarg.3
-			IL_0036: box [System.Runtime]System.Double
-			IL_003b: stelem.ref
-			IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0041: pop
-			IL_0042: ret
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C3
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldc.i4.4
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldstr "C3"
+			IL_002a: stelem.ref
+			IL_002b: dup
+			IL_002c: ldc.i4.1
+			IL_002d: ldarg.1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.2
+			IL_0036: ldarg.2
+			IL_0037: box [System.Runtime]System.Double
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.3
+			IL_003f: ldarg.3
+			IL_0040: box [System.Runtime]System.Double
+			IL_0045: stelem.ref
+			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_004b: pop
+			IL_004c: ret
 		} // end of method C3::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -621,7 +627,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 77 (0x4d)
+			// Code size: 87 (0x57)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -630,39 +636,41 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldc.i4.5
-			IL_0014: newarr [System.Runtime]System.Object
-			IL_0019: dup
-			IL_001a: ldc.i4.0
-			IL_001b: ldstr "C4"
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.1
-			IL_0023: ldarg.1
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.2
-			IL_002c: ldarg.2
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: stelem.ref
-			IL_0033: dup
-			IL_0034: ldc.i4.3
-			IL_0035: ldarg.3
-			IL_0036: box [System.Runtime]System.Double
-			IL_003b: stelem.ref
-			IL_003c: dup
-			IL_003d: ldc.i4.4
-			IL_003e: ldarg.s d
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C4
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldc.i4.5
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldstr "C4"
+			IL_002a: stelem.ref
+			IL_002b: dup
+			IL_002c: ldc.i4.1
+			IL_002d: ldarg.1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.2
+			IL_0036: ldarg.2
+			IL_0037: box [System.Runtime]System.Double
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.3
+			IL_003f: ldarg.3
 			IL_0040: box [System.Runtime]System.Double
 			IL_0045: stelem.ref
-			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_004b: pop
-			IL_004c: ret
+			IL_0046: dup
+			IL_0047: ldc.i4.4
+			IL_0048: ldarg.s d
+			IL_004a: box [System.Runtime]System.Double
+			IL_004f: stelem.ref
+			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0055: pop
+			IL_0056: ret
 		} // end of method C4::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -788,7 +796,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 97 (0x61)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -797,44 +805,46 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldc.i4.6
-			IL_0014: newarr [System.Runtime]System.Object
-			IL_0019: dup
-			IL_001a: ldc.i4.0
-			IL_001b: ldstr "C5"
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.1
-			IL_0023: ldarg.1
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.2
-			IL_002c: ldarg.2
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: stelem.ref
-			IL_0033: dup
-			IL_0034: ldc.i4.3
-			IL_0035: ldarg.3
-			IL_0036: box [System.Runtime]System.Double
-			IL_003b: stelem.ref
-			IL_003c: dup
-			IL_003d: ldc.i4.4
-			IL_003e: ldarg.s d
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C5
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldc.i4.6
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldstr "C5"
+			IL_002a: stelem.ref
+			IL_002b: dup
+			IL_002c: ldc.i4.1
+			IL_002d: ldarg.1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.2
+			IL_0036: ldarg.2
+			IL_0037: box [System.Runtime]System.Double
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.3
+			IL_003f: ldarg.3
 			IL_0040: box [System.Runtime]System.Double
 			IL_0045: stelem.ref
 			IL_0046: dup
-			IL_0047: ldc.i4.5
-			IL_0048: ldarg.s e
+			IL_0047: ldc.i4.4
+			IL_0048: ldarg.s d
 			IL_004a: box [System.Runtime]System.Double
 			IL_004f: stelem.ref
-			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0055: pop
-			IL_0056: ret
+			IL_0050: dup
+			IL_0051: ldc.i4.5
+			IL_0052: ldarg.s e
+			IL_0054: box [System.Runtime]System.Double
+			IL_0059: stelem.ref
+			IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_005f: pop
+			IL_0060: ret
 		} // end of method C5::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -961,7 +971,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 97 (0x61)
+			// Code size: 107 (0x6b)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
@@ -970,49 +980,51 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0011: stloc.0
-			IL_0012: ldloc.0
-			IL_0013: ldc.i4.7
-			IL_0014: newarr [System.Runtime]System.Object
-			IL_0019: dup
-			IL_001a: ldc.i4.0
-			IL_001b: ldstr "C6"
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.1
-			IL_0023: ldarg.1
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.2
-			IL_002c: ldarg.2
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: stelem.ref
-			IL_0033: dup
-			IL_0034: ldc.i4.3
-			IL_0035: ldarg.3
-			IL_0036: box [System.Runtime]System.Double
-			IL_003b: stelem.ref
-			IL_003c: dup
-			IL_003d: ldc.i4.4
-			IL_003e: ldarg.s d
+			IL_0007: ldtoken Modules.Classes_ClassConstructor_WithMultipleParameters/C6
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: ldc.i4.7
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldstr "C6"
+			IL_002a: stelem.ref
+			IL_002b: dup
+			IL_002c: ldc.i4.1
+			IL_002d: ldarg.1
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.2
+			IL_0036: ldarg.2
+			IL_0037: box [System.Runtime]System.Double
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.3
+			IL_003f: ldarg.3
 			IL_0040: box [System.Runtime]System.Double
 			IL_0045: stelem.ref
 			IL_0046: dup
-			IL_0047: ldc.i4.5
-			IL_0048: ldarg.s e
+			IL_0047: ldc.i4.4
+			IL_0048: ldarg.s d
 			IL_004a: box [System.Runtime]System.Double
 			IL_004f: stelem.ref
 			IL_0050: dup
-			IL_0051: ldc.i4.6
-			IL_0052: ldarg.s f
+			IL_0051: ldc.i4.5
+			IL_0052: ldarg.s e
 			IL_0054: box [System.Runtime]System.Double
 			IL_0059: stelem.ref
-			IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_005f: pop
-			IL_0060: ret
+			IL_005a: dup
+			IL_005b: ldc.i4.6
+			IL_005c: ldarg.s f
+			IL_005e: box [System.Runtime]System.Double
+			IL_0063: stelem.ref
+			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0069: pop
+			IL_006a: ret
 		} // end of method C6::.ctor
 
 		.method family hidebysig specialname rtspecialname 

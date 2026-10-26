@@ -32,4 +32,5 @@ public sealed class HIRForOfStatement : HIRStatement
     public HIRExpression Iterable { get; }
     public HIRStatement Body { get; }
     public string? Label { get; }
+    public HIRResourceKind ResourceKind { get; init; }
 }

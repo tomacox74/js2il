@@ -17,6 +17,7 @@ public sealed class Symbol
         BuiltinFunction0 toPrimitive = SymbolPrototypeToPrimitive;
         PrototypeChain.SetPrototype(prototypeValue, objectPrototype);
         GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+        JavaScriptRuntime.Function.MarkConstructible(constructorValue);
         // The "description" parameter is optional (Symbol ( [ description ] )), so the
         // spec-mandated length is 0. BuiltinFunction1's automatic length inference always
         // reports 1 (one JS-visible parameter), so it must be overridden explicitly here to

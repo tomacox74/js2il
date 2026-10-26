@@ -659,7 +659,8 @@ public record LIRStoreUserClassInstanceField(
     string RegistryClassName,
     string FieldName,
     bool IsPrivateField,
-    TempVariable Value) : LIRInstruction;
+    TempVariable Value,
+    bool PropertyAlreadyDefined = false) : LIRInstruction;
 
 /// <summary>
 /// Stores a value into a static field on a user-defined JS class.

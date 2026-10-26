@@ -8,4 +8,8 @@ namespace Jroc.HIR;
 /// </summary>
 public sealed class HIRSuperExpression : HIRExpression
 {
+    public HIRSuperExpression(string? staticOwnerRegistryClassName = null)
+        => StaticOwnerRegistryClassName = staticOwnerRegistryClassName;
+
+    public string? StaticOwnerRegistryClassName { get; }
 }

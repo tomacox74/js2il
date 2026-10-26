@@ -13,15 +13,24 @@ public sealed partial class HIRToLIRLowerer
         HIRExpression? computedKey,
         string? propertyName,
         bool read,
-        out SuperPropertyReference reference)
+        out SuperPropertyReference reference,
+        string? staticOwner = null)
     {
         reference = default;
         var receiver = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+        if (staticOwner != null)
+        {
+            if (!TryLowerExpression(new HIRUserClassTypeExpression(staticOwner), out receiver))
+                return false;
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver),
             [],
             receiver));
-        DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            DefineTempStorage(receiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
 
         TempVariable key;
         if (computedKey != null)
@@ -38,7 +47,13 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var prototype = CreateTempVariable();
-        if (_callableKind == Services.ScopesAbi.CallableKind.Constructor
+        if (staticOwner != null)
+        {
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.getPrototypeOf),
+                [EnsureObject(receiver)], prototype));
+        }
+        else if (_callableKind == Services.ScopesAbi.CallableKind.Constructor
             && TryGetEnclosingClassRegistryName(out var className)
             && className != null)
         {

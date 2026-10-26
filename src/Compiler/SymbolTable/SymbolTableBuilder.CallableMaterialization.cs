@@ -75,6 +75,17 @@ public partial class SymbolTableBuilder
 
                 var state = new CallableAnalysisState(binding, initializer);
                 states.Add(binding, state);
+                if (binding.DeclarationNode is VariableDeclarator declarator
+                    && parentMap.TryGetValue(declarator, out var declarationParent)
+                    && declarationParent is VariableDeclaration
+                    {
+                        Kind: VariableDeclarationKind.Using or VariableDeclarationKind.AwaitUsing
+                    })
+                {
+                    state.Reasons |= CallableMaterializationReason.NonCallRead;
+                    state.RuntimeUseCount++;
+                }
+
                 if (binding.IsScriptGlobalBinding)
                 {
                     state.Reasons |= CallableMaterializationReason.Reassigned;

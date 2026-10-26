@@ -74,19 +74,19 @@ public class ValidatorTests
         Assert.Empty(result.Warnings);
     }
 
-    [Fact]
-    public void Validate_UsingDeclarationOutsideForOf_ReportsUnsupported()
+    [Theory]
+    [InlineData("function f() { using resource = {}; }")]
+    [InlineData("async function f() { await using resource = null; }")]
+    [InlineData("{ using resource = null; }")]
+    [InlineData("for (using resource = null; false;) { }")]
+    public void Validate_ResourceDeclaration_ReturnsValid(string source)
     {
-        var ast = ParseStrict("function f() { using resource = {}; }");
+        var ast = ParseStrict(source);
 
         var result = _validator.Validate(ast);
 
-        Assert.False(result.IsValid);
-        Assert.Contains(
-            result.Errors,
-            error => error.Contains(
-                "using declarations are currently supported only in for-of and for-await-of loop heads",
-                StringComparison.Ordinal));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

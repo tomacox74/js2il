@@ -13,4 +13,5 @@ public sealed class HIRVariableDeclaration : HIRStatement
     public Symbol Name { get; init; }
     public HIRExpression? Initializer { get; init; }
     public string? InferredName { get; init; }
+    public HIRResourceKind ResourceKind { get; init; }
 }

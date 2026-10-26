@@ -4,9 +4,9 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-21T20:52:59Z
+> Last generated (UTC): 2026-10-25T04:44:35Z
 
-JROC supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
+JROC supports common declaration forms (`let`, `const`, `var`), explicit resource declarations (`using`, `await using`), and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,6 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Explicit resource declaration lifetimes | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/await-using/RemainingLanguageCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/await-using/syntax/RemainingLanguageCompletionExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/Integration/ResourceManagement/ExecutionTests.cs` | `test/language/statements/await-using/multiple-resources-disposed-in-reverse-order.js` | Synchronous and asynchronous resource declarations use immutable lexical bindings, capture the disposal method at initialization, and dispose in reverse order on normal and abrupt scope exit. Asynchronous cleanup preserves required suspension order, synchronous fallback semantics, and SuppressedError chaining. Returns, throws, labeled break/continue, per-iteration cleanup, iterator closing, callable resources, and exceptions after await/yield retain the correct completion. All 94 pinned await-using cases have outcomes: 93 verified passing and one unsupported eval dependency. Evidence is branch-local native validation, not central trusted acceptance. |
 | Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/const/dstr/ary-ptrn-rest-init-ary.js`<br>`test/language/statements/const/dstr/ary-ptrn-rest-init-id.js`<br>`test/language/statements/let/dstr/ary-ptrn-rest-init-ary.js`<br>`test/language/statements/let/dstr/ary-ptrn-rest-init-id.js`<br>`test/language/statements/using/redeclaration-error-from-within-strict-mode-function-using.js`<br>`test/language/statements/using/static-init-await-binding-invalid.js` | The native Test262 harness verifies 74 additional pinned parse-negative statement fixtures (26 `const`, 27 `let`, 21 `using`). All 144 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.3.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation))

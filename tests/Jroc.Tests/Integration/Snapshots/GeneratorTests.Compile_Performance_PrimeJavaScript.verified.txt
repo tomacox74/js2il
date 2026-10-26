@@ -1395,7 +1395,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 63 (0x3f)
+			// Code size: 73 (0x49)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -1407,30 +1407,32 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray::_scopes
-			IL_0015: ldarg.2
-			IL_0016: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_001b: ldc.i4.5
-			IL_001c: shr.un
-			IL_001d: conv.r.un
-			IL_001e: stloc.1
-			IL_001f: ldc.r8 1
-			IL_0028: ldloc.1
-			IL_0029: add
-			IL_002a: stloc.1
-			IL_002b: ldloc.1
-			IL_002c: box [System.Runtime]System.Double
-			IL_0031: stloc.2
-			IL_0032: ldarg.0
-			IL_0033: ldloc.2
-			IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-			IL_0039: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Compile_Performance_PrimeJavaScript/BitArray::wordArray
-			IL_003e: ret
+			IL_0007: ldtoken Modules.Compile_Performance_PrimeJavaScript/BitArray
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Compile_Performance_PrimeJavaScript/BitArray::_scopes
+			IL_001f: ldarg.2
+			IL_0020: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_0025: ldc.i4.5
+			IL_0026: shr.un
+			IL_0027: conv.r.un
+			IL_0028: stloc.1
+			IL_0029: ldc.r8 1
+			IL_0032: ldloc.1
+			IL_0033: add
+			IL_0034: stloc.1
+			IL_0035: ldloc.1
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.2
+			IL_003c: ldarg.0
+			IL_003d: ldloc.2
+			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_0043: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Compile_Performance_PrimeJavaScript/BitArray::wordArray
+			IL_0048: ret
 		} // end of method BitArray::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -2540,7 +2542,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 147 (0x93)
+			// Code size: 157 (0x9d)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -2553,62 +2555,64 @@
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object)
-			IL_000c: ldarg.1
-			IL_000d: stloc.0
-			IL_000e: ldarg.0
-			IL_000f: ldloc.0
-			IL_0010: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::_scopes
-			IL_0015: ldarg.0
-			IL_0016: ldarg.2
-			IL_0017: stfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSize
-			IL_001c: ldarg.2
-			IL_001d: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
-			IL_0022: ldc.i4.1
-			IL_0023: shr.un
-			IL_0024: conv.r.un
-			IL_0025: stloc.1
-			IL_0026: ldarg.0
-			IL_0027: ldloc.1
-			IL_0028: stfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSizeInBits
-			IL_002d: ldarg.1
-			IL_002e: ldc.i4.0
-			IL_002f: ldelem.ref
-			IL_0030: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
-			IL_0035: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
-			IL_003a: stloc.2
-			IL_003b: ldarg.1
-			IL_003c: stloc.0
-			IL_003d: ldc.r8 1
-			IL_0046: ldarg.0
-			IL_0047: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSizeInBits
-			IL_004c: add
-			IL_004d: stloc.1
-			IL_004e: ldloc.1
-			IL_004f: box [System.Runtime]System.Double
-			IL_0054: stloc.3
-			IL_0055: ldarg.0
-			IL_0056: ldc.i4.1
-			IL_0057: newarr [System.Runtime]System.Object
-			IL_005c: dup
-			IL_005d: ldc.i4.0
-			IL_005e: ldloc.3
-			IL_005f: stelem.ref
-			IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0065: ldloc.2
-			IL_0066: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
-			IL_006b: ldloc.0
-			IL_006c: ldloc.1
-			IL_006d: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray::.ctor(object[], float64)
-			IL_0072: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
-			IL_0077: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_007c: dup
-			IL_007d: ldloc.2
-			IL_007e: ldstr "prototype"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
-			IL_0088: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_008d: stfld class Modules.Compile_Performance_PrimeJavaScript/BitArray Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::bitArray
-			IL_0092: ret
+			IL_0007: ldtoken Modules.Compile_Performance_PrimeJavaScript/PrimeSieve
+			IL_000c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0011: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeConstructedClassPrototype(object, class [System.Runtime]System.Type)
+			IL_0016: ldarg.1
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: ldloc.0
+			IL_001a: stfld object[] Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::_scopes
+			IL_001f: ldarg.0
+			IL_0020: ldarg.2
+			IL_0021: stfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSize
+			IL_0026: ldarg.2
+			IL_0027: call int32 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToInt32(float64)
+			IL_002c: ldc.i4.1
+			IL_002d: shr.un
+			IL_002e: conv.r.un
+			IL_002f: stloc.1
+			IL_0030: ldarg.0
+			IL_0031: ldloc.1
+			IL_0032: stfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSizeInBits
+			IL_0037: ldarg.1
+			IL_0038: ldc.i4.0
+			IL_0039: ldelem.ref
+			IL_003a: castclass Modules.Compile_Performance_PrimeJavaScript/Scope
+			IL_003f: ldfld object Modules.Compile_Performance_PrimeJavaScript/Scope::BitArray
+			IL_0044: stloc.2
+			IL_0045: ldarg.1
+			IL_0046: stloc.0
+			IL_0047: ldc.r8 1
+			IL_0050: ldarg.0
+			IL_0051: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::sieveSizeInBits
+			IL_0056: add
+			IL_0057: stloc.1
+			IL_0058: ldloc.1
+			IL_0059: box [System.Runtime]System.Double
+			IL_005e: stloc.3
+			IL_005f: ldarg.0
+			IL_0060: ldc.i4.1
+			IL_0061: newarr [System.Runtime]System.Object
+			IL_0066: dup
+			IL_0067: ldc.i4.0
+			IL_0068: ldloc.3
+			IL_0069: stelem.ref
+			IL_006a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_006f: ldloc.2
+			IL_0070: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentNewTarget(object)
+			IL_0075: ldloc.0
+			IL_0076: ldloc.1
+			IL_0077: newobj instance void Modules.Compile_Performance_PrimeJavaScript/BitArray::.ctor(object[], float64)
+			IL_007c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentNewTarget()
+			IL_0081: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0086: dup
+			IL_0087: ldloc.2
+			IL_0088: ldstr "prototype"
+			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetProperty(object, string)
+			IL_0092: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0097: stfld class Modules.Compile_Performance_PrimeJavaScript/BitArray Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::bitArray
+			IL_009c: ret
 		} // end of method PrimeSieve::.ctor
 
 		.method family hidebysig specialname rtspecialname 
@@ -3509,7 +3513,7 @@
 		IL_0245: ldloc.s 8
 		IL_0247: ldc.i4.1
 		IL_0248: conv.r8
-		IL_0249: ldc.i4.0
+		IL_0249: ldc.i4.1
 		IL_024a: call class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeClassConstructorObject(class [JavaScriptRuntime]JavaScriptRuntime.JsClassConstructorObject, class [System.Runtime]System.Type, object[], float64, bool)
 		IL_024f: castclass Modules.Compile_Performance_PrimeJavaScript/BitArray/Scope_ctor/FunctionObject
 		IL_0254: stloc.s 10

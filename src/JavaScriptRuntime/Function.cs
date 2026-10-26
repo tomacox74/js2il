@@ -1117,6 +1117,9 @@ public static class Function
                 throw new TypeError("Generator functions are not constructors");
             }
 
+            if (GlobalThis.IsSymbolConstructorTarget(constructor.Target))
+                throw new TypeError("Symbol is not a constructor");
+
             if (JavaScriptRuntime.Number.IsNumberConstructor(
                     constructor.Target))
             {

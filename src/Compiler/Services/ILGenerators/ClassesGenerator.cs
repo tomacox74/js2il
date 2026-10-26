@@ -885,9 +885,11 @@ namespace Jroc.Services.ILGenerators
                     jsParamCount,
                     parameterClrTypes,
                     isGeneratorMethod);
-                if (methodCallable.Semantics.UsesSuper || methodCallable.Semantics.NestedArrowUsesSuper)
+                if (methodCallable.Semantics.UsesSuper || methodCallable.Semantics.NestedArrowUsesSuper
+                    || methodCallable.NeedsArgumentsObject || methodCallable.HasRestParameters
+                    || methodCallable.Semantics.UsesPrivateNames)
                 {
-                    _classRegistry.RequireMethodSuperContext((MethodDefinitionHandle)methodToken);
+                    _classRegistry.RequireMethodInvocationContext((MethodDefinitionHandle)methodToken);
                 }
             }
 

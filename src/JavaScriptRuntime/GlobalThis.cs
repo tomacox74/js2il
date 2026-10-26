@@ -129,9 +129,11 @@ namespace JavaScriptRuntime
                 "eval is not supported by JROC at this time; support will be added in a future release");
         private static readonly Func<object[], object?, object> _bigIntFunctionValue = static (_, value) =>
             global::JavaScriptRuntime.BigInt.Call(value);
-        private static readonly Func<object[], object?[]?, Delegate> _functionConstructorValue = static (_, args) =>
+        private static readonly Func<object[], object?[]?, object> _functionConstructorValue = static (_, args) =>
         {
             var callArgs = args ?? System.Array.Empty<object?>();
+            if (RuntimeServices.TryCreatePreparedDynamicFunction(callArgs, out var prepared))
+                return prepared!;
             JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs);
             if (callArgs.Length == 0 || callArgs[0] is null)
             {
@@ -988,6 +990,9 @@ namespace JavaScriptRuntime
             => ReferenceEquals(target, _booleanFunctionValue)
                 || target.Method == _booleanFunctionValue.Method;
 
+        internal static bool IsSymbolConstructorTarget(Delegate target)
+            => target.Method == ((BuiltinFunction1)SymbolCall).Method;
+
         internal static object? GetIntrinsicConstructorPrototype(
             Delegate target,
             RuntimeIntrinsics intrinsics)
@@ -1102,7 +1107,7 @@ namespace JavaScriptRuntime
         /// ECMAScript global Function constructor value.
         /// Nonempty source requires a compiler-prepared call site; unprepared runtime source throws.
         /// </summary>
-        public static Func<object[], object?[]?, Delegate> Function => _functionConstructorValue;
+        public static Func<object[], object?[]?, object> Function => _functionConstructorValue;
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
         internal static object SharedArrayBufferIntrinsicConstructor

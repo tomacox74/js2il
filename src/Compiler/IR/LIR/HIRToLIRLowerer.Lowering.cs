@@ -15,6 +15,8 @@ public sealed partial class HIRToLIRLowerer
 
         switch (statement)
         {
+            case HIRDisposeResourcesStatement disposal:
+                return TryLowerDisposeResources(disposal);
             case HIRClassDecorationApplicationStatement decoration:
                 return TryLowerClassDecorationApplication(decoration);
             case HIRSequencePointStatement sequencePoint:
@@ -28,16 +30,50 @@ public sealed partial class HIRToLIRLowerer
                     {
                         return false;
                     }
+                    TempVariable? decoratedReceiver = null;
+                    if (storeInstanceField.HasDecorators)
+                    {
+                        if (!TryLowerExpression(new HIRThisExpression(), out var receiver))
+                            return false;
+                        decoratedReceiver = receiver;
+                        valueTemp = EmitDecoratedClassField(storeInstanceField.RegistryClassName,
+                            receiver, storeInstanceField.FieldName, valueTemp);
+                    }
+                    if (!storeInstanceField.IsPrivateField)
+                    {
+                        if (!TryLowerExpression(new HIRThisExpression(), out var receiver))
+                            return false;
+                        var key = CreateStringConstant(storeInstanceField.FieldName);
+                        var defined = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
+                            [EnsureObject(receiver), key, EnsureObject(valueTemp)], defined));
+                        DefineTempStorage(defined, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
                     if (storeInstanceField.IsPrivateField && storeInstanceField.FieldName != "_scopes")
                     {
                         if (!TryLowerExpression(new HIRThisExpression(), out var receiverTemp))
                             return false;
+                        if (UsesInstancePrivateField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName))
+                        {
+                            EmitPrivateFieldOperation(
+                                nameof(JavaScriptRuntime.RuntimeServices.InitializeClassPrivateField),
+                                storeInstanceField.RegistryClassName, storeInstanceField.FieldName, receiverTemp, valueTemp);
+                        }
                         var checkedReceiver = CreateTempVariable();
                         lirInstructions.Add(new LIRCallIntrinsicStatic(
                             nameof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.EnsureCanAddPrivateElement),
                             [EnsureObject(receiverTemp)], checkedReceiver));
                         DefineTempStorage(checkedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+                    if (_isLexicallyEnclosedByDerivedConstructor && storeInstanceField.FieldName != "_scopes")
+                    {
+                        if (decoratedReceiver.HasValue)
+                            EmitDecoratedClassField(storeInstanceField.RegistryClassName,
+                                decoratedReceiver.Value, storeInstanceField.FieldName);
+                        return true;
                     }
 
                     // Only force object boxing when the declared field type is unknown/object.
@@ -51,7 +87,10 @@ public sealed partial class HIRToLIRLowerer
                         storeInstanceField.RegistryClassName,
                         storeInstanceField.FieldName,
                         storeInstanceField.IsPrivateField,
-                        valueTemp));
+                        valueTemp) { PropertyAlreadyDefined = !storeInstanceField.IsPrivateField });
+                    if (decoratedReceiver.HasValue)
+                        EmitDecoratedClassField(storeInstanceField.RegistryClassName,
+                            decoratedReceiver.Value, storeInstanceField.FieldName);
                     return true;
                 }
 
@@ -60,6 +99,15 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerExpression(storeStaticField.Value, out var valueTemp))
                     {
                         return false;
+                    }
+                    TempVariable? decoratedReceiver = null;
+                    if (storeStaticField.HasDecorators)
+                    {
+                        if (!TryLowerExpression(new HIRUserClassTypeExpression(storeStaticField.RegistryClassName), out var receiver))
+                            return false;
+                        decoratedReceiver = receiver;
+                        valueTemp = EmitDecoratedClassField(storeStaticField.RegistryClassName,
+                            receiver, storeStaticField.FieldName, valueTemp);
                     }
                     if (!TryApplyInferredNameToValue(
                             storeStaticField.Value,
@@ -96,6 +144,9 @@ public sealed partial class HIRToLIRLowerer
                             defined));
                         DefineTempStorage(defined, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
+                    if (decoratedReceiver.HasValue)
+                        EmitDecoratedClassField(storeStaticField.RegistryClassName,
+                            decoratedReceiver.Value, storeStaticField.FieldName);
                     return true;
                 }
 
@@ -229,6 +280,8 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerBlockStatements(HIRBlock block)
     {
+        if (block.ResourceKind != HIRResourceKind.None)
+            return TryLowerResourceScope(new HIRBlock(block.Statements), block.ResourceKind);
         for (var index = 0; index < block.Statements.Length; index++)
         {
             var statement = block.Statements[index];
@@ -316,7 +369,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerAsyncTryWithFinallyWithAwait(HIRTryStatement tryStmt)
+    private bool TryLowerAsyncTryWithFinallyWithAwait(HIRTryStatement tryStmt, Func<bool>? lowerTryBlock = null)
     {
         if (_methodBodyIR.AsyncInfo == null || _methodBodyIR.LeafScopeId.IsNil)
         {
@@ -337,6 +390,13 @@ public sealed partial class HIRToLIRLowerer
         const string hasPendingReturnField = nameof(JavaScriptRuntime.AsyncScope._hasPendingReturn);
 
         bool hasCatch = tryStmt.CatchBody != null;
+        var savedCompletions = _asyncTryFinallyStack.Count > 0
+            ? SavePendingCompletions(
+                (pendingExceptionField, typeof(object)), (hasPendingExceptionField, typeof(bool)),
+                (pendingReturnField, typeof(object)), (hasPendingReturnField, typeof(bool)))
+            : [];
+        var pendingAbruptTarget = CreateNumberSlotTemp("$asyncFinally_abruptTarget", 0d);
+        var abruptTargets = new Dictionary<int, SyncAbruptTarget>();
 
         // Synthetic labels used by the async state machine.
         var afterTryLabel = CreateLabel();
@@ -361,6 +421,11 @@ public sealed partial class HIRToLIRLowerer
             asyncInfo.RegisterResumeLabel(catchStateId, catchLabel);
         }
 
+        var finallyContext = new AsyncTryFinallyContext(
+            finallyEntryLabel, finallyExitLabel,
+            pendingExceptionField, hasPendingExceptionField, pendingReturnField, hasPendingReturnField,
+            IsInFinally: false, _controlFlowStack.Count, pendingAbruptTarget, abruptTargets);
+
         // Reset pending completion fields on entry.
         {
             var nullTemp = CreateTempVariable();
@@ -377,21 +442,14 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // --- Try block ---
-        _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
-            FinallyEntryLabelId: finallyEntryLabel,
-            FinallyExitLabelId: finallyExitLabel,
-            PendingExceptionFieldName: pendingExceptionField,
-            HasPendingExceptionFieldName: hasPendingExceptionField,
-            PendingReturnFieldName: pendingReturnField,
-            HasPendingReturnFieldName: hasPendingReturnField,
-            IsInFinally: false));
+        _asyncTryFinallyStack.Push(finallyContext);
         _asyncTryCatchStack.Push(new AsyncTryCatchContext(
             CatchStateId: hasCatch ? catchStateId : exceptionToFinallyStateId,
             CatchLabelId: hasCatch ? catchLabel : exceptionToFinallyLabel,
             PendingExceptionFieldName: pendingExceptionField));
         try
         {
-            if (!TryLowerStatement(tryStmt.TryBlock))
+            if (!(lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock)))
             {
                 return false;
             }
@@ -437,14 +495,7 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
-                FinallyEntryLabelId: finallyEntryLabel,
-                FinallyExitLabelId: finallyExitLabel,
-                PendingExceptionFieldName: pendingExceptionField,
-                HasPendingExceptionFieldName: hasPendingExceptionField,
-                PendingReturnFieldName: pendingReturnField,
-                HasPendingReturnFieldName: hasPendingReturnField,
-                IsInFinally: false));
+            _asyncTryFinallyStack.Push(finallyContext);
             _asyncTryCatchStack.Push(new AsyncTryCatchContext(
                 CatchStateId: exceptionToFinallyStateId,
                 CatchLabelId: exceptionToFinallyLabel,
@@ -483,14 +534,7 @@ public sealed partial class HIRToLIRLowerer
 
         // --- Finally block ---
         _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
-        _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
-            FinallyEntryLabelId: finallyEntryLabel,
-            FinallyExitLabelId: finallyExitLabel,
-            PendingExceptionFieldName: pendingExceptionField,
-            HasPendingExceptionFieldName: hasPendingExceptionField,
-            PendingReturnFieldName: pendingReturnField,
-            HasPendingReturnFieldName: hasPendingReturnField,
-            IsInFinally: true));
+        _asyncTryFinallyStack.Push(finallyContext with { IsInFinally = true });
         _asyncTryCatchStack.Push(new AsyncTryCatchContext(
             CatchStateId: exceptionInFinallyStateId,
             CatchLabelId: exceptionInFinallyLabel,
@@ -561,15 +605,34 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             SetTempVariableSlot(hasReturnTemp, CreateAnonymousVariableSlot("$finally_hasReturn", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
 
-            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, afterTryLabel));
+            var checkAbrupt = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, checkAbrupt));
 
             var retTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
             DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+            if (!EmitReturnCompletion(retTemp))
+                return false;
+            _methodBodyIR.Instructions.Add(new LIRLabel(checkAbrupt));
+            foreach (var (targetLabel, target) in abruptTargets)
+            {
+                var id = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstNumber(target.Id, id));
+                DefineTempStorage(id, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var matches = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(pendingAbruptTarget, id, matches));
+                DefineTempStorage(matches, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                var next = CreateLabel();
+                _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(matches, next));
+                if (!TryEmitAbruptThroughSyncFinally(targetLabel, target.MatchedAbsoluteIndex)
+                    && !TryEmitAbruptThroughAsyncFinally(targetLabel, target.MatchedAbsoluteIndex))
+                    _methodBodyIR.Instructions.Add(new LIRBranch(targetLabel));
+                _methodBodyIR.Instructions.Add(new LIRLabel(next));
+            }
         }
 
         _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
+        RestorePendingCompletions(savedCompletions);
         return true;
     }
 
