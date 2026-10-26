@@ -705,6 +705,49 @@ have identified independent-retention proofs. Further historical evidence retent
 tracked in #2230/#2242; archive retention horizons require a separate long-term policy.
 The manifest cannot set `history_complete=true` while the known gaps remain.
 
+### Discovering unmatched retained candidates (#2242)
+
+The existing `verify-retained` mode accepts only the original eight receipt-pinned
+objects. It cannot locate independent copies for the **33 unmatched recovery containers**.
+The metadata-only `discover-retained` operation is a separate reviewed path in the same
+master-only protected workflow; it is not preservation or payload verification.
+
+It reads the committed, validated frozen inventory and lists versions **only under the
+configured `cutover-evidence/` prefix**, using at most ten pages of 100 entries and 100
+candidate versions. It recognizes the existing `<run>-<attempt>/<artifact-id>.zip`
+layout and records every matching version, not merely the latest one. It checks exact
+version metadata, expected source ZIP length, configured KMS identity and current
+COMPLIANCE retention without downloading/decrypting payloads. It does not substitute an
+ETag, filename or S3 checksum field for the source ZIP SHA-256. Expected source hashes
+and candidate metadata remain explicitly distinct; `payload_digest_verified=false`.
+
+Public reports record source inventory hash, archive ID, candidate preservation run/attempt,
+opaque version, lengths, lock deadline and metadata disposition. Private bucket/prefix/key
+and KMS identifiers, raw error text and permission audits are excluded. The mode cannot
+upload, extend retention, change a policy, import data or execute fixtures. Its inline
+session policy permits only `s3:ListBucketVersions`, `s3:GetObjectVersion` (HEAD metadata)
+and `s3:GetObjectRetention`, intersected with the existing role; it does not grant decrypt.
+
+```sh
+# Only after review/merge and operator authorization; do not run an unreviewed branch.
+gh workflow run test262-cutover-evidence.yml --ref master \
+  -f operation=discover-retained
+```
+
+`discovery_complete=true` means only that this bounded metadata scan completed, not that
+the candidates were preserved or their bytes match. Any matching versions require a
+separate exact-version payload-verification decision before promotion into the retention
+ledger. `no_candidate_in_scoped_listing` means no candidate **in that prefix/layout at
+that observation**, not no independent copy anywhere or irretrievable loss.
+Listings are not atomic snapshots. Objects in other prefixes, buckets, providers or
+unrecognized layouts require an operator-provided inventory or separately reviewed scope.
+
+Permission denial, missing/repeated pagination markers, exhausted page/candidate budgets
+or candidate metadata failures fail the job and leave a sanitized incomplete report.
+Unfinished listings leave rows `not_assessed`; they never manufacture absence findings.
+Do not broaden the existing role/bucket/KMS policy on denial. Retain sanitized success
+or failure results and exact-SHA/run provenance outside Actions expiration after the run.
+
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
 availability. It uses a read/decrypt-only AWS session policy intersected with the
