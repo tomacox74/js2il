@@ -817,6 +817,59 @@ their WAL/SHM members, without treating those failures as acknowledged successfu
 Do not add them blindly to the complete-report verifier's `import_report_ids`, rerun
 historical imports or extrapolate the eight selected proofs to these 33 containers.
 
+#### Authorized preservation of the 33 recovery archives
+
+The owner subsequently authorized preservation and exact-version verification of
+these **33 original recovery ZIPs** in the configured destination, under the existing
+encryption and retention policy. This authorization excludes permission changes,
+imports, restores and fixture execution. Permission to merge related PRs is separate
+from this explicit storage-write authorization.
+
+The `preserve-recovery` operation uses only the reviewed frozen inventory SHA-256
+`ec75aea22258310fbb80f33b5c2f5c853e8be4575bf5efee565ca9ab90268bb7`.
+It requires the explicit authorization token below, merged master and the existing
+protected backup environment. It cannot select another manifest or substitute the
+complete-report verifier's `import_report_ids`.
+
+Before any S3 writes, it checks all 33 source artifacts' identity, run/attempt,
+master revision, workflow, availability, digest and length, then downloads and
+hashes every complete ZIP. Member indexes and original import-report digests and
+completion flags must match the frozen inventory. It never extracts or opens SQLite.
+The **68,135,697 source ZIP bytes**, **62 outbox databases**, **four WAL/SHM members**
+and **four incomplete reports** are preserved verbatim. Incomplete reports remain
+incomplete; preservation never manufactures import acknowledgements.
+
+Each upload uses a new run/attempt prefix. The version returned by `PutObject` is
+captured before readback, then passed explicitly to the shared exact-version verifier
+with the original ZIP hash and length. Encryption must match the configured KMS key,
+and COMPLIANCE retention must be current. The bucket must retain the existing
+versioning and at least 35-day default COMPLIANCE protection. No retention headers,
+policy changes, deletes or overwrites of earlier run/attempt objects are requested.
+
+After all 33 archive readbacks pass, a sanitized report is itself uploaded and
+exact-version verified. The outer report embeds those exact retained report bytes
+as `retained_report`, with a separate public `receipt` proving their hash, length,
+version and retention. `complete=true` requires both the archive readbacks and
+receipt verification. This is not a claim of successful historical imports, full
+history or acceptance of an indefinite retention horizon.
+
+```sh
+# Only after the preservation implementation is merged and uploads are authorized.
+gh workflow run test262-cutover-evidence.yml --ref master \
+  -f operation=preserve-recovery \
+  -f recovery_authorization=preserve-33-recovery-archives
+```
+
+The operation's temporary session policy permits only the required bucket checks,
+object upload/versioned read/retention read and KMS data-key/decrypt operations,
+intersected with the existing role. A denial fails without changing permissions.
+Partial reports retain exact uploaded-version identities where a response was
+received, stage and sanitized errors; an attempted upload without a response may
+still have reached S3. Automatic SDK retries are disabled for this operation.
+Reconcile partial results before any retry rather than
+duplicating uploads blindly. Existing eight-object proofs, finite November 12
+deadlines and the eleven original source gaps remain unchanged.
+
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
 availability. It uses a read/decrypt-only AWS session policy intersected with the
