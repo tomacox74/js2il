@@ -112,6 +112,49 @@ restore, import, fixture workload, database access or notification is triggered.
 Retain an authenticated public audit projection in Git before the 90-day Actions
 copy expires; that mirror is not an independently locked raw receipt.
 
+### October 26 read-only audit: metadata verified, lifecycle denied
+
+[Run 40418650287](https://github.com/tomacox74/js2il/actions/runs/40418650287),
+attempt 1, ran the reviewed `audit-retention` operation on exact master
+`8aefbe00c59d2547c953c4aa19f6e1722d3e5206`, after central invariants
+[40418215456](https://github.com/tomacox74/js2il/actions/runs/40418215456) passed.
+The [authenticated sanitized receipt](evidence/retention-audit-40418650287.json)
+has SHA-256 `acc6935ffa8d0c3e2d63724ba6410ee2ca6f856eed865c16d63ee208474eb632`.
+
+**The audit is incomplete, not healthy-by-default.** Fresh metadata verified all
+**42 exact versions**: the accepted 41 archive versions plus the newer receipt's
+self-version. Length, configured KMS identity, COMPLIANCE mode and current,
+unshortened deadlines matched; all 41 archive deadlines are unchanged. No payload
+hash was rechecked or decryption attempted. The private original eight-object
+receipt's self-version remains unrecorded/unassessed.
+
+Bucket versioning was enabled, the default was **35-day COMPLIANCE**, and default
+encryption was the configured KMS identity. However, the existing reader was
+denied **`s3:GetLifecycleConfiguration`**. This is unknown lifecycle behavior,
+not evidence of no rules, no deletion or indefinite retention. Independent
+observations continued; the job correctly failed with `audit_complete=false`.
+No permission was expanded and no alternate privileged reader was used.
+
+Forty-one objects have known Actions expirations beyond their observed locks;
+one archive's source expiration remains unknown. **No beyond-Actions protection
+is established.** Earliest archive lock expiry remains November 12; later
+archive/new-receipt locks remain November 30. Expiry itself is not deletion.
+Other preservation/readback/discovery operations were skipped, and no new backup,
+restore, import, fixture workload, payload download, storage write, retention
+extension, policy change or notification occurred.
+
+The receipt also retains authenticated observations of existing daily backup
+40266462184 and weekly restore 40165197393. Their receipts were successful and
+within the adopted 36-hour/eight-day monitor windows at the observation. The older
+weekly receipt lacks the new self-report and recovery-timing fields: first
+scheduled post-implementation verification is still pending, not a measured zero
+or an RPO/RTO acceptance. No replacement drill was dispatched.
+
+The remaining read-only prerequisite is an owner-reviewed grant of only the
+missing bucket lifecycle read to the existing reader, then another explicit
+`audit-retention` observation. That grant is **not authorized or applied here**.
+Longer-term protection still needs the separate horizon/ownership decision below.
+
 ## Draft policy and accountable-owner decision
 
 **Not adopted or implemented.** The following makes the remaining decision
