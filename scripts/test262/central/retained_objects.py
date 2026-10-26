@@ -9,6 +9,12 @@ from urllib.parse import urlsplit
 BACKUP_SUFFIX = re.compile(r'\d{4}/\d{2}/\d{2}/\d+-[1-9]\d*')
 
 
+def public_proof(value):
+    fields = ('version_id', 'content_length', 'sha256', 'encryption', 'lock_mode',
+              'retain_until', 'retention_verified')
+    return {key: value[key] for key in fields if key in value}
+
+
 def public_report(report):
     """Allowlist report fields; storage locations and KMS identities stay private."""
     fields = (
@@ -20,16 +26,12 @@ def public_report(report):
         'backup_age_seconds_at_start', 'report_retention_verified', 'retention_error_class',
         'source_revision', 'run_id', 'run_attempt')
     result = {key: report[key] for key in fields if key in report}
-    proof_fields = ('version_id', 'content_length', 'sha256', 'encryption', 'lock_mode',
-                    'retain_until', 'retention_verified')
-    def proof(value):
-        return {key: value[key] for key in proof_fields if key in value}
     if 'objects' in report:
-        result['objects'] = {name: proof(value) for name, value in report['objects'].items()
+        result['objects'] = {name: public_proof(value) for name, value in report['objects'].items()
                              if name in ('catalogue.dump', 'manifest.json')}
     for name in ('receipt', 'retained_report'):
         if name in report:
-            result[name] = proof(report[name])
+            result[name] = public_proof(report[name])
     return result
 
 

@@ -2,6 +2,17 @@ name: Test262 cutover evidence preservation
 on:
   workflow_dispatch:
     inputs:
+      operation:
+        description: Preserve reviewed archives, or only read back an already retained exact version
+        type: choice
+        options:
+          - preserve
+          - verify-retained
+        default: preserve
+      artifact_id:
+        description: Existing retained artifact ID for verify-retained (no upload or import)
+        type: string
+        default: '11522307991'
       evidence_manifest:
         description: Reviewed repository manifest defining the complete required artifact set
         type: string
@@ -27,11 +38,23 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install boto3
+      - name: Validate reviewed operation
+        env:
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          case "$OPERATION" in
+            preserve|verify-retained) ;;
+            *) echo "::error::Unsupported evidence operation"; exit 1 ;;
+          esac
       - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.TEST262_BACKUP_AWS_ROLE }}
           aws-region: ${{ vars.TEST262_BACKUP_AWS_REGION }}
+          inline-session-policy: >-
+            ${{ inputs.operation == 'verify-retained' &&
+            '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetObjectVersion","s3:GetObjectRetention","kms:Decrypt"],"Resource":"*"}]}' || '' }}
       - name: Verify reports/outboxes and retain original evidence in encrypted S3
+        if: inputs.operation == 'preserve'
         env:
           GH_TOKEN: ${{ github.token }}
           TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
@@ -39,11 +62,21 @@ jobs:
           EVIDENCE_OUTPUT: /tmp/test262-cutover-report
           EVIDENCE_MANIFEST: ${{ inputs.evidence_manifest }}
         run: python -m scripts.test262.central.cutover_evidence --manifest "$EVIDENCE_MANIFEST"
+      - name: Read back one existing retained archive without writes
+        if: inputs.operation == 'verify-retained'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
+          TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+          ARTIFACT_ID: ${{ inputs.artifact_id }}
+        run: |
+          python -m scripts.test262.central.retained_evidence \
+            --artifact-id "$ARTIFACT_ID" --output /tmp/test262-cutover-report/retained-verification-report.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test262-cutover-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: /tmp/test262-cutover-report/evidence-report.json
+          path: /tmp/test262-cutover-report/*report.json
           retention-days: 90
           if-no-files-found: warn
       - name: Remove local report copy

@@ -703,6 +703,41 @@ have been independently retained. Further historical archive retention remains t
 #2230/#2242; archive retention horizons require a separate long-term policy. The manifest
 cannot set `history_complete=true` while the known gaps remain.
 
+For an **already preserved** archive, use the separate `verify-retained` operation
+of that same master-only protected workflow; do not rerun `preserve` to check
+availability. It uses a read/decrypt-only AWS session policy intersected with the
+existing role, the pinned original run/receipt ZIP/report digests in
+`retained-evidence-receipt.json`, and the existing exact-version readback helper.
+It verifies one selected original version, KMS identity, current COMPLIANCE retention,
+length and original digest without uploading, importing, restoring or executing fixtures.
+No persistent IAM, bucket or KMS policy is changed.
+
+The [sanitized original receipt inspection](evidence/retained-receipt-37715977350.json)
+independently checks the original eight-archive/five-outbox receipt. It records
+**historical**, not fresh, retention through November 12, 2026. In particular,
+artifact `11522307991` has the expected original SHA-256 and a recorded immutable
+version even though its GitHub metadata is unavailable. This neither establishes
+that its S3 copy is currently retrievable nor increases the 11 known unavailable
+history gaps. The legacy receipt omits lengths and explicit KMS/lock fields;
+reviewed source checks those, but fresh verification must re-read the exact version.
+
+```sh
+# Receipt integrity/provenance only; requires no AWS/database access.
+python -m scripts.test262.central.retained_evidence --receipt-only \
+  --output /private/retained-receipt.json
+# After the verification mode is reviewed/merged, use the existing protected role.
+gh workflow run test262-cutover-evidence.yml --ref master \
+  -f operation=verify-retained -f artifact_id=11522307991
+```
+
+Keep `historical_receipt_verified` separate from `selected_object_verified`.
+The verification report allowlists public object version/digest/retention fields;
+bucket/prefix/object keys, KMS identifiers, private database identities and audits
+are not copied into it. Retain its sanitized result and exact-SHA/run provenance
+in the existing issue/Git ledger before Actions expiry. Neither success flag covers
+every original archive or useful failed outbox; #2242 remains open for the broader
+ledger, and #2343 retains ongoing retention/recovery ownership.
+
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
 
 ```bash
