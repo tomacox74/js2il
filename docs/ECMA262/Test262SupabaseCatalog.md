@@ -821,8 +821,10 @@ Collection uses bounded absolute ZIP byte ranges, including ZIP64 indexes, rathe
 downloading the 4.28 GB history archive. `whole_zip_digest_verified` refers only to a
 GitHub ZIP fully fetched within that range budget; all other outer digests are explicitly
 metadata/previous-receipt pins. Indexed membership is not a fresh retained-member rehash.
-The original history container and six other selected objects still need separate fresh
-verification; the one completed readback is reused without S3 access.
+At that frozen observation time, the original history container and six other selected
+objects still needed separate fresh verification; the one completed readback was reused
+without S3 access. Later readbacks belong in the supplemental ledger below, not a rewrite
+of the original observation.
 
 This completes the scoped inventory, **not #2242 acceptance**. Review the 33 unmatched
 recovery containers for existing independently retained copies or separately authorize
@@ -832,6 +834,65 @@ pretend their partial outboxes are acknowledged. Hand the ledger and November 12
 to #2343 for retention/receipt ownership; planning/monitoring diagnostics remain coordinated
 with #2341. No proposed RPO, RTO, indefinite compact retention or verbose-log horizon is
 approved or deployed by this inventory.
+
+### Exact-version readback evidence (#2242)
+
+The [supplemental readback ledger](evidence/retained-readbacks-20261026.json) retains
+the sanitized reports and source/run/attempt/artifact provenance for the seven subsequent
+`verify-retained` jobs, plus the original eighth readback from `40251228151` unchanged.
+The new jobs use master revision `cd90c4edda81988c7adb6b0457c760714f37da23`.
+They are dispatched **serially**: the existing shared concurrency group allows only one
+pending run, so dispatching all seven together could cancel pending verifications.
+
+All seven completed successfully on October 26, 2026. Together with the reused receipt,
+**eight of eight selected containers have successful exact-version readback evidence**:
+
+| Selected artifact | Read-only verification run | Disposition |
+|---|---|---|
+| `11293700607` | [40286520492](https://github.com/tomacox74/js2il/actions/runs/40286520492) | Verified; all 4,279,618,183 bytes match |
+| `11510693007` | [40286745826](https://github.com/tomacox74/js2il/actions/runs/40286745826) | Verified |
+| `11513473147` | [40286830247](https://github.com/tomacox74/js2il/actions/runs/40286830247) | Verified |
+| `11515534653` | [40286909493](https://github.com/tomacox74/js2il/actions/runs/40286909493) | Verified |
+| `11522581310` | [40286989640](https://github.com/tomacox74/js2il/actions/runs/40286989640) | Verified |
+| `11523270256` | [40287069451](https://github.com/tomacox74/js2il/actions/runs/40287069451) | Verified |
+| `11523056094` | [40287147515](https://github.com/tomacox74/js2il/actions/runs/40287147515) | Verified |
+| `11522307991` | [40251228151](https://github.com/tomacox74/js2il/actions/runs/40251228151) | Earlier verification reused, not rerun |
+
+Each new receipt is downloaded and its complete ZIP hash matched to Actions metadata
+before assembly. Its recorded original `report_sha256` is reproducible from the retained
+sanitized report bytes. The offline verifier checks the exact original object version,
+digest, expected ZIP length, encryption/COMPLIANCE flags, unshortened retention deadline,
+report time within the successful job, complete seven-object selection and skipped
+preservation step. It rejects omissions, duplicates, scope changes and private fields.
+KMS identity is checked by the existing protected readback implementation; the private
+configured identifier is not published.
+
+`selected_set_readback_verified` concerns **only the eight selected containers**.
+It does not establish retrieval of the 33 unmatched recovery containers, new per-member
+SQLite/ZIP integrity, outbox acknowledgement, a new database reconciliation or current
+trusted fixture acceptance. `full_archive_coverage_verified=false`,
+`history_complete=false`, the frozen inventory and its 11 original gaps remain unchanged.
+The proof is scoped to each report's `checked_at`; finite locks are not indefinite
+retention, and readback does not extend their November 12 deadlines.
+
+```sh
+# Offline: no AWS/GitHub access, fixtures, dispatch, upload or policy change.
+python3 -m scripts.test262.central.retained_readbacks --verify \
+  docs/ECMA262/evidence/retained-readbacks-20261026.json
+# Assemble only after authenticating the seven small downloaded receipts/provenance.
+# An incomplete/failed set is rejected; output must not already exist.
+python3 -m scripts.test262.central.retained_readbacks \
+  --reports /private/readback-1.json /private/readback-2.json \
+    /private/readback-3.json /private/readback-4.json /private/readback-5.json \
+    /private/readback-6.json /private/readback-7.json \
+  --output /private/new-readback-ledger.json
+```
+
+#2242 remains open for the unmatched containers and final retention/gap handoff.
+The handoff on #2343 is recorded although that issue is closed; closure is not evidence
+of retention-policy approval or preservation of the unmatched archives. No new upload,
+import, restore, fixture execution, authority transition or storage/IAM policy change
+is authorized by these receipts.
 
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
 
