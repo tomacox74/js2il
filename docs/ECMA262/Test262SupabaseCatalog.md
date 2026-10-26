@@ -748,7 +748,7 @@ Unfinished listings leave rows `not_assessed`; they never manufacture absence fi
 Do not broaden the existing role/bucket/KMS policy on denial. Retain sanitized success
 or failure results and exact-SHA/run provenance outside Actions expiration after the run.
 
-#### Live discovery access gate — October 26, 2026
+#### Initial discovery access denial — October 26, 2026
 
 The first authorized metadata-only discovery
 [run 40385997470](https://github.com/tomacox74/js2il/actions/runs/40385997470), attempt 1,
@@ -778,13 +778,44 @@ repeat the same denied request, broaden the search or change role/bucket/KMS pol
 without a separate operator decision. Existing eight-object full readback evidence,
 the 11 original gaps and finite November 12 lock deadlines are unchanged.
 
-To proceed, an operator can provide an authorized read-only inventory scoped to the
-configured cutover-evidence prefix/layout and 33 artifact IDs, including observation
-time, pagination/completeness and exact version/length/retention metadata, or resolve
-effective access through their approved change process and explicitly authorize a new
-run. Storage locations and policy diagnostics remain private. Supplied metadata still
-does not verify payload digests; candidate copies require a separate exact-version
-readback decision. No new preservation upload is authorized by resolving this gate.
+At that observation, proceeding required operator-provided scoped inventory or
+operator-managed access resolution and an explicitly authorized retry. The subsequent
+successful retry below resolves the listing-access gate without rewriting this denied
+attempt. Storage locations and policy diagnostics remain private. Metadata still does
+not verify payload digests, and resolving this gate does not authorize preservation uploads.
+
+#### Successful discovery retry — October 26, 2026
+
+After the owner reported adding the listing policy and authorized continuation,
+[run 40388618658](https://github.com/tomacox74/js2il/actions/runs/40388618658), attempt 1,
+succeeded on the same master revision
+`a3acf2307df96176a9ad6e6c9c9956ed3ab344bd`. Its
+[sanitized durable receipt](evidence/retained-discovery-40388618658.json) records
+`listing_complete=true` and `discovery_complete=true`: **one page, nine entries, zero
+matching candidate versions for the 33 target archives**. All target rows now read
+`no_candidate_in_scoped_listing`, not `not_assessed` for this later observation.
+One scanned entry was outside the recognized layout; no claim is made about its contents.
+
+The complete receipt ZIP was independently downloaded and its length/SHA-256 matched
+to Actions metadata. Exact source/run/attempt/job and guarded step outcomes, embedded
+report hash, inventory hash, all 33 source pins and timestamps were checked. The
+preservation and full-payload readback steps were skipped. No payload read/decrypt,
+S3 upload, import, restore, fixture execution or agent-managed permission change occurred.
+
+The listing-access blocker is resolved **for this successful run**. The substantive
+retention gap is not: no candidate was identified under the **configured prefix and
+recognized run-attempt/artifact ZIP layout** at that observation. This does not rule out
+copies in other prefixes, layouts, buckets or providers, and is not evidence of global
+absence or irretrievable loss. `full_archive_coverage_verified=false` and
+`history_complete=false`; the 11 original source gaps remain unchanged.
+
+The next owner decision is whether to provide an independently retained inventory
+from another location, authorize a separately reviewed discovery scope, or authorize
+preservation of the 33 source recovery archives still lacking retained-copy proof.
+Any preservation must retain each original ZIP, including partial failed outboxes and
+their WAL/SHM members, without treating those failures as acknowledged successful imports.
+Do not add them blindly to the complete-report verifier's `import_report_ids`, rerun
+historical imports or extrapolate the eight selected proofs to these 33 containers.
 
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
