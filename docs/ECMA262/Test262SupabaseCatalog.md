@@ -748,6 +748,75 @@ Unfinished listings leave rows `not_assessed`; they never manufacture absence fi
 Do not broaden the existing role/bucket/KMS policy on denial. Retain sanitized success
 or failure results and exact-SHA/run provenance outside Actions expiration after the run.
 
+#### Initial discovery access denial — October 26, 2026
+
+The first authorized metadata-only discovery
+[run 40385997470](https://github.com/tomacox74/js2il/actions/runs/40385997470), attempt 1,
+used merged master `a3acf2307df96176a9ad6e6c9c9956ed3ab344bd`. It failed with
+**`AccessDenied` at `ListObjectVersions` before the first page**. AWS role assumption
+succeeded, but that does not imply effective permission to list versions. The sanitized
+report does not identify which policy layer denied access; no private permission audit
+is published or inferred.
+
+The [durable sanitized denial receipt](evidence/retained-discovery-denial-40385997470.json)
+records the exact revision/run/attempt/job, downloaded artifact ZIP SHA-256, original
+report SHA-256, Actions expiration and execution guards. Its embedded report bytes can
+be reconstructed as UTF-8 `json.dumps(report, indent=2) + "\n"` and checked against
+`report_sha256`. The receipt ZIP was independently downloaded and its digest/length
+matched to Actions metadata before this record was generated.
+
+| Observed field | Result |
+|---|---|
+| `listing_complete` / `discovery_complete` | Both `false` |
+| `pages_read` / `entries_scanned` | Both `0` |
+| Unmatched recovery archives | All **33 `not_assessed`**, no candidates returned |
+| Preservation / payload-readback steps | Both skipped |
+| Payload reads / S3 changes / database access | All `false` |
+
+This is an explicit access gate, **not proof that the 33 objects are absent**. Do not
+repeat the same denied request, broaden the search or change role/bucket/KMS policies
+without a separate operator decision. Existing eight-object full readback evidence,
+the 11 original gaps and finite November 12 lock deadlines are unchanged.
+
+At that observation, proceeding required operator-provided scoped inventory or
+operator-managed access resolution and an explicitly authorized retry. The subsequent
+successful retry below resolves the listing-access gate without rewriting this denied
+attempt. Storage locations and policy diagnostics remain private. Metadata still does
+not verify payload digests, and resolving this gate does not authorize preservation uploads.
+
+#### Successful discovery retry — October 26, 2026
+
+After the owner reported adding the listing policy and authorized continuation,
+[run 40388618658](https://github.com/tomacox74/js2il/actions/runs/40388618658), attempt 1,
+succeeded on the same master revision
+`a3acf2307df96176a9ad6e6c9c9956ed3ab344bd`. Its
+[sanitized durable receipt](evidence/retained-discovery-40388618658.json) records
+`listing_complete=true` and `discovery_complete=true`: **one page, nine entries, zero
+matching candidate versions for the 33 target archives**. All target rows now read
+`no_candidate_in_scoped_listing`, not `not_assessed` for this later observation.
+One scanned entry was outside the recognized layout; no claim is made about its contents.
+
+The complete receipt ZIP was independently downloaded and its length/SHA-256 matched
+to Actions metadata. Exact source/run/attempt/job and guarded step outcomes, embedded
+report hash, inventory hash, all 33 source pins and timestamps were checked. The
+preservation and full-payload readback steps were skipped. No payload read/decrypt,
+S3 upload, import, restore, fixture execution or agent-managed permission change occurred.
+
+The listing-access blocker is resolved **for this successful run**. The substantive
+retention gap is not: no candidate was identified under the **configured prefix and
+recognized run-attempt/artifact ZIP layout** at that observation. This does not rule out
+copies in other prefixes, layouts, buckets or providers, and is not evidence of global
+absence or irretrievable loss. `full_archive_coverage_verified=false` and
+`history_complete=false`; the 11 original source gaps remain unchanged.
+
+The next owner decision is whether to provide an independently retained inventory
+from another location, authorize a separately reviewed discovery scope, or authorize
+preservation of the 33 source recovery archives still lacking retained-copy proof.
+Any preservation must retain each original ZIP, including partial failed outboxes and
+their WAL/SHM members, without treating those failures as acknowledged successful imports.
+Do not add them blindly to the complete-report verifier's `import_report_ids`, rerun
+historical imports or extrapolate the eight selected proofs to these 33 containers.
+
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
 availability. It uses a read/decrypt-only AWS session policy intersected with the
