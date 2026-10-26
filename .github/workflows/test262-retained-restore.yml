@@ -59,7 +59,7 @@ jobs:
           BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
         run: |
           python -m scripts.test262.central.retained_restore \
-            --backup-suffix "$BACKUP_SUFFIX" --output /tmp/test262-retained-restore
+            --backup-suffix "$BACKUP_SUFFIX" --output /tmp/test262-retained-restore --retain-report
       - name: Preserve sanitized verification report
         if: always()
         uses: actions/upload-artifact@v7
@@ -71,4 +71,3 @@ jobs:
       - name: Remove temporary backup material
         if: always()
         run: rm -rf /tmp/test262-retained-restore
-

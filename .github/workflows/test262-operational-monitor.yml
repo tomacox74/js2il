@@ -32,6 +32,11 @@ jobs:
           TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
           TEST262_DIAGNOSTIC_FILE: artifacts/test262/monitor-diagnostic.json
         run: python -m scripts.test262.central.monitoring --output artifacts/test262/monitoring-receipt.json
+      - name: Inventory recovery evidence metadata without database or object-store access
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m scripts.test262.central.recovery_coverage --output artifacts/test262/monitor-recovery-coverage.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:

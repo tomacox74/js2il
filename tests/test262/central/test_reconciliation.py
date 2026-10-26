@@ -187,4 +187,40 @@ class StoredHistoryTests(unittest.TestCase):
             with self.assertRaises(TimeoutError):self.report(frozen(),seconds=.1)
 
 
+class ProjectionTests(unittest.TestCase):
+    report=ReconciliationTests.report
+    def test_version_one_digest_unchanged_by_storage_optimization(self):
+        self.assertEqual(self.report(frozen())['logical_sha256'],
+            'f6a7be8889dceb05f634a374f4b7d134f2ddfb83d47c00f1dd4612c3647b20dc')
+
+    def test_unread_payload_and_legacy_document_still_change_logical_digest(self):
+        a=frozen()+[row('imports',import_id='i',source_schema='native-v4',expected_counts={'attempts':0},imported_counts={'observations':0},limitations={}),
+          row('legacy_control_records',import_id='i',source_table='historical_control',source_key='k',document={'raw':'first'})]
+        b=copy.deepcopy(a);b[-1][1]['document']['raw']='second'
+        self.assertNotEqual(self.report(a)['logical_sha256'],self.report(b)['logical_sha256'])
+
+    def test_append_load_uses_typed_projections_and_binary_hashes(self):
+        import sqlite3
+        from scripts.test262.central.reconciliation import load_export,relationships
+        with tempfile.TemporaryDirectory() as d,sqlite3.connect(':memory:') as db:
+            p=Path(d)/'snapshot';receipt=write_export(p,frozen());events=[]
+            load_export(db,p,receipt,progress=lambda **event:events.append(event))
+            self.assertEqual(db.execute('SELECT length(digest) FROM observation_payloads').fetchone()[0],32)
+            self.assertNotIn('payload',{c[1] for c in db.execute('PRAGMA table_info(observation_payloads)')})
+            relationships(db)
+            plan=db.execute('EXPLAIN QUERY PLAN SELECT 1 FROM fixtures p WHERE p.fixture_id=?',('f',)).fetchall()
+            self.assertTrue(any('COVERING INDEX' in r[3] for r in plan),plan)
+            self.assertTrue(any(e['stage']=='identity-index' for e in events))
+            self.assertEqual(db.execute("SELECT typeof(required) FROM fixture_variants").fetchone()[0],'integer')
+
+    def test_decimal_scaled_integer_identity_stays_numeric(self):
+        import sqlite3
+        from scripts.test262.central.reconciliation import load_export
+        rows=frozen()+[row('work_leases',work_item_id='w',lease_generation=Decimal('1.00'),producer_id='producer',run_id='r')]
+        with tempfile.TemporaryDirectory() as d,sqlite3.connect(':memory:') as db:
+            p=Path(d)/'snapshot';receipt=write_export(p,rows);load_export(db,p,receipt)
+            self.assertEqual(db.execute('SELECT lease_generation,typeof(lease_generation) FROM work_leases').fetchone(),(1,'integer'))
+
+
+
 if __name__=='__main__':unittest.main()

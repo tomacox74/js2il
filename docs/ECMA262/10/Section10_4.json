@@ -4,7 +4,7 @@
   "title": "Built-in Exotic Object Internal Methods and Slots",
   "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots",
-  "intro": "JROC implements spec-defined exotic-object behavior for the features it currently supports. Arrays provide dedicated index and length internal operations over dense and sparse storage; bound functions, typed arrays, and namespace imports retain the limitations documented below.",
+  "intro": "JROC implements bound-function, array, boxed-string, arguments, typed-array, module-namespace, and immutable-prototype exotic behavior. The statuses below reflect observable semantics, including operations implemented inline rather than as separately named specification helpers. Cached shared-buffer witness records remain unsupported; other limitations include string internal-slot encapsulation, growable shared-buffer views, and host module-record integration.",
   "parent": {
     "clause": "10"
   },
@@ -55,7 +55,7 @@
     {
       "clause": "10.4.2.3",
       "title": "ArraySpeciesCreate ( originalArray , length )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arrayspeciescreate"
     },
     {
@@ -67,7 +67,7 @@
     {
       "clause": "10.4.3",
       "title": "String Exotic Objects",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects"
     },
     {
@@ -79,19 +79,19 @@
     {
       "clause": "10.4.3.2",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.3.3",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-ownpropertykeys"
     },
     {
       "clause": "10.4.3.4",
       "title": "StringCreate ( value , prototype )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-stringcreate"
     },
     {
@@ -115,7 +115,7 @@
     {
       "clause": "10.4.4.2",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc"
     },
     {
@@ -169,13 +169,13 @@
     {
       "clause": "10.4.5.1",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-preventextensions"
     },
     {
       "clause": "10.4.5.2",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-getownproperty"
     },
     {
@@ -187,7 +187,7 @@
     {
       "clause": "10.4.5.4",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-defineownproperty"
     },
     {
@@ -205,7 +205,7 @@
     {
       "clause": "10.4.5.7",
       "title": "[[Delete]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-delete"
     },
     {
@@ -229,13 +229,13 @@
     {
       "clause": "10.4.5.11",
       "title": "TypedArrayCreate ( prototype )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraycreate"
     },
     {
       "clause": "10.4.5.12",
       "title": "TypedArrayByteLength ( taRecord )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraybytelength"
     },
     {
@@ -247,13 +247,13 @@
     {
       "clause": "10.4.5.14",
       "title": "IsTypedArrayOutOfBounds ( taRecord )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-istypedarrayoutofbounds"
     },
     {
       "clause": "10.4.5.15",
       "title": "IsTypedArrayFixedLength ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-istypedarrayfixedlength"
     },
     {
@@ -277,7 +277,7 @@
     {
       "clause": "10.4.5.19",
       "title": "IsArrayBufferViewOutOfBounds ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isarraybufferviewoutofbounds"
     },
     {
@@ -361,19 +361,19 @@
     {
       "clause": "10.4.7",
       "title": "Immutable Prototype Exotic Objects",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects"
     },
     {
       "clause": "10.4.7.1",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects-setprototypeof-v"
     },
     {
       "clause": "10.4.7.2",
       "title": "SetImmutablePrototype ( O , V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set-immutable-prototype"
     }
   ],
@@ -431,7 +431,34 @@
           "test/built-ins/Array/length/define-own-prop-length-overflow-order.js",
           "test/built-ins/Array/length/define-own-prop-length-no-value-order.js"
         ],
-        "notes": "Canonical array indices use dedicated dense storage for ordinary elements and descriptor-backed sparse storage for exceptional indices. Indexed data/accessor descriptors, holes, deletion, non-writable length, failed highest-to-lowest truncation, strict/sloppy writes, maximum index boundaries, observable ToUint32/ToNumber coercion order, and preventExtensions/seal/freeze invariants are enforced through the Array [[DefineOwnProperty]] and ArraySetLength paths. ArraySpeciesCreate remains separately unsupported."
+        "notes": "Canonical array indices use dedicated dense storage for ordinary elements and descriptor-backed sparse storage for exceptional indices. Indexed data/accessor descriptors, holes, deletion, non-writable length, failed highest-to-lowest truncation, strict/sloppy writes, maximum index boundaries, observable ToUint32/ToNumber coercion order, and preventExtensions/seal/freeze invariants are enforced through the Array [[DefineOwnProperty]] and ArraySetLength paths. ArraySpeciesCreate is implemented separately with the limitations below."
+      },
+      {
+        "clause": "10.4.2.3",
+        "feature": "Species-aware array result construction",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-arrayspeciescreate",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/JavaScript/create-species.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/JavaScript/create-species-neg-zero.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/slice/JavaScript/create-species-non-ctor.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/filter/JavaScript/create-species-null.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/splice/JavaScript/property-traps-order-with-species.js"
+        ],
+        "notes": "Array.ArraySpeciesCreate reads constructor and Symbol.species, defaults undefined/null species to an ordinary array, rejects non-constructors, and constructs custom species results with the requested length. It also recognizes another realm's intrinsic Array constructor. Array-producing methods including concat, filter, map, slice, splice, flat, and flatMap use this path. Broader constructor/proxy/realm behavior retains the limitations of the shared callable and object runtime."
+      },
+      {
+        "clause": "10.4.3",
+        "feature": "Boxed-string creation, indexed descriptors, and own keys",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/numeric-properties.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/proto-from-ctor-realm.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/seal/JavaScript/object-seal-p-is-own-property-of-a-string-object-which-implements-its-own-get-own-property.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/getOwnPropertyDescriptors/JavaScript/primitive-strings.js"
+        ],
+        "notes": "String.Construct creates wrappers with string data, a non-writable/non-enumerable/non-configurable length, and the requested prototype, including the new target's realm fallback. ObjectRuntime synthesizes enumerable, non-writable, non-configurable UTF-16 code-unit index descriptors; compatible definitions succeed and incompatible definitions are rejected. Own-key enumeration includes virtual indices, ordinary properties, and symbols in array-index/string/symbol order while filtering out the internal string-data key. String data is still stored under an internal-named descriptor rather than a fully inaccessible internal slot, so reflective isolation of that implementation key remains limited."
       },
       {
         "clause": "10.4.3.5",
@@ -444,7 +471,7 @@
         "test262Paths": [
           "test/built-ins/String/15.5.5.5.2-3-6.js"
         ],
-        "notes": "String primitive indexed access returns code-unit substrings for canonical integer indexes and falls back to ordinary property lookup for non-canonical numeric keys such as NaN. Full String exotic object creation, property descriptors, and own-key ordering remain incomplete."
+        "notes": "String primitive and boxed-string indexed access returns UTF-16 code-unit substrings for canonical integer indexes and falls back to ordinary property lookup for non-canonical numeric keys such as NaN. Boxed-string creation, indexed property descriptors, and own-key ordering are implemented; remaining internal-slot encapsulation limitations are documented under 10.4.3."
       },
       {
         "clause": "10.4.4",
@@ -510,7 +537,19 @@
           "test/language/arguments-object/async-gen-meth-args-trailing-comma-single-args.js",
           "test/language/arguments-object/cls-decl-async-private-gen-meth-static-args-trailing-comma-spread-operator.js"
         ],
-        "notes": "When referenced, non-arrow functions lazily materialize a dedicated ArgumentsObject that inherits Object.prototype. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped semantics; covered cases include indexed reads/writes/deletion, own indexed-property descriptors, length and callee descriptors, Object.prototype inheritance, own-key enumeration, for..of value iteration, non-strict callee data descriptors, and strict restricted callee accessors. Both mapped and unmapped objects define an own writable, non-enumerable, configurable Symbol.iterator whose value is the realm's original Array values function, unaffected by later Array.prototype mutations. The native Test262 harness verifies all 261 runnable arguments-object cases at the pinned revision, including async-generator function, public/private method, static method, and trailing-comma argument lists; the remaining two cases are explicitly unsupported because they require eval. Published coverage accounts for all 263 arguments-object cases. Broader limitations remain in full exotic invariants and exact abstract-operation factoring rather than absence of mapped arguments support."
+        "notes": "When referenced, non-arrow functions lazily materialize a dedicated ArgumentsObject that inherits Object.prototype. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped semantics; covered cases include indexed reads/writes/deletion, own indexed-property descriptors, length and callee descriptors, Object.prototype inheritance, own-key enumeration, for..of value iteration, non-strict callee data descriptors, and strict restricted callee accessors. Both mapped and unmapped objects define an own writable, non-enumerable, configurable Symbol.iterator whose value is the realm's original Array values function, unaffected by later Array.prototype mutations. The native Test262 harness verifies all 261 runnable arguments-object cases at the pinned revision, including async-generator function, public/private method, static method, and trailing-comma argument lists; the remaining two cases are explicitly unsupported because they require eval. Published coverage accounts for all 263 arguments-object cases. Broader exotic/compiler interactions retain limitations; separately named specification helpers are not required for observable support."
+      },
+      {
+        "clause": "10.4.4.2",
+        "feature": "Mapped arguments descriptor changes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/arguments-object/mapped/JavaScript/nonconfigurable-nonwritable-descriptors-define-property-consecutive.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/mapped/JavaScript/enumerable-configurable-accessor-descriptor.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/mapped/JavaScript/nonconfigurable-descriptors-with-param-assign.js"
+        ],
+        "notes": "ObjectRuntime validates and completes requested descriptors before ArgumentsObject.DefineOwnProperty applies them. Data-value definitions update mapped parameters; accessor conversion and non-writable definitions remove the mapping, preserving the current mapped value when no replacement value is supplied. Rejected non-configurable descriptor changes do not alter the mapping."
       },
       {
         "clause": "10.4.5",
@@ -525,7 +564,12 @@
           "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/from/BigInt/JavaScript/custom-ctor-returns-other-instance.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/of/BigInt/JavaScript/custom-ctor-returns-other-instance.js",
           "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Get/JavaScript/key-is-not-integer.js",
-          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Set/JavaScript/key-is-valid-index-reflect-set.js"
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Set/JavaScript/key-is-valid-index-reflect-set.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/GetOwnProperty/JavaScript/index-prop-desc.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/JavaScript/key-is-minus-zero.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/Delete/JavaScript/indexed-value-ab-strict.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/JavaScript/integer-indexes-resizable-array-buffer-auto.js",
+          "tests/Jroc.Tests/TypedArrayRuntimeTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/TypedArrayConstructors/from/BigInt/custom-ctor-returns-other-instance.js",
@@ -533,7 +577,41 @@
           "test/built-ins/TypedArrayConstructors/internals/Get/key-is-not-integer.js",
           "test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-reflect-set.js"
         ],
-        "notes": "Supported Number and BigInt typed-array families provide construction and integer-indexed element access. Canonical numeric keys use integer-indexed get, has, define, and set semantics rather than falling through to inherited properties: invalid indices do not become ordinary properties, detached views report undefined or missing elements, and indexed writes coerce values before checking current bounds. Reflect.set respects a distinct receiver for valid indices. The native Test262 harness verifies 94 additional integer-indexed exotic cases across Number and BigInt families. Other exotic invariants and proxy interactions remain subject to the documented limitations."
+        "notes": "Supported Number and BigInt typed-array families provide construction and integer-indexed get, has, define, set, delete, descriptor, and own-key operations. Invalid numeric indices do not become ordinary properties or fall through to inherited properties; valid element descriptors are writable/enumerable/configurable, but deleting an existing element or making it non-writable/non-enumerable/non-configurable is rejected. Detached views report undefined or missing elements, indexed writes coerce values before checking current bounds, and Reflect.set respects a distinct receiver for valid indices. Preventing extensions works for fixed-buffer views and fails without mutation for resizable-ArrayBuffer-backed views. The native Test262 harness includes 94 additional integer-indexed exotic cases across Number and BigInt families. Growable SharedArrayBuffer length tracking, complete shared-memory ordering guarantees, and broader proxy/exotic interactions remain limited."
+      },
+      {
+        "clause": "10.4.5.9",
+        "feature": "Cached shared-buffer witness records",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-with-buffer-witness-records",
+        "notes": "10.4.5.9-10 require a cached buffer byte length with the requested memory order, ensuring a single shared-memory byte-length read for a growable SharedArrayBuffer. TypedArrayBase reads backing lengths directly and does not implement this cached witness contract. Inline resizable-ArrayBuffer length and bounds checks are implemented, but do not establish shared-buffer witness support."
+      },
+      {
+        "clause": "10.4.5.12",
+        "feature": "Typed-array buffer length, bounds, and fixed-length bookkeeping",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarraybytelength",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/byteLength/JavaScript/resizable-array-buffer-auto.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/byteLength/JavaScript/resizable-array-buffer-fixed.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/byteLength/JavaScript/detached-buffer.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/length/JavaScript/resizable-array-buffer-auto.js",
+          "tests/Jroc.Tests/TypedArrayRuntimeTests.cs"
+        ],
+        "notes": "The single-agent behavior of 10.4.5.12-16 is implemented inline by TypedArrayBase buffer/offset/length fields, IsOutOfBounds, GetCurrentLengthOrZero, and ObjectRuntime's integer-index and preventExtensions checks. Fixed-length and auto-length resizable ArrayBuffer views recompute observable byte lengths and bounds after resize or detach. Complete cached-witness semantics and growable SharedArrayBuffer length tracking remain unsupported."
+      },
+      {
+        "clause": "10.4.5.19",
+        "feature": "TypedArray and DataView out-of-bounds checks",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isarraybufferviewoutofbounds",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/prototype/byteLength/JavaScript/resizable-array-buffer-fixed.js",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/JavaScript/resizable-array-buffer-auto.js",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteOffset/JavaScript/resizable-array-buffer-fixed.js",
+          "tests/Jroc.Test262.Tests/built-ins/DataView/prototype/byteLength/JavaScript/detached-buffer.js"
+        ],
+        "notes": "TypedArrayBase and DataView each implement detached-buffer and resized-view bounds checks inline. Typed-array length/byteLength accessors return zero for out-of-bounds views; DataView byteLength/byteOffset accessors and element operations throw TypeError. A separately named IsArrayBufferViewOutOfBounds dispatcher is not required for these observable behaviors. Growable shared-buffer and cross-agent witness semantics retain the limitations above."
       },
       {
         "clause": "10.4.6",
@@ -552,9 +630,13 @@
       {
         "clause": "10.4.7",
         "feature": "Immutable prototype exotic invariants",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects",
-        "notes": "JROC does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/JavaScript/setPrototypeOf-with-non-circular-values-__proto__.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/prototype/__proto__/JavaScript/set-immutable.js"
+        ],
+        "notes": "ObjectRuntime.OrdinarySetPrototypeOfInternal explicitly recognizes the current realm's Object.prototype before ordinary extensibility or cycle checks. Setting its existing null prototype succeeds as a no-op; any actual prototype change returns false through Reflect.setPrototypeOf and throws TypeError through Object.setPrototypeOf or the legacy __proto__ setter, even while Object.prototype is extensible. The shared implementation supplies both [[SetPrototypeOf]] and SetImmutablePrototype semantics without a separate CLR exotic class. Recognition compares against the active realm's Object.prototype rather than tracking immutable-prototype identity across all realms, so cross-realm targets remain limited."
       }
     ]
   }

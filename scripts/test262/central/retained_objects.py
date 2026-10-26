@@ -9,6 +9,43 @@ from urllib.parse import urlsplit
 BACKUP_SUFFIX = re.compile(r'\d{4}/\d{2}/\d{2}/\d+-[1-9]\d*')
 
 
+def public_report(report):
+    """Allowlist report fields; storage locations and KMS identities stay private."""
+    fields = (
+        'schema_version', 'backup_verified', 'restore_verified', 'independent_retention_verified',
+        'contains_performance_data', 'production_cutover', 'stage', 'failed_stage', 'error_class',
+        'aws_error_code', 'checked_at', 'bucket_retention_verified', 'selection', 'digest_verified',
+        'restored_authority', 'restored_epoch', 'writer_bindings_disabled', 'row_counts', 'view_counts',
+        'snapshot_started_at', 'started_at', 'elapsed_seconds', 'isolated_restore_seconds',
+        'backup_age_seconds_at_start', 'report_retention_verified', 'retention_error_class',
+        'source_revision', 'run_id', 'run_attempt')
+    result = {key: report[key] for key in fields if key in report}
+    proof_fields = ('version_id', 'content_length', 'sha256', 'encryption', 'lock_mode',
+                    'retain_until', 'retention_verified')
+    def proof(value):
+        return {key: value[key] for key in proof_fields if key in value}
+    if 'objects' in report:
+        result['objects'] = {name: proof(value) for name, value in report['objects'].items()
+                             if name in ('catalogue.dump', 'manifest.json')}
+    for name in ('receipt', 'retained_report'):
+        if name in report:
+            result[name] = proof(report[name])
+    return result
+
+
+def preserve_report(s3, bucket, key, kms_key, path):
+    """Use the existing finite Object Lock policy; verify exact uploaded bytes."""
+    path = Path(path)
+    s3.upload_file(str(path), bucket, key,
+                   ExtraArgs={'ServerSideEncryption': 'aws:kms', 'SSEKMSKeyId': kms_key})
+    result = verify_object(s3, bucket, key, kms_key)
+    with path.open('rb') as stream:
+        expected = hashlib.file_digest(stream, 'sha256').hexdigest()
+    if result['sha256'] != expected or result['content_length'] != path.stat().st_size:
+        raise ValueError('Retained report bytes differ')
+    return result
+
+
 def destination(uri):
     value=urlsplit(uri)
     if value.scheme!='s3' or not value.netloc or value.query or value.fragment:

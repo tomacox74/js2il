@@ -58,6 +58,25 @@ class RetainedObjectTests(unittest.TestCase):
             with patch.dict(policy,change):
                 with self.assertRaises(ValueError):retained_objects.verify_bucket(self.s3,'bucket')
 
+    def test_report_retention_checks_exact_bytes_and_length(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'report.json';path.write_bytes(self.data)
+            proof=retained_objects.preserve_report(self.s3,'bucket','reports/run/report.json','kms-key',path)
+            self.assertTrue(proof['retention_verified'])
+            path.write_bytes(b'wrong bytes')
+            with self.assertRaises(ValueError):
+                retained_objects.preserve_report(self.s3,'bucket','reports/run/report.json','kms-key',path)
+
+    def test_public_report_allowlist_excludes_private_locations_and_unknown_fields(self):
+        proof={'version_id':'v1','sha256':'a'*64,'kms_key':'PRIVATE-kms','key':'PRIVATE-key'}
+        report=retained_objects.public_report({'bucket':'PRIVATE-bucket','prefix':'PRIVATE-prefix',
+            'repository_id':'PRIVATE-repository','password':'PRIVATE-password','stage':'complete',
+            'objects':{'catalogue.dump':proof,'manifest.json':proof,'unexpected':proof},
+            'retained_report':proof})
+        self.assertNotIn('PRIVATE',json.dumps(report))
+        self.assertEqual(set(report['objects']),{'catalogue.dump','manifest.json'})
+        self.assertEqual(report['retained_report']['version_id'],'v1')
+
     def receipt(self):
         prefix='backups/2026/10/08/123-1'
         return {'schema_version':1,'backup_verified':True,'bucket':'bucket','prefix':prefix,
@@ -121,6 +140,8 @@ class RetainedObjectTests(unittest.TestCase):
                 backup.backup(args)
             report=json.loads((Path(output)/'backup-report.json').read_text())
         self.assertTrue(report['backup_verified'])
+        self.assertNotIn('bucket',report)
+        self.assertNotIn('prefix',report)
         self.assertEqual(report['objects']['catalogue.dump']['version_id'],'version-catalogue.dump')
         self.assertEqual([call.args[2].split('/')[-1] for call in self.s3.upload_file.call_args_list],
                          ['catalogue.dump','manifest.json','backup-report.json'])
@@ -140,19 +161,78 @@ class RetainedObjectTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as output, \
              patch.dict('sys.modules',{'boto3':SimpleNamespace(client=lambda *a:self.s3)}), \
              patch.dict(os.environ,{'TEST262_RESTORE_DATABASE_URL':'host=127.0.0.1 dbname=catalogue_retained_restore',
-                                  'TEST262_BACKUP_S3_URI':'s3://bucket/backups','TEST262_BACKUP_KMS_KEY':'kms-key'}), \
+                                  'TEST262_BACKUP_S3_URI':'s3://bucket/backups','TEST262_BACKUP_KMS_KEY':'kms-key',
+                                  'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'2','GITHUB_SHA':'b'*40}), \
              patch('psycopg.connect') as connect, \
              patch.object(retained_objects,'latest_receipt',return_value=(receipt['prefix'],receipt,{'version_id':'receipt-v3'})), \
              patch.object(retained_objects,'verify_object',side_effect=object_proof), \
+             patch.object(retained_objects,'preserve_report',return_value={'version_id':'report-v1',
+                 'sha256':'a'*64,'retention_verified':True}) as preserve, \
              patch.object(retained_restore.subprocess,'run',return_value=SimpleNamespace(stdout='{"restore_verified":true}\n')) as restore:
             connect.return_value.__enter__.side_effect=[before,after]
-            self.assertEqual(retained_restore.verify(SimpleNamespace(output=output,backup_suffix='')),0)
+            self.assertEqual(retained_restore.verify(SimpleNamespace(output=output,backup_suffix='',retain_report=True)),0)
             report=json.loads((Path(output)/'restore-report.json').read_text())
             self.assertTrue(report['restore_verified']);self.assertEqual(report['restored_epoch'],3)
             self.assertEqual(report['receipt']['version_id'],'receipt-v3')
             self.assertFalse((Path(output)/'catalogue.dump').exists())
             self.assertTrue(restore.call_args.kwargs['capture_output'])
             self.assertFalse(report['production_cutover'])
+            self.assertIsNone(report['backup_age_seconds_at_start'])
+            self.assertGreaterEqual(report['elapsed_seconds'],report['isolated_restore_seconds'])
+            self.assertNotIn('bucket',report)
+            self.assertTrue(report['report_retention_verified'])
+            self.assertEqual(report['retained_report']['version_id'],'report-v1')
+            preserve.assert_called_once()
+            before.execute.return_value.fetchone.side_effect=[('170000',),(False,)]
+            after.execute.return_value.fetchone.side_effect=[('shadow',3),(None,)]
+            connect.return_value.__enter__.side_effect=[before,after]
+            preserve.side_effect=ValueError('PRIVATE archival failure')
+            self.assertEqual(retained_restore.verify(SimpleNamespace(
+                output=output,backup_suffix='',retain_report=True)),1)
+            failed=json.loads((Path(output)/'restore-report.json').read_text())
+            self.assertTrue(failed['restore_verified'])
+            self.assertFalse(failed['report_retention_verified'])
+            self.assertEqual(failed['failed_stage'],'retain-report')
+            self.assertEqual(failed['stage'],'failed')
+            self.assertNotIn('PRIVATE',json.dumps(failed))
+
+    def test_recovery_age_is_conservative_and_unknown_for_legacy_manifests(self):
+        now=datetime(2026,10,25,tzinfo=timezone.utc)
+        self.assertIsNone(retained_restore.recovery_age({},now))
+        self.assertEqual(retained_restore.recovery_age({'snapshot_started_at':
+            '2026-10-24T00:00:00+00:00'},now),86400)
+        for value in ('2026-10-25T00:00:00','2026-10-26T00:00:00+00:00','bad'):
+            with self.subTest(value=value),self.assertRaises(ValueError):
+                retained_restore.recovery_age({'snapshot_started_at':value},now)
+
+    def test_failed_drill_report_is_retained_and_archive_failure_is_explicit(self):
+        for archive_failed in (False,True):
+            before=Mock();before.execute.return_value.fetchone.side_effect=[('170000',),(False,)]
+            observed=[]
+            def preserve(s3,bucket,key,kms,path):
+                observed.append(json.loads(Path(path).read_text()))
+                self.assertTrue(key.endswith('/restore-verification/123-2/restore-report.json'))
+                if archive_failed:
+                    raise ValueError('PRIVATE storage error')
+                return {'version_id':'report-v1','sha256':'a'*64,'retention_verified':True}
+            with self.subTest(archive_failed=archive_failed),tempfile.TemporaryDirectory() as output, \
+                 patch.dict('sys.modules',{'boto3':SimpleNamespace(client=lambda *a:self.s3)}), \
+                 patch.dict(os.environ,{'TEST262_RESTORE_DATABASE_URL':'host=127.0.0.1 dbname=catalogue_retained_restore',
+                     'TEST262_BACKUP_S3_URI':'s3://PRIVATE-bucket/backups','TEST262_BACKUP_KMS_KEY':'PRIVATE-kms',
+                     'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'2','GITHUB_SHA':'b'*40}), \
+                 patch('psycopg.connect') as connect, \
+                 patch.object(retained_objects,'latest_receipt',side_effect=ValueError('PRIVATE source error')), \
+                 patch.object(retained_objects,'preserve_report',side_effect=preserve):
+                connect.return_value.__enter__.return_value=before
+                result=retained_restore.verify(SimpleNamespace(output=output,backup_suffix='',retain_report=True))
+                report=json.loads((Path(output)/'restore-report.json').read_text())
+                self.assertEqual(result,1)
+                self.assertFalse(report['restore_verified'])
+                self.assertEqual(report['report_retention_verified'],not archive_failed)
+                self.assertEqual(report['failed_stage'],'select-latest-verified-backup')
+                self.assertNotIn('PRIVATE',json.dumps(report))
+                self.assertNotIn('PRIVATE',json.dumps(observed))
+                self.assertEqual(observed[0]['source_revision'],'b'*40)
 
     def test_restore_rejects_production_and_hostaddr_override_before_connect(self):
         for dsn in ('host=production.example dbname=catalogue_retained_restore',

@@ -664,8 +664,9 @@ that separately during the pilot; the proposed <5% goal is not an observed basel
 Configure protected environment `test262-catalogue-backup`: catalogue-only backup DSN,
 `TEST262_BACKUP_S3_URI` outside the Supabase project, `TEST262_BACKUP_KMS_KEY`,
 `TEST262_BACKUP_AWS_ROLE` (GitHub OIDC-bound) and `TEST262_BACKUP_AWS_REGION`. Enable bucket
-versioning/Object Lock and independently enforce retention (daily recovery snapshots,
-long-lived historical archives; no automatic compact-evidence purge). The workflow uses
+versioning/Object Lock and independently verify the existing finite retention for daily
+recovery snapshots and selected historical archives. Long-term class horizons remain
+owner decisions under #2343, not an approved indefinite policy. The workflow uses
 PostgreSQL 17 `pg_dump`, an exported MVCC snapshot shared with exact table/view counts,
 SHA-256 manifests and KMS-encrypted off-project objects. It never dumps the performance
 schema. Client tools receive the DSN as discrete libpq environment variables, never a
@@ -716,6 +717,12 @@ all restored credential bindings, increments epoch and leaves authority shadow. 
 the drill report off-project; the retained-restore workflow supplies recurring disposable verification. Credentials and
 role memberships must be reprovisioned explicitly; restoring a dump must not reactivate
 workers. A backup job's successful upload is not proof of a completed restore drill.
+
+See [retention and recovery acceptance](Test262Recovery.md) for the proposed retention
+classes/objectives, coverage ownership and cadence, recovery-point/isolated-duration
+measurements, retained sanitized reports, and operator-approved rehearsal/cutover/rollback
+gates. The existing hourly monitor also produces a bounded metadata-only recovery
+coverage inventory; unknown archive/storage proof is never treated as preservation.
 
 ## Validation
 
@@ -1414,6 +1421,61 @@ the chosen dashboard-first policy; do not route notifications to an invented add
 
 ## Offline export reconciliation (#2342)
 
+### Accepted snapshot and compact evidence
+
+[Verification run 40181091117](https://github.com/tomacox74/js2il/actions/runs/40181091117),
+attempt 1, succeeded for both jobs on source
+`e7fc19954e91dce9d8b905757787f9dbe943e056`. The coordinator opted into
+reconciliation: **32 tables / 13,178,203 records**, **48 relationship** and
+**18 semantic** checks, all zero failures. Its last offline progress event
+(`history`) was at **283.082 seconds**, within the 1,800-second processing
+budget; this is not an interactive query SLO.
+
+The [sanitized compact record](evidence/reconciliation-40181091117.json) and
+[source pins](evidence/reconciliation-40181091117-pins.json) preserve the
+snapshot, table digests, checks and warning counts in versioned Git, independently
+of the original Actions artifacts' January 23, 2027 expiry. The acceptance
+summary and digests are also mirrored to #2342's existing issue ledger. This selected compact
+evidence preservation does not approve indefinite retention, retain the full
+export, or verify historical archive preservation.
+
+| #2342 acceptance | Evidence and exact boundary |
+| --- | --- |
+| Single-snapshot semantic reconciliation | Retained live record above; every exported table and defined relationship/check is present. Nonexported tables remain outside the contract. |
+| Deterministic logical comparison | #2390 and #2394 frozen-input/reverse-serialization, numeric and field-mutation tests; logical version 1 is preserved. Exact stream `sha256`, whole-file `file_sha256` and `logical_sha256` are distinct fields, not interchangeable hashes. |
+| Concurrent ingestion/scope isolation | PostgreSQL 17 test `test_bulk_export_snapshot_deadline_and_portal_cleanup`, scope-parity tests and [CI 40139543154](https://github.com/tomacox74/js2il/actions/runs/40139543154); the late provenance/run/observation chain and budget are excluded from the original snapshot and visible afterward. #2394 [CI 40163686943](https://github.com/tomacox74/js2il/actions/runs/40163686943) retains the scaled implementation's regressions. |
+| Historical handoff | Stored receipts attribute **62 source entries to 61 distinct imports**, with no ambiguous/unmatched/orphan entries; recorded original-manifest SHA matches the existing cutover manifest. **11 unavailable gaps** remain, `history_complete=false`, `original_manifest_inspected=false`, and `archive_preservation_verified=false`. #2242 owns original-archive coverage. |
+| Scoped performance compatibility/cadence | Reuse #2341's scoped performance-panel evidence and #2389's release/manual cadence and compatibility validation. Private permission audits are not republished. This does not establish newer or continuous ingestion, retrospective row equality, or complete #2341 monitoring acceptance. |
+| Retained receipts and reproduction | Versioned sanitized record plus issue ledger, pinned ZIPs and offline verification command below. Private identities, permission audits and individual import identities are excluded; original payloads are not republished. |
+
+The live record also reports **11 batches requiring refresh or marked conflicted**
+and **one publication requiring attention**. These are unresolved operational
+warnings owned by #2332/#2344, not failed reconciliation relationships. No repair,
+publication, refund, authority change or additional execution follows from this
+acceptance. #2343 owns ongoing retention and recovery decisions.
+
+To independently verify the already-produced receipt ZIPs (no database or S3
+access, export, fixture execution or publication):
+
+```sh
+gh api repos/tomacox74/js2il/actions/artifacts/12594876207/zip > /private/coordinator.zip
+gh api repos/tomacox74/js2il/actions/artifacts/12593334632/zip > /private/reporter.zip
+python -m scripts.test262.central.acceptance_receipt \
+  --pins docs/ECMA262/evidence/reconciliation-40181091117-pins.json \
+  --coordinator /private/coordinator.zip --reporter /private/reporter.zip \
+  --output /private/sanitized-reconciliation.json
+cmp /private/sanitized-reconciliation.json docs/ECMA262/evidence/reconciliation-40181091117.json
+```
+
+Keep downloaded originals private: they contain database/project identity and
+permission-audit fields. The offline command checks both ZIP pins, source and
+snapshot agreement, counts/check coverage, the version-1 logical root from
+per-table digests, historical parity and the stored ledger handoff. It does not
+reread the discarded 13-million-row export or independently recompute table
+digests. Source jobs did that while the payload existed. After Actions expiry,
+reproduction requires independently available originals; the public compact
+record remains evidence, not a replacement full snapshot or archive.
+
 Use `scripts.test262.central.reconciliation` against an **existing** export from
 `Client.export`, with its independently retained receipt. This consumes the
 32-table logical export contract; it does not introduce another exporter, read
@@ -1444,7 +1506,7 @@ archive locations or DSNs are emitted into the reconciliation report.
 
 A temporary SQLite file indexes the verified rows on private disk and is removed
 when processing ends. It is disposable working storage, never shared authority.
-Memory is bounded by the record limit (32 MiB), SQLite's 8 MiB page cache and
+Memory is bounded by the record limit (32 MiB), SQLite's 256 MiB page cache and
 small report structures; disk must fit the source rows, indexes and sort workspace.
 This offline workload has no claimed production runtime or interactive SLO.
 It is separate from the export's 1,800-second bound. Do not repeat the completed
@@ -1579,3 +1641,45 @@ verifier's manifest join remains useful. Retain the reviewed receipt privately
 beyond Actions expiration; do not publish live database/permission metadata into
 git. Existing performance-cadence and scoped permission receipts from #2341 remain
 separate compatibility evidence.
+
+
+### Offline processing scale and failure receipts
+
+The first opt-in run completed its export but failed later with an offline
+`OperationalError` after approximately the reconciliation deadline. That older
+receipt did not retain a stage, so it cannot establish which offline operation
+exceeded the bound. Do not treat the completed export or reporter job as proof
+of completed semantic acceptance.
+
+The verifier now stages only typed relationship/semantic fields plus the full
+canonical row digest and primary identity. Unread payloads and uninterpreted
+legacy-control documents are hashed before being discarded from the temporary
+index. Every exported field still contributes to logical digest version 1;
+this changes working storage, not comparison semantics or evidence policy.
+Append loading defers uniqueness indexes to sorted passes, checks still reject
+duplicate identities, and covering indexes serve relationship lookups without
+repeated JSON parsing. SQLite's page cache is bounded at 256 MiB. The 30-minute
+offline deadline and existing export bound remain unchanged.
+
+Progress events contain stage/table/check names, row counts and elapsed times,
+never source records or exception text. An offline failure now preserves the
+independently verified export receipt and records safe stage/exception metadata
+with `reconciliation.verified=false`. The temporary input and index are still
+removed; retaining their receipt is not retaining their payload. A retry must
+produce a new verified snapshot unless an original input was independently kept.
+
+CI exercises a deterministic synthetic workload with 252,203 rows across large
+eligibility, registration and legacy-control relations and retains its timing,
+counts and digest alongside the PostgreSQL report. A larger operator probe is:
+
+```sh
+PYTHONPATH=. python tests/test262/central/reconciliation_scale.py \
+  --fixtures 53432 --output /private/synthetic-scale
+```
+
+This synthesizes approximately the live row-count scale using no database or
+production records. It is an offline performance/consistency test, not a
+production acceptance receipt, archive proof or guaranteed live runtime. Review
+its stage timings separately from export/network latency. After merge, the
+reviewed protected opt-in run still needs a passing live reconciliation receipt
+before closing #2342.
