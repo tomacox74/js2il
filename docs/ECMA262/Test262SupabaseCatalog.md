@@ -698,10 +698,12 @@ source parity to that manifest by PR. The verifier requires the entire configure
 set, independently verifies source hashes/import mappings/outbox acknowledgements/restore
 reports, and reads back every preserved encrypted Object Lock version plus its report.
 The default manifest retains the original eight cutover artifacts and the last five source
-recoveries; it is an explicitly selected scope, not a claim that all 62 entries' archives
-have been independently retained. Further historical archive retention remains tracked in
-#2230/#2242; archive retention horizons require a separate long-term policy. The manifest
-cannot set `history_complete=true` while the known gaps remain.
+recoveries; it is an explicitly selected scope, not the entire import/recovery archive
+inventory. The #2242 inventory below now identifies all 62 original source ZIP/SQLite pairs
+inside the retained discovery container, but only three of 36 import/recovery containers
+have identified independent-retention proofs. Further historical evidence retention remains
+tracked in #2230/#2242; archive retention horizons require a separate long-term policy.
+The manifest cannot set `history_complete=true` while the known gaps remain.
 
 For an **already preserved** archive, use the separate `verify-retained` operation
 of that same master-only protected workflow; do not rerun `preserve` to check
@@ -716,16 +718,19 @@ The [sanitized original receipt inspection](evidence/retained-receipt-3771597735
 independently checks the original eight-archive/five-outbox receipt. It records
 **historical**, not fresh, retention through November 12, 2026. In particular,
 artifact `11522307991` has the expected original SHA-256 and a recorded immutable
-version even though its GitHub metadata is unavailable. This neither establishes
-that its S3 copy is currently retrievable nor increases the 11 known unavailable
-history gaps. The legacy receipt omits lengths and explicit KMS/lock fields;
-reviewed source checks those, but fresh verification must re-read the exact version.
+version even though its GitHub metadata is unavailable. That historical receipt alone
+neither establishes current S3 retrievability nor increases
+the 11 known unavailable history gaps. The subsequent read-only verification
+[40251228151](https://github.com/tomacox74/js2il/actions/runs/40251228151) successfully
+read back this one exact version; its sanitized receipt is retained inside the inventory
+below. The legacy receipt omits lengths and explicit KMS/lock fields; reviewed source
+checks those, but fresh verification must re-read the exact version.
 
 ```sh
 # Receipt integrity/provenance only; requires no AWS/database access.
 python -m scripts.test262.central.retained_evidence --receipt-only \
   --output /private/retained-receipt.json
-# After the verification mode is reviewed/merged, use the existing protected role.
+# Already-reviewed read-only mode, using the existing protected role.
 gh workflow run test262-cutover-evidence.yml --ref master \
   -f operation=verify-retained -f artifact_id=11522307991
 ```
@@ -737,6 +742,96 @@ are not copied into it. Retain its sanitized result and exact-SHA/run provenance
 in the existing issue/Git ledger before Actions expiry. Neither success flag covers
 every original archive or useful failed outbox; #2242 remains open for the broader
 ledger, and #2343 retains ongoing retention/recovery ownership.
+
+### Frozen historical archive inventory (#2242)
+
+The [durable sanitized inventory](evidence/historical-archive-inventory-2242.json)
+records the October 26, 2026 observation of all **104 GitHub-listed historical import
+workflow runs**, including failed/cancelled attempts and later guard skips. Both pages of
+run metadata were reconciled against the workflow's total count and all 33 artifact links
+in #2242. The pinned original manifest was independently hash-verified, not reconstructed
+from the issue's narrative. Its **62 source entries and 11 original gaps** are preserved
+verbatim; each source's ZIP and SQLite member is present in the discovery ZIP index.
+The original gap reasons remain `no catalogue artifact`, not newly inferred expiration
+or an assertion that recovery is impossible.
+
+| Required evidence | Container artifact(s) identifying the retained object | Coverage/disposition |
+|---|---|---|
+| Original discovery manifest, 62 original source ZIPs and 62 SQLite files | `11293700607` | One historical exact-version container proof; indexed membership covers all manifest sources |
+| Final five native-source import reports/outboxes | `11510693007`, `11513473147`, `11515534653` | Three historical exact-version container proofs |
+| Cutover native/reconciled checkpoints | `11523270256`, `11523056094` | Each contains `native.sqlite`; separately retained containers, not additional original-manifest imports |
+| Cutover isolated-restore report | `11522581310` | Contains `restore-report.json`; not a claim about every backup |
+| Final retained-only legacy checkpoint | `11522307991` | Actions metadata returns 404; reuse the successful exact-version readback from `40251228151`, not a new import |
+| Other 33 import/recovery containers | **No independent retained object identified** | Actions metadata/indexes remain available; not classified as lost or independently preserved |
+
+`archives` enumerates every container/member, ZIP digest, Actions expiration, source
+run/revision and `retained_object_artifact_id` mapping. Resolve that ID in
+`retained_objects` for the original **`version_id`, `sha256`, `retain_until`** and
+`preservation_receipt` provenance. The eight historical retention deadlines are
+**November 12, 2026**, not the newer backup deadlines. A null mapping explicitly means
+**proof not identified**, not that no copy could exist elsewhere. Original source
+`archive_sha256`/SQLite `sha256`, container `zip_sha256`, manifest hashes and receipt
+hashes retain their distinct meanings.
+
+There are **41 required containers**, of which eight have identified retained objects.
+The **36 import/recovery archives contain 67 outbox databases and four WAL/SHM members**;
+only three containers/five outboxes have identified retained proofs. The four incomplete
+attempts below are useful original failure/recovery evidence and remain required even
+where a later import succeeded:
+
+| Run | Recovery artifact | Outbox databases | Additional sidecars |
+|---|---|---|---|
+| `37177718428` | `11296419607` | 1 | WAL and SHM |
+| `37188910885` | `11305023882` | 1 | WAL and SHM |
+| `37237023718` | `11316103861` | 2 | None indexed |
+| `37405627009` | `11386604548` | 1 | None indexed |
+
+All four lack an identified independent-retention proof. Preserve each observed
+DB/WAL/SHM set together in any separately approved preservation work. Inventorying
+their members does **not** recheck SQLite integrity, payloads, acknowledgements or
+successful ingestion.
+
+The ledger also accounts for **43 planning-only artifacts** (40 blocked, three completed
+selection no-ops) and **24 invocations with no artifact** (21 skipped, three unsuccessful).
+Planning-only ZIPs contain no import report/outbox and are excluded from this required
+original/import/outbox scope, not silently counted as import success. Runs `37219426911`,
+`37364118548` and `37426152050` have no produced recovery artifact to map; the second has
+a cancelled import job with no recorded steps, so its precise execution stage is unknown.
+These are not additional missing-original-archive gaps.
+
+Reports contain 63 verified source references covering 62 unique manifest sources:
+`11290148901` appears twice. Neither number is a distinct-import count or replaces the
+existing reconciliation of **61 distinct imports**. Supporting verification provenance is
+retained in `preservation_receipt` and `reused_readback`, including the byte-hash-verifiable
+sanitized single-object report. The original private preservation receipt was uploaded
+off-project, but no exact self-version proof was recorded in it; the durable sanitized
+Git projection does not establish retention of its private raw bytes.
+
+```sh
+# Offline: no credentials, GitHub, S3, database access or replacement ledger.
+python3 -m scripts.test262.central.archive_inventory --verify \
+  docs/ECMA262/evidence/historical-archive-inventory-2242.json
+# Optional reproduction while source Actions artifacts remain available.
+# GitHub reads only; output must be new. This does not verify or upload S3 objects.
+python3 -m scripts.test262.central.archive_inventory --collect \
+  --output /private/new-historical-archive-inventory.json
+```
+
+Collection uses bounded absolute ZIP byte ranges, including ZIP64 indexes, rather than
+downloading the 4.28 GB history archive. `whole_zip_digest_verified` refers only to a
+GitHub ZIP fully fetched within that range budget; all other outer digests are explicitly
+metadata/previous-receipt pins. Indexed membership is not a fresh retained-member rehash.
+The original history container and six other selected objects still need separate fresh
+verification; the one completed readback is reused without S3 access.
+
+This completes the scoped inventory, **not #2242 acceptance**. Review the 33 unmatched
+recovery containers for existing independently retained copies or separately authorize
+preservation before Actions expiration. The existing preservation verifier expects complete
+selected import reports: do not blindly add failed archives to `import_report_ids` or
+pretend their partial outboxes are acknowledged. Hand the ledger and November 12 deadlines
+to #2343 for retention/receipt ownership; planning/monitoring diagnostics remain coordinated
+with #2341. No proposed RPO, RTO, indefinite compact retention or verbose-log horizon is
+approved or deployed by this inventory.
 
 Perform a restore drill into a **new empty disposable** PostgreSQL 17 database:
 
