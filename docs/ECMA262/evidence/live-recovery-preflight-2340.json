@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "issue": 2340,
+  "repository": "tomacox74/js2il",
+  "evidence_kind": "authenticated-bounded-manual-live-preflight-stop",
+  "checked_at": "2026-10-27T19:17:12.373546+00:00",
+  "controls": {
+    "pr": 2417,
+    "merged_revision": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+    "source_branches_deleted": true
+  },
+  "result": {
+    "accepted_live_recovery": false,
+    "complete": false,
+    "phase": "exhaust",
+    "stage": "preflight",
+    "fixture_executions": 0,
+    "execution_intents": 0,
+    "fixture_selected": false,
+    "allocations_or_campaign_markers_created": false,
+    "catalogue_mutation_path_reached": false,
+    "zero_execution_basis": "Authenticated report and failing guard in pinned supervisor before fixture selection and any planning/mutating/executor call.",
+    "recovery_dispatched": false,
+    "retry_dispatched": false,
+    "shared_control_plane_equality_claimed": false,
+    "publication": false,
+    "permission_or_authority_changes": false,
+    "imports_or_restores": false,
+    "s3_access": false,
+    "github_cron_observed": false
+  },
+  "source": {
+    "run": {
+      "id": 40566656556,
+      "run_attempt": 1,
+      "event": "workflow_dispatch",
+      "head_branch": "master",
+      "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-27T19:10:15Z",
+      "updated_at": "2026-10-27T19:11:53Z",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40566656556"
+    },
+    "artifact": {
+      "id": 12762703884,
+      "name": "test262-recovery-drill-40566656556-1",
+      "digest": "sha256:937df7a19620f6cdce9a817440b851065627bd8a48b53eb4b1378edf8aed25e5",
+      "size_in_bytes": 828,
+      "created_at": "2026-10-27T19:11:49Z",
+      "expires_at": "2027-01-25T19:10:16Z"
+    },
+    "zip_sha256": "937df7a19620f6cdce9a817440b851065627bd8a48b53eb4b1378edf8aed25e5",
+    "members": {
+      "diagnostic.json": {
+        "sha256": "cf028ab9df2b008fab34d70b0e57b4b27ec53f94e8237f2214030739cb94bc64",
+        "bytes": 299
+      },
+      "report.json": {
+        "sha256": "420080eddb6eb26182779a0b27b2a7e508ea545fa50e424771bbf2c1e042e8cf",
+        "bytes": 791
+      }
+    }
+  },
+  "supervisor_report": {
+    "complete": false,
+    "stage": "preflight",
+    "actions": {
+      "id": 40566656556,
+      "run_attempt": 1,
+      "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+      "head_branch": "master",
+      "event": "workflow_dispatch",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40566656556"
+    },
+    "schema_version": 1,
+    "repository": "tomacox74/js2il",
+    "campaign": "live-recovery-2340-two-variants-20261027",
+    "phase": "exhaust",
+    "fixture_executions_maximum": 2,
+    "execution_intents": [],
+    "invocations": [],
+    "publication": false,
+    "authority_changed": false,
+    "permissions_changed": false,
+    "s3_access": false,
+    "imports_or_restores": false,
+    "cron_witness": false,
+    "error_class": "ValueError"
+  },
+  "sanitized_diagnostic": {
+    "error_type": "ValueError",
+    "locations": [
+      {
+        "file": "scripts/test262/central/live_recovery_drill.py",
+        "line": 484
+      },
+      {
+        "file": "scripts/test262/central/live_recovery_drill.py",
+        "line": 270
+      },
+      {
+        "file": "scripts/test262/central/live_recovery_drill.py",
+        "line": 31
+      }
+    ],
+    "stage": "recovery-drill.preflight"
+  },
+  "failing_guard": {
+    "source": "https://github.com/tomacox74/js2il/blob/08b50be490e521bbd50c63ca3799f8bb33b58707/scripts/test262/central/live_recovery_drill.py#L270-L272",
+    "checks": [
+      "refreshed native target full identity equals built execution identity",
+      "sealed corpus revision equals pinned upstream commit",
+      "sealed corpus URL equals pinned upstream clone URL"
+    ],
+    "which_component_differs": "unproven: the failed report does not retain compared documents or component hashes",
+    "required_response": "Stopped. Do not weaken the guard, reuse a failed receipt as exhaustion proof, or dispatch recovery."
+  },
+  "master_prerequisites": {
+    "source": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+    "runs": {
+      ".github/workflows/test262-central-refresh.yml": {
+        "id": 40565762524,
+        "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+        "run_attempt": 1,
+        "event": "workflow_run",
+        "path": ".github/workflows/test262-central-refresh.yml",
+        "name": "Test262 central registration refresh",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40565762524"
+      },
+      ".github/workflows/test262-mvp.yml": {
+        "id": 40565545982,
+        "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+        "run_attempt": 1,
+        "event": "push",
+        "path": ".github/workflows/test262-mvp.yml",
+        "name": "test262 MVP - push - master",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40565545982"
+      },
+      ".github/workflows/dotnet.yml": {
+        "id": 40565545951,
+        "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+        "run_attempt": 1,
+        "event": "push",
+        "path": ".github/workflows/dotnet.yml",
+        "name": ".NET - push - master",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40565545951"
+      },
+      ".github/workflows/test262-central-tests.yml": {
+        "id": 40565545894,
+        "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+        "run_attempt": 1,
+        "event": "push",
+        "path": ".github/workflows/test262-central-tests.yml",
+        "name": "Test262 central catalogue invariants",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40565545894"
+      }
+    }
+  },
+  "authenticated_registration_refresh": {
+    "run_id": 40565762524,
+    "artifact": {
+      "id": 12762034863,
+      "name": "test262-central-refresh-40565762524-1",
+      "digest": "sha256:ea74c39d13152a9610c78b0f24b8705cfe030c3352e3ad45cbc7b8228c2fd24d",
+      "size_in_bytes": 419,
+      "created_at": "2026-10-27T19:09:13Z",
+      "expires_at": "2027-01-25T19:04:23Z"
+    },
+    "zip_sha256": "ea74c39d13152a9610c78b0f24b8705cfe030c3352e3ad45cbc7b8228c2fd24d",
+    "report_sha256": "f6e40c76232d4d36aac8491746e0bdcdf901166207214c5b37c44d89d18c94ca",
+    "report": {
+      "provenance": "b60fd015-e157-5f39-a8a6-b26b6ff1638c",
+      "publication_started": false,
+      "registration_snapshot": "eb93f530-6805-50a6-85ce-29bd798dde82",
+      "revision": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+      "screening_started": false,
+      "status": "refreshed",
+      "validation": "b2761fd5-fe24-559e-a912-bbecf5058a19",
+      "validation_run": 40565545982,
+      "validation_url": "https://github.com/tomacox74/js2il/actions/runs/40565545982"
+    }
+  },
+  "remaining_acceptance": [
+    "Diagnose and reconcile the native-target/build identity binding without weakening full identity or changing authority.",
+    "No real attempt-budget exhaustion or same-identity missing-variant recovery has been witnessed.",
+    "Further live action requires a new explicit operator decision after the stop; no retry or second phase was attempted.",
+    "Keep issue 2340 open; this failed guarded preflight cannot satisfy the revised live acceptance."
+  ],
+  "boundaries": [
+    "This is a failed manual preflight, not a successful live recovery or cron witness.",
+    "No fixture was selected or executed, and the mutating path was not reached, as established by pinned source ordering.",
+    "No independent before/after production SQL snapshot was collected; no field-level identity mismatch is claimed.",
+    "Existing successful disposable proofs remain separate; no native acceptance, publication or full-suite claim is added.",
+    "This committed projection does not extend original Actions artifact retention."
+  ]
+}
