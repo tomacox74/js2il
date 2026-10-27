@@ -16,6 +16,7 @@ from . import commands, lifecycle
 from .client import Client, Outbox, bytea, canonical, identity, sha
 from .diagnostics import report_failure
 from .execution_identity import execution_identity
+from .identity_diagnostics import compare
 from .importer import provenance
 from .inventory import REPO, normalize_fixture
 from .monitoring import github
@@ -78,7 +79,7 @@ def check_invocation(args):
             ('id', 'run_attempt', 'head_sha', 'head_branch', 'event', 'path', 'html_url')}
 
 
-def fetch_previous(run_id, source):
+def fetch_report(run_id, source):
     require(type(run_id) is int and run_id > 0, 'Exact preceding Actions run required')
     root = f'repos/{REPOSITORY}/actions'
     run = github(f'{root}/runs/{run_id}/attempts/1')
@@ -107,13 +108,22 @@ def fetch_previous(run_id, source):
                 'Exactly one bounded preceding report required')
         encoded = archive.read(members[0])
     report = json.loads(encoded)
+    return report, {'run_id': run_id, 'run_attempt': 1, 'artifact_id': meta['id'],
+                    'zip_sha256': digest, 'report_sha256': hashlib.sha256(encoded).hexdigest()}
+
+
+def fetch_previous(run_id, source):
+    report, receipt = fetch_report(run_id, source)
     require(report['schema_version'] == 1 and report['repository'] == REPOSITORY
             and report['campaign'] == AUTHORIZATION and report['phase'] == 'exhaust'
             and report['phase_complete'] is True and report['complete'] is False
             and report['stage'] == 'exhaustion-verified'
             and report['source_revision'] == source
             and report['actions']['id'] == run_id and report['actions']['run_attempt'] == 1
+            and report['actions']['head_sha'] == source
+            and type(report['actual_fixture_executions']) is int
             and report['actual_fixture_executions'] == 1
+            and re.fullmatch('[a-f0-9]{64}', report['first_observation_sha256'])
             and len(report['execution_intents']) == len(report['invocations']) == 1
             and report['invocations'][0]['budget']['state'] == 'exhausted'
             and report['invocations'][0]['budget']['charged_attempts'] == 1
@@ -124,8 +134,55 @@ def fetch_previous(run_id, source):
                     ('publication', 'authority_changed', 'permissions_changed',
                      's3_access', 'imports_or_restores', 'cron_witness')),
             'Preceding report is not a verified single-execution exhaustion')
-    return report, {'run_id': run_id, 'run_attempt': 1, 'artifact_id': meta['id'],
-                    'zip_sha256': digest, 'report_sha256': hashlib.sha256(encoded).hexdigest()}
+    return report, receipt
+
+
+def fetch_baseline(run_id, source):
+    report, receipt = fetch_report(run_id, source)
+    require(report['schema_version'] == 1 and report['repository'] == REPOSITORY
+            and report['campaign'] == AUTHORIZATION and report['phase'] == 'verify'
+            and report['phase_complete'] is True and report['complete'] is False
+            and report['stage'] == 'baseline-verified' and report['baseline_read_only'] is True
+            and report['source_revision'] == source
+            and report['actions']['id'] == run_id and report['actions']['run_attempt'] == 1
+            and report['actions']['head_sha'] == source
+            and type(report['actual_fixture_executions']) is int
+            and report['actual_fixture_executions'] == 0
+            and report['execution_intents'] == report['invocations'] == []
+            and report['control_plane_unchanged'] is True
+            and report['preflight_comparison']['matches'] is True
+            and report['preflight_comparison']['expected_sha256']
+            == report['preflight_comparison']['actual_sha256']
+            == report['native_execution_identity_sha256']
+            and report['sealed_upstream_matches'] is True
+            and report['required_variants'] == ['non-strict', 'strict']
+            and re.fullmatch('[a-f0-9]{64}', report['image_archive_sha256'])
+            and re.fullmatch('sha256:[a-f0-9]{64}', report['fixture_image_id'])
+            and all(report[key] is False for key in
+                    ('publication', 'authority_changed', 'permissions_changed',
+                     's3_access', 'imports_or_restores', 'cron_witness')),
+            'Baseline is not an authenticated zero-execution frozen identity')
+    return report, receipt
+
+
+def image_archive_sha256(args):
+    digest = hashlib.sha256()
+    with Path(args.image_archive).open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def restore_image(args):
+    baseline = args.baseline_report
+    require(image_archive_sha256(args) == baseline['image_archive_sha256'],
+            'Frozen image archive differs; do not load or execute it')
+    subprocess.run(['docker', 'image', 'load', '--input', args.image_archive],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    require(image_id(args) == baseline['fixture_image_id'],
+            'Loaded image differs from the frozen baseline')
+    return {'archive_sha256': baseline['image_archive_sha256'],
+            'image_id': baseline['fixture_image_id']}
 
 
 def control_plane(client, args):
@@ -232,12 +289,12 @@ class GuardedClaims:
 
 
 def run(client, args, report):
-    require(args.phase in ('exhaust', 'recover'), 'Explicit bounded phase required')
+    require(args.phase in ('verify', 'exhaust', 'recover'), 'Explicit bounded phase required')
     previous = getattr(args, 'previous_report', None)
-    require((args.phase == 'exhaust' and previous is None)
+    require((args.phase in ('verify', 'exhaust') and previous is None)
             or (args.phase == 'recover' and previous is not None),
             'Recovery requires authenticated preceding evidence')
-    index = 0 if args.phase == 'exhaust' else 1
+    index = 1 if args.phase == 'recover' else 0
     args.kind = 'native'
     args.repository_name = REPOSITORY
     args.cap_ms = 120000
@@ -257,6 +314,7 @@ def run(client, args, report):
         report['execution_intents'] = list(previous['execution_intents'])
         report['invocations'] = list(previous['invocations'])
         report['first_observation'] = previous['first_observation']
+        report['first_observation_sha256'] = previous['first_observation_sha256']
     checkpoint(args, report)
     before = control_plane(client, args)
     target = before['native_target']
@@ -267,16 +325,23 @@ def run(client, args, report):
     require(inventory and inventory['inventory_state'] == 'sealed',
             'Existing sealed inventory required; the drill never imports or registers a corpus')
     base = execution_identity(args, corpus)
-    require(current['identity_document'] == base and inventory['revision'] == base['upstream']['commit']
-            and inventory['upstream_url'] == base['upstream']['cloneUrl'],
+    report['preflight_comparison'] = compare(current['identity_document'], base)
+    report['sealed_upstream_matches'] = (
+        inventory['revision'] == base['upstream']['commit']
+        and inventory['upstream_url'] == base['upstream']['cloneUrl'])
+    checkpoint(args, report)
+    require(report['preflight_comparison']['matches'] and report['sealed_upstream_matches'],
             'Current native target and built execution identity differ')
     validation = commands.github_validation(REPOSITORY, args.revision)
     frozen_image = image_id(args)
     args.image = frozen_image
     check_identity(args, corpus, base, frozen_image)
+    baseline = getattr(args, 'baseline_report', None)
+    selected_id = (previous['fixture']['fixture_id'] if previous else
+                   baseline['fixture']['fixture_id'] if baseline else None)
     fixture, normalized, reasons = select_fixture(
         client, args, target, base,
-        fixture_id=previous['fixture']['fixture_id'] if previous else None)
+        fixture_id=selected_id)
     doc = dict(base, operator_recovery_drill={'campaign': AUTHORIZATION, 'fixture_image': frozen_image})
     pid = identity(args.repository, 'native', sha(doc))
     marker_keys = [AUTHORIZATION + ':exhaust', AUTHORIZATION + ':recover']
@@ -288,6 +353,9 @@ def run(client, args, report):
     run_ids = ([this_run] if previous is None else
                [previous['invocations'][0]['context']['run'], this_run])
     report.update(source_revision=args.revision, corpus=corpus, provenance_id=pid,
+                  native_provenance_id=current['provenance_id'],
+                  native_execution_identity_sha256=sha(base),
+                  image_archive_sha256=image_archive_sha256(args),
                   execution_identity_sha256=sha(doc), execution_identity_components={
                       key: sha(base[key]) for key in ('binaries', 'harness', 'tooling',
                                                      'capabilities', 'environment_identity', 'timeouts')},
@@ -296,6 +364,24 @@ def run(client, args, report):
                   fixture={key: fixture[key] for key in
                            ('fixture_id', 'upstream_path', 'content_sha256', 'dependency_manifest_digest')},
                   required_variants=['non-strict', 'strict'])
+    if args.phase == 'verify':
+        check_identity(args, corpus, base, frozen_image)
+        require(control_plane(client, args) == before
+                and all(client.one('runs', external_run_key=key) is None for key in marker_keys)
+                and not any(client.read('work_items', {'state': 'leased'})),
+                'Baseline changed, campaign already started or unrelated work is leased')
+        report.update(stage='baseline-verified', phase_complete=True, complete=False,
+                      actual_fixture_executions=0, control_plane_unchanged=True,
+                      checked_at=datetime.now(timezone.utc).isoformat())
+        checkpoint(args, report)
+        return report
+    frozen_fields = ('source_revision', 'corpus', 'provenance_id', 'native_provenance_id',
+                     'native_execution_identity_sha256', 'execution_identity_sha256',
+                     'fixture_image_id', 'image_archive_sha256', 'control_plane_sha256',
+                     'fixture', 'required_variants')
+    require(baseline and baseline['phase'] == 'verify'
+            and all(sha(baseline[key]) == sha(report[key]) for key in frozen_fields),
+            'Source/full identity/image/fixture/control plane differs from the frozen baseline')
     if previous is not None:
         require(previous['source_revision'] == args.revision
                 and previous['execution_identity_sha256'] == sha(doc)
@@ -303,6 +389,7 @@ def run(client, args, report):
                 and previous['provenance_id'] == pid
                 and previous['control_plane_sha256'] == sha(before)
                 and previous['fixture'] == report['fixture']
+                and previous['baseline_source'] == report['baseline_source']
                 and previous['actions']['id'] != report['actions']['id'],
                 'Previous source/full identity/fixture/control plane differs')
     checkpoint(args, report)
@@ -316,13 +403,25 @@ def run(client, args, report):
     completed_work = {row['work_item_id'] for row in report['execution_intents']}
     first_budget = previous['invocations'][0]['budget'] if previous else None
 
+    def check_previous_evidence():
+        if previous is not None:
+            original = [row for row in observations(client, pid)
+                        if row['observation_id'] == report['first_observation']]
+            require(len(original) == 1 and sha(original[0]) == report['first_observation_sha256']
+                    and sha(client.one('budget_scopes', budget_scope_id=first_budget['budget_scope_id']))
+                    == sha(first_budget),
+                    'Original observation payload or previous charges changed; stop the drill')
+
+    check_previous_evidence()
+
     def guard(lease):
         check_identity(args, corpus, base, frozen_image)
+        check_previous_evidence()
         require(control_plane(client, args) == before, 'Control-plane state changed; stop the drill')
         require(lease['fixture_id'] == fixture['fixture_id'] and lease['provenance_id'] == pid
                 and lease['variant'] in ('non-strict', 'strict')
                 and lease['work_item_id'] not in completed_work
-                and len(report['execution_intents']) < 2,
+                and len(report['execution_intents']) == index,
                 'Foreign, repeated or excess fixture execution rejected')
         expected = identity(args.repository, pid, fixture['fixture_id'], lease['variant'], 0)
         require(lease['work_item_id'] == expected and lease['lease_generation'] == 1,
@@ -334,6 +433,7 @@ def run(client, args, report):
 
     def before_claim():
         check_identity(args, corpus, base, frozen_image)
+        check_previous_evidence()
         # Match api_lock's repository key and keep this lock through api_claim,
         # so its repository-wide expiry sweep cannot race the scoped preflight.
         client.db.execute('SELECT pg_advisory_xact_lock(hashtextextended(%s,0))',
@@ -425,7 +525,9 @@ def run(client, args, report):
                         'Initial budget did not leave exactly one required variant pending')
                 first_budget = budget
                 report['first_observation'] = rows[0]['observation_id']
+                report['first_observation_sha256'] = sha(rows[0])
             else:
+                check_previous_evidence()
                 require(budget['state'] == 'closed'
                         and client.one('budget_scopes', budget_scope_id=first_budget['budget_scope_id']) == first_budget
                         and {row['variant'] for row in rows} == {'non-strict', 'strict'}
@@ -459,8 +561,11 @@ def run(client, args, report):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--authorization', required=True)
-    parser.add_argument('--phase', choices=['exhaust', 'recover'], required=True)
+    parser.add_argument('--phase', choices=['verify', 'exhaust', 'recover'], required=True)
     parser.add_argument('--previous-run-id', type=int)
+    parser.add_argument('--baseline-run-id', type=int)
+    parser.add_argument('--image-archive', required=True)
+    parser.add_argument('--restore-image-only', action='store_true')
     parser.add_argument('--root', required=True)
     parser.add_argument('--output', required=True)
     parser.add_argument('--repository', default=os.getenv('TEST262_REPOSITORY_ID'))
@@ -473,15 +578,34 @@ def main(argv=None):
     client = None
     try:
         report['actions'] = check_invocation(args)
-        require((args.phase == 'exhaust' and args.previous_run_id is None)
+        require((args.phase in ('verify', 'exhaust') and args.previous_run_id is None)
                 or (args.phase == 'recover' and args.previous_run_id is not None),
                 'Only recovery takes the preceding run identity')
+        require((args.phase == 'verify' and args.baseline_run_id is None and not args.restore_image_only)
+                or (args.phase in ('exhaust', 'recover') and args.baseline_run_id is not None),
+                'Only live phases take the authenticated frozen baseline')
+        if args.phase != 'verify':
+            args.baseline_report, report['baseline_source'] = fetch_baseline(
+                args.baseline_run_id, args.revision)
         if args.phase == 'recover':
             args.previous_report, report['previous_source'] = fetch_previous(
                 args.previous_run_id, args.revision)
         require(args.repository and args.producer, 'Explicit scoped catalogue identities required')
+        if args.restore_image_only:
+            report.update(stage='image-verified', image=restore_image(args), fixture_executions=0)
+            checkpoint(args, report)
+            return 0
         client = Client()
-        run(client, args, report)
+        if args.phase == 'verify':
+            with client.view():
+                client.db.execute('SET LOCAL default_transaction_read_only=on')
+                require(client.db.execute('SHOW default_transaction_read_only').fetchone()[0] == 'on'
+                        and client.db.execute('SHOW transaction_read_only').fetchone()[0] == 'on',
+                        'Baseline must use verified server read-only settings')
+                report['baseline_read_only'] = True
+                run(client, args, report)
+        else:
+            run(client, args, report)
         return 0
     except Exception as error:
         report.update(complete=False, error_class=type(error).__name__)
