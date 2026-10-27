@@ -1700,6 +1700,41 @@ No catalogue API read or identity probe was reached. Explicit transaction-local
 enforcement addresses this observed diagnostic setup issue; it does not
 change roles, permissions, authority, stored rows or any live-recovery guard.
 
+**Authenticated comparison result:** diagnostic
+[`40577213648`](https://github.com/tomacox74/js2il/actions/runs/40577213648),
+attempt 1, controller `ac7ae0def5869826460addaa3f5caf07f0282994`, completed both
+original-source rebuild profiles with verified server read-only settings.
+[Durable evidence](evidence/identity-diagnostics-2340.json) retains authenticated
+run/artifact metadata, ZIP/member SHA-256 digests, the complete sanitized reports
+and both earlier diagnostic setup stops.
+
+Both rebuilds differ from original provenance **only in `binaries`**:
+`Jroc.Testing.dll` and `NativeScreeningHost.dll`. Runner, upstream, inventory,
+harness, tooling (including generated C#), capabilities, recorded environment
+identity and timeouts all match. There are no added/missing files or nonfile
+field differences; the sealed upstream binding matches in both profiles.
+
+| File | Original SHA-256 prefix | Refresh rebuild prefix | Drill rebuild prefix |
+|---|---|---|---|
+| `Jroc.Testing.dll` | `83c14567f6d4dc6f` | `24fda8cc934fe939` | `a4f3f5f16a083fc7` |
+| `NativeScreeningHost.dll` | `47a8252468648b4d` | `0a0db53dd437f5d2` | `8e6a6c18d1b3e60a` |
+
+These are 16-character prefixes; the evidence contains full file/component/root
+digests. The original root is
+`89e13962b4791d22b89f0cfde614b0cf15f0ac3d2aa0d36ddfc63ffcbfcc2305`.
+Both rebuilt roots differ from it and from each other. Thus neither rebuild
+would satisfy the original full-identity guard. This localizes **reproduced**
+drift to two DLL byte streams, but does not prove which historical component
+failed in `40566656556` or why the DLL bytes drift: the historical failed
+document and baseline/failed DLL bytes are absent from the reviewed evidence.
+Do not attribute the result to generated tooling, SDK, pin, permissions or a
+specific build-profile mechanism without further evidence.
+
+The diagnostic executed zero live fixtures and made no catalogue writes,
+publication, permission/authority changes, imports/restores or S3 operations.
+The live-recovery guard is unchanged, no recovery was dispatched, and #2340
+remains open pending a separate operator decision and its live acceptance.
+
 ## Independent local and downstream workers (#2339)
 
 The supported execution path is `central.cli enlist` on Linux with Docker,
