@@ -570,11 +570,134 @@ class IdentityDiagnosticsTests(unittest.TestCase):
         self.assertFalse(report['complete'])
         self.assertEqual(report['stage'], 'read-original-identity')
         self.assertEqual(report['error_class'], 'RuntimeError')
+        self.assertNotIn('failed_guard_sha256', report)
+        self.assertNotIn('failed_guard_checks', report)
         self.assertEqual(failure['error_type'], 'RuntimeError')
         self.assertEqual(failure['stage'], 'identity-diagnostic.read-original-identity')
         self.assertNotIn(SECRET, json.dumps([report, failure]) + stderr.getvalue())
         self.execution.assert_not_called()
         db.close.assert_called_once_with()
+
+    def test_main_reports_exact_failed_contract_provenance_and_registration_checks(self):
+        baseline_contract, baseline_rows = deepcopy(self.contract), deepcopy(self.rows)
+        cases = [
+            ('contract', 'Foreign catalogue read scope',
+             ['contract.producer', 'contract.permission']),
+            ('provenance', 'Original provenance/corpus identity is not intact',
+             ['provenance.document-hash', 'corpus.url']),
+            ('registration', 'Original source registration/validation binding differs',
+             ['snapshot.source', 'validation.original-run'])]
+        for group, message, failed in cases:
+            with self.subTest(group=group):
+                self.contract, self.rows = deepcopy(baseline_contract), deepcopy(baseline_rows)
+                if group == 'contract':
+                    self.contract.update(producer_id=SECRET, permission=SECRET)
+                elif group == 'provenance':
+                    self.rows['provenances']['identity_sha256'] = SECRET
+                    self.rows['corpora']['upstream_url'] = SECRET
+                else:
+                    self.rows['registration_snapshots']['source_revision'] = SECRET
+                    self.rows['validation_events']['external_run_key'] = SECRET
+                db, _ = self.fake_database()
+                stderr = io.StringIO()
+                with self.fake_git(), redirect_stderr(stderr):
+                    self.assertEqual(diagnostic.main(self.argv()), 1)
+                report = json.loads(Path(self.args.output).read_text())
+                failure = json.loads((self.folder / 'diagnostic.json').read_text())
+                self.assertEqual(report['failed_guard_sha256'], sha(message))
+                self.assertEqual(report['failed_guard_checks'], failed)
+                self.assertFalse(report['complete'])
+                self.assertEqual(report['stage'], 'read-original-identity')
+                self.assertEqual(report['error_class'], 'ValueError')
+                self.assertEqual(failure['stage'], 'identity-diagnostic.read-original-identity')
+                self.assertTrue(report['controller_error_lines'])
+                self.assertTrue(all(type(line) is int and line > 0
+                                    for line in report['controller_error_lines']))
+                output = json.dumps([report, failure]) + stderr.getvalue()
+                for forbidden in (SECRET, message, diagnostic.__file__, self.args.root):
+                    self.assertNotIn(forbidden, output)
+                if group == 'contract':
+                    self.assertEqual(db.execute.call_count, 4)
+                db.close.assert_called_once_with()
+                self.execution.assert_not_called()
+
+    def test_main_names_the_exact_immutable_table_row_and_pagination_failures(self):
+        tables = ['provenances', 'corpora', 'registration_snapshots', 'validation_events']
+        for index, table in enumerate(tables):
+            with self.subTest(table=table):
+                db, _ = self.fake_database()
+                execute = db.execute.side_effect
+
+                def fail_exact_row(sql, parameters=None):
+                    result = execute(sql, parameters)
+                    if (sql == 'SELECT test262.api_read(%s,%s,%s,%s,%s)'
+                            and parameters[1] == table):
+                        return SimpleNamespace(fetchone=lambda: ({'rows': [], 'next': SECRET},))
+                    return result
+
+                db.execute.side_effect = fail_exact_row
+                stderr = io.StringIO()
+                with self.fake_git(), redirect_stderr(stderr):
+                    self.assertEqual(diagnostic.main(self.argv()), 1)
+                report = json.loads(Path(self.args.output).read_text())
+                self.assertEqual(report['failed_guard_sha256'], sha('Exact immutable baseline row required'))
+                self.assertEqual(report['failed_guard_checks'],
+                                 [table + '.single-row', table + '.no-next-page'])
+                self.assertFalse(report['complete'])
+                self.assertEqual(report['stage'], 'read-original-identity')
+                self.assertEqual([entry.args[1][1] for entry in db.execute.call_args_list[4:]],
+                                 tables[:index + 1])
+                self.assertNotIn(SECRET, json.dumps(report) + stderr.getvalue())
+                self.assertNotIn('Exact immutable baseline row required', json.dumps(report))
+                db.close.assert_called_once_with()
+                self.execution.assert_not_called()
+
+    def test_isolated_controller_reports_only_its_exact_traceback_lines_without_paths(self):
+        source = Path(diagnostic.__file__).read_text()
+        tree = ast.parse(source)
+        controller = ModuleType('offline_isolated_identity_controller')
+        controller.__file__ = '/isolated-private/controller-opaque.py'
+        exec(compile(source, controller.__file__, 'exec'), controller.__dict__)
+        foreign_file = controller.__file__ + '.foreign'
+        namespace = {'require': controller.require, 'secret': SECRET}
+        exec(compile('\n' * 1000 + (
+            'def foreign_reader(*unused):\n'
+            "    require(False, secret, checks={'contract.producer': False, 'contract.version': True})\n"
+        ), foreign_file, 'exec'), namespace)
+        expected_lines = []
+        for function_name, call_name in [('main', 'run'), ('run', 'read_original')]:
+            function = next(node for node in tree.body
+                            if isinstance(node, ast.FunctionDef) and node.name == function_name)
+            calls = [node for node in ast.walk(function)
+                     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                     and node.func.id == call_name]
+            self.assertEqual(len(calls), 1)
+            expected_lines.append(calls[0].lineno)
+        require_function = next(node for node in tree.body
+                                if isinstance(node, ast.FunctionDef) and node.name == 'require')
+        expected_lines.extend(node.lineno for node in ast.walk(require_function)
+                              if isinstance(node, ast.Raise))
+        stderr = io.StringIO()
+        with patch.object(controller, 'check_invocation', return_value={}), \
+                patch.object(controller, 'read_original', side_effect=namespace['foreign_reader']), \
+                redirect_stderr(stderr):
+            self.assertEqual(controller.main(self.argv()), 1)
+        report = json.loads(Path(self.args.output).read_text())
+        failure = json.loads((self.folder / 'diagnostic.json').read_text())
+        self.assertEqual(report['controller_error_lines'], expected_lines)
+        self.assertTrue(all(type(line) is int for line in report['controller_error_lines']))
+        self.assertEqual(report['failed_guard_sha256'], sha(SECRET))
+        self.assertEqual(report['failed_guard_checks'], ['contract.producer'])
+        self.assertEqual(report['stage'], 'read-original-identity')
+        self.assertFalse(report['complete'])
+        self.assertEqual(failure['error_type'], 'ValueError')
+        self.assertEqual(failure['stage'], 'identity-diagnostic.read-original-identity')
+        self.assertNotIn('locations', failure)
+        output = json.dumps([report, failure]) + stderr.getvalue()
+        for forbidden in (SECRET, controller.__file__, foreign_file, '/isolated-private'):
+            self.assertNotIn(forbidden, output)
+        self.connect.assert_not_called()
+        self.execution.assert_not_called()
 
     def test_main_identity_probe_error_preserves_stage_after_database_has_closed(self):
         db, _ = self.fake_database()

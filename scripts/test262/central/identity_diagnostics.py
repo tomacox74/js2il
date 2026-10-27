@@ -38,9 +38,12 @@ FIELDS = {
 }
 
 
-def require(condition, message):
+def require(condition, message, *, checks=None):
     if not condition:
-        raise ValueError(message)
+        error = ValueError(message)
+        error._identity_guard_sha256 = sha(message)
+        error._identity_guard_checks = checks or {}
+        raise error
 
 
 def write_report(args, report):
@@ -155,12 +158,16 @@ def read_original(args):
             require(db.execute('SHOW transaction_read_only').fetchone()[0] == 'on',
                     'Server transaction must be read only')
             contract = db.execute('SELECT test262.api_contract()').fetchone()[0]
-            require(contract['api_contract_version'] == 1
-                    and contract['repository_id'] == args.repository == REPOSITORY_ID
-                    and contract['producer_id'] == args.producer
-                    and contract['trust_class'] == 'trusted' and contract['permission'] == 'coordinator'
-                    and contract['deployment_state'] == 'active'
-                    and contract['minimum_writer_epoch'] == args.epoch, 'Foreign catalogue read scope')
+            checks = {
+                'contract.version': contract['api_contract_version'] == 1,
+                'contract.repository': contract['repository_id'] == args.repository == REPOSITORY_ID,
+                'contract.producer': contract['producer_id'] == args.producer,
+                'contract.trust': contract['trust_class'] == 'trusted',
+                'contract.permission': contract['permission'] == 'coordinator',
+                'contract.deployment': contract['deployment_state'] == 'active',
+                'contract.epoch': contract['minimum_writer_epoch'] == args.epoch,
+            }
+            require(all(checks.values()), 'Foreign catalogue read scope', checks=checks)
 
             def one(table, key, value):
                 allowed = {'provenances': 'provenance_id', 'corpora': 'corpus_id',
@@ -168,7 +175,9 @@ def read_original(args):
                 require(allowed.get(table) == key, 'Only fixed original identity reads are permitted')
                 result = db.execute('SELECT test262.api_read(%s,%s,%s,%s,%s)',
                                     (args.epoch, table, Jsonb({key: value}), None, 2)).fetchone()[0]
-                require(len(result['rows']) == 1 and not result['next'], 'Exact immutable baseline row required')
+                checks = {table + '.single-row': len(result['rows']) == 1,
+                          table + '.no-next-page': not result['next']}
+                require(all(checks.values()), 'Exact immutable baseline row required', checks=checks)
                 return result['rows'][0]
 
             provenance = one('provenances', 'provenance_id', PROVENANCE)
@@ -176,23 +185,31 @@ def read_original(args):
             snapshot = one('registration_snapshots', 'snapshot_id', SNAPSHOT)
             validation = one('validation_events', 'validation_id', VALIDATION)
             doc = provenance['identity_document']
-            require(provenance['provenance_id'] == PROVENANCE
-                    and provenance['repository_id'] == REPOSITORY_ID
-                    and provenance['evidence_kind'] == 'native' and provenance['identity_version'] == 1
-                    and provenance['identity_sha256'] == bytea(sha(doc))
-                    and identity(REPOSITORY_ID, 'native', sha(doc)) == PROVENANCE
-                    and corpus['corpus_id'] == provenance['corpus_id'] == doc['inventory']
-                    and corpus['inventory_state'] == 'sealed'
-                    and corpus['revision'] == doc['upstream']['commit']
-                    and corpus['upstream_url'] == doc['upstream']['cloneUrl'],
-                    'Original provenance/corpus identity is not intact')
-            require(snapshot['snapshot_id'] == SNAPSHOT and snapshot['repository_id'] == REPOSITORY_ID
-                    and snapshot['state'] == 'sealed' and snapshot['source_revision'] == SOURCE
-                    and validation['validation_id'] == VALIDATION
-                    and validation['repository_id'] == REPOSITORY_ID
-                    and validation['target_revision'] == SOURCE and validation['conclusion'] == 'success'
-                    and validation['external_run_key'] == '40565545982',
-                    'Original source registration/validation binding differs')
+            checks = {
+                'provenance.id': provenance['provenance_id'] == PROVENANCE,
+                'provenance.repository': provenance['repository_id'] == REPOSITORY_ID,
+                'provenance.kind': provenance['evidence_kind'] == 'native',
+                'provenance.identity-version': provenance['identity_version'] == 1,
+                'provenance.document-hash': provenance['identity_sha256'] == bytea(sha(doc)),
+                'provenance.derived-id': identity(REPOSITORY_ID, 'native', sha(doc)) == PROVENANCE,
+                'corpus.id': corpus['corpus_id'] == provenance['corpus_id'] == doc['inventory'],
+                'corpus.sealed': corpus['inventory_state'] == 'sealed',
+                'corpus.revision': corpus['revision'] == doc['upstream']['commit'],
+                'corpus.url': corpus['upstream_url'] == doc['upstream']['cloneUrl'],
+            }
+            require(all(checks.values()), 'Original provenance/corpus identity is not intact', checks=checks)
+            checks = {
+                'snapshot.id': snapshot['snapshot_id'] == SNAPSHOT,
+                'snapshot.repository': snapshot['repository_id'] == REPOSITORY_ID,
+                'snapshot.sealed': snapshot['state'] == 'sealed',
+                'snapshot.source': snapshot['source_revision'] == SOURCE,
+                'validation.id': validation['validation_id'] == VALIDATION,
+                'validation.repository': validation['repository_id'] == REPOSITORY_ID,
+                'validation.source': validation['target_revision'] == SOURCE,
+                'validation.conclusion': validation['conclusion'] == 'success',
+                'validation.original-run': validation['external_run_key'] == '40565545982',
+            }
+            require(all(checks.values()), 'Original source registration/validation binding differs', checks=checks)
             return {'document': doc, 'corpus': corpus,
                     'authority': {key: contract[key] for key in
                                   ('repository_id', 'producer_id', 'minimum_writer_epoch', 'deployment_state')},
@@ -250,6 +267,16 @@ def main(argv=None):
         return 0
     except Exception as error:
         report.update(complete=False, error_class=type(error).__name__)
+        if hasattr(error, '_identity_guard_sha256'):
+            report['failed_guard_sha256'] = error._identity_guard_sha256
+            report['failed_guard_checks'] = [
+                name for name, passed in error._identity_guard_checks.items() if not passed]
+        lines, trace = [], error.__traceback__
+        while trace:
+            if trace.tb_frame.f_code.co_filename == __file__:
+                lines.append(trace.tb_lineno)
+            trace = trace.tb_next
+        report['controller_error_lines'] = lines
         error._test262_stage = 'identity-diagnostic.' + report['stage']
         try:
             write_report(args, report)
