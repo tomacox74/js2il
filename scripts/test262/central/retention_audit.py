@@ -282,8 +282,9 @@ def audit(s3, uri, kms_key, report, now=None, fetch=github):
     try:
         report['coverage'] = recovery_coverage.collect(fetch, now)
         report['coverage_collection_complete'] = True
-        # Fresh metadata supersedes dated archive deadlines here, not in the frozen ledger.
-        findings.extend(row for row in report['coverage']['findings'] if 'artifact_id' not in row)
+        # Live probes supersede dated retention proofs, not independent workflow failures.
+        findings.extend(row for row in report['coverage']['findings']
+                        if row.get('kind') in ('backup', 'restore'))
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
         report['coverage'] = dict(failure(error, 'unavailable'), fetch_state='unavailable')
         findings.append({'kind': 'workflow-receipts', 'code': 'workflow_coverage_unavailable',
