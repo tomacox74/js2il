@@ -151,10 +151,11 @@ def open_database():
 def read_original(args):
     from psycopg.types.json import Jsonb
     with open_database() as db:
-        require(db.execute('SHOW default_transaction_read_only').fetchone()[0] == 'on',
-                'Server default must be read only')
         with db.transaction():
             db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY')
+            db.execute('SET LOCAL default_transaction_read_only=on')
+            require(db.execute('SHOW default_transaction_read_only').fetchone()[0] == 'on',
+                    'Server default must be read only')
             require(db.execute('SHOW transaction_read_only').fetchone()[0] == 'on',
                     'Server transaction must be read only')
             contract = db.execute('SELECT test262.api_contract()').fetchone()[0]
