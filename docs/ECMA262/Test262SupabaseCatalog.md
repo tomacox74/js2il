@@ -1691,11 +1691,16 @@ decision and is not required to establish the disposable acceptance gates.
 The GitHub-only recovery coverage artifact now includes the owner-accepted
 41-container historical ledger, not the superseded selected-eight source
 inventory. It distinguishes dated exact-version proofs from current S3 protection,
-surfaces their finite deadlines and routes ongoing archive retention findings to
-#2343. The protected preservation workflow's explicit `audit-retention` operation
+preserves original fields/findings and uses the separately authenticated
+[42-version April 30 extension](Test262Recovery.md#october-27-authorized-retry-all-42-versions-protected-through-april-30)
+for latest-recorded archive/receipt deadlines. Schema 3 retains the original
+11 gaps and one unknown source expiry; it does not claim a fresh S3 read or
+indefinite protection. Missing/invalid/future proof stays explicit unknown.
+Ongoing archive retention findings belong to #2343. The protected preservation workflow's explicit `audit-retention` operation
 adds read-only configuration and pinned-version metadata checks without payload
 reads or writes. See [retention audit and draft policy](Test262Recovery.md#read-only-retention-audit);
-merge permission does not approve the proposed horizons or recovery objectives.
+only the separate fixed42-version horizon was approved/verified; merge permission
+does not adopt broader retention policy or recovery objectives.
 
 The operator selected **dashboard warnings first, with notification rules paused**,
 and adopted these targets on 23 October 2026: avoidable recorded execution repeats

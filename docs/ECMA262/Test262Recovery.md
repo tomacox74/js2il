@@ -61,10 +61,16 @@ python -m scripts.test262.central.recovery_coverage --output /private/recovery-c
 
 It reports latest failed/incomplete runs separately from older successful receipts,
 unavailable/expired/invalid receipt proof, stale verification and recorded expired
-object locks. Schema 2 includes all 41 dated archive proofs, their earliest recorded
-deadline and protection beyond frozen Actions expiry still unproven under those
-proofs. It does not re-inventory Actions sources or assert a fresh S3 observation;
-historical acceptance and current protection are separate fields. Ongoing findings
+object locks. **Schema 3** preserves the original 41 archive fields, earliest
+historical deadline and `historical_findings`, then authenticates the separately
+retained April extension below. `latest_verified_*` fields and current `findings`
+use that matching dated proof without rewriting the accepted ledger. The newer
+receipt is a separate verified target, not a forty-second archive. Missing,
+invalid or future-dated proof produces an explicit unknown finding and does not
+silently become healthy. At/after the recorded April deadline, expiry findings
+return; expiry itself does not prove deletion. It does not re-inventory Actions
+sources or assert a fresh S3 observation; historical acceptance and latest
+recorded protection are separate fields. Ongoing findings
 belong to #2343, not closed #2242. This is not an all-archive/all-log inventory.
 No fallback to older green evidence clears a newer failure. Unknown proof remains
 unknown. Persist useful sanitized snapshots in
@@ -243,12 +249,56 @@ preserves the compact denied-attempt and before/after observations, not a newly
 locked S3 report.
 
 An owner-reviewed permission decision for `s3:PutObjectRetention` on the authorized
-versions is now the execution blocker. The denial does not identify which
+versions was the execution blocker at that observation. The denial does not identify which
 identity/resource policy or other restriction caused it. **No permission change
 was authorized or made**, and no alternate privileged principal or repeat
 mutation was used. No S3 uploads/deletions, payload reads, imports, restores,
 fixtures, database/production changes, bucket/KMS/lifecycle changes or notifications
 occurred. Broader #2343 policy/recovery gates and the original 11 gaps are unchanged.
+
+### October 27 authorized retry: all 42 versions protected through April 30
+
+After the owner confirmed adding the narrow IAM policy, explicit
+[run 40445723674](https://github.com/tomacox74/js2il/actions/runs/40445723674),
+attempt 1, source `968756594b68290acadb81f01336cc7c02454b99`,
+completed successfully. Its retention code and workflow were unchanged from the
+previous reviewed/exact-master-verified implementation; that intervening commit
+only retained the earlier denied-attempt evidence.
+
+All **42 authorized versions** passed complete configuration/metadata preflight,
+then **42 exact-version PUTs were acknowledged**, immediately read back, and
+finally verified together at **2026-10-27T03:43:45Z**. The **41 accepted archives
+and verified newer preservation receipt** now each have COMPLIANCE retention
+through **2027-04-30T00:00:00Z**. Version IDs, lengths, configured KMS identity and
+unshortened COMPLIANCE proofs matched; no object version or payload was replaced.
+Existing byte hashes remain pinned expectations, not fresh rehash/decryption proofs.
+
+The [authenticated sanitized result](evidence/retention-extension-40445723674.json)
+has SHA-256
+`facd2a698d64137ca063ffdbf26903096370c2aeecc7f047728f8809853c3a59`.
+Its exact Actions report has SHA-256
+`d32ea46c4c651887f7bac23be4d2b5c2ba5f63e4851d7bb76ea9a4ab5cf246ad`;
+the ZIP has SHA-256
+`068d7233b5a06ece5864f9fa9d014da3e94027a5fbc4aa88c1f6e98c3adf74d5`.
+Actions artifact `12708161865` expires January 25, 2027; Git retains the compact
+authenticated projection, not a newly uploaded/locked S3 report.
+
+The new horizon covers the frozen known Actions expirations of **40 archives and
+the newer receipt**. One archive's source expiration remains unknown; do not infer
+coverage beyond an unknown expiry. The November deadlines remain true in the
+unchanged historical ledger and earlier denied-attempt record, but are **not the
+latest recorded deadlines of these 42 versions**. Schema 3 coverage uses the
+authenticated extension for latest-recorded findings while retaining the original
+history, 11 gaps and unknown source expiry. A fresh live audit still takes
+precedence over dated archive/receipt findings; independent backup/restore
+failures remain visible.
+
+No S3 object/report uploads, deletions, payload reads, imports, restores, fixtures,
+database/production, bucket defaults/KMS/lifecycle or notification changes occurred.
+The owner added the permission; the workflow made no permission changes. The
+original private older receipt remains unassessed because its self-version is
+unrecorded. This finite extension does not approve indefinite/180-day retention,
+ongoing ownership/renewal, RPO/RTO, a new rehearsal or production cutover.
 
 ## Draft policy and accountable-owner decision
 
@@ -270,8 +320,8 @@ paused; no new alert destination or service-recovery objective is selected here.
 
 **Separately approved finite horizon:** the owner authorized only the 42-version
 extension through **2027-04-30T00:00:00Z** described above, beyond their known
-January source/report Actions expirations. Execution and exact-version readback
-are still required; authorization/tooling and the denied attempt are not proof that locks changed.
+January source/report Actions expirations. The successful retry and exact-version readback above establish that finite
+horizon; authorization/tooling or the earlier denied attempt alone would not.
 Unknown source expiry remains unknown. Record every resulting version, deadline
 and receipt, then decide longer-term renewal separately. Under the historical
 proofs, earlier archive locks begin expiring **November 12, 2026 UTC**; later
@@ -378,8 +428,9 @@ Do not publish a cutover command or replace a DSN as a shortcut around these gat
 
 ## Remaining acceptance gates
 
-#2343 stays open for owner policy/role assignments, longer-term protection of the
-accepted 41-container ledger, first post-review retained measurement/report verification,
+#2343 stays open for owner policy/role assignments and renewal planning before the
+verified April 30 deadline, broader archive/receipt/log coverage and retrieval, and the first
+post-review retained measurement/report verification,
 actual backup/log coverage and retrieval, approved/measured RPO/RTO, and an
 operator-approved synthetic cutover/rollback rehearsal. #2341 owns alert deployment
 and monitoring acceptance. Existing 11 conflicted/refresh batches and one publication

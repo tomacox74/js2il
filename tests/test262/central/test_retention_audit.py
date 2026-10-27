@@ -532,13 +532,15 @@ class RetentionAuditTests(unittest.TestCase):
         for row in report['objects']:
             self.assertIs(row['covers_frozen_actions_expiry'],
                           None if row.get('artifact_id') in unknown else True)
-        nested = report['coverage']['findings']
-        expired = [row for row in nested if row['code'] == 'recorded_archive_lock_expired']
+        historical_findings = report['coverage']['historical_findings']
+        expired = [row for row in historical_findings
+                   if row['code'] == 'recorded_archive_lock_expired']
         self.assertEqual(len(expired), 41)
-        historical = [row for row in nested if row['code'] ==
+        historical = [row for row in historical_findings if row['code'] ==
                       'historical_archive_protection_beyond_actions_expiry_unproven']
         self.assertEqual(len(historical), 41)
-        workflow_findings = [row for row in nested if 'artifact_id' not in row]
+        workflow_findings = [row for row in report['coverage']['findings']
+                             if row.get('kind') in ('backup', 'restore')]
         self.assertTrue(workflow_findings)
         self.assertEqual([row for row in report['findings'] if 'artifact_id' not in row],
                          workflow_findings)
@@ -549,6 +551,79 @@ class RetentionAuditTests(unittest.TestCase):
         self.assertEqual(report['original_private_receipt_self_version'], 'unrecorded_not_assessed')
         self.assertIs(report['retention_policy_adopted'], False)
         self.assert_safe_flags(report)
+        self.assert_public(report)
+
+    def test_fresh_live_metadata_supersedes_dated_receipt_expiry_at_and_after_april_horizon(self):
+        horizon = datetime(2027, 4, 30, tzinfo=timezone.utc)
+        live_deadline = datetime(2030, 1, 1, tzinfo=timezone.utc)
+        self.s3.lock_changes = {'RetainUntilDate': live_deadline}
+        failed_workflow = {
+            'fetch_state': 'observed', 'latest_run_id': 9, 'latest_state': 'completed',
+            'latest_conclusion': 'failure', 'receipt_verified': True,
+            'retention_verified': True, 'receipt_checked_at': horizon.isoformat(),
+            'retention_until': live_deadline.isoformat(),
+        }
+        for offset in (0, 1):
+            with self.subTest(offset=offset):
+                now = horizon+timedelta(seconds=offset)
+                self.s3.calls.clear()
+                report = audit.initial_report(now)
+                with patch.object(coverage, 'collect_check', return_value=failed_workflow):
+                    audit.audit(self.s3, f's3://{BUCKET}/{BASE}', KMS, report, now,
+                                Mock(side_effect=AssertionError('No unbounded GitHub calls')))
+                dated = report['coverage']['findings']
+                self.assertEqual([row for row in dated
+                                  if row.get('kind') == 'preservation_receipt'], [{
+                    'kind': 'preservation_receipt',
+                    'code': 'recorded_preservation_receipt_lock_expired',
+                    'state': 'attention', 'owner_issue': 2343,
+                }])
+                self.assertEqual(sum(row['code'] == 'recorded_archive_lock_expired'
+                                     for row in dated), 41)
+                self.assertEqual(
+                    {(row['kind'], row['code']) for row in report['findings']
+                     if row.get('kind') in ('backup', 'restore')},
+                    {('backup', 'latest_attempt_unsuccessful'),
+                     ('restore', 'latest_attempt_unsuccessful')})
+                self.assertFalse(any(row['code'] in (
+                    'recorded_preservation_receipt_lock_expired', 'recorded_archive_lock_expired',
+                    'historical_archive_protection_beyond_actions_expiry_unproven',
+                    'recorded_retention_extension_unavailable') for row in report['findings']))
+                self.assertIs(report['object_metadata_verified'], True)
+                self.assertEqual(report['summary']['metadata_verified_count'], 42)
+                self.assertEqual({row['retain_until'] for row in report['objects']},
+                                 {live_deadline.isoformat()})
+                self.assertEqual(len([row for row in report['objects']
+                                      if row['kind'] == 'preservation_receipt']), 1)
+                self.assertEqual(report['original_private_receipt_self_version'],
+                                 'unrecorded_not_assessed')
+                unknown = {row['artifact_id'] for row in self.ledger['archives']
+                           if not row['actions_expires_at_from_frozen_inventory']}
+                self.assertEqual(
+                    {row['artifact_id'] for row in report['findings']
+                     if row['code'] == 'protection_beyond_actions_expiry_unproven'}, unknown)
+                self.assert_safe_flags(report)
+                self.assert_public(report)
+
+    def test_fresh_live_metadata_supersedes_unknown_extension_but_not_workflow_failures(self):
+        now = datetime(2026, 12, 1, tzinfo=timezone.utc)
+        self.s3.lock_changes = {'RetainUntilDate': datetime(2030, 1, 1, tzinfo=timezone.utc)}
+        report = audit.initial_report(now)
+        with patch.object(coverage, 'load_retention_extension', side_effect=OSError(PRIVATE)), \
+             patch.object(coverage, 'collect_check', return_value={'fetch_state': 'unavailable'}):
+            audit.audit(self.s3, f's3://{BUCKET}/{BASE}', KMS, report, now,
+                        Mock(side_effect=AssertionError('No unbounded GitHub calls')))
+        self.assertIn('recorded_retention_extension_unavailable',
+                      {row['code'] for row in report['coverage']['findings']})
+        self.assertNotIn('recorded_retention_extension_unavailable',
+                         {row['code'] for row in report['findings']})
+        expected = [row for row in report['coverage']['findings']
+                    if row.get('kind') in ('backup', 'restore')]
+        self.assertEqual({row['kind'] for row in expected}, {'backup', 'restore'})
+        self.assertEqual([row for row in report['findings']
+                          if row.get('kind') in ('backup', 'restore')], expected)
+        self.assertIs(report['object_metadata_verified'], True)
+        self.assertEqual(report['original_private_receipt_self_version'], 'unrecorded_not_assessed')
         self.assert_public(report)
 
     def test_configuration_negative_findings_distinguish_35_day_floor_from_observation(self):
