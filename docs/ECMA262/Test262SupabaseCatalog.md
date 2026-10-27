@@ -1538,7 +1538,8 @@ therefore leaves `actual_scheduled_normal_budget_exhaustion_observed`,
 `actual_scheduled_same_sha_exhaustion_resume_observed` and
 `all_issue_gates_proven` false.
 
-To finish the remaining #2340 gate, authenticate a later actual scheduled
+At that evidence-retention point, finishing the remaining #2340 gate required
+authenticating a later actual scheduled
 exhaustion/resume chain at the same source and full execution identity. Confirm
 that deferred required variants are resumed without repeating terminal variants,
 the exhausted predecessor's charges remain unchanged, the recovery allocation
@@ -1621,6 +1622,9 @@ preventing the claim API's expiry sweep from mutating unrelated work in a race.
 Operator sequence, **only after merging the guarded controls, successful
 exact-master validation and the normal registration refresh**:
 
+**The recorded campaign below is now complete and its two-execution allowance
+fully consumed. These historical commands do not authorize redispatch.**
+
 ```bash
 gh workflow run test262-recovery-drill.yml --ref master \
   -f authorization=live-recovery-2340-two-variants-20261027 -f phase=verify
@@ -1680,6 +1684,64 @@ is used only to explain the earlier drift, never for acceptance or identity
 comparison. Live execution still requires the separate authenticated matching
 native baseline at the final merged SHA.
 
+#### Verified manual exhaustion and recovery, October 27
+
+The owner's revised manual-witness acceptance is now verified at execution
+source **`7058c7c55f7d401de0452d32e020e06ad9f68fb3`** (PR #2423).
+Exact-source master .NET `40591322634`, MVP `40591322360`, catalogue invariants
+`40591322604` and Canary Smoke `40591322358` passed. Automatic native refresh
+`40591519487` has an authenticated `status=refreshed` receipt, with screening and
+publication disabled. It establishes native provenance
+`03560ebe-7448-5eb2-b2b5-0684793c9fe4` and registration snapshot
+`594c9741-1aa8-5f4d-a53a-64ce922c1dcd`.
+
+| Authenticated run, attempt 1 | Phase | Physical fixture executions | Verified result |
+|---|---|---:|---|
+| [40592440970](https://github.com/tomacox74/js2il/actions/runs/40592440970) | Read-only baseline | 0 | All nine native identity components match; fixed fixture/control plane and saved image frozen before live work. |
+| [40593043603](https://github.com/tomacox74/js2il/actions/runs/40593043603) | Exhaustion | 1 | Non-strict completes, strict remains pending; genuine one-attempt allocation exhausts with zero reservations/unacknowledged evidence. |
+| [40593457941](https://github.com/tomacox74/js2il/actions/runs/40593457941) | Recovery | 1 | Only strict executes under a distinct allocation; original observation/full-row digest and exhausted budget remain unchanged; both variants complete. |
+
+Both live phases use the same validated source, full native/drill identities,
+fixed fixture content/dependencies, image/archive and control-plane digest:
+
+- native identity: `be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339`;
+- drill identity: `5f10ae49f795bc57ded167eb764b8fa5c30bbc7ddc570c75f8575cdcd34d8181`;
+- immutable image: `sha256:5e4c2b04b61f8e163dfe25e8c3719bff023549fb66168672d97c5cd98a135153`;
+- archive SHA-256: `147e74f5088103a02a9cef11e2ac7092b12704856185ff97a4e24e49c9989832`;
+- control-plane digest: `54e32f5390fc77856890f4418142849e6194ffa9a6fe82f295c31be4df4682d1`.
+
+The first genuine allocation, `70c8556d-f20c-5ab2-bd44-70ff78948024`, remains
+`exhausted`, charged once for 1598 ms. The distinct recovery allocation,
+`e29c75d8-79bb-50b0-98d7-6bb50e0fd502`, closes drained, charged once for 1194 ms.
+Both have zero reservations; each scoped outbox has one acknowledged message
+and completion, with no pending evidence and successful read-only integrity
+inspection. Both work items have lease generation 1. The original observation
+`830001fe-d04a-4216-99fb-33030146eede` is reused, not replaced or repeated.
+
+The complete workflow inventory contains the original zero-execution stop,
+this zero-execution verification and these two one-execution live phases only.
+**The lifetime maximum of two physical executions is fully consumed.** Campaign
+latches and exhausted charges remain intact; no retry, replacement fixture,
+publication, permission/authority change, import/restore, S3 operation or
+unrelated live execution occurred.
+
+The fixed eligible fixture is
+`test/built-ins/Temporal/Duration/prototype/nanoseconds/prop-desc.js`.
+**Both product outcomes are `fail`, not conformance passes.** This proves
+operational exhaustion/resumption, not Temporal support, native fixture
+acceptance or full-suite conformance. No fixture was ported, sealed or published.
+It is the owner-accepted **manual** witness, not evidence that cron fired;
+earlier disposable complete-only acceptance proofs remain separately scoped.
+
+[Durable authenticated live evidence](evidence/live-recovery-2340.json) has
+SHA-256 `c285d544d95b256ee8affbb6e6f4492c8ab0887673d9adba9435bcd5512e93b2`.
+It retains all run/source/attempt and artifact/member digests, frozen bindings,
+before/after contexts, observation/work identities, accounting, acknowledged
+outbox counts and acceptance boundaries. It does not retain credentials or raw
+SQLite payloads, download the large image, or extend artifact retention. The
+execution source remains the implementation SHA above, not the later
+documentation-only evidence merge.
+
 #### Recorded guarded stop, October 27
 
 Controls PR #2417 was merged at
@@ -1708,10 +1770,10 @@ Its zero-execution/mutation-path conclusion is based on the authenticated report
 and pinned source ordering, not an independently collected production SQL diff.
 Original Actions artifact expiry is unchanged.
 
-Issue #2340 remains open. Next work is to diagnose the native-target/build
-identity binding and obtain a new explicit operator decision after the stop,
-without weakening provenance or changing authority. Actual normal exhaustion
-and same-identity missing-variant recovery remain unwitnessed in this live scope.
+At this historical stop, #2340 remained open pending diagnosis and a new explicit
+operator decision, without weakening provenance or changing authority. It did
+not witness normal exhaustion or recovery; the subsequent owner-authorized
+verified manual chain above supplies that separate evidence.
 
 #### Read-only identity diagnosis
 
@@ -1785,8 +1847,10 @@ specific build-profile mechanism without further evidence.
 
 The diagnostic executed zero live fixtures and made no catalogue writes,
 publication, permission/authority changes, imports/restores or S3 operations.
-The live-recovery guard is unchanged, no recovery was dispatched, and #2340
-remains open pending a separate operator decision and its live acceptance.
+At that diagnostic stage the live-recovery guard was unchanged, no recovery had
+been dispatched, and #2340 remained open pending a separate operator decision
+and live acceptance. The later renewed authorization, build fix and verified
+manual chain above are separately recorded, not retroactive diagnostic effects.
 
 ## Independent local and downstream workers (#2339)
 

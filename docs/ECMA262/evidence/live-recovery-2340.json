@@ -1,0 +1,1734 @@
+{
+  "schema_version": 1,
+  "issue": 2340,
+  "repository": "tomacox74/js2il",
+  "evidence_kind": "owner-authorized-bounded-manual-live-recovery",
+  "checked_at": "2026-10-27T22:18:50.776225+00:00",
+  "acceptance": {
+    "complete": true,
+    "owner_accepted_manual_in_place_of_cron_witness": true,
+    "github_cron_observed": false,
+    "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+    "actual_fixture_executions": 2,
+    "original_budget_unchanged": true,
+    "first_observation_reused": true,
+    "shared_control_plane_unchanged": true,
+    "publication": false,
+    "authority_or_permission_changes": false,
+    "s3_access": false,
+    "imports_or_restores": false,
+    "native_fixture_acceptance_attempted": false,
+    "full_suite_conformance_claimed": false
+  },
+  "execution_identity": {
+    "binaries": {
+      "Acornima.dll": "a11417b8542b4e55330e751fca44da5cbde1d95e79b1519c2aba59be7a7b941c",
+      "Argon.dll": "572a432d7ed2ca8759ff06396066e8ade6482fb351bd43d966d1fd3f064d4725",
+      "DiffEngine.dll": "6bd6cf59ce2f76171338cdc1778c456dcb9a9548a544b1d38c492e0004cdf066",
+      "EmptyFiles.dll": "9d10c1b7c5f8ef76695cf7db052b0a040a835d0a3425f7bc36b130df9a13d8aa",
+      "ICSharpCode.Decompiler.dll": "2e47c9b7557d071935f4730d5cd692162bd0f6266ce7d29f1d13ffeb6b2dae75",
+      "JavaScriptRuntime.dll": "6f67f2a22de141c957aee33dfc9e56925eefc8cea66e323a01460d533035c917",
+      "Jroc.Compiler.dll": "10ed7761b740877bd852ef1fe3ec59504f8f9f3eb96a6ab712847f788d9e7cca",
+      "Jroc.Testing.dll": "77ffa8cade1fab9357d61d0300292829f84408d448a9813c5881809a916bdfb6",
+      "Jroc.deps.json": "abdbbfb3b3a3853b81aabedf722a6bba715df2e4e43d847dad67aeeda96fd56a",
+      "Jroc.dll": "b57c8356597b0a50612c4e94c16777cdc2d30c21d56a1b66cb7203e98185abb0",
+      "Jroc.runtimeconfig.json": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f",
+      "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "278e44ff99650cfc2b9062f7eb08f7b952871b19a2462047c65a0984e52a759a",
+      "Microsoft.Extensions.DependencyInjection.dll": "068e92316da6c34203bddfed7121735f874ed86446654e0986aa6bee95ab85d3",
+      "Microsoft.Extensions.Logging.Abstractions.dll": "34b41688a7eaf30f579669353391dc36183a2d4e0a1e06ac7f4c693671c6e72b",
+      "Microsoft.Extensions.Logging.dll": "a9080cdb5e0131ddc648776b3540ed8723b557627b05d520b494bc33ca697f35",
+      "Microsoft.Extensions.Options.dll": "651266b70634a34e5e9e4b73d8f9238264431ee34a38a089bf4777cd0943da4a",
+      "Microsoft.Extensions.Primitives.dll": "3a11081a4d453ae68b7a0a8cbfcd3d8b71dac58d7826b8610a6c1112b164a063",
+      "NativeScreeningHost.deps.json": "a4a713ebac1d335b561755b5b21f8cd6d6998f53a9bfcd89a1b132e740ac052f",
+      "NativeScreeningHost.dll": "4159d523a5c6df0cd6ddf479229b03a2b5828e6c82aeea679ca0ec00882fbc2c",
+      "NativeScreeningHost.runtimeconfig.json": "9950d4583cfc9a106857c0d5b8a75b53e8774852b57b80bc3823a74d44a4d87f",
+      "PowerArgs.dll": "59a39a22082652262e7b59b28930ced367c9f0d7e1882371adc2c40fd4975255",
+      "SimpleInfoName.dll": "6e6103eaed38f7bd4e2f4ba20fdd02fb300e7e131c6da4b71c88cff4af577f3d",
+      "System.CodeDom.dll": "36d70ccbb49f8fd3cb60c32d2cd1db0ddfc505066f0630040e567f170f80287e",
+      "System.Management.dll": "c5f69a258fc609d42e6d50903e9b4449027f4d332faa8daec04bdc3cb9286d4b",
+      "Verify.Xunit.dll": "654319dff7c6cd9533fa87074592c326d7d30f10563dc6193749499e3a041a77",
+      "Verify.dll": "3b334ffdcacf3e3e0f30117640abd43b70fe5c3bf6ec5949d3a6a0a35b528c5c",
+      "xunit.abstractions.dll": "3166dc70323fb30ccf1cedb0fe86f2ad122c46d254542342d90386efc4c9285c",
+      "xunit.assert.dll": "bcd9711b22d227ac8cd4c1568e72433a0f576d2ec8aae64ac508081892015b1d",
+      "xunit.core.dll": "2f7feeec8c6dec7df684c25fb80aadb292b963d09723460f03d53c5ad2088acc",
+      "xunit.execution.dotnet.dll": "e70febe547c15f8155db3e2d95c3ba4445a59cbc21a3e7541ab22ed49d3dcf7b"
+    },
+    "capabilities": {
+      "dependencies": {
+        "harness_files": true,
+        "sibling_files": true
+      },
+      "flags": {
+        "async": true,
+        "module": "module-goal",
+        "no_strict": true,
+        "only_strict": true,
+        "raw": false
+      },
+      "includes": [
+        "assertRelativeDateMs.js",
+        "asyncHelpers.js",
+        "atomicsHelper.js",
+        "byteConversionValues.js",
+        "compareArray.js",
+        "compareIterator.js",
+        "dateConstants.js",
+        "decimalToHexString.js",
+        "deepEqual.js",
+        "detachArrayBuffer.js",
+        "fnGlobalObject.js",
+        "isConstructor.js",
+        "iteratorZipUtils.js",
+        "nans.js",
+        "nativeFunctionMatcher.js",
+        "promiseHelper.js",
+        "propertyHelper.js",
+        "proxyTrapsHelper.js",
+        "regExpUtils.js",
+        "resizableArrayBufferUtils.js",
+        "temporalHelpers.js",
+        "testAtomics.js",
+        "testTypedArray.js",
+        "tcoHelper.js",
+        "wellKnownIntrinsicObjects.js"
+      ],
+      "isolation": {
+        "agent_cleanup": true,
+        "timeout": true,
+        "worker_process": true
+      },
+      "negative": {
+        "parse": "SyntaxError",
+        "resolution": "SyntaxError",
+        "runtime": true
+      },
+      "schema_version": 1
+    },
+    "environment_identity": {
+      "dotnet_runtime": {
+        "name": "Microsoft.NETCore.App",
+        "requested": "10.0.0",
+        "selected": "10.0.14"
+      },
+      "machine": "x86_64",
+      "node": {
+        "major": 24
+      },
+      "os": "Linux",
+      "os_release": {
+        "id": "ubuntu",
+        "version_id": "24.04"
+      }
+    },
+    "harness": {
+      "harness/assert.js": "a6bc7e9a8581db7eda02fda118b23ed5d9203b86d9a6d4514774493c93505abb",
+      "harness/assertRelativeDateMs.js": "5113bc0c6d87018bb372da7eb589ca5912b0b7664563262169e3336ad96ad3cc",
+      "harness/asyncHelpers.js": "e8e31dca012f552d2bcd4b348c5d8654dc21ba8092fb2f2543d4be6f0161035f",
+      "harness/atomicsHelper.js": "9486ad9ca3bef4672180553a5ba66e2d44d33139905c48629c080ff590db6cca",
+      "harness/byteConversionValues.js": "33d19f8bec615dcaf7a99298035df4f7155fe371ff33e54fef2fdb78b658c3da",
+      "harness/compareArray.js": "015e9fbaabe4ec661268498c5fdb02ebeb1f78b203c9d077d53463fbee494436",
+      "harness/compareIterator.js": "ce41ebea8f4a3514d2412aea139e2961521a6c4534215a37d664fc93c8d311d3",
+      "harness/dateConstants.js": "f7cafff2ac96601232c801568bb357eff1a515b849211b230e1b16a41bc786ce",
+      "harness/decimalToHexString.js": "bc8786436987220b53cbc28443697f1fb61d5818fbf4f0741fd80a736d1d4ff5",
+      "harness/deepEqual.js": "b884b27b927d91c62eb9fc7d2ff9d76050d524d8179b9993eda3d5a2d9f86525",
+      "harness/detachArrayBuffer.js": "d487a9c3c7d51b7e9d66c5fce89929ab3d09a6341d21a833e38f9caba6bf2e0e",
+      "harness/doneprintHandle.js": "01282de15feb05d865dfc2cdfc68f59d8e760eb7d81a14ade3bc08cbc8520add",
+      "harness/features.yml": "53227230ea262fa4584fd798f0d798e13f09a1165d181f86a1d01526df65a0e6",
+      "harness/fnGlobalObject.js": "c1cdfdd80333c70a2567377331788555c10fefc50c4cb0c573170baa8864ac1a",
+      "harness/isConstructor.js": "68e1a3e4565a8d33ea7fc918627fbbf446bcf14d7a939777616b2b545a5e7d32",
+      "harness/iteratorZipUtils.js": "225712bd535058c9e60000dbda45759be56b8e1e1d3999a531e44254ae46c94f",
+      "harness/nans.js": "cfc08a1415d798879d544b58e11bee1e368f7ca52e1bbf3652c77737050bc90d",
+      "harness/nativeFunctionMatcher.js": "277e156a46d4f200e92c0f0d89aebbf5c6e94ca3eae8638f7802365819db0954",
+      "harness/promiseHelper.js": "76cf933b2a7069dc22fcff70d6d4f082ab777b3485e08b79ab4d6a18aef9df9c",
+      "harness/propertyHelper.js": "261069605a9e2070c412b2386c1d092ca6db8d09c42a1d523202b8bbcb86b25f",
+      "harness/proxyTrapsHelper.js": "4ba2c48c14b15d7d21520b0fa839d9a9ee9795b5dc2d7139413006b2cacab04c",
+      "harness/regExpUtils.js": "76d46c1f38486ae94c4757646cefa64716b03fce3df7576be4c87d37b88c02f5",
+      "harness/resizableArrayBufferUtils.js": "029aa552050861eb85fe9d848a52716dfd24747dcaf06f2a8937cb510ab31f50",
+      "harness/sm/assertThrowsValue.js": "101f426e0b86f2b833248b509f09c55894865ea8aee41dc53748768ddab31b1a",
+      "harness/sm/non262-Date-shell.js": "0e99cd29d9dfd26172a733cb336921bd9212667778f745702ff4c382febdfc5d",
+      "harness/sm/non262-JSON-shell.js": "6e044b591f99d9e7db383c58d2c9d68010aa613c97c06a72f5f0f839bde4204c",
+      "harness/sm/non262-Math-shell.js": "79dea1172236685567e09da8c9e868e0f84686bf40cff728785223c5b43f5e7b",
+      "harness/sm/non262-Reflect-shell.js": "aa9579bc7040fff7c7313becf5ad528d64b3e550497ff761dd3a3a4b6e1c3116",
+      "harness/sm/non262-Set-shell.js": "b6cf757b362036e7768c0b29b0b6a4cc68a7d34a67dee57fed0e0fdb277e5ce6",
+      "harness/sm/non262-Temporal-PlainMonthDay-shell.js": "00418c0b37f9eb472c49730ea149fda95db0cf8bbc2f42aee3f6d369e8b2bf8c",
+      "harness/sm/non262-TypedArray-shell.js": "3798d277ac8f105b65ad26602b500b497af7f3361fd14a169c58a601c605bb2e",
+      "harness/sm/non262-expressions-shell.js": "b7ebfbcdef5dcfe18994441efea440b26b45ba9a21ac167c6bf35b73371a568f",
+      "harness/sm/non262-generators-shell.js": "a489ee0e718066080dae7766f4884e1f69ede4e6391b1372f022818e6c90bad6",
+      "harness/sm/non262-strict-shell.js": "fe77ba782cbddebef6bc7f86f354f48c9b435557222ab585c6b2ee1b6c6804b6",
+      "harness/sta.js": "c9e2ade590f4fa8d1756df00c6e62429cef97dc96a7b1b9f551588ec32f26e07",
+      "harness/tcoHelper.js": "a533b07378e41044c98199e250e1c78a28610a783ad0814cb467e9ea2f5de8fa",
+      "harness/temporalHelpers.js": "2a2ee8c7ddac898c51a68d6fc7492f9da6f9f174adb2fcb250e1f02b399d8b1d",
+      "harness/testAtomics.js": "ebc1ca5e35a70941015a764968d46746ed51a6e37de6840e90d71efd4b7121df",
+      "harness/testIntl.js": "dee1aeb19883536773990cb39a47e49b58511a6dc8ffe5952a4a2875e2f95d74",
+      "harness/testTypedArray.js": "4c0e237804f39a4aa670f72c05b4520730c03c2d2e9f2f41e6b380bd6749ec61",
+      "harness/typeCoercion.js": "b0864a0ead1fe13939a1dfa57986af004d0b7bf13f3ffd56060f36e9841b1e51",
+      "harness/wellKnownIntrinsicObjects.js": "bf52f7cca33e62937a9f800b67f6c9d4e4a0bc5819115223f6782f8cb84536a4"
+    },
+    "inventory": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+    "operator_recovery_drill": {
+      "campaign": "live-recovery-2340-two-variants-20261027",
+      "fixture_image": "sha256:5e4c2b04b61f8e163dfe25e8c3719bff023549fb66168672d97c5cd98a135153"
+    },
+    "runner": "native",
+    "timeouts": {
+      "cap_ms": 120000,
+      "compile": 60,
+      "runtime": 30
+    },
+    "tooling": {
+      "scripts/test262/NativeScreeningHost/Program.cs": "1f7ffd7e80dfbb1ae87e95c29d25f0062fa912ab4971f5f4b3450e06779693e8",
+      "scripts/test262/NativeScreeningHost/obj/Release/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs": "f79c1ad9a9fc76110b3655f5bfb5ff4e3168e9addceff05b937c0796f0ec34eb",
+      "scripts/test262/NativeScreeningHost/obj/Release/net10.0/NativeScreeningHost.AssemblyInfo.cs": "77510591d6b0c5d9bbfa711fa7a8c10968e7af633169df31081b0b7a649c1939",
+      "scripts/test262/NativeScreeningHost/obj/Release/net10.0/NativeScreeningHost.GlobalUsings.g.cs": "8befe4ed5abc9a8fe2b247a5517d69bda0f1bd7a43f59dd4a25330a9aa67fef5",
+      "scripts/test262/NativeScreeningHost/obj/Release/net10.0/Verify.Attributes.cs": "261c11536ee98e48687aff3c2d75db556134f12bc64bdb53b79a2f5de0a918fa",
+      "scripts/test262/NativeScreeningHost/obj/Release/net10.0/VerifyXunit.Attributes.cs": "6f19f42f794a2c6825b528f7b07a306be5551a6860d255ca14b7afd25ba4438d",
+      "scripts/test262/bootstrap.js": "25ecf599c0175d0004d9bf160241b514562bbb541a780f0c6d90183716c29fbc",
+      "scripts/test262/catalog.py": "11ded786836c326e2c22f8c32710c64dca0d8ad233be6d8d8cb4b111cef7a1d8",
+      "scripts/test262/catalog.test.js": "60dd9df0b37d53bbe9d73990ccf7609db3a550c420efe01a05a2314f6fb59386",
+      "scripts/test262/catalogBridge.js": "a0b03ff7189182371389112a9cf3156d10ca0380b9019eb5e0864c22664a9096",
+      "scripts/test262/central/__init__.py": "6bdde2d226fd80981e3091628e032418bb2ceddb914607781ab987dcd1e23cf3",
+      "scripts/test262/central/acceptance_receipt.py": "2920b9f490926e77a1114831f51af9950194aaa2bba0839ed8fbf393e164b699",
+      "scripts/test262/central/archive_inventory.py": "8e7ce1232cb690d06462063fbf50bb5e5987a40ffcb4a65c027b5931343af53b",
+      "scripts/test262/central/backup.py": "45624c07b3b81cf184d5765c4191bd44b6de7e933d3127df0d6f938e3064cf90",
+      "scripts/test262/central/budgets.py": "767df9d4ab43ad7b2c0c4b590835491d6f6f703c7a0a4f7bb3dd4e2a2c3b92da",
+      "scripts/test262/central/cli.py": "f191ce4aca45c9abc9345488a450e33bf5109e7b16727843d8dac5221de0ad7d",
+      "scripts/test262/central/client.py": "881cf1f49bbf8eb3e53e17430b860a26aca9c8c844b1c95be994e10a7e79839a",
+      "scripts/test262/central/commands.py": "88a87bf0033188a6feb55f25780e7739858d142fc9efef91fcd50f4cfbfc02e5",
+      "scripts/test262/central/connection_check.py": "4ef2c810d2bdb03093b6f307272f5d6e0c962210fb5928e5df1a410be5db9dea",
+      "scripts/test262/central/cutover_evidence.py": "40676255bb9969fdefd89c52b9de02da1a9baf42c440fdfe3bf6d24c52319002",
+      "scripts/test262/central/diagnostics.py": "1ea9516fd92071ffd9dd989d367e28ba1a9ca20b06324b249f096fb924f47f77",
+      "scripts/test262/central/enlist.py": "1be6b2771bbb3d2f02185a584180c4273f27fc1012bf3ce0784757835995da76",
+      "scripts/test262/central/execution_identity.py": "a24332e59c61643c88fe51c1f453bd7d7dea1f094ae256f7cc357d728d936e9d",
+      "scripts/test262/central/history.py": "ca5115670e8630d019c5ff915db6eda6c4bb8eca2d67a5d13b55051efdc14ffb",
+      "scripts/test262/central/history_auto.py": "452aeddeaa9f61b1956d14e607db47af29cae6eaf2bd30c220828aa07124e415",
+      "scripts/test262/central/history_import.py": "3518ba070ca2208c09ef557deb4eb9cb14732657630d9addecec5761be30ee0c",
+      "scripts/test262/central/identity_diagnostics.py": "0c91d9e2c25df58fa8706aab9d4304284ddee91d7e73afaa8e637c0a5a1de859",
+      "scripts/test262/central/importer.py": "3fed8ca860f34f23ee925173a0b01e4ce11389adcca9d5fc23a10efea28e2bd2",
+      "scripts/test262/central/inventory.py": "547c740ac3fa416e6132403910c1424580af30c9e550015db250e46f79444c2c",
+      "scripts/test262/central/lifecycle.py": "4a687a03cc7a7b3dc32fa88c826bc4d7901a6751a773fcd7f70d98665ef8cb3b",
+      "scripts/test262/central/live_recovery_drill.py": "56735ffaa2b44d8cb628bd84862b00cf295ddb07f80b1ac7e4ad49aa18df1e3a",
+      "scripts/test262/central/monitoring.py": "40fe8fb9b8647d24d0a6ffa04859b9f33ade7eceace022cc50a445c2123d1e76",
+      "scripts/test262/central/monitoring_dashboard.py": "27673b2d930de9586a60035142dd3b33f688c6a8fdf4f6ab0e33d72d7945413e",
+      "scripts/test262/central/pilot.py": "0694d31875c3b1d5b678c677fc30f1c55d9e828312950c8b21c5e58fabdbe546",
+      "scripts/test262/central/pilot_drills.py": "2afb3ef0e1dda2ab85cc5caac9b16398aad81b03732987cb60e54fcb0eb5a45d",
+      "scripts/test262/central/pilot_enlistment_child.py": "8de77de3b73a0ee32e831144ea7d28f26d397fbb4625e260c1eca69d931c5009",
+      "scripts/test262/central/pilot_enlistments.py": "5f50c364192128b09c3f0a0b2f87b3fe6f4139bab1292745442a621959ff14d9",
+      "scripts/test262/central/pilot_process.py": "f2fe8098d0270706acdfd500fc43d522282f035a21f0b68e800ce3482c40882c",
+      "scripts/test262/central/pilot_restore.py": "3eff0fd3647a5213d4d40b7bd097eb1eb0458e35877cfe605c6fe3f9ae37d085",
+      "scripts/test262/central/pilot_scheduled_recovery.py": "773e26de17024cec55736d39c17d9bc794273b4e043c4374bcf9eca1fe4376a8",
+      "scripts/test262/central/publication.py": "69be72ad5e67749a3c84108ca5efef4cc41c38d31851b329be6bae5ffec346fd",
+      "scripts/test262/central/reconciliation.py": "b60876ecf668a2e0f88f6630cc3f4b5c7abb48a2f61bc895a7a91aec879a6443",
+      "scripts/test262/central/recovery_coverage.py": "79b93c46541b08bbde67a9ad1a37f99617914dc8530ac1cf9a5e29bab951c250",
+      "scripts/test262/central/recovery_preservation.py": "45cf1944eb8b050bbb5b6f69cdf02c696a72496077cae14cac5bad7f013d9b2e",
+      "scripts/test262/central/retained_discovery.py": "80c19de30fb22d9c33f40d1a3b991ea363106e8848afecb1f488385fd6055bc6",
+      "scripts/test262/central/retained_evidence.py": "811e20fc2f7825f9a2f7f779cc886e9bce7ea4782dd05b032b234ddb770a440a",
+      "scripts/test262/central/retained_objects.py": "7900f3fb3d73008fc153d2e413f9cf0f2dfcc69c1be0a72337d5f1633a34c0b2",
+      "scripts/test262/central/retained_readbacks.py": "835a659a6f0c1d30c32ee56570b7304005175d0b54be6527dc942debbd088507",
+      "scripts/test262/central/retained_restore.py": "2f0215782d0943eb37e42d95253e15fc7c5e60be5ed86336daf23d824639d7b4",
+      "scripts/test262/central/retention_audit.py": "768296708e51eabd83820ab54083b8553c7b43b167875fb27cd5f08d07a79820",
+      "scripts/test262/central/retention_extension.py": "f31c402bcd07c21f799cd8acf8e4441a8dffd1036f83ca383419eca286899350",
+      "scripts/test262/central/schedule.py": "344ec15e0f185a596f5939a26bcad3ebdc365b6586704f275b0524e3b698719e",
+      "scripts/test262/central/specification_backfill.py": "7891c198bbe6918331e2e5fef957803ef847b075b6a49985129857fbb98bba60",
+      "scripts/test262/central/verify_specification_deployment.py": "642e0d9c29d4220cb486f350c6a2673d8b7f7ba79de61d9b73328af7c762a315",
+      "scripts/test262/central/worker.py": "262f165b2265aa9f78fc01ed0d80479774f072c90547d494dbb834fdb4cbbc76",
+      "scripts/test262/compilationCoverage.py": "87f5f99a1e175c9518c8af786d6061bebfe511bc64a832202624b58ad3a5bc7b",
+      "scripts/test262/compilationCoverage.test.js": "ec88fde8ba952727d3b30bbc3de1d5dc8d2b6bc98d8ccddb7eeaef59423a1c16",
+      "scripts/test262/metadataParser.js": "1b2c374d9f38e3e4d4925b610638b76d400ba9d378a7af23ace086f9c01fea6f",
+      "scripts/test262/nativePorting.py": "edaaebfce667e81e3bb6646fd1e4d58e12f01ccb1aa6532af142bb6eeb02f607",
+      "scripts/test262/nativePorting.test.js": "6ae0579f3fa40345250d3f64af2f22140f69a1208dc122869213a2f918c24e19",
+      "scripts/test262/nativeScreeningHost.test.js": "9dcf46a79527b60a153eb716f6d04da3f4907d80042e6cd68474871d55fa97a4",
+      "scripts/test262/runMvp.js": "4c91ce485cc0404aa2c1074a5375e5437cfa79629b970235b8a6280bc0e327bd",
+      "scripts/test262/specificationMetadata.test.js": "c399bb30033ecdf022d6fbfa530d830b0dcb95d8b85fc534b8dc191a00fcfc49",
+      "tests/Jroc.Testing/ExecutionTestsBase.cs": "83dfc96cfd6abd2928a81c21ce351602f0326035944e71763e4fb936d946bd5b",
+      "tests/Jroc.Testing/GeneratedAssemblyConsumerHarness.cs": "5979c7b0e857bbd0b4569aed075edc5e83963cc19026b949b3e2a7020fbea10a",
+      "tests/Jroc.Testing/GeneratorTestsBase.cs": "03df15631dfafd5083ccf00c639aef38084d6f1b68e2dd8710a23b16863d87bd",
+      "tests/Jroc.Testing/InMemoryTestCompiler.cs": "de8992e5528301a1c1e809171b2461c2b30a079b69ff167d36391f6bcd9f9134",
+      "tests/Jroc.Testing/Integration/FixedCommandLineEnvironment.cs": "76b6a32031d7d017023e92396671bea27434efd2d99675936538e7af460a11dd",
+      "tests/Jroc.Testing/Integration/TemporaryCurrentDirectory.cs": "0c21884936e4426f01f2422d7ffe5826da50af567d8688e3f8228d6714f679d7",
+      "tests/Jroc.Testing/MockFileSystem.cs": "c4594911f8dfc63faba6d27be03eda9719c7427c2ad96940563dd41bb09f4408",
+      "tests/Jroc.Testing/Properties/InternalsVisibleTo.cs": "83c8a528b7fe506c3fbbcc1d9d0bf552f764aaef732bfd4fe7ff11d18cb48947",
+      "tests/Jroc.Testing/SharedTestCompilation.cs": "d5fe60543ce40db77af74199408f84770cf9d75a63fda4915081c3cc2990f7ae",
+      "tests/Jroc.Testing/Test262/Test262AgentHelpers.cs": "f42d97f177cfd8c1b2efd345345a0a1f1845dc190bfbf0737302615ed11410fe",
+      "tests/Jroc.Testing/Test262/Test262AsyncCompletion.cs": "1dd56350ad1fb9f6a6b0ae50ddd248b17832f3d43d73ec1e6d494cf05f2f5d8a",
+      "tests/Jroc.Testing/Test262/Test262AsyncHelpers.cs": "a4fe90d875ab26f7002a6a9d33ee2872268dbc7505a4c57417ed6bfe4e41aac7",
+      "tests/Jroc.Testing/Test262/Test262AtomicsHelpers.cs": "8074dc8dcd2cafd226ce4632bb45e209ce28329f3591ddbaf43a23246c097468",
+      "tests/Jroc.Testing/Test262/Test262ByteConversionHelpers.cs": "5985fe2e2c2a87de752f5395a135633b7b0bca8d168f6e48d1af252afa14ea8c",
+      "tests/Jroc.Testing/Test262/Test262CompilationAssertions.cs": "b7c0175caf7c6c2d7929d357511cb13b7ad0794998cd1a66655540a0b38a8e2a",
+      "tests/Jroc.Testing/Test262/Test262DeepEqualHelpers.cs": "d9ae9328576aa44fcfe8d171327bfa66acf81b6fbcb324260d6104a3ffac1b42",
+      "tests/Jroc.Testing/Test262/Test262EncodingHelpers.cs": "f6578282994cb037dbaa387ce497c7a319ca3500090dbd1ccb02b4d859854b9e",
+      "tests/Jroc.Testing/Test262/Test262HostRuntimeIntrinsics.cs": "f07ed567ff26cd4cc16741a452703238bf40446c665ab680ce241960167b795f",
+      "tests/Jroc.Testing/Test262/Test262IteratorZipHelpers.cs": "bab76d7e1268c986a310101b9173eba9c1a6629546dba5aa67d228adf866839d",
+      "tests/Jroc.Testing/Test262/Test262NativeFunctionMatcherHelpers.cs": "dcccc03f70c2f874c8b5a53b70a0a2254511705f72e2c8e994931a0b655c37d3",
+      "tests/Jroc.Testing/Test262/Test262PromiseHelpers.cs": "11bff7abc2edb7e07d9fab7da1bc1ec5f395fa32320d015bf58ed32f9f4fa8eb",
+      "tests/Jroc.Testing/Test262/Test262PropertyHelpers.cs": "b04bc3bdf9e5b41a81d603696d30705c06e31ed52b1907c97ff49805ea7ca2fd",
+      "tests/Jroc.Testing/Test262/Test262ProxyTrapsHelpers.cs": "cfda60ce228a45dd3659d16e2af50419436e68fbda6b543332c468fba7222b12",
+      "tests/Jroc.Testing/Test262/Test262RegExpHelpers.cs": "08028028dfccbb5893c2df21f444b1e22305446f842bbca0510703a699e46a55",
+      "tests/Jroc.Testing/Test262/Test262ResizableArrayBufferHelpers.cs": "50abef5047925f61ca77317e0ec2cf357d88240f20cedbabf3499d86af1c4794",
+      "tests/Jroc.Testing/Test262/Test262ScriptHelpers.cs": "8d011983e22c96f38e0588bdb53f99cf5578d19caacbf59115b74844860be9e2",
+      "tests/Jroc.Testing/Test262/Test262SharedAssertHarness.cs": "47a1b56bb72a66b2873d25157e5b39a3f975906c739a2dd1ff5579f711211560",
+      "tests/Jroc.Testing/Test262/Test262TemporalHelpers.cs": "78120d33aa48fdaa2724b98ba5aa356ad6d191a5539364e85a041024ffb2bf94",
+      "tests/Jroc.Testing/Test262/Test262TypedArrayHelpers.cs": "bdfe62545c6bba0cce2ee555e98e2e98f923025c3db08dc0bed28bd74b818350",
+      "tests/Jroc.Testing/Test262/Test262WellKnownIntrinsicObjectsHelpers.cs": "a6003632f63d0a8a7112e2070766876430084965a7a8474020249411fb539f6c",
+      "tests/Jroc.Testing/TestCompiler.cs": "102ebd137c9a98a58d6f8767bf7e8350eca8970a921553fb3626d65b1abdac1f",
+      "tests/Jroc.Testing/TestLogger.cs": "c8d37d76c4e33a7422f4103e97b93e91d4a0b88e2fe96250990064509bb9d6f3",
+      "tests/Jroc.Testing/TestProjectLayout.cs": "226c98dfa25ad6b4520d87550c97e396dd226bf032d45aa2a2b4c8db864125e1",
+      "tests/Jroc.Testing/Utilities/AssemblyToText.cs": "8363518a8024ee678be73f8a8e36e2d7879ef684174d97d57482cd5f3c5977ee",
+      "tests/Jroc.Testing/VerifyModuleInitializer.cs": "742a1b4198483de4b865b93aa9383c10ec8fb2ff84b6365de482743eea3500e1",
+      "tests/Jroc.Testing/obj/Release/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs": "f79c1ad9a9fc76110b3655f5bfb5ff4e3168e9addceff05b937c0796f0ec34eb",
+      "tests/Jroc.Testing/obj/Release/net10.0/Jroc.Testing.AssemblyInfo.cs": "7388b0b02da6951c1a3a5a816aa69add57f526cbaded89b53b242684d3921e21",
+      "tests/Jroc.Testing/obj/Release/net10.0/Jroc.Testing.GlobalUsings.g.cs": "8befe4ed5abc9a8fe2b247a5517d69bda0f1bd7a43f59dd4a25330a9aa67fef5",
+      "tests/Jroc.Testing/obj/Release/net10.0/Verify.Attributes.cs": "65c0eabf7c1e8c64227d6e73f8993d4dad0cd9b4e0d53615ce7077d3ef33b8c2",
+      "tests/Jroc.Testing/obj/Release/net10.0/VerifyXunit.Attributes.cs": "6f19f42f794a2c6825b528f7b07a306be5551a6860d255ca14b7afd25ba4438d",
+      "tests/test262/test262.pin.json": "ea10a1dce0267a04a6ea45f40721620137f1b524a1627e11378419f2c8ac63e2"
+    },
+    "upstream": {
+      "cloneUrl": "https://github.com/tc39/test262.git",
+      "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+      "owner": "tc39",
+      "packageVersion": "5.0.0",
+      "repo": "test262"
+    }
+  },
+  "frozen_baseline": {
+    "run": {
+      "id": 40592440970,
+      "run_attempt": 1,
+      "event": "workflow_dispatch",
+      "head_branch": "master",
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-27T22:08:19Z",
+      "updated_at": "2026-10-27T22:11:02Z",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40592440970"
+    },
+    "artifact": {
+      "id": 12774043049,
+      "name": "test262-recovery-drill-40592440970-1",
+      "digest": "sha256:c659e725373dbac0ba0a4b7fb36a2db7c486376cdc7a407d1619203b75708129",
+      "size_in_bytes": 1977,
+      "created_at": "2026-10-27T22:10:59Z",
+      "expires_at": "2027-01-25T22:08:20Z"
+    },
+    "zip_sha256": "c659e725373dbac0ba0a4b7fb36a2db7c486376cdc7a407d1619203b75708129",
+    "members": {
+      "report.json": {
+        "sha256": "d91e4e95d25b5766413e91c2662e98c991d6311ca6f84c314232f15b5bd4d8f4",
+        "bytes": 6285
+      }
+    },
+    "receipt": {
+      "run_id": 40592440970,
+      "run_attempt": 1,
+      "artifact_id": 12774043049,
+      "zip_sha256": "c659e725373dbac0ba0a4b7fb36a2db7c486376cdc7a407d1619203b75708129",
+      "report_sha256": "d91e4e95d25b5766413e91c2662e98c991d6311ca6f84c314232f15b5bd4d8f4"
+    },
+    "report_projection": {
+      "complete": false,
+      "stage": "baseline-verified",
+      "actions": {
+        "id": 40592440970,
+        "run_attempt": 1,
+        "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "head_branch": "master",
+        "event": "workflow_dispatch",
+        "path": ".github/workflows/test262-recovery-drill.yml",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40592440970"
+      },
+      "baseline_read_only": true,
+      "schema_version": 1,
+      "repository": "tomacox74/js2il",
+      "campaign": "live-recovery-2340-two-variants-20261027",
+      "phase": "verify",
+      "fixture_executions_maximum": 2,
+      "execution_intents": [],
+      "invocations": [],
+      "publication": false,
+      "authority_changed": false,
+      "permissions_changed": false,
+      "s3_access": false,
+      "imports_or_restores": false,
+      "cron_witness": false,
+      "preflight_comparison": {
+        "matches": true,
+        "expected_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+        "actual_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+        "components": [
+          {
+            "field": "binaries",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+            "actual_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+            "matches": true
+          },
+          {
+            "field": "capabilities",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+            "actual_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+            "matches": true
+          },
+          {
+            "field": "environment_identity",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+            "actual_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+            "matches": true
+          },
+          {
+            "field": "harness",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+            "actual_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+            "matches": true
+          },
+          {
+            "field": "inventory",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+            "actual_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+            "matches": true
+          },
+          {
+            "field": "runner",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+            "actual_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+            "matches": true
+          },
+          {
+            "field": "timeouts",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+            "actual_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+            "matches": true
+          },
+          {
+            "field": "tooling",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+            "actual_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+            "matches": true
+          },
+          {
+            "field": "upstream",
+            "expected_present": true,
+            "actual_present": true,
+            "expected_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+            "actual_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+            "matches": true
+          }
+        ],
+        "file_differences": [],
+        "field_differences": []
+      },
+      "sealed_upstream_matches": true,
+      "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+      "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+      "native_provenance_id": "03560ebe-7448-5eb2-b2b5-0684793c9fe4",
+      "native_execution_identity_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+      "image_archive_sha256": "147e74f5088103a02a9cef11e2ac7092b12704856185ff97a4e24e49c9989832",
+      "execution_identity_sha256": "5f10ae49f795bc57ded167eb764b8fa5c30bbc7ddc570c75f8575cdcd34d8181",
+      "execution_identity_components": {
+        "binaries": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+        "harness": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+        "tooling": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+        "capabilities": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+        "environment_identity": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+        "timeouts": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4"
+      },
+      "fixture_image_id": "sha256:5e4c2b04b61f8e163dfe25e8c3719bff023549fb66168672d97c5cd98a135153",
+      "master_validation": {
+        "id": 40591322360,
+        "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "head_branch": "master",
+        "event": "push",
+        "conclusion": "success",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322360",
+        "workflow_id": 263567262,
+        "updated_at": "2026-10-27T22:01:21Z"
+      },
+      "control_plane_sha256": "54e32f5390fc77856890f4418142849e6194ffa9a6fe82f295c31be4df4682d1",
+      "fixture": {
+        "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+        "upstream_path": "test/built-ins/Temporal/Duration/prototype/nanoseconds/prop-desc.js",
+        "content_sha256": "\\xd171109cf8e7d1e80d5576da09deafd3b4a52cba065cef14b4905982fe15a511",
+        "dependency_manifest_digest": "\\x61ce1bdd2c118fe9ad9354de1fe294011bb7ca9f3db1fbe7266a39f2108a6ae0"
+      },
+      "required_variants": [
+        "non-strict",
+        "strict"
+      ],
+      "phase_complete": true,
+      "actual_fixture_executions": 0,
+      "control_plane_unchanged": true,
+      "checked_at": "2026-10-27T22:10:54.992828+00:00"
+    },
+    "image_artifact": {
+      "id": 12774063141,
+      "name": "test262-recovery-image-40592440970-1",
+      "digest": "sha256:aae9163d29ab1608244a24e25e8a8b91923662095ec9da4625ab4581f1b00c3e",
+      "size_in_bytes": 389236550,
+      "created_at": "2026-10-27T22:10:58Z",
+      "expires_at": "2026-11-03T22:10:55Z"
+    },
+    "image_boundary": "Image ZIP metadata is authenticated; live image-check members verify the frozen archive bytes before load. This collector does not download the large image."
+  },
+  "original_observation_canonical_sha256": "eb6275a0b893477c5205480f7ceaf91a21f5cdf7864d779eeefba0b78e0b1489",
+  "original_budget_canonical_sha256": "584642a334dc020c1c18786824e7f2ab4f3ed670f3f915a9fb9e65fe6827af27",
+  "sources": [
+    {
+      "run": {
+        "id": 40593043603,
+        "run_attempt": 1,
+        "event": "workflow_dispatch",
+        "head_branch": "master",
+        "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "path": ".github/workflows/test262-recovery-drill.yml",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-27T22:12:48Z",
+        "updated_at": "2026-10-27T22:15:04Z",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593043603"
+      },
+      "artifact": {
+        "id": 12774517904,
+        "name": "test262-recovery-drill-40593043603-1",
+        "digest": "sha256:9fd95c21707d1a4906aec23da60efdcdf45bb734653bd385aaa9bef9dfc1060c",
+        "size_in_bytes": 15320,
+        "created_at": "2026-10-27T22:15:00Z",
+        "expires_at": "2027-01-25T22:12:49Z"
+      },
+      "zip_sha256": "9fd95c21707d1a4906aec23da60efdcdf45bb734653bd385aaa9bef9dfc1060c",
+      "members": {
+        "report.json": {
+          "sha256": "132509e3ce49a3412d66b3e074348b0b31531187020071408016ea28aa2240bc",
+          "bytes": 14674
+        },
+        "image-check.json": {
+          "sha256": "2e5a759527869c1b8e1805de1cce47640777192530524112ecf53d955482bc11",
+          "bytes": 887
+        },
+        "context-0.json": {
+          "sha256": "abb8afcf484a625c45190b001fe1a75d0e6a75128e2abd45ef095e0685022a28",
+          "bytes": 21577
+        },
+        "outbox-0.sqlite": {
+          "sha256": "91420f4e3dda3edb8bf0268cfb16ee21e86f39f381b1a586a3b490d344c1c7e7",
+          "bytes": 24576
+        }
+      },
+      "outbox": {
+        "integrity": "ok",
+        "counts": {
+          "messages": 1,
+          "completions": 1
+        },
+        "unacknowledged": {
+          "messages": 0,
+          "completions": 0
+        }
+      },
+      "report_projection": {
+        "complete": false,
+        "stage": "exhaustion-verified",
+        "actions": {
+          "id": 40593043603,
+          "run_attempt": 1,
+          "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "head_branch": "master",
+          "event": "workflow_dispatch",
+          "path": ".github/workflows/test262-recovery-drill.yml",
+          "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593043603"
+        },
+        "baseline_source": {
+          "run_id": 40592440970,
+          "run_attempt": 1,
+          "artifact_id": 12774043049,
+          "zip_sha256": "c659e725373dbac0ba0a4b7fb36a2db7c486376cdc7a407d1619203b75708129",
+          "report_sha256": "d91e4e95d25b5766413e91c2662e98c991d6311ca6f84c314232f15b5bd4d8f4"
+        },
+        "schema_version": 1,
+        "repository": "tomacox74/js2il",
+        "campaign": "live-recovery-2340-two-variants-20261027",
+        "phase": "exhaust",
+        "fixture_executions_maximum": 2,
+        "execution_intents": [
+          {
+            "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+            "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+            "variant": "non-strict",
+            "lease_generation": 1
+          }
+        ],
+        "invocations": [
+          {
+            "phase": 0,
+            "context": {
+              "repository": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "producer": "80728796-377b-4956-b6eb-44fdb7a5db62",
+              "run": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "budget": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+              "provenance": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+              "kind": "native",
+              "revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+              "registration_snapshot": "594c9741-1aa8-5f4d-a53a-64ce922c1dcd",
+              "validation": "286bee5f-b51b-5252-b196-2193387838ce",
+              "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+              "candidate_ids": [
+                "00056ea5-f2bd-5765-9446-fb65631abae6"
+              ],
+              "cap_ms": 120000,
+              "compilation_coverage": false,
+              "planning_scope": {
+                "campaign": "live-recovery-2340-two-variants-20261027",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "cursor_before": 0,
+                "shared_cursor_changed": false,
+                "reporting_target_changed": false
+              },
+              "recovery": {
+                "resumed_fixtures": 0,
+                "discovery_fixtures": 1,
+                "queued_variants": 2,
+                "reused_terminal_variants": 0,
+                "cursor_before": 0,
+                "cursor_after": 1
+              }
+            },
+            "worker": {
+              "attempts": 1,
+              "seconds": 5.7080801750000205,
+              "stop_reason": "budget-exhausted",
+              "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024"
+            },
+            "lifecycle": {
+              "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "state": "complete",
+              "ended_at": "2026-10-27T22:14:58.407543+00:00",
+              "budget": {
+                "state": "exhausted",
+                "reason": "remaining-capacity-insufficient",
+                "result": {
+                  "state": "exhausted",
+                  "version": 3,
+                  "ended_at": "2026-10-27T22:14:58.538106+00:00",
+                  "lifecycle": {
+                    "state": "exhausted",
+                    "reason": "remaining-capacity-insufficient",
+                    "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                    "version": 2,
+                    "charged_ms": 1598,
+                    "disposition": "terminal",
+                    "before_state": "open",
+                    "claim_cap_ms": 120000,
+                    "pending_work": 1,
+                    "flush_verified": true,
+                    "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                    "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                    "charged_attempts": 1,
+                    "collection_state": "complete",
+                    "external_run_key": "actions:40593043603:1",
+                    "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                    "expired_reservations": 0
+                  },
+                  "charged_ms": 1598,
+                  "scope_kind": "run",
+                  "reserved_ms": 0,
+                  "claim_cap_ms": 120000,
+                  "external_key": "actions:40593043603",
+                  "attempt_limit": 1,
+                  "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+                  "time_limit_ms": 1200000,
+                  "accepted_limit": 1,
+                  "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                  "candidate_limit": 1,
+                  "charged_attempts": 1,
+                  "reserved_attempts": 0
+                },
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "version": 2,
+                "charged_ms": 1598,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 1,
+                "flush_verified": true,
+                "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593043603:1",
+                "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                "expired_reservations": 0
+              }
+            },
+            "budget": {
+              "state": "exhausted",
+              "version": 3,
+              "ended_at": "2026-10-27T22:14:58.538106+00:00",
+              "lifecycle": {
+                "state": "exhausted",
+                "reason": "remaining-capacity-insufficient",
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "version": 2,
+                "charged_ms": 1598,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 1,
+                "flush_verified": true,
+                "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593043603:1",
+                "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                "expired_reservations": 0
+              },
+              "charged_ms": 1598,
+              "scope_kind": "run",
+              "reserved_ms": 0,
+              "claim_cap_ms": 120000,
+              "external_key": "actions:40593043603",
+              "attempt_limit": 1,
+              "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "time_limit_ms": 1200000,
+              "accepted_limit": 1,
+              "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+              "candidate_limit": 1,
+              "charged_attempts": 1,
+              "reserved_attempts": 0
+            },
+            "outbox": {
+              "integrity": "ok",
+              "pending_messages": 0,
+              "pending_completions": 0
+            },
+            "observations": [
+              {
+                "observation_id": "830001fe-d04a-4216-99fb-33030146eede",
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "variant": "non-strict",
+                "outcome": "fail",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "1fa6f062-4584-5cb5-b53e-074a3b1d3714",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "strict",
+                "state": "pending",
+                "lease_generation": 0
+              }
+            ]
+          }
+        ],
+        "publication": false,
+        "authority_changed": false,
+        "permissions_changed": false,
+        "s3_access": false,
+        "imports_or_restores": false,
+        "cron_witness": false,
+        "preflight_comparison": {
+          "matches": true,
+          "expected_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+          "actual_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+          "components": [
+            {
+              "field": "binaries",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+              "actual_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+              "matches": true
+            },
+            {
+              "field": "capabilities",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+              "actual_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+              "matches": true
+            },
+            {
+              "field": "environment_identity",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+              "actual_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+              "matches": true
+            },
+            {
+              "field": "harness",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+              "actual_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+              "matches": true
+            },
+            {
+              "field": "inventory",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+              "actual_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+              "matches": true
+            },
+            {
+              "field": "runner",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+              "actual_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+              "matches": true
+            },
+            {
+              "field": "timeouts",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+              "actual_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+              "matches": true
+            },
+            {
+              "field": "tooling",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+              "actual_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+              "matches": true
+            },
+            {
+              "field": "upstream",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+              "actual_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+              "matches": true
+            }
+          ],
+          "file_differences": [],
+          "field_differences": []
+        },
+        "sealed_upstream_matches": true,
+        "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+        "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+        "native_provenance_id": "03560ebe-7448-5eb2-b2b5-0684793c9fe4",
+        "native_execution_identity_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+        "image_archive_sha256": "147e74f5088103a02a9cef11e2ac7092b12704856185ff97a4e24e49c9989832",
+        "execution_identity_sha256": "5f10ae49f795bc57ded167eb764b8fa5c30bbc7ddc570c75f8575cdcd34d8181",
+        "execution_identity_components": {
+          "binaries": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+          "harness": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+          "tooling": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+          "capabilities": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+          "environment_identity": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+          "timeouts": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4"
+        },
+        "fixture_image_id": "sha256:5e4c2b04b61f8e163dfe25e8c3719bff023549fb66168672d97c5cd98a135153",
+        "master_validation": {
+          "id": 40591322360,
+          "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "head_branch": "master",
+          "event": "push",
+          "conclusion": "success",
+          "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322360",
+          "workflow_id": 263567262,
+          "updated_at": "2026-10-27T22:01:21Z"
+        },
+        "control_plane_sha256": "54e32f5390fc77856890f4418142849e6194ffa9a6fe82f295c31be4df4682d1",
+        "fixture": {
+          "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+          "upstream_path": "test/built-ins/Temporal/Duration/prototype/nanoseconds/prop-desc.js",
+          "content_sha256": "\\xd171109cf8e7d1e80d5576da09deafd3b4a52cba065cef14b4905982fe15a511",
+          "dependency_manifest_digest": "\\x61ce1bdd2c118fe9ad9354de1fe294011bb7ca9f3db1fbe7266a39f2108a6ae0"
+        },
+        "required_variants": [
+          "non-strict",
+          "strict"
+        ],
+        "campaign_marker": {
+          "state": "cancelled",
+          "run_id": "5c6b57fd-8c65-585d-a55e-3cc88e56cdd0",
+          "ended_at": "2026-10-27T22:14:43.227063+00:00",
+          "run_kind": "native",
+          "started_at": "2026-10-27T22:14:43.227063+00:00",
+          "producer_id": "80728796-377b-4956-b6eb-44fdb7a5db62",
+          "trust_class": "trusted",
+          "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+          "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+          "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "external_run_key": "live-recovery-2340-two-variants-20261027:exhaust",
+          "environment_diagnostics": {
+            "phase": "exhaust",
+            "campaign": "live-recovery-2340-two-variants-20261027",
+            "actions_run_id": 40593043603,
+            "fixture_executions": 0,
+            "administrative_latch": true,
+            "collection_lifecycle": {
+              "state": "cancelled",
+              "reason": "job-cancelled",
+              "source": "supervisor",
+              "flush_verified": true,
+              "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+              "external_run_key": "live-recovery-2340-two-variants-20261027:exhaust"
+            }
+          },
+          "validated_target_revision": null
+        },
+        "first_observation": "830001fe-d04a-4216-99fb-33030146eede",
+        "first_observation_sha256": "eb6275a0b893477c5205480f7ceaf91a21f5cdf7864d779eeefba0b78e0b1489",
+        "phase_complete": true,
+        "actual_fixture_executions": 1,
+        "original_budget_unchanged": false,
+        "control_plane_unchanged": true,
+        "checked_at": "2026-10-27T22:14:59.718579+00:00"
+      }
+    },
+    {
+      "run": {
+        "id": 40593457941,
+        "run_attempt": 1,
+        "event": "workflow_dispatch",
+        "head_branch": "master",
+        "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "path": ".github/workflows/test262-recovery-drill.yml",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-27T22:15:54Z",
+        "updated_at": "2026-10-27T22:18:36Z",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593457941"
+      },
+      "artifact": {
+        "id": 12775740717,
+        "name": "test262-recovery-drill-40593457941-1",
+        "digest": "sha256:c06ad7fa3bb1022a1a5f711facc4cb1b942eb35bf4e9cc60c38a067d689ce641",
+        "size_in_bytes": 15947,
+        "created_at": "2026-10-27T22:18:32Z",
+        "expires_at": "2027-01-25T22:15:55Z"
+      },
+      "zip_sha256": "c06ad7fa3bb1022a1a5f711facc4cb1b942eb35bf4e9cc60c38a067d689ce641",
+      "members": {
+        "report.json": {
+          "sha256": "c48dc50c4b4a6c57d0d43dcc66e12d0d708586a113ce7219064e83c0e0a1b7d4",
+          "bytes": 22044
+        },
+        "image-check.json": {
+          "sha256": "e01910c30935b67101ac125de876e2a8c00f8e6696cce486bbc4ec04959fb1ae",
+          "bytes": 1170
+        },
+        "context-1.json": {
+          "sha256": "ee86c84710fb9475a7b17daec043c5c91f83c6b4b7930bb9bf5069cb8b677b9a",
+          "bytes": 21577
+        },
+        "outbox-1.sqlite": {
+          "sha256": "d2268f5c8bf1d98a8a92f9d537ff872b36823a6efcc6a8ce00d03b65136bd637",
+          "bytes": 24576
+        }
+      },
+      "outbox": {
+        "integrity": "ok",
+        "counts": {
+          "messages": 1,
+          "completions": 1
+        },
+        "unacknowledged": {
+          "messages": 0,
+          "completions": 0
+        }
+      },
+      "report_projection": {
+        "complete": true,
+        "stage": "verified",
+        "actions": {
+          "id": 40593457941,
+          "run_attempt": 1,
+          "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "head_branch": "master",
+          "event": "workflow_dispatch",
+          "path": ".github/workflows/test262-recovery-drill.yml",
+          "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593457941"
+        },
+        "baseline_source": {
+          "run_id": 40592440970,
+          "run_attempt": 1,
+          "artifact_id": 12774043049,
+          "zip_sha256": "c659e725373dbac0ba0a4b7fb36a2db7c486376cdc7a407d1619203b75708129",
+          "report_sha256": "d91e4e95d25b5766413e91c2662e98c991d6311ca6f84c314232f15b5bd4d8f4"
+        },
+        "previous_source": {
+          "run_id": 40593043603,
+          "run_attempt": 1,
+          "artifact_id": 12774517904,
+          "zip_sha256": "9fd95c21707d1a4906aec23da60efdcdf45bb734653bd385aaa9bef9dfc1060c",
+          "report_sha256": "132509e3ce49a3412d66b3e074348b0b31531187020071408016ea28aa2240bc"
+        },
+        "schema_version": 1,
+        "repository": "tomacox74/js2il",
+        "campaign": "live-recovery-2340-two-variants-20261027",
+        "phase": "recover",
+        "fixture_executions_maximum": 2,
+        "execution_intents": [
+          {
+            "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+            "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+            "variant": "non-strict",
+            "lease_generation": 1
+          },
+          {
+            "work_item_id": "1fa6f062-4584-5cb5-b53e-074a3b1d3714",
+            "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+            "variant": "strict",
+            "lease_generation": 1
+          }
+        ],
+        "invocations": [
+          {
+            "phase": 0,
+            "context": {
+              "repository": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "producer": "80728796-377b-4956-b6eb-44fdb7a5db62",
+              "run": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "budget": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+              "provenance": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+              "kind": "native",
+              "revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+              "registration_snapshot": "594c9741-1aa8-5f4d-a53a-64ce922c1dcd",
+              "validation": "286bee5f-b51b-5252-b196-2193387838ce",
+              "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+              "candidate_ids": [
+                "00056ea5-f2bd-5765-9446-fb65631abae6"
+              ],
+              "cap_ms": 120000,
+              "compilation_coverage": false,
+              "planning_scope": {
+                "campaign": "live-recovery-2340-two-variants-20261027",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "cursor_before": 0,
+                "shared_cursor_changed": false,
+                "reporting_target_changed": false
+              },
+              "recovery": {
+                "resumed_fixtures": 0,
+                "discovery_fixtures": 1,
+                "queued_variants": 2,
+                "reused_terminal_variants": 0,
+                "cursor_before": 0,
+                "cursor_after": 1
+              }
+            },
+            "worker": {
+              "attempts": 1,
+              "seconds": 5.7080801750000205,
+              "stop_reason": "budget-exhausted",
+              "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024"
+            },
+            "lifecycle": {
+              "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+              "state": "complete",
+              "ended_at": "2026-10-27T22:14:58.407543+00:00",
+              "budget": {
+                "state": "exhausted",
+                "reason": "remaining-capacity-insufficient",
+                "result": {
+                  "state": "exhausted",
+                  "version": 3,
+                  "ended_at": "2026-10-27T22:14:58.538106+00:00",
+                  "lifecycle": {
+                    "state": "exhausted",
+                    "reason": "remaining-capacity-insufficient",
+                    "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                    "version": 2,
+                    "charged_ms": 1598,
+                    "disposition": "terminal",
+                    "before_state": "open",
+                    "claim_cap_ms": 120000,
+                    "pending_work": 1,
+                    "flush_verified": true,
+                    "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                    "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                    "charged_attempts": 1,
+                    "collection_state": "complete",
+                    "external_run_key": "actions:40593043603:1",
+                    "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                    "expired_reservations": 0
+                  },
+                  "charged_ms": 1598,
+                  "scope_kind": "run",
+                  "reserved_ms": 0,
+                  "claim_cap_ms": 120000,
+                  "external_key": "actions:40593043603",
+                  "attempt_limit": 1,
+                  "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+                  "time_limit_ms": 1200000,
+                  "accepted_limit": 1,
+                  "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                  "candidate_limit": 1,
+                  "charged_attempts": 1,
+                  "reserved_attempts": 0
+                },
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "version": 2,
+                "charged_ms": 1598,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 1,
+                "flush_verified": true,
+                "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593043603:1",
+                "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                "expired_reservations": 0
+              }
+            },
+            "budget": {
+              "state": "exhausted",
+              "version": 3,
+              "ended_at": "2026-10-27T22:14:58.538106+00:00",
+              "lifecycle": {
+                "state": "exhausted",
+                "reason": "remaining-capacity-insufficient",
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "version": 2,
+                "charged_ms": 1598,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 1,
+                "flush_verified": true,
+                "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593043603:1",
+                "collection_ended_at": "2026-10-27T22:14:58.407543+00:00",
+                "expired_reservations": 0
+              },
+              "charged_ms": 1598,
+              "scope_kind": "run",
+              "reserved_ms": 0,
+              "claim_cap_ms": 120000,
+              "external_key": "actions:40593043603",
+              "attempt_limit": 1,
+              "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "time_limit_ms": 1200000,
+              "accepted_limit": 1,
+              "budget_scope_id": "70c8556d-f20c-5ab2-bd44-70ff78948024",
+              "candidate_limit": 1,
+              "charged_attempts": 1,
+              "reserved_attempts": 0
+            },
+            "outbox": {
+              "integrity": "ok",
+              "pending_messages": 0,
+              "pending_completions": 0
+            },
+            "observations": [
+              {
+                "observation_id": "830001fe-d04a-4216-99fb-33030146eede",
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "variant": "non-strict",
+                "outcome": "fail",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "1fa6f062-4584-5cb5-b53e-074a3b1d3714",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "strict",
+                "state": "pending",
+                "lease_generation": 0
+              }
+            ]
+          },
+          {
+            "phase": 1,
+            "context": {
+              "repository": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "producer": "80728796-377b-4956-b6eb-44fdb7a5db62",
+              "run": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+              "budget": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+              "provenance": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+              "kind": "native",
+              "revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+              "registration_snapshot": "594c9741-1aa8-5f4d-a53a-64ce922c1dcd",
+              "validation": "286bee5f-b51b-5252-b196-2193387838ce",
+              "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+              "candidate_ids": [
+                "00056ea5-f2bd-5765-9446-fb65631abae6"
+              ],
+              "cap_ms": 120000,
+              "compilation_coverage": false,
+              "planning_scope": {
+                "campaign": "live-recovery-2340-two-variants-20261027",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "cursor_before": 1,
+                "shared_cursor_changed": false,
+                "reporting_target_changed": false
+              },
+              "recovery": {
+                "resumed_fixtures": 1,
+                "discovery_fixtures": 0,
+                "queued_variants": 1,
+                "reused_terminal_variants": 1,
+                "cursor_before": 1,
+                "cursor_after": 1
+              }
+            },
+            "worker": {
+              "attempts": 1,
+              "seconds": 5.05493320000005,
+              "stop_reason": "queue-empty-or-delayed",
+              "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+              "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502"
+            },
+            "lifecycle": {
+              "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+              "state": "complete",
+              "ended_at": "2026-10-27T22:18:30.140175+00:00",
+              "budget": {
+                "state": "closed",
+                "reason": "drained",
+                "result": {
+                  "state": "closed",
+                  "version": 3,
+                  "ended_at": "2026-10-27T22:18:30.237336+00:00",
+                  "lifecycle": {
+                    "state": "closed",
+                    "reason": "drained",
+                    "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+                    "version": 2,
+                    "charged_ms": 1194,
+                    "disposition": "terminal",
+                    "before_state": "open",
+                    "claim_cap_ms": 120000,
+                    "pending_work": 0,
+                    "flush_verified": true,
+                    "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+                    "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                    "charged_attempts": 1,
+                    "collection_state": "complete",
+                    "external_run_key": "actions:40593457941:1",
+                    "collection_ended_at": "2026-10-27T22:18:30.140175+00:00",
+                    "expired_reservations": 0
+                  },
+                  "charged_ms": 1194,
+                  "scope_kind": "run",
+                  "reserved_ms": 0,
+                  "claim_cap_ms": 120000,
+                  "external_key": "actions:40593457941",
+                  "attempt_limit": 1,
+                  "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+                  "time_limit_ms": 1200000,
+                  "accepted_limit": 1,
+                  "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+                  "candidate_limit": 1,
+                  "charged_attempts": 1,
+                  "reserved_attempts": 0
+                },
+                "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+                "version": 2,
+                "charged_ms": 1194,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 0,
+                "flush_verified": true,
+                "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593457941:1",
+                "collection_ended_at": "2026-10-27T22:18:30.140175+00:00",
+                "expired_reservations": 0
+              }
+            },
+            "budget": {
+              "state": "closed",
+              "version": 3,
+              "ended_at": "2026-10-27T22:18:30.237336+00:00",
+              "lifecycle": {
+                "state": "closed",
+                "reason": "drained",
+                "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+                "version": 2,
+                "charged_ms": 1194,
+                "disposition": "terminal",
+                "before_state": "open",
+                "claim_cap_ms": 120000,
+                "pending_work": 0,
+                "flush_verified": true,
+                "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+                "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+                "charged_attempts": 1,
+                "collection_state": "complete",
+                "external_run_key": "actions:40593457941:1",
+                "collection_ended_at": "2026-10-27T22:18:30.140175+00:00",
+                "expired_reservations": 0
+              },
+              "charged_ms": 1194,
+              "scope_kind": "run",
+              "reserved_ms": 0,
+              "claim_cap_ms": 120000,
+              "external_key": "actions:40593457941",
+              "attempt_limit": 1,
+              "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+              "time_limit_ms": 1200000,
+              "accepted_limit": 1,
+              "budget_scope_id": "e29c75d8-79bb-50b0-98d7-6bb50e0fd502",
+              "candidate_limit": 1,
+              "charged_attempts": 1,
+              "reserved_attempts": 0
+            },
+            "outbox": {
+              "integrity": "ok",
+              "pending_messages": 0,
+              "pending_completions": 0
+            },
+            "observations": [
+              {
+                "observation_id": "830001fe-d04a-4216-99fb-33030146eede",
+                "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0",
+                "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "variant": "non-strict",
+                "outcome": "fail",
+                "lease_generation": 1
+              },
+              {
+                "observation_id": "addc0c0f-b31a-4b0a-8880-9b6fcb7118be",
+                "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02",
+                "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "work_item_id": "1fa6f062-4584-5cb5-b53e-074a3b1d3714",
+                "variant": "strict",
+                "outcome": "fail",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "0c69ab9b-39cc-5a01-a252-469b60abc79f",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "1fa6f062-4584-5cb5-b53e-074a3b1d3714",
+                "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+                "variant": "strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          }
+        ],
+        "publication": false,
+        "authority_changed": false,
+        "permissions_changed": false,
+        "s3_access": false,
+        "imports_or_restores": false,
+        "cron_witness": false,
+        "first_observation": "830001fe-d04a-4216-99fb-33030146eede",
+        "first_observation_sha256": "eb6275a0b893477c5205480f7ceaf91a21f5cdf7864d779eeefba0b78e0b1489",
+        "preflight_comparison": {
+          "matches": true,
+          "expected_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+          "actual_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+          "components": [
+            {
+              "field": "binaries",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+              "actual_sha256": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+              "matches": true
+            },
+            {
+              "field": "capabilities",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+              "actual_sha256": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+              "matches": true
+            },
+            {
+              "field": "environment_identity",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+              "actual_sha256": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+              "matches": true
+            },
+            {
+              "field": "harness",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+              "actual_sha256": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+              "matches": true
+            },
+            {
+              "field": "inventory",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+              "actual_sha256": "f5264f95e133d9824dcdd3c9ed8ff5cbf7988773d783769d5a1f5dd0950391f9",
+              "matches": true
+            },
+            {
+              "field": "runner",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+              "actual_sha256": "4333d880d7e2f1bfe343268c0e1f99165f38b5fd1bc812aed41cec0477f8246e",
+              "matches": true
+            },
+            {
+              "field": "timeouts",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+              "actual_sha256": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4",
+              "matches": true
+            },
+            {
+              "field": "tooling",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+              "actual_sha256": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+              "matches": true
+            },
+            {
+              "field": "upstream",
+              "expected_present": true,
+              "actual_present": true,
+              "expected_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+              "actual_sha256": "c56ef82498ea145925067dbbed35a31873c200782911e30cbc4c5df32e3b2a51",
+              "matches": true
+            }
+          ],
+          "file_differences": [],
+          "field_differences": []
+        },
+        "sealed_upstream_matches": true,
+        "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+        "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+        "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+        "native_provenance_id": "03560ebe-7448-5eb2-b2b5-0684793c9fe4",
+        "native_execution_identity_sha256": "be236123cb92394b635221e4acd769bde0dec018786a7ad94c180e6e85e75339",
+        "image_archive_sha256": "147e74f5088103a02a9cef11e2ac7092b12704856185ff97a4e24e49c9989832",
+        "execution_identity_sha256": "5f10ae49f795bc57ded167eb764b8fa5c30bbc7ddc570c75f8575cdcd34d8181",
+        "execution_identity_components": {
+          "binaries": "88479e52491dbf48cf6d728373b3ef13aaa70323b06575c68bab1b004287fa50",
+          "harness": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+          "tooling": "e14e515044177368c2d88d27df62fb6276fa13700adbfbe2c3561fbe923f1ebb",
+          "capabilities": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+          "environment_identity": "14d3cc614161bca25546bea5c09e47305ce48e49c5c1d1d8cc0372dbd2ef1d0f",
+          "timeouts": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4"
+        },
+        "fixture_image_id": "sha256:5e4c2b04b61f8e163dfe25e8c3719bff023549fb66168672d97c5cd98a135153",
+        "master_validation": {
+          "id": 40591322360,
+          "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "head_branch": "master",
+          "event": "push",
+          "conclusion": "success",
+          "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322360",
+          "workflow_id": 263567262,
+          "updated_at": "2026-10-27T22:01:21Z"
+        },
+        "control_plane_sha256": "54e32f5390fc77856890f4418142849e6194ffa9a6fe82f295c31be4df4682d1",
+        "fixture": {
+          "fixture_id": "00056ea5-f2bd-5765-9446-fb65631abae6",
+          "upstream_path": "test/built-ins/Temporal/Duration/prototype/nanoseconds/prop-desc.js",
+          "content_sha256": "\\xd171109cf8e7d1e80d5576da09deafd3b4a52cba065cef14b4905982fe15a511",
+          "dependency_manifest_digest": "\\x61ce1bdd2c118fe9ad9354de1fe294011bb7ca9f3db1fbe7266a39f2108a6ae0"
+        },
+        "required_variants": [
+          "non-strict",
+          "strict"
+        ],
+        "campaign_marker": {
+          "state": "cancelled",
+          "run_id": "c8a50562-eae2-52cf-bec3-ea13611a96aa",
+          "ended_at": "2026-10-27T22:18:18.097918+00:00",
+          "run_kind": "native",
+          "started_at": "2026-10-27T22:18:18.097918+00:00",
+          "producer_id": "80728796-377b-4956-b6eb-44fdb7a5db62",
+          "trust_class": "trusted",
+          "provenance_id": "eaa74701-2dc7-5e44-8e13-c10f51e72a97",
+          "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+          "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+          "external_run_key": "live-recovery-2340-two-variants-20261027:recover",
+          "environment_diagnostics": {
+            "phase": "recover",
+            "campaign": "live-recovery-2340-two-variants-20261027",
+            "actions_run_id": 40593457941,
+            "fixture_executions": 0,
+            "administrative_latch": true,
+            "collection_lifecycle": {
+              "state": "cancelled",
+              "reason": "job-cancelled",
+              "source": "supervisor",
+              "flush_verified": true,
+              "source_revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+              "external_run_key": "live-recovery-2340-two-variants-20261027:recover"
+            }
+          },
+          "validated_target_revision": null
+        },
+        "phase_complete": true,
+        "actual_fixture_executions": 2,
+        "original_budget_unchanged": true,
+        "control_plane_unchanged": true,
+        "checked_at": "2026-10-27T22:18:31.436291+00:00"
+      }
+    }
+  ],
+  "boundaries": [
+    "Two actual manual Actions runs, not evidence that cron fired.",
+    "Product outcomes remain pass/fail/unsupported as observed; no batch was sealed or published.",
+    "Existing disposable complete-only acceptance proofs remain separately scoped.",
+    "Administrative marker runs are cancelled zero-execution latches, not physical collections.",
+    "Live database equality and control-plane checks were performed by the authenticated pinned supervisor.",
+    "This committed projection is durable Git evidence; it does not extend original Actions artifact retention.",
+    "The eligible fixed Temporal fixture has two product failures, not conformance passes. No fixture was ported, replaced, accepted or published.",
+    "Complete campaign inventory contains only the original zero-execution stop, zero-execution verification and the two successful one-execution live phases; no automatic live retry occurred.",
+    "The frozen execution source is the implementation squash SHA, not the later documentation-only evidence merge.",
+    "The image artifact is a seven-day operational input; report artifacts are ninety-day inputs. This evidence does not extend their retention."
+  ],
+  "master_prerequisites": [
+    {
+      "id": 40591322634,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/dotnet.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322634",
+      "created_at": "2026-10-27T22:00:00Z",
+      "updated_at": "2026-10-27T22:06:50Z"
+    },
+    {
+      "id": 40591322360,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-mvp.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322360",
+      "created_at": "2026-10-27T22:00:00Z",
+      "updated_at": "2026-10-27T22:01:21Z"
+    },
+    {
+      "id": 40591322604,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-central-tests.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322604",
+      "created_at": "2026-10-27T22:00:00Z",
+      "updated_at": "2026-10-27T22:02:29Z"
+    },
+    {
+      "id": 40591322358,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/canary-smoke.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591322358",
+      "created_at": "2026-10-27T22:00:00Z",
+      "updated_at": "2026-10-27T22:00:59Z"
+    },
+    {
+      "id": 40591519487,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-central-refresh.yml",
+      "event": "workflow_run",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591519487",
+      "created_at": "2026-10-27T22:01:24Z",
+      "updated_at": "2026-10-27T22:05:08Z"
+    }
+  ],
+  "native_registration_refresh": {
+    "run": {
+      "id": 40591519487,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-central-refresh.yml",
+      "event": "workflow_run",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40591519487",
+      "created_at": "2026-10-27T22:01:24Z",
+      "updated_at": "2026-10-27T22:05:08Z"
+    },
+    "artifact": {
+      "id": 12775210072,
+      "name": "test262-central-refresh-40591519487-1",
+      "digest": "sha256:df0972ecac8b9dba5f711d3966e6a0288cca24b97368a4e333811a37e0f261b1",
+      "size_in_bytes": 417,
+      "created_at": "2026-10-27T22:05:03Z",
+      "expires_at": "2027-01-25T22:01:24Z"
+    },
+    "zip_sha256": "df0972ecac8b9dba5f711d3966e6a0288cca24b97368a4e333811a37e0f261b1",
+    "report_sha256": "0a1f729221145082258fb768308f52efe771c9e7401792cc94fdc2e08ecb0845",
+    "report": {
+      "provenance": "03560ebe-7448-5eb2-b2b5-0684793c9fe4",
+      "publication_started": false,
+      "registration_snapshot": "594c9741-1aa8-5f4d-a53a-64ce922c1dcd",
+      "revision": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "screening_started": false,
+      "status": "refreshed",
+      "validation": "286bee5f-b51b-5252-b196-2193387838ce",
+      "validation_run": 40591322360,
+      "validation_url": "https://github.com/tomacox74/js2il/actions/runs/40591322360"
+    }
+  },
+  "complete_campaign_inventory": [
+    {
+      "id": 40593457941,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593457941",
+      "created_at": "2026-10-27T22:15:54Z",
+      "updated_at": "2026-10-27T22:18:35Z"
+    },
+    {
+      "id": 40593043603,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40593043603",
+      "created_at": "2026-10-27T22:12:48Z",
+      "updated_at": "2026-10-27T22:15:03Z"
+    },
+    {
+      "id": 40592440970,
+      "run_attempt": 1,
+      "head_sha": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40592440970",
+      "created_at": "2026-10-27T22:08:19Z",
+      "updated_at": "2026-10-27T22:11:02Z"
+    },
+    {
+      "id": 40566656556,
+      "run_attempt": 1,
+      "head_sha": "08b50be490e521bbd50c63ca3799f8bb33b58707",
+      "head_branch": "master",
+      "path": ".github/workflows/test262-recovery-drill.yml",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/tomacox74/js2il/actions/runs/40566656556",
+      "created_at": "2026-10-27T19:10:15Z",
+      "updated_at": "2026-10-27T19:11:53Z"
+    }
+  ],
+  "prior_guarded_stop": {
+    "run_id": 40566656556,
+    "fixture_executions": 0,
+    "retained_evidence": "live-recovery-preflight-2340.json",
+    "sha256": "d351f95627c8c7d9dbc9ea1a8eea8c1ee1ef06005a6646c53ce04028d489753e",
+    "boundary": "Original older-source stop preceded fixture selection, markers, allocations and execution; it was not exhaustion."
+  },
+  "implementation": {
+    "pull_request": 2423,
+    "squash_commit": "7058c7c55f7d401de0452d32e020e06ad9f68fb3",
+    "feature_tree_verified_equal_to_squash_tree": true,
+    "local_and_remote_source_branches_deleted": true,
+    "focused_offline_tests_passed": 96,
+    "bounded_offline_tests_passed": 435,
+    "existing_postgresql_integration_skips": 25,
+    "build_proof": "reproducible-native-build-2340.json",
+    "build_proof_sha256": "81281dec4ecf2dd10200e80d5583b830496b63db23846ed221cdbcbbaa93c5f0"
+  },
+  "product_outcomes": [
+    {
+      "variant": "non-strict",
+      "outcome": "fail",
+      "observation_id": "830001fe-d04a-4216-99fb-33030146eede",
+      "run_id": "53d65c19-5992-5072-86cd-1f22e68b62d0"
+    },
+    {
+      "variant": "strict",
+      "outcome": "fail",
+      "observation_id": "addc0c0f-b31a-4b0a-8880-9b6fcb7118be",
+      "run_id": "e9ff3008-423a-5a47-8176-6d181b03ed02"
+    }
+  ],
+  "retained_at": "2026-10-27T22:20:13.790531+00:00"
+}
