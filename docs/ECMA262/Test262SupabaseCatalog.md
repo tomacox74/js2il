@@ -1660,6 +1660,35 @@ identity binding and obtain a new explicit operator decision after the stop,
 without weakening provenance or changing authority. Actual normal exhaustion
 and same-identity missing-variant recovery remain unwitnessed in this live scope.
 
+#### Read-only identity diagnosis
+
+The owner separately authorized rebuilding the failed original source and
+comparing it with the original immutable provenance, with no live fixtures,
+diagnostic catalogue writes, publication, permission/authority changes,
+imports/restores or S3 operations. This does **not** resume the stopped campaign.
+
+`test262-identity-diagnostics.yml` is a protected manual-only workflow. It copies
+its reviewed controller outside the checkout, then rebuilds the exact original
+SHA `08b50be490e521bbd50c63ca3799f8bb33b58707` in two original profiles:
+registration refresh (full history, host build) and drill (shallow history, CLI
+then host build). Both use the originally observed .NET SDK `10.0.403` and Node
+`24.22.1`. The comparison targets immutable provenance
+`b60fd015-e157-5f39-a8a6-b26b6ff1638c`, not the moving master reporting pointer.
+
+Database credentials exist only in the comparison step. Its connection defaults
+to server-enforced read only, verifies that setting, starts a repeatable-read
+read-only transaction, verifies that setting too, and performs only bounded
+primary-key reads of the original provenance/corpus/registration/validation.
+Only the native host's `--capabilities` operation is used; there is no fixture,
+worker, Docker, budget, outbox, import or publication path.
+
+The report contains component/field hashes and differing file paths/digests,
+not arbitrary values, exception messages, connection details or file contents.
+Unrecognized field names and unsafe paths are redacted. A successful diagnostic
+means the comparison completed, not that the identities matched or live recovery
+succeeded. Reproduced identities must remain distinct from the original failed
+build document, which was not retained.
+
 ## Independent local and downstream workers (#2339)
 
 The supported execution path is `central.cli enlist` on Linux with Docker,

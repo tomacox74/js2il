@@ -1,0 +1,84 @@
+name: Test262 read-only original identity diagnostics
+on:
+  workflow_dispatch:
+    inputs:
+      authorization:
+        description: Explicit owner authorization for original-source read-only diagnosis
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    if: ${{ github.ref == 'refs/heads/master' && inputs.authorization == 'identity-readonly-2340-20261027' && github.run_attempt == 1 }}
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: refresh
+            fetch_depth: 0
+            build_cli: false
+          - profile: drill
+            fetch_depth: 1
+            build_cli: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Isolate reviewed controller from the original identity inputs
+        run: cp scripts/test262/central/identity_diagnostics.py "$RUNNER_TEMP/identity_diagnostics.py"
+      - uses: actions/checkout@v5
+        with:
+          ref: 08b50be490e521bbd50c63ca3799f8bb33b58707
+          fetch-depth: ${{ matrix.fetch_depth }}
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.403
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.22.1'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Rebuild original profile without running fixtures
+        env:
+          BUILD_CLI: ${{ matrix.build_cli }}
+        run: |
+          export GITHUB_SHA=08b50be490e521bbd50c63ca3799f8bb33b58707
+          if [ "$BUILD_CLI" = 'true' ]; then
+            dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          fi
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Read immutable original provenance and compare sanitized identities
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          AUTHORIZATION: ${{ inputs.authorization }}
+          PROFILE: ${{ matrix.profile }}
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/identity-diagnostics/${{ matrix.profile }}/diagnostic.json
+        run: |
+          python "$RUNNER_TEMP/identity_diagnostics.py" \
+            --authorization "$AUTHORIZATION" --profile "$PROFILE" --root "$TEST262_ROOT" \
+            --output "artifacts/test262/identity-diagnostics/$PROFILE/report.json"
+      - name: Retain sanitized read-only comparisons
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-identity-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.profile }}
+          path: artifacts/test262/identity-diagnostics/${{ matrix.profile }}
+          if-no-files-found: warn
+          retention-days: 90
