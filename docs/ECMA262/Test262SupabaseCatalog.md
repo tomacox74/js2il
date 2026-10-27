@@ -1554,6 +1554,79 @@ inspection only: no workflow dispatch, fixture execution, database/S3 access,
 publication, permission change or authority change. It does not extend the
 original artifacts' retention or authorize future operational mutations.
 
+### Owner-authorized bounded live witness
+
+For #2340 the owner explicitly accepted an authenticated bounded manual live
+drill instead of the prior actual-cron witness for #2340. The fixed authorization
+is `live-recovery-2340-two-variants-20261027`. This is a one-campaign authorization,
+not a general screening, publication, permission or authority grant.
+
+The manual-only `test262-recovery-drill.yml` workflow uses the protected catalogue
+environment and the existing native-target concurrency group. Two distinct
+Actions runs are needed because the established budget finalizer binds an
+allocation to its real `actions:<run-id>` and collection to
+`actions:<run-id>:1`. Custom fabricated Actions IDs, reopening an old allocation,
+or a second scheduler are not used.
+
+Before any writes, the supervisor authenticates its workflow/run/source, checks
+current master validation and the matching sealed native reporting target, then
+selects one currently eligible unregistered fixture with exactly the strict and
+non-strict required variants. Source, upstream, binary/harness/tooling/runtime
+identity and immutable fixture image must remain unchanged across both runs.
+The image build uses the source commit's `SOURCE_DATE_EPOCH`; changed base images
+or any other identity drift still stop recovery rather than silently relaxing
+the identity check.
+
+The drill has a separate explicitly labelled provenance and a private
+single-fixture plan. It reuses production preparation, missing-variant planning,
+claiming, credential-free container execution, outboxes and finalization, but
+never changes shared reporting targets or the global reconciliation cursor.
+There is no sealing/generation/publication path. Each work item has a one-attempt
+limit; each phase has one attempt in its own allocation. Fixed campaign marker
+runs are latched transactionally before execution and prevent another dispatch,
+rerun or changed SHA from obtaining a fresh pair of executions.
+These non-executing administrative marker runs are immediately cancelled; they
+have no budgets, leases, observations or screening receipts and do not claim a
+successful collection. Only the genuine Actions collections carry that proof.
+
+The first phase must execute one variant, stop on its actual one-attempt budget,
+drain acknowledgments/reservations and leave exactly the other variant pending.
+Only after that Actions run succeeds may recovery authenticate its artifact
+digest/report and verify its original live budget/marker. The second phase must
+execute only the missing variant under a different allocation, reuse the first
+observation, preserve the exhausted budget byte-for-field, and drain both work
+items without changing the source, image or control plane. Before claims the
+supervisor refuses unrelated leased work; before every physical execution it
+checks the exact allowed work/variant, identity and journaled two-execution bound.
+The no-leased-work check and claim share the existing repository advisory lock,
+preventing the claim API's expiry sweep from mutating unrelated work in a race.
+
+Operator sequence, **only after merging the guarded controls, successful
+exact-master validation and the normal registration refresh**:
+
+```bash
+gh workflow run test262-recovery-drill.yml --ref master \
+  -f authorization=live-recovery-2340-two-variants-20261027 -f phase=exhaust
+# Authenticate the exact successful run/report and record its Actions run ID.
+gh workflow run test262-recovery-drill.yml --ref master \
+  -f authorization=live-recovery-2340-two-variants-20261027 \
+  -f phase=recover -f previous_run_id=<verified-exhaustion-run-id>
+```
+
+Do not dispatch recovery after a failed/uncertain first phase, changed master or
+changed identity. Do not retry a consumed phase, reset charges, replace the
+fixture or add executions after a failure. The permanent campaign latches
+deliberately stop these cases; report the partial evidence and obtain a new
+explicit decision if further work would exceed the original authorization.
+
+Both runs retain `report.json`, contexts and scoped outboxes for authenticated
+sanitized evidence retention. The first report has `phase_complete=true` and
+`complete=false`; only the verified recovery report can have `complete=true`.
+It remains a manual live witness, not evidence that GitHub cron fired. Product
+failures/unsupported outcomes are not passes; no full-suite conformance or native
+fixture publication is inferred. Imports/restores, S3 operations and
+permission/authority changes remain outside the authorization.
+
 ## Independent local and downstream workers (#2339)
 
 The supported execution path is `central.cli enlist` on Linux with Docker,

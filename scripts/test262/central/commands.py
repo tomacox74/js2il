@@ -32,6 +32,31 @@ def github_validation(repository, revision):
     return {key:run[key] for key in ('id','head_sha','head_branch','event','conclusion','html_url','workflow_id','updated_at')}
 
 
+def fixture_eligibility(kind, original, row, capabilities):
+    state = 'runnable'
+    reasons = [reason['code'] for reason in original['reasons']]
+    if row['is_support_file']:
+        state = 'policy-excluded'
+    elif kind == 'native' and not nativePorting.porting_supported_path(row['path']):
+        state = 'policy-excluded'
+        reasons.append('native-porting-area')
+    elif row['metadata_state'] != 'valid':
+        state = 'metadata-error'
+    elif kind == 'mvp-composite' and original['state'] != 'runnable':
+        state = 'harness-gap'
+    elif kind == 'native':
+        if not nativePorting.native_eligible_state(dict(original, reasons=canonical(original['reasons']))):
+            state = 'harness-gap'
+        meta = row['metadata']
+        negative = meta.get('negative') or {}
+        if (negative.get('phase') in ('parse', 'early', 'resolution')
+                or 'raw' in meta.get('flags', [])
+                or any(name not in capabilities.get('includes', []) for name in meta.get('includes', []))
+                or row['dependency_manifest_digest'] is None):
+            state = 'harness-gap'
+    return state, reasons
+
+
 def prepare_inventory(client, args):
     root = Path(args.root).resolve()
     source = git('rev-parse','HEAD')
@@ -51,24 +76,7 @@ def prepare_inventory(client, args):
     pid = provenance(client,args.repository,corpus,args.kind,doc)
     eligibility=[]
     for original, row in zip(inventory,normalized):
-        state = 'runnable'
-        reasons = [reason['code'] for reason in original['reasons']]
-        if row['is_support_file']:
-            state='policy-excluded'
-        elif args.kind=='native' and not nativePorting.porting_supported_path(row['path']):
-            state='policy-excluded'
-            reasons.append('native-porting-area')
-        elif row['metadata_state']!='valid':
-            state='metadata-error'
-        elif args.kind=='mvp-composite' and original['state']!='runnable':
-            state='harness-gap'
-        elif args.kind=='native':
-            if not nativePorting.native_eligible_state(dict(original,reasons=canonical(original['reasons']))):
-                state='harness-gap'
-            meta=row['metadata']; negative=meta.get('negative') or {}
-            includes=capabilities.get('includes',[])
-            if negative.get('phase') in ('parse','early','resolution') or 'raw' in meta.get('flags',[]) or any(i not in includes for i in meta.get('includes',[])) or row['dependency_manifest_digest'] is None:
-                state='harness-gap'
+        state, reasons = fixture_eligibility(args.kind, original, row, capabilities)
         eligibility.append({'repository_id':args.repository,'provenance_id':pid,'fixture_id':ids[row['path']],
                             'eligibility':state,'reason_codes':reasons,
                             'diagnostic':{'source_state':original['state']}})
@@ -134,10 +142,20 @@ def prepare(client, args):
     return prepare_from_inventory(client,args,prepared)
 
 
-def prepare_from_inventory(client, args, prepared):
+def prepare_from_inventory(client, args, prepared, *, recovery_drill=None):
     """Plan against one verified inventory; also used by the bounded disposable drill."""
     source,corpus,ids,snapshot,pid,doc,normalized,eligibility=(prepared[k] for k in
         ('source','corpus','ids','snapshot','pid','doc','normalized','eligibility'))
+    if recovery_drill is not None:
+        if (args.kind != 'native' or args.candidate_limit != 1 or args.accepted_limit != 1
+                or args.attempt_limit != 1 or len(normalized) != 1
+                or recovery_drill.get('campaign') != 'live-recovery-2340-two-variants-20261027'
+                or type(recovery_drill.get('cursor_before')) is not int
+                or recovery_drill['cursor_before'] not in (0, 1)
+                or ids[normalized[0]['path']] != recovery_drill.get('fixture_id')
+                or sorted(v['variant'] for v in normalized[0]['variants']) != ['non-strict', 'strict']
+                or not all(v['required'] for v in normalized[0]['variants'])):
+            raise ValueError('Live recovery drill requires the fixed single-fixture bounded plan')
     run = start_run(client,args,pid,args.run_key,source,'mvp' if args.kind=='mvp-composite' else 'native')
     budget = identity(args.repository,'budget',args.budget_key)
     client.put('budget_scopes',[{'budget_scope_id':budget,'repository_id':args.repository,'scope_kind':'run','external_key':args.budget_key,
@@ -149,7 +167,9 @@ def prepare_from_inventory(client, args, prepared):
     previous=list(client.read('work_items',{'provenance_id':pid}))
     terminal={(w['fixture_id'],w['variant']) for w in previous if w['state'] in ('completed','deferred','cancelled')}
     unfinished={w['fixture_id'] for w in previous if w['state'] in ('pending','leased')}
-    reconciliation=client.one('reconciliation_state',pipeline='native',channel='master') if args.kind=='native' else None
+    reconciliation=({'fallback_cursor': recovery_drill['cursor_before'],
+                     'last_reconciled_revision': source} if recovery_drill is not None else
+                    client.one('reconciliation_state',pipeline='native',channel='master') if args.kind=='native' else None)
     choices=[r for r in choices if any((ids[r['path']],v['variant']) not in terminal for v in r['variants'])]
     # Preserve component-sensitive retry hints and a bounded rotating discovery share.
     balanced=[r for r,_ in catalog.area_balanced([(dict(r,path=r['path']),None) for r in choices])]
@@ -169,9 +189,10 @@ def prepare_from_inventory(client, args, prepared):
             raise ValueError('Prior validated target is not an ancestor')
         components=set(nativePorting.classify_changed_components(git('diff','--name-only',prior,source).splitlines()))
         fixtures_by_id={}
-        eligible_runs={r['run_id'] for r in client.read('runs') if r['trust_class'] in ('trusted','legacy')}
+        eligible_runs=({r['run_id'] for r in client.read('runs') if r['trust_class'] in ('trusted','legacy')}
+                       if recovery_drill is None else set())
         failure_hints=set()
-        for observed in client.read('observations',{'outcome':'fail'}):
+        for observed in (client.read('observations',{'outcome':'fail'}) if recovery_drill is None else ()):
             if observed['run_id'] not in eligible_runs or observed['provenance_id']==pid:
                 continue
             if observed['fixture_id'] not in fixtures_by_id:
@@ -193,7 +214,8 @@ def prepare_from_inventory(client, args, prepared):
         choices=balanced[:args.candidate_limit]
     work_rows=[{'work_item_id':identity(args.repository,pid,ids[r['path']],v['variant'],0),'repository_id':args.repository,
                'provenance_id':pid,'fixture_id':ids[r['path']],'variant':v['variant'],'retry_generation':0,
-               'coherent_area':nativePorting.coherent_area(r['path']),'priority':0,'attempt_limit':3,
+               'coherent_area':nativePorting.coherent_area(r['path']),'priority':0,
+               'attempt_limit':1 if recovery_drill is not None else 3,
                'selection_reason':{'reason':'fresh provenance discovery'}} for r in choices for v in r['variants']
                if (ids[r['path']],v['variant']) not in terminal]
     discovery_count=len(choices)-len(resumed)
@@ -207,14 +229,15 @@ def prepare_from_inventory(client, args, prepared):
         raise ValueError('Master advanced during preparation; rerun at the current revision')
     target={'repository_id':args.repository,'channel':'master','evidence_kind':args.kind,'provenance_id':pid,
             'registration_snapshot_id':snapshot,'validation_id':validation}
-    old=client.one('reporting_targets',channel='master',evidence_kind=args.kind)
-    if old:
-        client.call('transition','reporting_targets',{k:target[k] for k in ('repository_id','channel','evidence_kind')},old['version'],
-                    {k:target[k] for k in ('provenance_id','registration_snapshot_id','validation_id')})
-    else:
-        client.put('reporting_targets',[target])
-    if args.kind=='native':
-        cur=reconciliation
+    if recovery_drill is None:
+        old=client.one('reporting_targets',channel='master',evidence_kind=args.kind)
+        if old:
+            client.call('transition','reporting_targets',{k:target[k] for k in ('repository_id','channel','evidence_kind')},old['version'],
+                        {k:target[k] for k in ('provenance_id','registration_snapshot_id','validation_id')})
+        else:
+            client.put('reporting_targets',[target])
+    cur=reconciliation
+    if args.kind=='native' and recovery_drill is None:
         if cur is None:
             cur={'repository_id':args.repository,'pipeline':'native','channel':'master','authority_epoch':client.epoch,'version':0,'fallback_cursor':0}
             client.put('reconciliation_state',[cur])
@@ -235,6 +258,9 @@ def prepare_from_inventory(client, args, prepared):
             'kind':args.kind,'revision':source,'registration_snapshot':snapshot,'validation':validation,
             'corpus':corpus,'candidate_ids':[ids[r['path']] for r in choices],'cap_ms':args.cap_ms,'identity':doc}
     result['compilation_coverage'] = getattr(args, 'compilation_coverage', False)
+    if recovery_drill is not None:
+        result['planning_scope'] = dict(recovery_drill, shared_cursor_changed=False,
+                                        reporting_target_changed=False)
     result['recovery']={'resumed_fixtures':len(resumed),'discovery_fixtures':discovery_count,
                         'queued_variants':len(work_rows),
                         'reused_terminal_variants':sum((ids[r['path']],v['variant']) in terminal for r in choices for v in r['variants']),
@@ -329,4 +355,3 @@ def generate_from_view(client,args,context,batch_id):
     result=nativePorting.generate_batch(db,argparse.Namespace(run_id=context['run'],upstream=args.root,destination=str(REPO),output=args.output))
     db.close()
     return result
-
