@@ -2041,7 +2041,7 @@ preserves original fields/findings and uses the separately authenticated
 for latest-recorded archive/receipt deadlines. Schema 3 retains the original
 11 gaps and one unknown source expiry; it does not claim a fresh S3 read or
 indefinite protection. Missing/invalid/future proof stays explicit unknown.
-Ongoing archive retention findings belong to #2343. The protected preservation workflow's explicit `audit-retention` operation
+Ongoing archive retention findings belong to #2414. The protected preservation workflow's explicit `audit-retention` operation
 adds read-only configuration and pinned-version metadata checks without payload
 reads or writes. See [retention audit and draft policy](Test262Recovery.md#read-only-retention-audit);
 only the separate fixed42-version horizon was approved/verified; merge permission
@@ -2128,7 +2128,7 @@ not establish backup or restore success.
 
 Receipt retention describes the exact-version storage checks made by that job;
 it is **not a fresh S3 query** and does not prove indefinite archival or recovery
-objectives. #2343 continues to own retention policy/RPO/RTO. A sample older than
+objectives. #2414 owns ongoing retention; #2415 owns recovery objectives. A sample older than
 two hours or a missing collector is unknown, never silently healthy. Current
 master means the last GitHub observation; it is not an atomic statement that no
 new push occurred during a query. New master pushes have one hour for validation
@@ -2189,9 +2189,10 @@ of deployed Grafana latency, and a small diagnostic sample is not a sustained p9
 acceptance test. Never publish live measurements or permission/database metadata
 without explicit operator authorization.
 
-After merge: deploy the exact reviewed migration, update both existing dashboard
-UIDs, let the protected collector produce a sample, and repeat representative
-filtered queries through Grafana at current volume. Verify all new panels, actual
+For rollout or subsequent changes: deploy only the exact authorized migration,
+retain both existing dashboard UIDs, let the protected collector produce a sample,
+and repeat representative filtered queries through Grafana at current volume.
+Verify all new panels, actual
 native/MVP conformance latency, unknown/no-data behavior, unchanged performance
 panels and effective grants. Retain that receipt on #2341 before marking deployment
 acceptance complete. The PR's PostgreSQL tests exercise warning→recovery→unknown,
@@ -2206,6 +2207,77 @@ live rule was created and no delivery test was claimed. The versioned paused
 provisioning file is reviewable independently. Notification activation, contact-point
 selection and a real delivery/recovery test remain a later operator decision under
 the chosen dashboard-first policy; do not route notifications to an invented address.
+
+### Read-only acceptance rehearsal
+
+Use the existing Grafana token and datasource; no database-owner or coordinator
+credential is needed for measurement:
+
+```sh
+python -m scripts.test262.central.monitoring_acceptance \
+  --repository-id "$TEST262_REPOSITORY_ID" --samples 3 \
+  --output "$PRIVATE_EVIDENCE_DIRECTORY/test262-monitoring-acceptance.json"
+```
+
+Set `PRIVATE_EVIDENCE_DIRECTORY` to a private absolute directory outside the
+checkout. The collector refuses checkout output, writes the completed report
+atomically with mode `0600`, and never loads `.env`. Keep the report private:
+it contains effective grants, execution plans, operational rows and identifiers.
+Do not attach it to a public issue or PR without separate sanitization approval.
+
+The collector compares deployed query/datasource contracts, panel IDs, variables
+and navigation against the two versioned dashboards. Visual normalization is not
+SQL drift. Drift prevents that dashboard's SQL from executing; it is not silently
+adopted. The two reviewed performance-summary queries are checked separately.
+Only fixed GET endpoints and the datasource query endpoint are used; redirects
+are refused. There are no configuration calls, catalogue writes, new grants,
+fixture execution, workflow dispatch, notification delivery or S3 operations.
+
+All versioned SQL panels are sampled once. Representative operational,
+conformance and performance queries receive one to three samples. Representative
+or slow queries additionally get a separate `EXPLAIN (ANALYZE, FORMAT JSON,
+TIMING OFF)` measurement and private plan. These are SELECT-only rehearsals,
+**not server-enforced read-only transactions or a coherent cross-panel snapshot**.
+Transport elapsed time, instrumented database time and browser rendering are
+different measurements; browser rendering is not measured. No-data, malformed
+frames, HTTP/query errors and unreviewed SQL remain distinct. Failed requests
+are not automatically retried.
+
+Exit `0` means collection completed, not that latency, operational signals or
+service acceptance passed; exit `2` means drift or incomplete collection.
+Every report retains `acceptance=operator-review-required` and declines a
+sustained latency-SLO claim. Seven-day counts must be reviewed with actual
+active days, provenance/run coverage and classification completeness; a seven-day
+query against newly instrumented work is not automatically a representative week.
+Retain an authenticated existing monitor artifact and the historical #2340
+exhaustion/recovery receipts alongside the measurement, rather than rerunning
+fixtures. #2340's lifetime live allowance is consumed and must not be reused.
+
+### Prepared import-report optimization
+
+`20261027230000_test262_import_reporting_performance.sql` is a separate,
+reviewable performance change, **not deployment authorization**. It replaces
+per-import mapping/observation aggregation in `v_catalogue_imports` with
+set-based per-repository/import counts and adds a partial covering index for
+observation mappings. Metadata-only projections can omit the unused count join.
+Empty-import zeros, complete/partial coverage, missing or wrong-repository
+uploads, legacy checkpoint/source metadata, column types, the security barrier
+and existing ACLs remain unchanged. No cached evidence, counters, observations,
+charges, reporting targets or authority bindings are substituted or changed.
+
+Use the established authorized database-owner migration procedure only after
+approval. Apply the whole file in one explicit transaction so both `SET LOCAL`
+timeouts take effect. The index build takes a write-blocking table lock; lock
+acquisition is bounded to five seconds and each statement to 60 seconds. Plan an
+appropriate maintenance window, check storage/headroom, and do not retry an
+uncertain deployment blindly. The read-only Grafana identity must not be promoted
+to apply DDL. After deployment, repeat the private acceptance rehearsal and compare
+full-row semantics and timing against retained baseline evidence.
+
+Disposable synthetic measurements and parity tests validate the candidate, not
+its production latency. Do not waive the adopted two-second target, relabel
+historical repetition as unnecessary execution, clear publication ownership
+warnings, or activate notification rules to make acceptance appear complete.
 
 ## Offline export reconciliation (#2342)
 

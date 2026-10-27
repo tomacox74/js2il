@@ -270,7 +270,14 @@ class PostgresTests(unittest.TestCase):
         if cls.db.execute("SELECT to_regclass('public.perf_results')").fetchone()[0]:
             raise RuntimeError('Refusing production/performance database')
         cls.db.execute('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;')
-        for migration in sorted((ROOT/'supabase/migrations').glob('*test262_catalogue*.sql')):
+        reporting_migration=ROOT/'supabase/migrations/20261027230000_test262_import_reporting_performance.sql'
+        migrations=set((ROOT/'supabase/migrations').glob('*test262_catalogue*.sql')) | {reporting_migration}
+        for migration in sorted(migrations):
+            if migration == reporting_migration:
+                cls.import_reporting_contract=cls.db.execute("""
+                    SELECT relacl,reloptions FROM pg_class
+                    WHERE oid='test262_reporting.v_catalogue_imports'::regclass
+                """).fetchone()
             cls.db.execute(migration.read_text())
         # Roll back test fixtures while retaining the migration.
         with cls.db.transaction(force_rollback=True):
@@ -958,6 +965,153 @@ class PostgresTests(unittest.TestCase):
             }])
             with self.assertRaises(psycopg.errors.CheckViolation):
                 client.put('fixture_specification_metadata', [dict(payload, fixture_id=staging_fixture)])
+
+    def previous_catalogue_imports(self):
+        """Use the pinned original SQL, not a second hand-maintained count oracle."""
+        original=(ROOT/'supabase/migrations/20261004083416_test262_catalogue_summary_reporting.sql').read_text()
+        definition=original.split('CREATE VIEW test262_reporting.v_catalogue_imports',1)[1]
+        definition=definition.split('CREATE VIEW test262_reporting.v_catalogue_outcomes',1)[0]
+        self.db.execute('CREATE TEMP VIEW previous_catalogue_imports'+definition)
+
+    def test_catalogue_imports_preserves_column_types_security_barrier_and_grants(self):
+        with self.db.transaction(force_rollback=True):
+            self.previous_catalogue_imports()
+            def columns(view):
+                return self.db.execute("""
+                    SELECT attname,atttypid,atttypmod FROM pg_attribute
+                    WHERE attrelid=%s::regclass AND attnum>0 AND NOT attisdropped ORDER BY attnum
+                """,(view,)).fetchall()
+            actual=columns('test262_reporting.v_catalogue_imports')
+            self.assertEqual(len(actual),15)
+            self.assertEqual(actual,columns('pg_temp.previous_catalogue_imports'))
+            contract=self.db.execute("""
+                SELECT relacl,reloptions FROM pg_class
+                WHERE oid='test262_reporting.v_catalogue_imports'::regclass
+            """).fetchone()
+            self.assertEqual(contract,self.import_reporting_contract)
+            self.assertIn('security_barrier=true',contract[1])
+            self.assertTrue(self.db.execute("""
+                SELECT has_table_privilege('test262_reporter',
+                    'test262_reporting.v_catalogue_imports','SELECT')
+            """).fetchone()[0])
+
+    def test_catalogue_imports_preserves_previous_rows_and_observation_coverage(self):
+        from datetime import datetime, timezone
+        from psycopg.rows import dict_row
+        started=datetime(2026,10,27,12,tzinfo=timezone.utc)
+        complete='Observation coverage complete'
+        partial='Partial or in progress'
+        with self.db.transaction(force_rollback=True):
+            self.previous_catalogue_imports()
+            other,producer,provenance=[str(uuid.uuid4()) for _ in range(3)]
+            self.db.execute("""
+                INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name)
+                VALUES(%s,'github',%s,'test/import-reporting-other')
+            """,(other,other))
+            self.db.execute('INSERT INTO test262.repository_corpora(repository_id,corpus_id) VALUES(%s,%s)',(other,self.corpus))
+            self.db.execute("""
+                INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject)
+                VALUES(%s,%s,'importer','import reporting','import-reporting')
+            """,(producer,other))
+            self.db.execute("""
+                INSERT INTO test262.provenances(provenance_id,repository_id,corpus_id,evidence_kind,
+                    identity_version,identity_sha256,identity_document,capability_sha256)
+                VALUES(%s,%s,%s,'native',1,sha256('import-reporting'::bytea),'{}',sha256('cap'::bytea))
+            """,(provenance,other,self.corpus))
+            uploaded=[]
+            for repository,owner,pv,count in ((self.repo,self.producer,self.prov,3),(other,producer,provenance,1)):
+                run=str(uuid.uuid4())
+                self.db.execute("""
+                    INSERT INTO test262.runs(run_id,repository_id,producer_id,provenance_id,
+                        external_run_key,source_revision,run_kind,trust_class)
+                    VALUES(%s,%s,%s,%s,%s,repeat('b',40),'import','legacy')
+                """,(run,repository,owner,pv,run))
+                for index in range(count):
+                    observation=str(uuid.uuid4())
+                    self.db.execute("""
+                        INSERT INTO test262.observations(observation_id,repository_id,run_id,provenance_id,
+                            fixture_id,variant,outcome,phase,started_at,finished_at,active_ms,payload_sha256,source_kind)
+                        VALUES(%s,%s,%s,%s,%s,'strict','pass','runtime',%s,%s,0,
+                            sha256('import-reporting'::bytea),'legacy-snapshot')
+                    """,(observation,repository,run,pv,self.fixtures[index],started,started))
+                    uploaded.append(observation)
+            first,second,unmapped,foreign=uploaded
+            missing=str(uuid.uuid4())
+            # Each expected tuple is (expected, mapped, uploaded, reported, coverage).
+            # The third local observation is deliberately unmapped.
+            cases=[
+                ('empty-unreported',self.repo,{}, {},[],(0,0,0,0,partial)),
+                ('empty-reported-zero',self.repo,{'results':0,'attempts':7},{'observations':0},[],(0,0,0,0,complete)),
+                ('expected-without-mappings',self.repo,{'results':1},{'observations':0},[],(1,0,0,0,partial)),
+                ('partial-unmatched',self.repo,{'results':2},{'observations':1},[first,missing],(2,2,1,1,partial)),
+                ('wrong-repository',self.repo,{'results':1},{'observations':1},[foreign],(1,1,0,1,partial)),
+                ('non-observation',self.repo,{'results':0},{'observations':0},[],(0,0,0,0,complete)),
+                ('complete-results',self.repo,{'results':2,'attempts':7},{'observations':0},[first,second],(2,2,2,0,complete)),
+                ('complete-attempts-duplicate',self.repo,{'results':None,'attempts':2},{'observations':2},[first,first],(2,2,2,2,complete)),
+                ('expected-count-mismatch',self.repo,{'results':3},{'observations':2},[first,second],(3,2,2,2,partial)),
+                ('missing-reported-key',self.repo,{'attempts':2},{},[first,second],(2,2,2,0,partial)),
+                ('other-repository-complete',other,{'attempts':1},{'observations':1},[foreign],(1,1,1,1,complete)),
+            ]
+            imports={}
+            for label,repository,expected,reported,mappings,counts in cases:
+                imported=str(uuid.uuid4())
+                imports[label]=imported
+                rich=label=='complete-results'
+                limitations=({'artifact_history_complete':True,'missing_artifacts':['older-snapshot']}
+                             if rich else {})
+                self.db.execute("""
+                    INSERT INTO test262.imports(import_id,repository_id,source_sha256,source_schema,source_uri,
+                        state,expected_counts,imported_counts,limitations,started_at,completed_at)
+                    VALUES(%s,%s,sha256(%s::bytea),%s,%s,%s,%s,%s,%s,%s,%s)
+                """,(imported,repository,imported.encode(),'mvp' if rich else 'jroc','test:'+label,
+                      'complete' if rich else 'incomplete',Jsonb(expected),Jsonb(reported),
+                      Jsonb(limitations),started,started if rich else None))
+                for index,entity in enumerate(mappings):
+                    self.db.execute("""
+                        INSERT INTO test262.import_records(import_id,source_table,source_key,entity_kind,entity_id)
+                        VALUES(%s,'results',%s,'observation',%s)
+                    """,(imported,str(index),entity))
+                if label=='non-observation':
+                    # Even an existing observation UUID must not count for another entity kind.
+                    self.db.execute("""
+                        INSERT INTO test262.import_records VALUES(%s,'fixtures','0','fixture',%s)
+                    """,(imported,first))
+                if rich:
+                    for table,key,document in (
+                            ('artifact_source','z',{'uri':'test:later-source'}),
+                            ('artifact_source','a',{'uri':'test:first-source'}),
+                            ('mvp_import_checkpoint','one',{'observations':1}),
+                            ('mvp_import_checkpoint','two',{'observations':1}),
+                            ('settings','schema',{'value':'legacy'})):
+                        self.db.execute('INSERT INTO test262.legacy_control_records VALUES(%s,%s,%s,%s)',
+                                        (imported,table,key,Jsonb(document)))
+            with self.db.cursor(row_factory=dict_row) as cursor:
+                # One statement preserves exact as_of parity; no timestamp fields are discarded.
+                cursor.execute("""
+                    SELECT 'current' AS definition,v.* FROM test262_reporting.v_catalogue_imports v
+                    WHERE import_id=ANY(%s::uuid[])
+                    UNION ALL
+                    SELECT 'previous' AS definition,v.* FROM pg_temp.previous_catalogue_imports v
+                    WHERE import_id=ANY(%s::uuid[])
+                """,(list(imports.values()),list(imports.values())))
+                rows=cursor.fetchall()
+            current=[{k:v for k,v in row.items() if k!='definition'} for row in rows if row['definition']=='current']
+            previous=[{k:v for k,v in row.items() if k!='definition'} for row in rows if row['definition']=='previous']
+            self.assertEqual(len(current),len(cases))
+            self.assertEqual(sorted(current,key=lambda r:r['import_id']),sorted(previous,key=lambda r:r['import_id']))
+            for label,repository,expected,reported,mappings,counts in cases:
+                with self.subTest(case=label):
+                    matches=[row for row in current if str(row['import_id'])==imports[label]]
+                    self.assertEqual(len(matches),1)
+                    row=matches[0]
+                    self.assertEqual(tuple(row[k] for k in ('expected_observations','mapped_observations',
+                        'uploaded_observations','reported_observations','coverage')),counts)
+                    rich=label=='complete-results'
+                    self.assertEqual((str(row['repository_id']),row['source_schema'],row['import_state'],row['started_at']),
+                                     (repository,'mvp' if rich else 'jroc','complete' if rich else 'incomplete',started))
+                    self.assertEqual((row['history_complete'],row['completed_provenances'],
+                                      row['source_artifact'],row['history_limitations']),
+                                     (True,2,'test:first-source',['older-snapshot']) if rich else (False,0,None,None))
 
     def test_overlapping_mvp_snapshots_preserve_old_run_and_replay_outbox(self):
         """Real restricted APIs: old initialization revision must not block older snapshots."""
