@@ -1627,6 +1627,39 @@ failures/unsupported outcomes are not passes; no full-suite conformance or nativ
 fixture publication is inferred. Imports/restores, S3 operations and
 permission/authority changes remain outside the authorization.
 
+#### Recorded guarded stop, October 27
+
+Controls PR #2417 was merged at
+`08b50be490e521bbd50c63ca3799f8bb33b58707`. Required PR checks and exact-source
+master CI/MVP/catalogue invariants passed. The automatic registration refresh
+run `40565762524` has an authenticated `status=refreshed` receipt for that SHA,
+with screening and publication disabled.
+
+The first authorized manual phase, run `40566656556` attempt 1, **failed closed
+at preflight**. The pinned supervisor rejected the combined native-target/built
+identity and sealed-upstream binding at source lines 270-272, before fixture
+selection, allocation/campaign-marker creation, catalogue mutations or execution.
+Its authenticated report has empty execution-intent and invocation lists:
+**zero fixture executions**, not an exhausted one-attempt allocation.
+
+The compared documents/component hashes were not retained, so the exact
+differing identity component is unproven. Do not infer successful exhaustion,
+silently relax that equality check, or substitute job success/failure for the
+missing live recovery evidence. No recovery, retry, charge reset, permission
+change or additional execution was dispatched after this stop.
+
+The [durable sanitized preflight record](evidence/live-recovery-preflight-2340.json)
+retains authenticated run/artifact/member digests, the failed report/diagnostic,
+successful master prerequisites and the exact registration-refresh receipt.
+Its zero-execution/mutation-path conclusion is based on the authenticated report
+and pinned source ordering, not an independently collected production SQL diff.
+Original Actions artifact expiry is unchanged.
+
+Issue #2340 remains open. Next work is to diagnose the native-target/build
+identity binding and obtain a new explicit operator decision after the stop,
+without weakening provenance or changing authority. Actual normal exhaustion
+and same-identity missing-variant recovery remain unwitnessed in this live scope.
+
 ## Independent local and downstream workers (#2339)
 
 The supported execution path is `central.cli enlist` on Linux with Docker,
