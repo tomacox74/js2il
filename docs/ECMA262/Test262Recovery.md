@@ -1,6 +1,7 @@
 # Test262 retention and recovery acceptance (#2343)
 
-**Reviewable procedures and proposals, not approval or deployment.** No production
+**Broader procedures and proposals are not approval or deployment.** Only the
+fixed 42-version retention extension below has separate scoped owner authorization. No production
 restore/cutover, credential rotation, storage/KMS policy or authority change is
 authorized by this document. Changes to scheduled tooling take effect only after
 review/merge; no live drill was dispatched for this work.
@@ -30,7 +31,9 @@ not an all-history/all-log completeness claim. Never infer
 
 Existing tooling's minimum **35-day COMPLIANCE default** and Actions' **90-day**
 artifact convenience are implemented finite checks, not approval of those proposals.
-Do not change bucket/KMS policies or retention settings as a consequence of this PR.
+Do not change bucket/KMS policies or broader retention settings as a consequence
+of these proposals. The separately authorized fixed-version extension below is
+the only approved exception.
 
 ## Coverage, ownership and verification inventory
 
@@ -153,7 +156,62 @@ or an RPO/RTO acceptance. No replacement drill was dispatched.
 The remaining read-only prerequisite is an owner-reviewed grant of only the
 missing bucket lifecycle read to the existing reader, then another explicit
 `audit-retention` observation. That grant is **not authorized or applied here**.
-Longer-term protection still needs the separate horizon/ownership decision below.
+That observation is historical; the successful October 27 rerun below supersedes
+its lifecycle-read prerequisite. Longer-term ownership and renewal remain separate
+decisions.
+
+### October 27 read-only rerun: lifecycle absence observed
+
+After the owner supplied the missing read permission, explicit read-only
+[run 40435377938](https://github.com/tomacox74/js2il/actions/runs/40435377938),
+attempt 1, source `3d46b322f2c3cc97df5405fd313392c0401b3a87`,
+completed with `audit_complete=true`. S3 returned
+`NoSuchLifecycleConfiguration`, not access denial. All **42 exact versions**
+matched the prior metadata observations without changed locks; versioning,
+35-day COMPLIANCE default and configured KMS identity were unchanged. The
+[authenticated compact observation](https://github.com/tomacox74/js2il/issues/2343#issuecomment-6431827427)
+records report SHA-256
+`9f7191db7e6654ec0e063935b9ce7daa963ae9736b5f078d6be2950af9f19e60`.
+No payload read, retention extension or other write occurred. Lifecycle absence
+is a dated observation, not an indefinite protection guarantee.
+
+## Owner-authorized fixed-version retention extension
+
+The owner separately authorized extending COMPLIANCE on the accepted **41 archive
+versions and verified newer preservation receipt version** through
+**2027-04-30T00:00:00Z**, followed by exact-version verification. This does not
+approve uploads, deletions, imports, restores, production changes, permission
+changes, bucket defaults/lifecycle/KMS changes or the broader draft policy below.
+COMPLIANCE extensions cannot subsequently be shortened.
+
+Select **`operation=extend-retention`** explicitly on master with
+**`retention_authorization=extend-42-retention-20270430`**. The protected existing
+OIDC role is restricted by a separate intersecting session policy to the audit's
+six read actions plus `s3:PutObjectRetention`. No role or bucket permission is
+changed; missing write permission is a blocker, not permission to grant it. The
+token and target deadline are fixed in the reviewed collector, not arbitrary
+version, destination or date selectors.
+
+The collector authenticates both immutable evidence pins, checks configuration
+and **all 42 exact versions before its first write**, and refuses mutation on any
+unknown/invalid preflight. It PUTs only COMPLIANCE retention for the pinned
+version IDs; already equal/longer deadlines are left unchanged. SDK retries are
+disabled. Local sanitized progress is journaled before each irreversible request,
+after acknowledgment and verification; no replacement object or S3 report is
+uploaded. Each acknowledged PUT is immediately read back. The first denied,
+ambiguous or unverifiable write stops subsequent writes, followed by a final
+read-only check of all 42 versions. Reports distinguish attempts, acknowledgments
+and actual verified protection, including partial outcomes; no rollback is
+attempted. A failed operation stays failed even if readback resolves an ambiguous
+request as applied.
+
+Retain an authenticated sanitized success/partial/denial report in Git before the
+90-day Actions report expires. Only successful exact-version observations prove
+the resulting horizon; merging tooling is not proof of an extension. These are
+metadata/length/KMS observations, not fresh payload rehash/decryption proofs. The
+original private eight-object receipt remains outside this authorization because
+its self-version is unrecorded. The original 11 historical gaps and #2343's
+ownership, renewal, service-objective and recovery-verification gates remain.
 
 ## Draft policy and accountable-owner decision
 
@@ -173,16 +231,15 @@ paused; no new alert destination or service-recovery objective is selected here.
 | Useful failed/partial outboxes and restricted diagnostics | Archive useful original evidence before Actions expiry with hashes, provenance and access classification; do not archive credentials or indiscriminately duplicate raw logs | Archive/monitoring operators, #2343/#2341; define useful contents, redaction, retrieval and deletion criteria |
 | Verbose disposable logs | Proposed 180-day hot retention, then useful hashed archival; current Actions convenience remains 90 days | Monitoring owner, #2341 with #2343; approve cost, access, archive/delete criteria and a supported destination before changing retention |
 
-**Immediate finite-horizon proposal:** approve protection of the 41 archive
-versions and the new receipt through **2027-04-30 UTC**, comfortably beyond their
-known January source/report Actions expirations. This is a proposed common horizon,
-not an extension already performed or permission to create replacements. Unknown
-source expiry remains unknown. Prefer protecting the accepted exact versions;
-verify effective lifecycle and permissions first, record every resulting version,
-deadline and receipt, then decide the longer-term renewal policy separately.
-Existing archive locks start expiring **November 12, 2026 UTC**; later archive and
-new-receipt locks expire **November 30**. Review before those deadlines, not after
-source Actions expiry. Their expiry is not a deletion prediction.
+**Separately approved finite horizon:** the owner authorized only the 42-version
+extension through **2027-04-30T00:00:00Z** described above, beyond their known
+January source/report Actions expirations. Execution and exact-version readback
+are still required; authorization/tooling is not proof that locks changed.
+Unknown source expiry remains unknown. Record every resulting version, deadline
+and receipt, then decide longer-term renewal separately. Under the historical
+proofs, earlier archive locks begin expiring **November 12, 2026 UTC**; later
+archive/new-receipt locks expire **November 30**. Those historical deadlines are
+not rewritten, and lock expiry is not a deletion prediction.
 
 For approval, record the named primary/backup and independent verifier, accepted
 horizons/cost, renewal lead time and access separation. Coordinate warning thresholds

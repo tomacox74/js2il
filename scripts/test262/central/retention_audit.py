@@ -173,8 +173,14 @@ def audit_configuration(s3, bucket, base, kms_key):
     return observations
 
 
-def audit_objects(s3, bucket, base, kms_key, ledger, preservation, now):
-    now = timestamp(now)
+def load_evidence():
+    ledger = recovery_coverage.load_ledger()
+    raw = PRESERVATION.read_bytes()
+    require(hashlib.sha256(raw).hexdigest() == PRESERVATION_SHA256)
+    return ledger, json.loads(raw)
+
+
+def retention_targets(ledger, preservation):
     targets = []
     for row in ledger['archives']:
         origin = 40393597860 if row['verification']['run_id'] == 40393597860 else 37715977350
@@ -184,51 +190,58 @@ def audit_objects(s3, bucket, base, kms_key, ledger, preservation, now):
     targets.append(({'kind': 'preservation_receipt'}, '40393597860-1',
                     'recovery-preservation-report.json', preservation['report']['receipt'],
                     preservation['actions_artifact']['expires_at']))
+    return targets
+
+
+def audit_object(s3, bucket, key, kms_key, pin, identity, expiration, now):
+    now = timestamp(now)
+    row = dict(identity, version_id=pin['version_id'], expected_sha256=pin['sha256'],
+               metadata_verified=False, payload_digest_verified=False)
+    try:
+        head = s3.head_object(Bucket=bucket, Key=key, VersionId=pin['version_id'])
+        retained = s3.get_object_retention(Bucket=bucket, Key=key, VersionId=pin['version_id'])
+        require(isinstance(head, dict) and isinstance(retained, dict))
+        retention = retained['Retention']
+        require(isinstance(retention, dict))
+        require(isinstance(head.get('VersionId'), str) and head['VersionId'] not in ('', 'null'))
+        require(type(head.get('ContentLength')) is int and head['ContentLength'] >= 0)
+        require(head.get('ServerSideEncryption') in ('AES256', 'aws:kms', 'aws:kms:dsse'))
+        require(retention.get('Mode') in ('COMPLIANCE', 'GOVERNANCE'))
+        until = timestamp(retention['RetainUntilDate'])
+        previous = timestamp(pin['retain_until'])
+        covers = until > timestamp(expiration.replace('Z', '+00:00')) if expiration else None
+        row.update(
+            state='observed', content_length=head['ContentLength'],
+            encryption=head['ServerSideEncryption'], retain_until=until.isoformat(),
+            lock_mode=retention['Mode'], version_matches=head['VersionId'] == pin['version_id'],
+            length_matches=head['ContentLength'] == pin['content_length'],
+            kms_identity_matches=head.get('SSEKMSKeyId') == kms_key,
+            prior_lock_not_shortened=until >= previous,
+            compliance_lock_current=retention['Mode'] == 'COMPLIANCE' and until > now,
+            covers_frozen_actions_expiry=covers)
+        row['metadata_verified'] = all(row[field] for field in (
+            'version_matches', 'length_matches', 'kms_identity_matches',
+            'prior_lock_not_shortened', 'compliance_lock_current')) and row['encryption'] == 'aws:kms'
+    except (ClientError, BotoCoreError) as error:
+        row.update(failure(error, 'unavailable'))
+    except (ValueError, TypeError, KeyError) as error:
+        row.update(failure(error, 'invalid'))
+    return row
+
+
+def audit_objects(s3, bucket, base, kms_key, ledger, preservation, now):
+    now = timestamp(now)
     observations = []
-    for identity, origin, name, pin, expiration in targets:
-        row = dict(identity, version_id=pin['version_id'], expected_sha256=pin['sha256'],
-                   metadata_verified=False, payload_digest_verified=False)
+    for identity, origin, name, pin, expiration in retention_targets(ledger, preservation):
         key = '/'.join(filter(None, (base, 'cutover-evidence', origin, name)))
-        try:
-            head = s3.head_object(Bucket=bucket, Key=key, VersionId=pin['version_id'])
-            retained = s3.get_object_retention(Bucket=bucket, Key=key, VersionId=pin['version_id'])
-            require(isinstance(head, dict) and isinstance(retained, dict))
-            retention = retained['Retention']
-            require(isinstance(retention, dict))
-            require(isinstance(head.get('VersionId'), str) and head['VersionId'] not in ('', 'null'))
-            require(type(head.get('ContentLength')) is int and head['ContentLength'] >= 0)
-            require(head.get('ServerSideEncryption') in ('AES256', 'aws:kms', 'aws:kms:dsse'))
-            require(retention.get('Mode') in ('COMPLIANCE', 'GOVERNANCE'))
-            until = timestamp(retention['RetainUntilDate'])
-            previous = timestamp(pin['retain_until'])
-            covers = until > timestamp(expiration.replace('Z', '+00:00')) if expiration else None
-            row.update(
-                state='observed', content_length=head['ContentLength'],
-                encryption=head['ServerSideEncryption'], retain_until=until.isoformat(),
-                lock_mode=retention['Mode'], version_matches=head['VersionId'] == pin['version_id'],
-                length_matches=head['ContentLength'] == pin['content_length'],
-                kms_identity_matches=head.get('SSEKMSKeyId') == kms_key,
-                prior_lock_not_shortened=until >= previous,
-                compliance_lock_current=retention['Mode'] == 'COMPLIANCE' and until > now,
-                covers_frozen_actions_expiry=covers)
-            row['metadata_verified'] = all(row[field] for field in (
-                'version_matches', 'length_matches', 'kms_identity_matches',
-                'prior_lock_not_shortened', 'compliance_lock_current')) and row['encryption'] == 'aws:kms'
-        except (ClientError, BotoCoreError) as error:
-            row.update(failure(error, 'unavailable'))
-        except (ValueError, TypeError, KeyError) as error:
-            row.update(failure(error, 'invalid'))
-        observations.append(row)
+        observations.append(audit_object(s3, bucket, key, kms_key, pin, identity, expiration, now))
     return observations
 
 
 def audit(s3, uri, kms_key, report, now=None, fetch=github):
     now = timestamp(now or datetime.now(timezone.utc))
     require(isinstance(kms_key, str) and bool(kms_key.strip()))
-    ledger = recovery_coverage.load_ledger()
-    raw = PRESERVATION.read_bytes()
-    require(hashlib.sha256(raw).hexdigest() == PRESERVATION_SHA256)
-    preservation = json.loads(raw)
+    ledger, preservation = load_evidence()
     bucket, base = destination(uri)
     report.update(ledger_sha256=recovery_coverage.LEDGER_SHA256,
                   preservation_sha256=PRESERVATION_SHA256,
