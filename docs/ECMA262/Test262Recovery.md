@@ -213,6 +213,43 @@ original private eight-object receipt remains outside this authorization because
 its self-version is unrecorded. The original 11 historical gaps and #2343's
 ownership, renewal, service-objective and recovery-verification gates remain.
 
+### October 27 authorized attempt: retention PUT denied, locks unchanged
+
+The guarded tooling from #2410 passed exact-master central invariants
+[40437418376](https://github.com/tomacox74/js2il/actions/runs/40437418376).
+The separately authorized
+[extension run 40437767853](https://github.com/tomacox74/js2il/actions/runs/40437767853),
+attempt 1, source `03d40ed9cbcd5d4ac01541a1a5a5df3224b4ea09`,
+then completed its **42/42 metadata and configuration preflight**, including
+known lifecycle absence. The first exact-version `s3:PutObjectRetention` request
+returned **`AccessDenied`**. The collector stopped: **one PUT attempt, zero
+acknowledgments, 41 targets not attempted, no retry or rollback**.
+
+Final read-only verification still checked **all 42 exact versions**, with matching
+length, configured KMS identity, COMPLIANCE mode and **all deadlines unchanged**.
+**Zero versions were verified through the requested April 30, 2027 horizon.**
+The earlier November 12 and newer November 30 deadlines still apply; protection
+beyond Actions source expiry remains unproven. This is a denied extension with
+successful unchanged-metadata verification, not a successful extension or missing
+objects. Payload hashes were not rechecked.
+
+The [authenticated sanitized result](evidence/retention-extension-40437767853.json)
+has SHA-256
+`10a674761615feb6bc7f34809c0ed927c117dcd54f42cb3c28996e8e44410d13`;
+its exact Actions report has SHA-256
+`d4637b3a76009a925f99121c1dc8bee93e4a5c14966188950b5e8943e6efaffc`.
+The original Actions artifact expires January 25, 2027; this Git projection
+preserves the compact denied-attempt and before/after observations, not a newly
+locked S3 report.
+
+An owner-reviewed permission decision for `s3:PutObjectRetention` on the authorized
+versions is now the execution blocker. The denial does not identify which
+identity/resource policy or other restriction caused it. **No permission change
+was authorized or made**, and no alternate privileged principal or repeat
+mutation was used. No S3 uploads/deletions, payload reads, imports, restores,
+fixtures, database/production changes, bucket/KMS/lifecycle changes or notifications
+occurred. Broader #2343 policy/recovery gates and the original 11 gaps are unchanged.
+
 ## Draft policy and accountable-owner decision
 
 **Not adopted or implemented.** The following makes the remaining decision
@@ -234,7 +271,7 @@ paused; no new alert destination or service-recovery objective is selected here.
 **Separately approved finite horizon:** the owner authorized only the 42-version
 extension through **2027-04-30T00:00:00Z** described above, beyond their known
 January source/report Actions expirations. Execution and exact-version readback
-are still required; authorization/tooling is not proof that locks changed.
+are still required; authorization/tooling and the denied attempt are not proof that locks changed.
 Unknown source expiry remains unknown. Record every resulting version, deadline
 and receipt, then decide longer-term renewal separately. Under the historical
 proofs, earlier archive locks begin expiring **November 12, 2026 UTC**; later
