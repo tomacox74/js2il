@@ -1507,6 +1507,53 @@ same-SHA/provenance when applicable, worker and lifecycle receipts. Do not claim
 same-SHA recovery across a changed compiler/pin/environment, or infer full-suite
 conformance from this bounded proof.
 
+### Retained acceptance evidence - October 27, 2026
+
+The implementation was merged in PR #2383
+(`2fcaf570ca0a60d9ac818c3017f52a6133a43d85`). The bounded, sanitized
+[scheduled-recovery evidence](evidence/scheduled-recovery-2340.json) now retains
+authenticated GitHub run/artifact provenance, original ZIP/member digests,
+per-invocation source/identity hashes, variants, cursors, work/observation IDs,
+charges, reservations and the distinct acceptance boundaries outside Actions
+artifact expiry. It is an observation record, not another scheduler or a copy of
+the original database/outboxes.
+
+| Evidence | Proven scope | Not proven |
+|---|---|---|
+| Disposable native pilot [40027859210](https://github.com/tomacox74/js2il/actions/runs/40027859210), artifact 12532773635 | Both normal attempt/time exhaustion scenarios execute one variant, resume only the missing variant at identical source/execution identity, seal one complete fixture, then execute zero variants on repeat. Original finalization-loss, process-kill, replay and lease/fencing drills pass in their recorded disposable scopes. | GitHub cron firing those simulated invocations, or production exhaustion/recovery. |
+| Actual scheduled collection [40282309564](https://github.com/tomacox74/js2il/actions/runs/40282309564), artifact 12633231943 | The October 26 schedule selected native with automatic publication disabled. Source `cd90c4edda81988c7adb6b0457c760714f37da23`; 100 acknowledged observations/completions, zero pending outbox messages/reservations. | Normal shared-budget exhaustion or same-SHA recovery: this worker stopped at its 100-attempt limit, below the allocation's 400-attempt limit. Its budget finalized `interrupted`, with 238 variants pending and zero resumed fixtures. |
+
+The pilot's GitHub PR head is
+`8f923340fb0a5c2dc04a1a4fbedd1c260a07a9a1`; its actual executed test-merge source
+is `4be389cc39a771c9225e62df051be89b094ced3b`. Verified commit ancestry links them;
+they must not be conflated. The partial disposable inventory, synthetic successful
+master validation and simulated schedule event IDs remain explicitly labelled.
+The pilot and actual scheduled collection also have different source/provenance
+and cannot be combined into an actual same-SHA resume claim.
+
+The actual collection's 100 observations are product failures, not passes or
+accepted fixtures. A green workflow and collection state `complete` mean neither
+full-suite success nor an exhausted/recovered allocation. The retained record
+therefore leaves `actual_scheduled_normal_budget_exhaustion_observed`,
+`actual_scheduled_same_sha_exhaustion_resume_observed` and
+`all_issue_gates_proven` false.
+
+To finish the remaining #2340 gate, authenticate a later actual scheduled
+exhaustion/resume chain at the same source and full execution identity. Confirm
+that deferred required variants are resumed without repeating terminal variants,
+the exhausted predecessor's charges remain unchanged, the recovery allocation
+is distinct, reservations/outboxes drain and native acceptance uses only complete
+matching evidence. A changed SHA/provenance, worker stop, infrastructure error
+or successful job is not a substitute. Start with existing receipts; obtain
+specific operator approval for any new live drill instead of dispatching one,
+resetting an allocation, lowering limits or freezing production authority merely
+to manufacture acceptance.
+
+This evidence collection used GitHub artifact reads and read-only local SQLite
+inspection only: no workflow dispatch, fixture execution, database/S3 access,
+publication, permission change or authority change. It does not extend the
+original artifacts' retention or authorize future operational mutations.
+
 ## Independent local and downstream workers (#2339)
 
 The supported execution path is `central.cli enlist` on Linux with Docker,
