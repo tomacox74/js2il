@@ -823,7 +823,7 @@ class RecoveryPreservationTests(unittest.TestCase):
         self.assertIn('--output /tmp/test262-cutover-report/recovery-preservation-report.json', block)
         policies = [json.loads(raw) for raw in re.findall(
             r"'(\{\"Version\".*?\})' \|\|", workflow)]
-        self.assertEqual(len(policies), 4)
+        self.assertEqual(len(policies), 5)
         recovery_policy = re.search(
             r"inputs.operation == 'preserve-recovery' &&\s*'(\{\"Version\".*?\})' \|\|",
             workflow)

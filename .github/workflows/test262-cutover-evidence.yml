@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Preserve evidence, verify a version, discover metadata, or audit retention read-only
+        description: Preserve evidence, verify/audit metadata, or extend explicitly authorized retention
         type: choice
         options:
           - preserve
@@ -11,6 +11,7 @@ on:
           - verify-retained
           - discover-retained
           - audit-retention
+          - extend-retention
         default: preserve
       artifact_id:
         description: Existing retained artifact ID for verify-retained (no upload or import)
@@ -22,6 +23,10 @@ on:
         default: scripts/test262/central/cutover-evidence.json
       recovery_authorization:
         description: For owner-authorized recovery uploads only, enter preserve-33-recovery-archives
+        type: string
+        default: ''
+      retention_authorization:
+        description: For the approved 42-version deadline only, enter extend-42-retention-20270430
         type: string
         default: ''
 permissions:
@@ -49,12 +54,18 @@ jobs:
         env:
           OPERATION: ${{ inputs.operation }}
           RECOVERY_AUTHORIZATION: ${{ inputs.recovery_authorization }}
+          RETENTION_AUTHORIZATION: ${{ inputs.retention_authorization }}
         run: |
           case "$OPERATION" in
             preserve|verify-retained|discover-retained|audit-retention) ;;
             preserve-recovery)
               if [ "$RECOVERY_AUTHORIZATION" != "preserve-33-recovery-archives" ]; then
                 echo "::error::Explicit authorization for the 33 recovery archives is required"; exit 1
+              fi
+              ;;
+            extend-retention)
+              if [ "$RETENTION_AUTHORIZATION" != "extend-42-retention-20270430" ]; then
+                echo "::error::Explicit authorization for the 42-version retention extension is required"; exit 1
               fi
               ;;
             *) echo "::error::Unsupported evidence operation"; exit 1 ;;
@@ -68,6 +79,8 @@ jobs:
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:ListBucketVersions","s3:GetObjectVersion","s3:GetObjectRetention"],"Resource":"*"}]}' ||
             inputs.operation == 'preserve-recovery' &&
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:PutObject","s3:GetObjectVersion","s3:GetObjectRetention","kms:GenerateDataKey","kms:Decrypt"],"Resource":"*"}]}' ||
+            inputs.operation == 'extend-retention' &&
+            '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetLifecycleConfiguration","s3:GetEncryptionConfiguration","s3:GetObjectVersion","s3:GetObjectRetention","s3:PutObjectRetention"],"Resource":"*"}]}' ||
             inputs.operation == 'audit-retention' &&
             '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketVersioning","s3:GetBucketObjectLockConfiguration","s3:GetLifecycleConfiguration","s3:GetEncryptionConfiguration","s3:GetObjectVersion","s3:GetObjectRetention"],"Resource":"*"}]}' ||
             inputs.operation == 'verify-retained' &&
@@ -119,6 +132,16 @@ jobs:
         run: |
           python -m scripts.test262.central.retention_audit \
             --output /tmp/test262-cutover-report/retention-audit-report.json
+      - name: Extend only authorized pinned retention and verify exact versions
+        if: inputs.operation == 'extend-retention'
+        env:
+          TEST262_BACKUP_S3_URI: ${{ vars.TEST262_BACKUP_S3_URI }}
+          TEST262_BACKUP_KMS_KEY: ${{ vars.TEST262_BACKUP_KMS_KEY }}
+          RETENTION_AUTHORIZATION: ${{ inputs.retention_authorization }}
+        run: |
+          python -m scripts.test262.central.retention_extension \
+            --authorization "$RETENTION_AUTHORIZATION" \
+            --output /tmp/test262-cutover-report/retention-extension-report.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
