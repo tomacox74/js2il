@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "repository": "tomacox74/js2il",
+  "issue": 2340,
+  "checked_at": "2026-10-27T05:04:40.253702+00:00",
+  "scope": "Read-only authentication of existing disposable and scheduled GitHub artifacts",
+  "implementation": {
+    "pull_request": 2383,
+    "merge_commit": "2fcaf570ca0a60d9ac818c3017f52a6133a43d85"
+  },
+  "disposable_pilot": {
+    "source": {
+      "run": {
+        "id": 40027859210,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_branch": "fix/test262-scheduled-recovery-2340",
+        "head_sha": "8f923340fb0a5c2dc04a1a4fbedd1c260a07a9a1",
+        "path": ".github/workflows/test262-worker-pilot.yml",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-23T21:35:18Z",
+        "updated_at": "2026-10-23T21:37:33Z",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40027859210"
+      },
+      "artifact": {
+        "id": 12532773635,
+        "name": "test262-worker-pilot-40027859210-1",
+        "size_in_bytes": 223413,
+        "created_at": "2026-10-23T21:37:28Z",
+        "expires_at": "2027-01-21T21:35:18Z",
+        "digest": "sha256:77145a9d32c44614c12d25ff9657aedea986705860a5ba25d63f3fb48e7de86a",
+        "zip_sha256": "77145a9d32c44614c12d25ff9657aedea986705860a5ba25d63f3fb48e7de86a"
+      },
+      "api_metadata_checked": true,
+      "test_merge_revision": "4be389cc39a771c9225e62df051be89b094ced3b",
+      "test_merge_parents": [
+        "cbe2b2a201c2dd5ecd0eee5f603794ead2896b60",
+        "8f923340fb0a5c2dc04a1a4fbedd1c260a07a9a1"
+      ]
+    },
+    "reports": [
+      {
+        "member": "pilot-report.json",
+        "sha256": "12f92b6aa78a45c097b797726dfc75d838a77fcd9ee59d5f563d532413fe041c",
+        "bytes": 144930
+      },
+      {
+        "member": "scheduled-recovery/scheduled-recovery-report.json",
+        "sha256": "cd5b6f9dbb41d6e4842e1d5d739e25f4dd1e67005eb14911b1f963e253e7b7ac",
+        "bytes": 128492
+      }
+    ],
+    "scope": "disposable loopback catalogue only",
+    "trigger": "simulated schedule input through production collection_kind",
+    "github_cron_observed": false,
+    "production_cutover": false,
+    "validation": "synthetic disposable master validation; not production acceptance",
+    "registration_inventory": "controlled empty disposable snapshot",
+    "scenarios": {
+      "attempt": {
+        "complete": true,
+        "source_revision": "4be389cc39a771c9225e62df051be89b094ced3b",
+        "upstream": {
+          "owner": "tc39",
+          "repo": "test262",
+          "cloneUrl": "https://github.com/tc39/test262.git",
+          "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+          "packageVersion": "5.0.0"
+        },
+        "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+        "identity_sha256": "a5216de91b57c7ea8f8e90245609630a455da60b1fc29f7b81b1fe2da44f3e01",
+        "component_identity_sha256": {
+          "binaries": "23019ccfd79df2356ac90cb3203de93f01d2758b868dc95fb7ccbcfb2683009b",
+          "harness": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+          "tooling": "b13073fba5f7df41108da6ed9dafc3584087a95515d2d5c890b7df4cca4a2e2c",
+          "capabilities": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+          "environment_identity": "2c4f8c492edca6ba16b1d527e78d745a6359b632815b440dd1ca2ebdc0d282a2",
+          "timeouts": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4"
+        },
+        "fixture": "test/built-ins/Math/abs/length.js",
+        "required_variants": [
+          "non-strict",
+          "strict"
+        ],
+        "interrupted_operation": "finish_run",
+        "accepted_batch": {
+          "batch": "3a814c65-cf81-562c-8cb6-972d67ea8f1e",
+          "accepted": 1
+        },
+        "invocations": [
+          {
+            "simulated_event": "actions:2340000:1",
+            "run_id": "fba1b607-8750-5b58-b111-23592fe4c996",
+            "worker": {
+              "attempts": 1,
+              "seconds": 0.7206962620000468,
+              "stop_reason": "budget-exhausted",
+              "run_id": "fba1b607-8750-5b58-b111-23592fe4c996",
+              "budget_scope_id": "81c68cf6-91a1-5987-b03e-705d2b92f015"
+            },
+            "recovery": {
+              "resumed_fixtures": 0,
+              "discovery_fixtures": 1,
+              "queued_variants": 2,
+              "reused_terminal_variants": 0,
+              "cursor_before": 0,
+              "cursor_after": 1
+            },
+            "budget": {
+              "budget_scope_id": "81c68cf6-91a1-5987-b03e-705d2b92f015",
+              "external_key": "actions:2340000",
+              "state": "exhausted",
+              "attempt_limit": 1,
+              "time_limit_ms": 240000,
+              "charged_attempts": 1,
+              "charged_ms": 710,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "03d986ee-5016-4a3f-8069-7da13ac19e52",
+                "run_id": "fba1b607-8750-5b58-b111-23592fe4c996",
+                "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "098e9de1-42f3-5c12-bceb-ef7f436d5048",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "c3bfbb16-3bae-57a4-837e-a846924085bb",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "pending",
+                "lease_generation": 0
+              }
+            ]
+          },
+          {
+            "simulated_event": "actions:2340001:1",
+            "run_id": "38fc4c17-96f1-5885-9b68-e74e3b396d89",
+            "worker": {
+              "attempts": 1,
+              "seconds": 0.6692102799999589,
+              "stop_reason": "queue-empty-or-delayed",
+              "run_id": "38fc4c17-96f1-5885-9b68-e74e3b396d89",
+              "budget_scope_id": "3b4596d3-9a5f-5799-ab87-7d7966300604"
+            },
+            "recovery": {
+              "resumed_fixtures": 1,
+              "discovery_fixtures": 0,
+              "queued_variants": 1,
+              "reused_terminal_variants": 1,
+              "cursor_before": 1,
+              "cursor_after": 1
+            },
+            "budget": {
+              "budget_scope_id": "3b4596d3-9a5f-5799-ab87-7d7966300604",
+              "external_key": "actions:2340001",
+              "state": "closed",
+              "attempt_limit": 1,
+              "time_limit_ms": 240000,
+              "charged_attempts": 1,
+              "charged_ms": 660,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "03d986ee-5016-4a3f-8069-7da13ac19e52",
+                "run_id": "fba1b607-8750-5b58-b111-23592fe4c996",
+                "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              },
+              {
+                "observation_id": "f1a234a8-6781-4b18-9bad-382f60533b90",
+                "run_id": "38fc4c17-96f1-5885-9b68-e74e3b396d89",
+                "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "098e9de1-42f3-5c12-bceb-ef7f436d5048",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "c3bfbb16-3bae-57a4-837e-a846924085bb",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          },
+          {
+            "simulated_event": "actions:2340002:1",
+            "run_id": "b7fca799-fdbe-5ebb-93a8-0626cdf63097",
+            "worker": {
+              "attempts": 0,
+              "seconds": 0.0013319699999669865,
+              "stop_reason": "queue-empty-or-delayed",
+              "run_id": "b7fca799-fdbe-5ebb-93a8-0626cdf63097",
+              "budget_scope_id": "4888e7f9-fa62-50c6-878d-c9f6fa107dcf"
+            },
+            "recovery": {
+              "resumed_fixtures": 0,
+              "discovery_fixtures": 0,
+              "queued_variants": 0,
+              "reused_terminal_variants": 0,
+              "cursor_before": 1,
+              "cursor_after": 1
+            },
+            "budget": {
+              "budget_scope_id": "4888e7f9-fa62-50c6-878d-c9f6fa107dcf",
+              "external_key": "actions:2340002",
+              "state": "closed",
+              "attempt_limit": 1,
+              "time_limit_ms": 240000,
+              "charged_attempts": 0,
+              "charged_ms": 0,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "03d986ee-5016-4a3f-8069-7da13ac19e52",
+                "run_id": "fba1b607-8750-5b58-b111-23592fe4c996",
+                "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              },
+              {
+                "observation_id": "f1a234a8-6781-4b18-9bad-382f60533b90",
+                "run_id": "38fc4c17-96f1-5885-9b68-e74e3b396d89",
+                "provenance_id": "72008498-ef0c-5879-b724-2b5faf96ff5b",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "098e9de1-42f3-5c12-bceb-ef7f436d5048",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "c3bfbb16-3bae-57a4-837e-a846924085bb",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          }
+        ]
+      },
+      "time": {
+        "complete": true,
+        "source_revision": "4be389cc39a771c9225e62df051be89b094ced3b",
+        "upstream": {
+          "owner": "tc39",
+          "repo": "test262",
+          "cloneUrl": "https://github.com/tc39/test262.git",
+          "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+          "packageVersion": "5.0.0"
+        },
+        "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+        "identity_sha256": "3f188038066c2be67d155a710b08b4a111e26fc5246fd87f87a6a1d6d64b7eb4",
+        "component_identity_sha256": {
+          "binaries": "23019ccfd79df2356ac90cb3203de93f01d2758b868dc95fb7ccbcfb2683009b",
+          "harness": "d7c76e201485e346a6d080654b7788d2dd841e43859673d28c8065a686dd5818",
+          "tooling": "b13073fba5f7df41108da6ed9dafc3584087a95515d2d5c890b7df4cca4a2e2c",
+          "capabilities": "d13ae74d8e3a501b9224a979cccafc92ed359ac92db52d94f8246d162b9588e3",
+          "environment_identity": "2c4f8c492edca6ba16b1d527e78d745a6359b632815b440dd1ca2ebdc0d282a2",
+          "timeouts": "8bc45f2d321abea51eff4d7dafd7c4ad7c2e45e449a8e0333acc76a044d8c8d4"
+        },
+        "fixture": "test/built-ins/Math/abs/length.js",
+        "required_variants": [
+          "non-strict",
+          "strict"
+        ],
+        "interrupted_operation": "finish_budget",
+        "accepted_batch": {
+          "batch": "d75a7377-0acc-5963-a91a-b927c4729639",
+          "accepted": 1
+        },
+        "invocations": [
+          {
+            "simulated_event": "actions:2340100:1",
+            "run_id": "196a55b2-d8f4-5154-9643-cb3d041beb79",
+            "worker": {
+              "attempts": 1,
+              "seconds": 0.7149183050000261,
+              "stop_reason": "budget-exhausted",
+              "run_id": "196a55b2-d8f4-5154-9643-cb3d041beb79",
+              "budget_scope_id": "932dd28c-9a6e-5ab5-8cda-2827ad7cfafb"
+            },
+            "recovery": {
+              "resumed_fixtures": 0,
+              "discovery_fixtures": 1,
+              "queued_variants": 2,
+              "reused_terminal_variants": 0,
+              "cursor_before": 1,
+              "cursor_after": 2
+            },
+            "budget": {
+              "budget_scope_id": "932dd28c-9a6e-5ab5-8cda-2827ad7cfafb",
+              "external_key": "actions:2340100",
+              "state": "exhausted",
+              "attempt_limit": 10,
+              "time_limit_ms": 120000,
+              "charged_attempts": 1,
+              "charged_ms": 706,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "66eb1cfe-a3bf-44b0-9e3c-8096cdf29a9d",
+                "run_id": "196a55b2-d8f4-5154-9643-cb3d041beb79",
+                "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "65caebdc-583b-5c96-bfc6-1a9674e76adf",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "pending",
+                "lease_generation": 0
+              },
+              {
+                "work_item_id": "f347ef6f-95d7-5350-97bf-128143841cea",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          },
+          {
+            "simulated_event": "actions:2340101:1",
+            "run_id": "813471d0-d039-5cf8-8270-92dac933d9c6",
+            "worker": {
+              "attempts": 1,
+              "seconds": 0.6803872130000173,
+              "stop_reason": "queue-empty-or-delayed",
+              "run_id": "813471d0-d039-5cf8-8270-92dac933d9c6",
+              "budget_scope_id": "395ec0a2-7177-5acb-87fc-e27f05edc226"
+            },
+            "recovery": {
+              "resumed_fixtures": 1,
+              "discovery_fixtures": 0,
+              "queued_variants": 1,
+              "reused_terminal_variants": 1,
+              "cursor_before": 2,
+              "cursor_after": 2
+            },
+            "budget": {
+              "budget_scope_id": "395ec0a2-7177-5acb-87fc-e27f05edc226",
+              "external_key": "actions:2340101",
+              "state": "closed",
+              "attempt_limit": 10,
+              "time_limit_ms": 120000,
+              "charged_attempts": 1,
+              "charged_ms": 672,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "66eb1cfe-a3bf-44b0-9e3c-8096cdf29a9d",
+                "run_id": "196a55b2-d8f4-5154-9643-cb3d041beb79",
+                "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              },
+              {
+                "observation_id": "dada9241-3624-4b25-941c-796f9ec9f606",
+                "run_id": "813471d0-d039-5cf8-8270-92dac933d9c6",
+                "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "65caebdc-583b-5c96-bfc6-1a9674e76adf",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "f347ef6f-95d7-5350-97bf-128143841cea",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          },
+          {
+            "simulated_event": "actions:2340102:1",
+            "run_id": "3b56c3f0-ab81-5315-924b-4423cba88ddd",
+            "worker": {
+              "attempts": 0,
+              "seconds": 0.0012056400000233225,
+              "stop_reason": "queue-empty-or-delayed",
+              "run_id": "3b56c3f0-ab81-5315-924b-4423cba88ddd",
+              "budget_scope_id": "2efbafc1-4539-5253-ba02-5f9e07a41d7f"
+            },
+            "recovery": {
+              "resumed_fixtures": 0,
+              "discovery_fixtures": 0,
+              "queued_variants": 0,
+              "reused_terminal_variants": 0,
+              "cursor_before": 2,
+              "cursor_after": 2
+            },
+            "budget": {
+              "budget_scope_id": "2efbafc1-4539-5253-ba02-5f9e07a41d7f",
+              "external_key": "actions:2340102",
+              "state": "closed",
+              "attempt_limit": 10,
+              "time_limit_ms": 120000,
+              "charged_attempts": 0,
+              "charged_ms": 0,
+              "reserved_attempts": 0,
+              "reserved_ms": 0
+            },
+            "pending_outbox": 0,
+            "observations": [
+              {
+                "observation_id": "66eb1cfe-a3bf-44b0-9e3c-8096cdf29a9d",
+                "run_id": "196a55b2-d8f4-5154-9643-cb3d041beb79",
+                "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              },
+              {
+                "observation_id": "dada9241-3624-4b25-941c-796f9ec9f606",
+                "run_id": "813471d0-d039-5cf8-8270-92dac933d9c6",
+                "provenance_id": "a3687d4d-fbad-56b0-a6e2-4e477c3e2c8a",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "outcome": "pass",
+                "lease_generation": 1
+              }
+            ],
+            "work": [
+              {
+                "work_item_id": "65caebdc-583b-5c96-bfc6-1a9674e76adf",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "strict",
+                "state": "completed",
+                "lease_generation": 1
+              },
+              {
+                "work_item_id": "f347ef6f-95d7-5350-97bf-128143841cea",
+                "fixture_id": "548b1f74-707c-55da-b484-de167a8dca79",
+                "variant": "non-strict",
+                "state": "completed",
+                "lease_generation": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "queue_drills": {
+      "scope": "synthetic queue control in disposable database only",
+      "complete": true,
+      "stage": "verified",
+      "expired_lease": {
+        "old_generation": 1,
+        "new_generation": 2,
+        "renewal_rejection_sqlstate": "40001",
+        "late_evidence_retained": true,
+        "late_completion_fenced": true,
+        "charged_attempts": 2,
+        "charged_ms": 1000,
+        "pending_reservations": 0,
+        "real_deadline_wait": true
+      },
+      "conflicting_replay": {
+        "request_rejection_sqlstate": "P0001",
+        "observation_rejection_sqlstate": "P0001",
+        "original_unchanged": true,
+        "original_receipt_reused": true,
+        "observations": 2
+      },
+      "exhausted_budget": {
+        "reserved_limit_blocked": true,
+        "charged_limit_blocked": true,
+        "charged_attempts": 1,
+        "pending_unattempted": 1,
+        "pending_reservations": 0
+      }
+    },
+    "process_kill": {
+      "complete": true,
+      "scope": "real fixture in disposable database only",
+      "stage": "verified",
+      "server_observations_before_kill": 0,
+      "reserved_attempts_before_kill": 1,
+      "kill_exitcode": -9,
+      "observations": 1,
+      "completed_work": 1,
+      "charged_attempts": 1,
+      "reserved_attempts": 0,
+      "new_attempts_after_restart": 0
+    }
+  },
+  "actual_scheduled_collection": {
+    "source": {
+      "run": {
+        "id": 40282309564,
+        "run_attempt": 1,
+        "event": "schedule",
+        "head_branch": "master",
+        "head_sha": "cd90c4edda81988c7adb6b0457c760714f37da23",
+        "path": ".github/workflows/test262-central.yml",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-26T06:51:47Z",
+        "updated_at": "2026-10-26T06:58:31Z",
+        "html_url": "https://github.com/tomacox74/js2il/actions/runs/40282309564"
+      },
+      "artifact": {
+        "id": 12633231943,
+        "name": "test262-central-recovery-40282309564",
+        "size_in_bytes": 55910,
+        "created_at": "2026-10-26T06:58:26Z",
+        "expires_at": "2027-01-24T06:51:47Z",
+        "digest": "sha256:e7901e17a484bc64477b415616b50b57d15daf9d0d848f898934889488e514d1",
+        "zip_sha256": "e7901e17a484bc64477b415616b50b57d15daf9d0d848f898934889488e514d1"
+      },
+      "api_metadata_checked": true
+    },
+    "reports": [
+      {
+        "member": "central-context.json",
+        "sha256": "f8a05f0aec67f77bcb6966ef58021a1c5d2ad965479be1b46e615ee804f309c9",
+        "bytes": 28161
+      },
+      {
+        "member": "central-schedule.json",
+        "sha256": "1f51742e358a7c58eb43e7f3d8c081674dba3a54cb2ae9d78795b7ea81f6428b",
+        "bytes": 151
+      },
+      {
+        "member": "central-worker.json",
+        "sha256": "d4f171f7c31d7cc2c9c4b18e65ab5465d6844b415372dfee0ea08c550c99b204",
+        "bytes": 183
+      },
+      {
+        "member": "central-lifecycle.json",
+        "sha256": "f255443f25c4f9fd3547145bef1c1eb0b42e4c4633654bcbe0eaa4875edda11f",
+        "bytes": 1707
+      }
+    ],
+    "policy": {
+      "automatic_publication": false,
+      "budget_policy": "new-actions-run-allocation; retries-share-existing-charges",
+      "event": "schedule",
+      "kind": "native"
+    },
+    "context": {
+      "revision": "cd90c4edda81988c7adb6b0457c760714f37da23",
+      "run": "c0c6a89f-2598-507c-82c4-bab983787fa8",
+      "budget": "e98d5c34-39a3-576b-9eb1-cc3cf7891227",
+      "provenance": "d083a5ce-60e9-5d0d-8220-48ab66fed06c",
+      "corpus": "024b79d7-0f92-5f9d-ade7-8bdf3907e097",
+      "kind": "native",
+      "recovery": {
+        "cursor_after": 3800,
+        "cursor_before": 3600,
+        "discovery_fixtures": 200,
+        "queued_variants": 338,
+        "resumed_fixtures": 0,
+        "reused_terminal_variants": 0
+      }
+    },
+    "identity_sha256": "b80fa2f2194f0d5700d65427930cfd698d68f7f4fbb8c2b88365c0b200d9696f",
+    "worker": {
+      "attempts": 100,
+      "budget_scope_id": "e98d5c34-39a3-576b-9eb1-cc3cf7891227",
+      "run_id": "c0c6a89f-2598-507c-82c4-bab983787fa8",
+      "seconds": 122.554760052,
+      "stop_reason": "worker-attempt-limit"
+    },
+    "lifecycle": {
+      "budget": {
+        "before_state": "open",
+        "budget_scope_id": "e98d5c34-39a3-576b-9eb1-cc3cf7891227",
+        "charged_attempts": 100,
+        "charged_ms": 100517,
+        "claim_cap_ms": 120000,
+        "collection_ended_at": "2026-10-26T06:58:24.748026+00:00",
+        "collection_state": "complete",
+        "disposition": "terminal",
+        "expired_reservations": 0,
+        "external_run_key": "actions:40282309564:1",
+        "flush_verified": true,
+        "pending_work": 238,
+        "reason": "collection-stopped-with-pending-work",
+        "result": {
+          "accepted_limit": 100,
+          "attempt_limit": 400,
+          "budget_scope_id": "e98d5c34-39a3-576b-9eb1-cc3cf7891227",
+          "candidate_limit": 200,
+          "charged_attempts": 100,
+          "charged_ms": 100517,
+          "claim_cap_ms": 120000,
+          "ended_at": "2026-10-26T06:58:24.811648+00:00",
+          "external_key": "actions:40282309564",
+          "lifecycle": {
+            "before_state": "open",
+            "budget_scope_id": "e98d5c34-39a3-576b-9eb1-cc3cf7891227",
+            "charged_attempts": 100,
+            "charged_ms": 100517,
+            "claim_cap_ms": 120000,
+            "collection_ended_at": "2026-10-26T06:58:24.748026+00:00",
+            "collection_state": "complete",
+            "disposition": "terminal",
+            "expired_reservations": 0,
+            "external_run_key": "actions:40282309564:1",
+            "flush_verified": true,
+            "pending_work": 238,
+            "reason": "collection-stopped-with-pending-work",
+            "run_id": "c0c6a89f-2598-507c-82c4-bab983787fa8",
+            "source_revision": "cd90c4edda81988c7adb6b0457c760714f37da23",
+            "state": "interrupted",
+            "version": 200
+          },
+          "repository_id": "faf01df8-aa65-4375-a708-6c1e555f957b",
+          "reserved_attempts": 0,
+          "reserved_ms": 0,
+          "scope_kind": "run",
+          "state": "interrupted",
+          "time_limit_ms": 1200000,
+          "version": 201
+        },
+        "run_id": "c0c6a89f-2598-507c-82c4-bab983787fa8",
+        "source_revision": "cd90c4edda81988c7adb6b0457c760714f37da23",
+        "state": "interrupted",
+        "version": 200
+      },
+      "ended_at": "2026-10-26T06:58:24.748026+00:00",
+      "run_id": "c0c6a89f-2598-507c-82c4-bab983787fa8",
+      "state": "complete"
+    },
+    "outbox": {
+      "member": "central-outbox.sqlite",
+      "sha256": "6445977741cdc27b5cc5520e4ee7e0b7e56a5801539de343ac39e6027e8ea6a2",
+      "integrity": "ok",
+      "observations": 100,
+      "outcomes": {
+        "fail": 100
+      },
+      "acknowledged_messages": 100,
+      "acknowledged_completions": 100,
+      "pending_uploads": 0,
+      "pending_completions": 0
+    }
+  },
+  "acceptance": {
+    "disposable_same_sha_attempt_and_time_recovery_verified": true,
+    "actual_scheduled_native_routing_observed": true,
+    "actual_scheduled_normal_budget_exhaustion_observed": false,
+    "actual_scheduled_same_sha_exhaustion_resume_observed": false,
+    "all_issue_gates_proven": false
+  },
+  "collection_effects": {
+    "workflow_dispatch": false,
+    "fixture_execution": false,
+    "database_access": false,
+    "s3_access": false,
+    "publication": false,
+    "permission_or_authority_change": false
+  },
+  "limitations": [
+    "Disposable schedule inputs/event IDs and successful master validation are controlled fixtures; they are not actual GitHub timer invocations.",
+    "The pilot PR head and executed test-merge revision are different, explicitly linked by verified commit ancestry.",
+    "The actual scheduled collection stopped at its worker limit with a non-exhausted interrupted allocation and 238 pending variants.",
+    "Collection completion, successful Actions status and acknowledged outboxes do not establish budget exhaustion, recovered deferred work or full-suite completion.",
+    "The pilot and scheduled source/provenance differ; their observations must not be joined into a claimed actual same-SHA recovery.",
+    "A later authenticated scheduled same-source/execution-identity exhaustion/resume chain remains necessary; no live drill was dispatched.",
+    "Original artifacts expire under Actions policy. This sanitized bounded Git projection retains hashes and selected evidence, not original outboxes or a database backup."
+  ]
+}
