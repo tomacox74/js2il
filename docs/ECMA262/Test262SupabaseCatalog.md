@@ -1562,8 +1562,9 @@ is `live-recovery-2340-two-variants-20261027`. This is a one-campaign authorizat
 not a general screening, publication, permission or authority grant.
 
 The manual-only `test262-recovery-drill.yml` workflow uses the protected catalogue
-environment and the existing native-target concurrency group. Two distinct
-Actions runs are needed because the established budget finalizer binds an
+environment and the existing native-target concurrency group. A zero-execution
+read-only verification run freezes the baseline first. Two distinct live
+Actions runs are then needed because the established budget finalizer binds an
 allocation to its real `actions:<run-id>` and collection to
 `actions:<run-id>:1`. Custom fabricated Actions IDs, reopening an old allocation,
 or a second scheduler are not used.
@@ -1573,9 +1574,20 @@ current master validation and the matching sealed native reporting target, then
 selects one currently eligible unregistered fixture with exactly the strict and
 non-strict required variants. Source, upstream, binary/harness/tooling/runtime
 identity and immutable fixture image must remain unchanged across both runs.
-The image build uses the source commit's `SOURCE_DATE_EPOCH`; changed base images
-or any other identity drift still stop recovery rather than silently relaxing
-the identity check.
+The verification run builds the image once using the source commit's
+`SOURCE_DATE_EPOCH`, saves it, and authenticates its archive hash and immutable
+image ID in the baseline report. Both live phases download that same image
+archive, authenticate the successful baseline report/source/artifact and archive
+hash before loading it, then verify the loaded image ID without catalogue
+credentials. They do not rebuild or pull a replacement image.
+
+Verification uses a repeatable-read read-only transaction with a transaction-local
+read-only default and both effective settings checked before target/fixture
+reads. It creates no provenance, markers, allocations, observations or work.
+Both live phases must match its exact source, native and drill identities,
+image/archive, fixture and control-plane digest before any catalogue writes.
+The seven-day image artifact is an operational input; report artifacts last
+90 days and sanitized acceptance evidence is retained in Git.
 
 The drill has a separate explicitly labelled provenance and a private
 single-fixture plan. It reuses production preparation, missing-variant planning,
@@ -1598,6 +1610,11 @@ observation, preserve the exhausted budget byte-for-field, and drain both work
 items without changing the source, image or control plane. Before claims the
 supervisor refuses unrelated leased work; before every physical execution it
 checks the exact allowed work/variant, identity and journaled two-execution bound.
+The first report freezes the full original observation's digest, including its
+stored payload digest. Recovery rechecks that row and the original budget before
+planning, claiming and execution, and after recovery; retaining an observation ID
+alone is insufficient. The execution journal also limits each phase to one
+physical execution, independently of the lifetime cap.
 The no-leased-work check and claim share the existing repository advisory lock,
 preventing the claim API's expiry sweep from mutating unrelated work in a race.
 
@@ -1606,11 +1623,16 @@ exact-master validation and the normal registration refresh**:
 
 ```bash
 gh workflow run test262-recovery-drill.yml --ref master \
-  -f authorization=live-recovery-2340-two-variants-20261027 -f phase=exhaust
+  -f authorization=live-recovery-2340-two-variants-20261027 -f phase=verify
+# Authenticate the zero-execution read-only baseline and matching native identity.
+gh workflow run test262-recovery-drill.yml --ref master \
+  -f authorization=live-recovery-2340-two-variants-20261027 \
+  -f phase=exhaust -f baseline_run_id=<verified-baseline-run-id>
 # Authenticate the exact successful run/report and record its Actions run ID.
 gh workflow run test262-recovery-drill.yml --ref master \
   -f authorization=live-recovery-2340-two-variants-20261027 \
-  -f phase=recover -f previous_run_id=<verified-exhaustion-run-id>
+  -f phase=recover -f baseline_run_id=<verified-baseline-run-id> \
+  -f previous_run_id=<verified-exhaustion-run-id>
 ```
 
 Do not dispatch recovery after a failed/uncertain first phase, changed master or
@@ -1626,6 +1648,37 @@ It remains a manual live witness, not evidence that GitHub cron fired. Product
 failures/unsupported outcomes are not passes; no full-suite conformance or native
 fixture publication is inferred. Imports/restores, S3 operations and
 permission/authority changes remain outside the authorization.
+
+#### Reproducible native build and renewed bounded authorization
+
+After the read-only diagnostics below, the owner explicitly authorized fixing
+the two-DLL drift, related squash merges after required checks, selection of a
+new validated SHA and its normal scoped native registration/provenance refresh,
+then one frozen two-phase live drill. The lifetime maximum remains two physical
+fixture executions, including earlier attempts; the original stopped run used
+zero. The same permanent campaign keys remain in use: no charge or latch reset,
+automatic live retry, replacement fixture, publication, permission/authority
+change, import/restore, S3 operation or unrelated live execution is authorized.
+
+The cause is Verify `30.4.0`'s `buildTransitive/Verify.props`, which sets
+`Deterministic=false` in `Jroc.Testing` and transitively in
+`NativeScreeningHost`. Evaluated properties and MSBuild binary-log replay show
+`/deterministic-` for precisely those two projects. Two forced builds at unchanged
+source/path/SDK changed both DLLs; their only byte differences were random module
+MVIDs and COFF timestamps. The other three own compiler/runtime DLLs stayed
+identical. This is a controlled reproduction, not recovery of the original
+historical failed bytes.
+
+The fix explicitly sets `Deterministic=true` in those two projects after the
+package props. It leaves Verify's `DeterministicSourcePaths=false` policy intact
+to preserve snapshot caller paths. Two further forced unchanged builds produce
+byte-identical DLLs, stable MVIDs/timestamps and reproducible PE debug entries.
+[Controlled build proof](evidence/reproducible-native-build-2340.json) retains
+the local SDK, commands, full hashes, PE metadata and diagnostic-only comparison.
+Full raw binary hashes remain authoritative: diagnostic metadata normalization
+is used only to explain the earlier drift, never for acceptance or identity
+comparison. Live execution still requires the separate authenticated matching
+native baseline at the final merged SHA.
 
 #### Recorded guarded stop, October 27
 

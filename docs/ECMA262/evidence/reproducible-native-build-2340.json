@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "issue": 2340,
+  "evidence_kind": "controlled-local-native-binary-reproducibility",
+  "checked_at": "2026-10-27T21:42:44.408350+00:00",
+  "source_revision": "86a14676283526b8daacacf28003761c5dd6523e",
+  "sdk": "10.0.113",
+  "configuration": "Release",
+  "target_framework": "net10.0",
+  "scope": "Isolated owned checkout, identical source/path/SDK for the two before builds; then only the two project Deterministic overrides and two more forced builds.",
+  "command": "dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo",
+  "subsequent_build_target": "Rebuild",
+  "all_four_build_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "cause": {
+    "package": "Verify",
+    "version": "30.4.0",
+    "build_asset": "buildTransitive/Verify.props",
+    "build_asset_sha256": "2b084287242e01ad8981a8c1b9849fce6b64e63b3606a688c4814238255fa651",
+    "transitive_properties": {
+      "Deterministic": "false",
+      "DeterministicSourcePaths": "false"
+    },
+    "csc_before": {
+      "Jroc.Testing": "/deterministic-",
+      "NativeScreeningHost": "/deterministic-",
+      "JavaScriptRuntime": "/deterministic+",
+      "Jroc.Compiler": "/deterministic+",
+      "Jroc": "/deterministic+"
+    },
+    "binlog_analysis": "MSBuild replay of baseline-01.binlog; raw logs and package/source paths retained locally only."
+  },
+  "fix": {
+    "project_overrides": {
+      "tests/Jroc.Testing/Jroc.Testing.csproj": {
+        "Deterministic": "true"
+      },
+      "scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj": {
+        "Deterministic": "true"
+      }
+    },
+    "DeterministicSourcePaths_remains": "false",
+    "snapshot_caller_path_policy_changed": false,
+    "binary_identity_uses_full_raw_sha256": true,
+    "identity_guard_weakened": false
+  },
+  "affected_binary_metadata": {
+    "Jroc.Testing.dll": {
+      "before": [
+        {
+          "file": "Jroc.Testing.dll",
+          "sha256": "34c04fbb7cd4259566bd1bf1d66bdb283bc2c68958b8c969ebde9faa10923296",
+          "module_version_id": "a9536bed-e1ab-42a5-9ab2-1e18b4a0bd05",
+          "coff_timestamp": 1793136613,
+          "reproducible_debug_entry": false,
+          "codeview": [
+            {
+              "guid": "241a5d33-f8b5-473d-9a4b-1cab7e33cd4a",
+              "age": 1,
+              "pdb": "Jroc.Testing.pdb"
+            }
+          ]
+        },
+        {
+          "file": "baseline-02-Jroc.Testing.dll",
+          "sha256": "173395b6477323395988fadb2d343d6c5cff6a493af9ed1ac5c62908627a5b85",
+          "module_version_id": "1834cfec-cc74-4d53-8e7f-dd8b98050951",
+          "coff_timestamp": 1793136801,
+          "reproducible_debug_entry": false,
+          "codeview": [
+            {
+              "guid": "241a5d33-f8b5-473d-9a4b-1cab7e33cd4a",
+              "age": 1,
+              "pdb": "Jroc.Testing.pdb"
+            }
+          ]
+        }
+      ],
+      "after": [
+        {
+          "file": "Jroc.Testing.dll",
+          "sha256": "c3dcad4e9e1c8d6aca71bb7f7772f0acc3276a02fd038b56ef5879fe959e02d7",
+          "module_version_id": "cd6a362d-2480-4293-8b86-637f24e02e87",
+          "coff_timestamp": -1532709303,
+          "reproducible_debug_entry": true,
+          "codeview": [
+            {
+              "guid": "241a5d33-f8b5-473d-9a4b-1cab7e33cd4a",
+              "age": 1,
+              "pdb": "Jroc.Testing.pdb"
+            }
+          ]
+        },
+        {
+          "file": "Jroc.Testing.dll",
+          "sha256": "c3dcad4e9e1c8d6aca71bb7f7772f0acc3276a02fd038b56ef5879fe959e02d7",
+          "module_version_id": "cd6a362d-2480-4293-8b86-637f24e02e87",
+          "coff_timestamp": -1532709303,
+          "reproducible_debug_entry": true,
+          "codeview": [
+            {
+              "guid": "241a5d33-f8b5-473d-9a4b-1cab7e33cd4a",
+              "age": 1,
+              "pdb": "Jroc.Testing.pdb"
+            }
+          ]
+        }
+      ]
+    },
+    "NativeScreeningHost.dll": {
+      "before": [
+        {
+          "file": "NativeScreeningHost.dll",
+          "sha256": "e321ec30e4b13c16621203710a985400de645a0bae3febfcbddd961fcddffcb2",
+          "module_version_id": "4957b5da-00e3-46dd-b988-9616db7e9c87",
+          "coff_timestamp": 1793136613,
+          "reproducible_debug_entry": false,
+          "codeview": [
+            {
+              "guid": "0d854098-8ce7-4666-94dd-a0d4f4234e76",
+              "age": 1,
+              "pdb": "NativeScreeningHost.pdb"
+            }
+          ]
+        },
+        {
+          "file": "baseline-02-NativeScreeningHost.dll",
+          "sha256": "ae69e2a98adcc88ee35250f6d95f584f56cd22c7c03851e089a0e4b8be70f297",
+          "module_version_id": "1ffc44d0-08b7-46df-b258-6ee21298d0ba",
+          "coff_timestamp": 1793136801,
+          "reproducible_debug_entry": false,
+          "codeview": [
+            {
+              "guid": "0d854098-8ce7-4666-94dd-a0d4f4234e76",
+              "age": 1,
+              "pdb": "NativeScreeningHost.pdb"
+            }
+          ]
+        }
+      ],
+      "after": [
+        {
+          "file": "NativeScreeningHost.dll",
+          "sha256": "1ea2f97ab324c84cec785fbdaf700c5badf9ddb3a67520633422d2ba0b485927",
+          "module_version_id": "c6335587-3b29-4ca3-8f51-bdf11d8d3556",
+          "coff_timestamp": -1881720522,
+          "reproducible_debug_entry": true,
+          "codeview": [
+            {
+              "guid": "0d854098-8ce7-4666-94dd-a0d4f4234e76",
+              "age": 1,
+              "pdb": "NativeScreeningHost.pdb"
+            }
+          ]
+        },
+        {
+          "file": "NativeScreeningHost.dll",
+          "sha256": "1ea2f97ab324c84cec785fbdaf700c5badf9ddb3a67520633422d2ba0b485927",
+          "module_version_id": "c6335587-3b29-4ca3-8f51-bdf11d8d3556",
+          "coff_timestamp": -1881720522,
+          "reproducible_debug_entry": true,
+          "codeview": [
+            {
+              "guid": "0d854098-8ce7-4666-94dd-a0d4f4234e76",
+              "age": 1,
+              "pdb": "NativeScreeningHost.pdb"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "unchanged_compiler_runtime_binary_sha256": {
+    "JavaScriptRuntime.dll": "06ee3c76e44593ac518dcdb163d69324907ad1bcb7e0baa84f10f63a4757aed7",
+    "Jroc.Compiler.dll": "c48daa21b14fa21b928e788eb7d6ce948ed9803f543f066f1c39a4ac1c47c432",
+    "Jroc.dll": "17a650675b6cf67a9dadf48e013e83f8129687fb7fef2f817385c10721c059eb"
+  },
+  "diagnostic_only_byte_comparison": [
+    {
+      "file": "Jroc.Testing.dll",
+      "only_mvid_and_coff_timestamp_differ": true,
+      "diagnostic_normalized_sha256": "edffd81514a7502d801935e0afd05f35f4bda012d4285f0cd3e1f41ddc6b18e0",
+      "normalization_used_for_execution_identity": false
+    },
+    {
+      "file": "NativeScreeningHost.dll",
+      "only_mvid_and_coff_timestamp_differ": true,
+      "diagnostic_normalized_sha256": "cd900e449c91ce9c6b4ca55b609d4e92c54e6e6020cbc8b40fb4ba90466297da",
+      "normalization_used_for_execution_identity": false
+    }
+  ],
+  "fixture_executions": 0,
+  "catalogue_access": false,
+  "s3_access": false,
+  "boundary": "Local same-path reproduction and fix verification, not the original historical failed bytes or the final merged-SHA live witness. Final native refresh and frozen-image verification are separate gates."
+}

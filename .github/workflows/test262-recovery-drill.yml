@@ -7,10 +7,14 @@ on:
         type: string
         required: true
       phase:
-        description: First exhaust one attempt, then recover only its missing variant
+        description: Verify a frozen baseline, then exhaust and recover its missing variant
         type: choice
-        options: [exhaust, recover]
+        options: [verify, exhaust, recover]
         required: true
+      baseline_run_id:
+        description: Exact successful zero-execution baseline run, required for both live phases
+        type: string
+        default: ''
       previous_run_id:
         description: Exact successful exhaustion run, only for recovery
         type: string
@@ -34,26 +38,59 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 10.0.403
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
-          check-latest: true
+          node-version: '24.22.1'
       - run: npm ci --ignore-scripts
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: python -m pip install -r scripts/test262/central/requirements.txt
-      - name: Build trusted binaries and isolated fixture image
+      - name: Build trusted binaries and pinned inventory
         run: |
           dotnet build src/Cli/Jroc.csproj -c Release --nologo
           dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
-          docker build --pull --build-arg SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)" \
-            -t test262-fixture:recovery-drill -f scripts/test262/central/fixture.Dockerfile .
           ROOT="$(node scripts/test262/bootstrap.js --print-root)"
           git -C "$ROOT" sparse-checkout add /test/
           echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
-      - name: Execute only the authorized exhaustion and missing-variant recovery
+      - name: Build and save the baseline fixture image once
+        if: inputs.phase == 'verify'
+        run: |
+          docker build --pull --build-arg SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)" \
+            -t test262-fixture:recovery-drill -f scripts/test262/central/fixture.Dockerfile .
+          mkdir -p artifacts/test262
+          docker image save test262-fixture:recovery-drill | gzip -n > artifacts/test262/fixture-image.tar.gz
+      - name: Download the frozen baseline image without catalogue credentials
+        if: inputs.phase != 'verify'
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.baseline_run_id }}
+          name: test262-recovery-image-${{ inputs.baseline_run_id }}-1
+          path: artifacts/test262
+      - name: Authenticate the baseline archive before loading its image
+        if: inputs.phase != 'verify'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          AUTHORIZATION: ${{ inputs.authorization }}
+          PHASE: ${{ inputs.phase }}
+          BASELINE_RUN_ID: ${{ inputs.baseline_run_id }}
+          PREVIOUS_RUN_ID: ${{ inputs.previous_run_id }}
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/recovery-drill/image-diagnostic.json
+        run: |
+          PREVIOUS_ARGS=()
+          if [ -n "$PREVIOUS_RUN_ID" ]; then
+            PREVIOUS_ARGS+=(--previous-run-id "$PREVIOUS_RUN_ID")
+          fi
+          python -m scripts.test262.central.live_recovery_drill \
+            --authorization "$AUTHORIZATION" --phase "$PHASE" --root "$TEST262_ROOT" \
+            --baseline-run-id "$BASELINE_RUN_ID" --restore-image-only \
+            --image-archive artifacts/test262/fixture-image.tar.gz \
+            --output artifacts/test262/recovery-drill/image-check.json "${PREVIOUS_ARGS[@]}"
+      - name: Verify the read-only baseline or execute the one authorized phase
         env:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
@@ -63,16 +100,32 @@ jobs:
           AUTHORIZATION: ${{ inputs.authorization }}
           PHASE: ${{ inputs.phase }}
           PREVIOUS_RUN_ID: ${{ inputs.previous_run_id }}
+          BASELINE_RUN_ID: ${{ inputs.baseline_run_id }}
           TEST262_PROGRESS: '1'
           TEST262_DIAGNOSTIC_FILE: artifacts/test262/recovery-drill/diagnostic.json
         run: |
           PREVIOUS_ARGS=()
+          BASELINE_ARGS=()
           if [ -n "$PREVIOUS_RUN_ID" ]; then
             PREVIOUS_ARGS+=(--previous-run-id "$PREVIOUS_RUN_ID")
           fi
+          if [ -n "$BASELINE_RUN_ID" ]; then
+            BASELINE_ARGS+=(--baseline-run-id "$BASELINE_RUN_ID")
+          fi
           python -m scripts.test262.central.live_recovery_drill \
             --authorization "$AUTHORIZATION" --phase "$PHASE" --root "$TEST262_ROOT" \
-            --output artifacts/test262/recovery-drill/report.json "${PREVIOUS_ARGS[@]}"
+            --image-archive artifacts/test262/fixture-image.tar.gz \
+            --output artifacts/test262/recovery-drill/report.json \
+            "${PREVIOUS_ARGS[@]}" "${BASELINE_ARGS[@]}"
+      - name: Retain the verified image for the two bounded live phases
+        if: success() && inputs.phase == 'verify'
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-recovery-image-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/fixture-image.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
       - name: Preserve bounded proof and uncertain outcomes without replay
         if: always()
         uses: actions/upload-artifact@v7

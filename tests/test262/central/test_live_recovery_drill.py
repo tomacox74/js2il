@@ -202,8 +202,8 @@ class DrillCase(unittest.TestCase):
                              variants=['non-strict', 'strict'], metadata={}, state='runnable', reasons=[])
         self.normalized = normalize_fixture(self.original, self.args.root)
         self.base = dict(upstream=dict(commit=UPSTREAM, cloneUrl='https://example.invalid/test262'),
-                         inventory='corpus', binaries={'host.dll': 'binary-hash'},
-                         harness={'assert.js': 'harness-hash'}, tooling={'worker.py': 'tool-hash'},
+                         inventory='corpus', binaries={'host.dll': '1' * 64},
+                         harness={'assert.js': '2' * 64}, tooling={'worker.py': '3' * 64},
                          capabilities={'includes': []}, environment_identity={'runtime': 'offline'},
                          timeouts={'runtime': 30, 'compile': 60, 'cap_ms': 120000})
         fixture = dict(fixture_id=FIXTURE, upstream_path=PATH, corpus_id='corpus',
@@ -211,6 +211,26 @@ class DrillCase(unittest.TestCase):
                        dependency_manifest_digest=bytea(self.normalized['dependency_manifest_digest']),
                        metadata={}, metadata_state='valid')
         self.client = Catalogue(deepcopy(self.base), fixture)
+        archive = self.folder / 'fixture-image.tar.gz'
+        archive.write_bytes(b'offline frozen image archive; never loaded')
+        self.args.image_archive = str(archive)
+        self.baseline_source = dict(run_id=100, run_attempt=1, artifact_id=70,
+                                    zip_sha256='4' * 64, report_sha256='5' * 64)
+        document = dict(self.base, operator_recovery_drill={
+            'campaign': drill.AUTHORIZATION, 'fixture_image': IMAGE})
+        self.args.baseline_report = dict(
+            phase='verify', source_revision=SOURCE, corpus='corpus',
+            provenance_id=identity('repo', 'native', sha(document)), native_provenance_id='base',
+            native_execution_identity_sha256=sha(self.base), execution_identity_sha256=sha(document),
+            fixture_image_id=IMAGE, image_archive_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
+            control_plane_sha256=sha(dict(
+                authority=self.client.contract,
+                native_target=self.client.tables['reporting_targets'][0],
+                mvp_target=self.client.tables['reporting_targets'][1],
+                reconciliation=self.client.tables['reconciliation_state'][0])),
+            fixture={k: fixture[k] for k in (
+                'fixture_id', 'upstream_path', 'content_sha256', 'dependency_manifest_digest')},
+            required_variants=['non-strict', 'strict'])
         self.physical = []
         self.after_execute = None
         self.fake_outcome = 'pass'
@@ -224,6 +244,7 @@ class DrillCase(unittest.TestCase):
                 (drill, 'execution_identity', {'side_effect': lambda *a: deepcopy(self.base)}),
                 (drill, 'image_id', {'return_value': IMAGE}),
                 (drill.subprocess, 'check_output', {'side_effect': self.subprocess_output}),
+                (drill.subprocess, 'run', {'side_effect': AssertionError('No real external processes')}),
                 (drill, 'stage_runtime', {'return_value': None}),
                 (drill, 'work_staged', {'side_effect': self.fake_worker}),
                 (drill, 'github', {'side_effect': AssertionError('Unexpected GitHub request')}),
@@ -232,7 +253,8 @@ class DrillCase(unittest.TestCase):
             p = patch.object(owner, name, **options)
             self.patches[name] = p.start()
             self.addCleanup(p.stop)
-        self.report = {'actions': {'id': 123, 'run_attempt': 1}}
+        self.report = {'actions': {'id': 123, 'run_attempt': 1, 'head_sha': SOURCE},
+                       'baseline_source': deepcopy(self.baseline_source)}
 
     @staticmethod
     def git(*args):
@@ -266,7 +288,8 @@ class DrillCase(unittest.TestCase):
                 row = dict(observation_id='observation-' + lease['variant'], run_id=args.run,
                            provenance_id=lease['provenance_id'], fixture_id=FIXTURE,
                            work_item_id=lease['work_item_id'], variant=lease['variant'],
-                           outcome=self.fake_outcome, lease_generation=1)
+                           outcome=self.fake_outcome, lease_generation=1,
+                           payload_sha256=bytea(sha({'outcome': self.fake_outcome, 'offline': True})))
                 outbox.enqueue([row])
                 outbox.flush(client)
                 count += 1
@@ -278,15 +301,22 @@ class DrillCase(unittest.TestCase):
             outbox.db.close()
 
     def run_drill(self):
+        self.report.setdefault('baseline_source', deepcopy(self.baseline_source))
         with redirect_stdout(io.StringIO()):
             return drill.run(self.client, self.args, self.report)
+
+    @staticmethod
+    def authorize_main(args):
+        args.revision = SOURCE
+        return {'id': 123, 'run_attempt': 1, 'head_sha': SOURCE}
 
     def prepare_recovery(self):
         previous = deepcopy(self.report)
         self.args.previous_report = previous
         self.args.phase = 'recover'
         self.args.output = str(Path(tempfile.mkdtemp(dir=self.folder)) / 'report.json')
-        self.report = {'actions': {'id': 456, 'run_attempt': 1}}
+        self.report = {'actions': {'id': 456, 'run_attempt': 1, 'head_sha': SOURCE},
+                       'baseline_source': deepcopy(self.baseline_source)}
         return previous
 
     def run_both(self):
@@ -603,6 +633,9 @@ class DriverTests(DrillCase):
                     self.client.tables['registration_snapshots'][0]['source_revision'] = self.args.revision
                     self.patches['git'].side_effect = lambda *a: self.args.revision if a[0] == 'rev-parse' else ''
                     self.patches['current_master'].return_value = self.args.revision
+                    # Preserve the original replay test's focus: even an otherwise
+                    # matching newly verified source cannot replace the lifetime latch.
+                    self.args.baseline_report['source_revision'] = self.args.revision
                 with patch.dict(os.environ, {'GITHUB_RUN_ID': '999' if label != 'same-dispatch' else '123'}):
                     with self.assertRaisesRegex(ValueError, 'already started'):
                         self.run_drill()
@@ -833,7 +866,7 @@ class DriverTests(DrillCase):
                     self.client.tables['budget_scopes'].append(dict(
                         budget_scope_id=identity('repo', 'budget', 'actions:456')))
                 event_count = len(self.client.events)
-                with self.assertRaisesRegex(ValueError, 'Previous charges|allocation already exists'):
+                with self.assertRaisesRegex(ValueError, '[Pp]revious charges|allocation already exists'):
                     self.run_drill()
                 self.assertEqual(len(self.physical), 1)
                 self.assertEqual([e for e in self.client.events[event_count:] if e[0] in ('put', 'call')], [])
@@ -939,7 +972,7 @@ class DriverTests(DrillCase):
                         client.tables['work_items'][0]['state'] = 'cancelled'
                     return result
                 self.patches['work_staged'].side_effect = corrupt
-                with self.assertRaisesRegex(ValueError, 'Recovery lost/replaced'):
+                with self.assertRaisesRegex(ValueError, 'Recovery lost/replaced|Original observation payload'):
                     self.run_drill()
                 self.assertFalse(self.report['complete'])
                 self.assertEqual(len(self.physical), 2)
@@ -949,6 +982,8 @@ class DriverTests(DrillCase):
         budgets = deepcopy(self.client.tables['budget_scopes'])
         self.args.producer = 'different-producer'
         self.client.contract['producer_id'] = self.args.producer
+        self.args.baseline_report['control_plane_sha256'] = sha(
+            drill.control_plane(self.client, self.args))
         self.report = {'actions': {'id': 789, 'run_attempt': 1}}
         count = len(self.client.events)
         with self.assertRaisesRegex(ValueError, 'already started'):
@@ -1157,8 +1192,10 @@ class PreviousReceiptTests(DrillCase):
     def previous(self):
         return dict(schema_version=1, repository=drill.REPOSITORY, stage='exhaustion-verified',
                     campaign=drill.AUTHORIZATION, phase='exhaust', phase_complete=True, complete=False,
-                    source_revision=SOURCE, actions={'id': 123, 'run_attempt': 1},
+                    source_revision=SOURCE, actions={'id': 123, 'run_attempt': 1, 'head_sha': SOURCE},
                     actual_fixture_executions=1, execution_intents=[{'work_item_id': 'work'}],
+                    first_observation_sha256=sha({'observation_id': 'offline-observation',
+                                                 'payload_sha256': bytea('6' * 64), 'outcome': 'pass'}),
                     invocations=[{'budget': {'state': 'exhausted', 'charged_attempts': 1},
                                   'worker': {'attempts': 1, 'stop_reason': 'budget-exhausted'}}],
                     control_plane_unchanged=True, publication=False, authority_changed=False,
@@ -1323,10 +1360,12 @@ class PreviousReceiptTests(DrillCase):
             args.revision = SOURCE
             return {'id': 456}
         with patch.object(drill, 'check_invocation', side_effect=authorize), \
+                patch.object(drill, 'fetch_baseline', return_value=({}, self.baseline_source)), \
                 patch.object(drill, 'fetch_previous', side_effect=ValueError('tampered receipt')) as previous, \
                 patch.object(drill, 'report_failure'):
             result = drill.main(['--authorization', drill.AUTHORIZATION, '--phase', 'recover',
-                                 '--previous-run-id', '123', '--root', self.args.root,
+                                 '--previous-run-id', '123', '--baseline-run-id', '100',
+                                 '--image-archive', self.args.image_archive, '--root', self.args.root,
                                  '--output', self.args.output])
         self.assertEqual(result, 1)
         previous.assert_called_once()
@@ -1339,6 +1378,7 @@ class PreviousReceiptTests(DrillCase):
                     patch.object(drill, 'check_invocation', return_value={'id': 456}), \
                     patch.object(drill, 'fetch_previous') as fetch, patch.object(drill, 'report_failure'):
                 argv = ['--authorization', drill.AUTHORIZATION, '--phase', label,
+                        '--image-archive', self.args.image_archive,
                         '--root', self.args.root, '--output', self.args.output]
                 if label == 'exhaust':
                     argv.extend(['--previous-run-id', '123'])
@@ -1386,11 +1426,13 @@ class OutboxAndEntrypointTests(DrillCase):
             drill.checkpoint(args, report)
         def io_failure(*args):
             raise OSError('offline IO uncertainty')
-        with patch.object(drill, 'check_invocation', return_value={'id': 123}), \
+        with patch.object(drill, 'check_invocation', side_effect=self.authorize_main), \
+                patch.object(drill, 'fetch_baseline', return_value=({}, self.baseline_source)), \
                 patch.object(drill, 'run', side_effect=fail), \
                 patch.object(drill, 'checkpoint', side_effect=io_failure) as journal, \
                 patch.object(drill, 'report_failure') as failure:
             result = drill.main(['--authorization', drill.AUTHORIZATION, '--phase', 'exhaust',
+                                 '--baseline-run-id', '100', '--image-archive', self.args.image_archive,
                                  '--repository', 'repo', '--producer', 'producer',
                                  '--root', self.args.root, '--output', self.args.output])
         self.assertEqual(result, 1)
@@ -1431,6 +1473,7 @@ class OutboxAndEntrypointTests(DrillCase):
         with patch.object(drill, 'check_invocation', side_effect=ValueError('offline secret marker')), \
                 patch.object(drill, 'report_failure') as failure:
             result = drill.main(['--authorization', 'wrong', '--phase', 'exhaust',
+                                 '--image-archive', self.args.image_archive,
                                  '--root', self.args.root, '--output', str(output)])
         self.assertEqual(result, 1)
         self.patches['Client'].assert_not_called()
@@ -1445,10 +1488,12 @@ class OutboxAndEntrypointTests(DrillCase):
                 client = Mock()
                 self.patches['Client'].side_effect = None
                 self.patches['Client'].return_value = client
-                with patch.object(drill, 'check_invocation', return_value={'id': 123}), \
+                with patch.object(drill, 'check_invocation', side_effect=self.authorize_main), \
+                        patch.object(drill, 'fetch_baseline', return_value=({}, self.baseline_source)), \
                         patch.object(drill, 'run', side_effect=None if success else TimeoutError('uncertain')) as run, \
                         patch.object(drill, 'report_failure'):
                     result = drill.main(['--authorization', drill.AUTHORIZATION, '--phase', 'exhaust',
+                                         '--baseline-run-id', '100', '--image-archive', self.args.image_archive,
                                          '--root', self.args.root,
                                          '--repository', 'repo', '--producer', 'producer',
                                          '--output', self.args.output])
