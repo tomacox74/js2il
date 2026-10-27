@@ -113,14 +113,33 @@ class IdentityDiagnosticsTests(unittest.TestCase):
 
         db.__exit__ = Mock(side_effect=close_connection)
         tx = Mock()
-        tx.__enter__ = Mock()
-        tx.__exit__ = Mock(return_value=False)
+        state = {'transaction': False, 'setup': 0}
+        setup = [
+            'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+            'SET LOCAL default_transaction_read_only=on',
+            'SHOW default_transaction_read_only',
+            'SHOW transaction_read_only']
+
+        def enter_transaction():
+            state['transaction'] = True
+
+        def exit_transaction(*unused):
+            state['transaction'] = False
+            return False
+
+        tx.__enter__ = Mock(side_effect=enter_transaction)
+        tx.__exit__ = Mock(side_effect=exit_transaction)
         db.transaction.return_value = tx
 
         def execute(sql, parameters=None):
+            self.assertTrue(state['transaction'], 'All SQL must use the explicit transaction')
+            if state['setup'] < len(setup):
+                self.assertEqual(sql, setup[state['setup']])
+                state['setup'] += 1
             if sql == 'SHOW default_transaction_read_only':
                 value = default
-            elif sql == 'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY':
+            elif sql in ('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+                         'SET LOCAL default_transaction_read_only=on'):
                 return None
             elif sql == 'SHOW transaction_read_only':
                 value = transaction
@@ -304,11 +323,12 @@ class IdentityDiagnosticsTests(unittest.TestCase):
                        ('repository_id', 'producer_id', 'minimum_writer_epoch', 'deployment_state')}))
         uuid_function.assert_called_once_with(REPOSITORY_ID, 'native', sha(self.document))
         self.assertEqual([entry.args[0] for entry in db.execute.call_args_list], [
-            'SHOW default_transaction_read_only',
             'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+            'SET LOCAL default_transaction_read_only=on',
+            'SHOW default_transaction_read_only',
             'SHOW transaction_read_only', 'SELECT test262.api_contract()',
             *['SELECT test262.api_read(%s,%s,%s,%s,%s)'] * 4])
-        self.assertEqual([entry.args[1][1] for entry in db.execute.call_args_list[4:]],
+        self.assertEqual([entry.args[1][1] for entry in db.execute.call_args_list[5:]],
                          ['provenances', 'corpora', 'registration_snapshots', 'validation_events'])
         self.assertEqual(db.mock_calls[0], call.__enter__())
         self.assertLess(db.mock_calls.index(call.transaction().__enter__()),
@@ -320,16 +340,52 @@ class IdentityDiagnosticsTests(unittest.TestCase):
 
     def test_either_read_only_flag_off_blocks_all_api_reads_and_closes_connection(self):
         for default, transaction, statements in [
-                ('off', 'on', ['SHOW default_transaction_read_only']),
-                ('on', 'off', ['SHOW default_transaction_read_only',
+                ('off', 'on', [
                  'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+                 'SET LOCAL default_transaction_read_only=on',
+                 'SHOW default_transaction_read_only']),
+                ('on', 'off', [
+                 'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+                 'SET LOCAL default_transaction_read_only=on',
+                 'SHOW default_transaction_read_only',
                  'SHOW transaction_read_only'])]:
             with self.subTest(default=default, transaction=transaction):
                 db, _ = self.fake_database(default, transaction)
                 with self.assertRaises(ValueError):
                     diagnostic.read_original(self.args)
                 self.assertEqual([entry.args[0] for entry in db.execute.call_args_list], statements)
+                self.assertEqual(db.transaction.return_value.__exit__.call_args.args[0], ValueError)
                 db.close.assert_called_once_with()
+
+    def test_set_local_failure_exits_transaction_and_connection_before_api_reads_or_probe(self):
+        db, _ = self.fake_database()
+        execute = db.execute.side_effect
+
+        def fail_local_setting(sql, parameters=None):
+            if sql == 'SET LOCAL default_transaction_read_only=on':
+                raise RuntimeError(SECRET)
+            return execute(sql, parameters)
+
+        db.execute.side_effect = fail_local_setting
+        stderr = io.StringIO()
+        with self.fake_git(), redirect_stderr(stderr):
+            self.assertEqual(diagnostic.main(self.argv()), 1)
+        self.assertEqual([entry.args[0] for entry in db.execute.call_args_list], [
+            'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
+            'SET LOCAL default_transaction_read_only=on'])
+        db.transaction.return_value.__enter__.assert_called_once_with()
+        self.assertEqual(db.transaction.return_value.__exit__.call_args.args[0], RuntimeError)
+        self.assertEqual(db.__exit__.call_args.args[0], RuntimeError)
+        db.close.assert_called_once_with()
+        self.execution.assert_not_called()
+        report = json.loads(Path(self.args.output).read_text())
+        failure = json.loads((self.folder / 'diagnostic.json').read_text())
+        self.assertFalse(report['complete'])
+        self.assertEqual(report['stage'], 'read-original-identity')
+        self.assertEqual(report['error_class'], 'RuntimeError')
+        self.assertNotIn('database_read_only', report)
+        self.assertNotIn('comparison', report)
+        self.assertNotIn(SECRET, json.dumps([report, failure]) + stderr.getvalue())
 
     def test_contract_scope_mismatches_fail_before_baseline_reads(self):
         original = deepcopy(self.contract)
@@ -343,14 +399,14 @@ class IdentityDiagnosticsTests(unittest.TestCase):
                 db, _ = self.fake_database()
                 with self.assertRaises(ValueError):
                     diagnostic.read_original(self.args)
-                self.assertEqual(db.execute.call_count, 4)
+                self.assertEqual(db.execute.call_count, 5)
                 db.close.assert_called_once_with()
         self.contract = original
         self.args.repository = 'foreign'
         db, _ = self.fake_database()
         with self.assertRaises(ValueError):
             diagnostic.read_original(self.args)
-        self.assertEqual(db.execute.call_count, 4)
+        self.assertEqual(db.execute.call_count, 5)
         db.close.assert_called_once_with()
 
     def test_missing_ambiguous_or_paginated_baseline_is_not_accepted(self):
@@ -362,7 +418,7 @@ class IdentityDiagnosticsTests(unittest.TestCase):
                 db, _ = self.fake_database(row_result=result)
                 with self.assertRaises(ValueError):
                     diagnostic.read_original(self.args)
-                self.assertEqual(db.execute.call_count, 5)
+                self.assertEqual(db.execute.call_count, 6)
                 db.close.assert_called_once_with()
 
     def test_api_read_failure_exits_transaction_and_closes_connection_without_probe(self):
@@ -617,7 +673,7 @@ class IdentityDiagnosticsTests(unittest.TestCase):
                 for forbidden in (SECRET, message, diagnostic.__file__, self.args.root):
                     self.assertNotIn(forbidden, output)
                 if group == 'contract':
-                    self.assertEqual(db.execute.call_count, 4)
+                    self.assertEqual(db.execute.call_count, 5)
                 db.close.assert_called_once_with()
                 self.execution.assert_not_called()
 
@@ -645,7 +701,7 @@ class IdentityDiagnosticsTests(unittest.TestCase):
                                  [table + '.single-row', table + '.no-next-page'])
                 self.assertFalse(report['complete'])
                 self.assertEqual(report['stage'], 'read-original-identity')
-                self.assertEqual([entry.args[1][1] for entry in db.execute.call_args_list[4:]],
+                self.assertEqual([entry.args[1][1] for entry in db.execute.call_args_list[5:]],
                                  tables[:index + 1])
                 self.assertNotIn(SECRET, json.dumps(report) + stderr.getvalue())
                 self.assertNotIn('Exact immutable baseline row required', json.dumps(report))

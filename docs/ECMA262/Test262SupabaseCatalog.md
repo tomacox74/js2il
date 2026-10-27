@@ -1675,10 +1675,13 @@ then host build). Both use the originally observed .NET SDK `10.0.403` and Node
 `24.22.1`. The comparison targets immutable provenance
 `b60fd015-e157-5f39-a8a6-b26b6ff1638c`, not the moving master reporting pointer.
 
-Database credentials exist only in the comparison step. Its connection defaults
-to server-enforced read only, verifies that setting, starts a repeatable-read
-read-only transaction, verifies that setting too, and performs only bounded
-primary-key reads of the original provenance/corpus/registration/validation.
+Database credentials exist only in the comparison step. Its connection requests
+read only at startup, then starts an explicit repeatable-read read-only
+transaction and sets its local default to read only. It verifies both effective
+settings before any catalogue API read and performs only bounded primary-key
+reads of the original provenance/corpus/registration/validation. Keeping the
+assignment inside the transaction avoids relying on startup/session settings
+surviving a transaction-pooling boundary; no setting escapes the transaction.
 Only the native host's `--capabilities` operation is used; there is no fixture,
 worker, Docker, budget, outbox, import or publication path.
 
@@ -1688,6 +1691,14 @@ Unrecognized field names and unsafe paths are redacted. A successful diagnostic
 means the comparison completed, not that the identities matched or live recovery
 succeeded. Reproduced identities must remain distinct from the original failed
 build document, which was not retained.
+
+The initial diagnostic `40573445098` rebuilt both profiles but stopped before
+the identity probe. After isolated-controller guard reporting was added in
+PR #2420, diagnostic `40575448904` identified the exact stop in both profiles:
+`SHOW default_transaction_read_only` was not `on`, despite the startup request.
+No catalogue API read or identity probe was reached. Explicit transaction-local
+enforcement addresses this observed diagnostic setup issue; it does not
+change roles, permissions, authority, stored rows or any live-recovery guard.
 
 ## Independent local and downstream workers (#2339)
 
