@@ -1,0 +1,84 @@
+name: Test262 authorized bounded recovery drill
+on:
+  workflow_dispatch:
+    inputs:
+      authorization:
+        description: Fixed owner authorization for the one two-variant campaign
+        type: string
+        required: true
+      phase:
+        description: First exhaust one attempt, then recover only its missing variant
+        type: choice
+        options: [exhaust, recover]
+        required: true
+      previous_run_id:
+        description: Exact successful exhaustion run, only for recovery
+        type: string
+        default: ''
+permissions:
+  contents: read
+  actions: read
+jobs:
+  drill:
+    if: ${{ github.ref == 'refs/heads/master' && inputs.authorization == 'live-recovery-2340-two-variants-20261027' && github.run_attempt == 1 }}
+    concurrency:
+      group: test262-central-native-target
+      cancel-in-progress: false
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+      - run: npm ci --ignore-scripts
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Build trusted binaries and isolated fixture image
+        run: |
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+          docker build --pull --build-arg SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)" \
+            -t test262-fixture:recovery-drill -f scripts/test262/central/fixture.Dockerfile .
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Execute only the authorized exhaustion and missing-variant recovery
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          AUTHORIZATION: ${{ inputs.authorization }}
+          PHASE: ${{ inputs.phase }}
+          PREVIOUS_RUN_ID: ${{ inputs.previous_run_id }}
+          TEST262_PROGRESS: '1'
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/recovery-drill/diagnostic.json
+        run: |
+          PREVIOUS_ARGS=()
+          if [ -n "$PREVIOUS_RUN_ID" ]; then
+            PREVIOUS_ARGS+=(--previous-run-id "$PREVIOUS_RUN_ID")
+          fi
+          python -m scripts.test262.central.live_recovery_drill \
+            --authorization "$AUTHORIZATION" --phase "$PHASE" --root "$TEST262_ROOT" \
+            --output artifacts/test262/recovery-drill/report.json "${PREVIOUS_ARGS[@]}"
+      - name: Preserve bounded proof and uncertain outcomes without replay
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-recovery-drill-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/recovery-drill
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90

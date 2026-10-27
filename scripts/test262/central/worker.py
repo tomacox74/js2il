@@ -88,7 +88,7 @@ def work(client, args):
         return work_staged(client, args)
 
 
-def work_staged(client, args):
+def work_staged(client, args, *, before_execute=None):
     outbox = Outbox(args.outbox,args.repository,args.producer,client.epoch)
     outbox.flush(client)
     started = time.monotonic()
@@ -110,6 +110,8 @@ def work_staged(client, args):
                         for row in client.read('fixture_dependencies', {'fixture_id': fixture['fixture_id']})]
         if hashlib.sha256((Path(args.root)/fixture['upstream_path']).read_bytes()).hexdigest() != fixture['content_sha256'][2:]:
             raise ValueError('Fixture bytes differ from sealed inventory')
+        if before_execute is not None:
+            before_execute(lease)
         begin = time.time()
         tick = time.monotonic()
         try:
