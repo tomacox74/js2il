@@ -47,9 +47,9 @@ public sealed partial class HIRToLIRLowerer
 
             // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
             var loopHeadLexicalBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                ? forOfStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).ToList()
-                : new List<BindingInfo>();
-            var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
+                ? forOfStmt.LoopHeadBindings.Where(static b => b.Kind is BindingKind.Let or BindingKind.Const).ToArray()
+                : Array.Empty<BindingInfo>();
+            var perIterationBindings = loopHeadLexicalBindings.Where(static b => b.IsCaptured).ToArray();
 
             bool useTempPerIterationScope = false;
             TempVariable loopHeadScopeTemp = default;
@@ -59,7 +59,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Current implementation only supports the "typed temp scope" optimization for non-async methods.
             // Keep behavior consistent with sync for..of lowering.
-            if (loopHeadLexicalBindings.Count > 0
+            if (loopHeadLexicalBindings.Length > 0
                 && !_methodBodyIR.IsGenerator)
             {
                 var declaringScope = loopHeadLexicalBindings[0].DeclaringScope;
@@ -454,9 +454,9 @@ public sealed partial class HIRToLIRLowerer
 
             // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
             var loopHeadLexicalBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                ? forOfStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).ToList()
-                : new List<BindingInfo>();
-            var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
+                ? forOfStmt.LoopHeadBindings.Where(static b => b.Kind is BindingKind.Let or BindingKind.Const).ToArray()
+                : Array.Empty<BindingInfo>();
+            var perIterationBindings = loopHeadLexicalBindings.Where(static b => b.IsCaptured).ToArray();
 
             bool useTempPerIterationScope = false;
             TempVariable loopHeadScopeTemp = default;
@@ -464,7 +464,7 @@ public sealed partial class HIRToLIRLowerer
             ScopeId loopScopeId = default;
             string? loopScopeName = null;
 
-            if (loopHeadLexicalBindings.Count > 0
+            if (loopHeadLexicalBindings.Length > 0
                 && !_methodBodyIR.IsGenerator)
             {
                 var declaringScope = loopHeadLexicalBindings[0].DeclaringScope;

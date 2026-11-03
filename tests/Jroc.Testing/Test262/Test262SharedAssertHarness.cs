@@ -141,16 +141,20 @@ public static class Test262SharedAssertHarness
         string entryScript,
         FrontmatterMetadata metadata)
     {
-        var (prefix, remainder, hasUseStrictDirective) = SplitDirectivePrologue(entryScript);
+        // Insert before the first token, not after a guessed directive prologue:
+        // a leading string can be an operand ('caller' in function() {}).
+        // Repeating an existing "use strict" directive is harmless.
+        var index = 0;
+        SkipTrivia(entryScript, ref index);
         var scriptBuilder = new System.Text.StringBuilder();
-        scriptBuilder.Append(prefix);
+        scriptBuilder.Append(entryScript.AsSpan(0, index));
 
-        if (metadata.OnlyStrict && !hasUseStrictDirective)
+        if (metadata.OnlyStrict)
         {
             scriptBuilder.AppendLine("\"use strict\";");
         }
 
-        scriptBuilder.Append(remainder);
+        scriptBuilder.Append(entryScript.AsSpan(index));
         return scriptBuilder.ToString();
     }
 

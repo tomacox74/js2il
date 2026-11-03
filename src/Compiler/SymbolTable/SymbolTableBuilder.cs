@@ -722,7 +722,7 @@ namespace Jroc.SymbolTables
             }
 
             if (!DynamicFunctionSupport.TryGetStaticStringArguments(
-                    arguments,
+                    DynamicFunctionSupport.GetSourceArguments(calleeId, arguments),
                     name => (TryResolveBinding(currentScope, name)?.DeclarationNode as VariableDeclarator)?.Init,
                     out var literalArgs))
             {
@@ -2555,7 +2555,11 @@ namespace Jroc.SymbolTables
             // Parameter default expressions evaluate in a separate environment from body declarations.
             // When a function has parameter expressions, default initializers should still resolve the
             // implicit arguments object even if the body declares its own `arguments` binding.
-            if (functionScope.Bindings.ContainsKey("arguments")
+            // A plain `var arguments` redeclares that implicit binding; unlike
+            // a parameter or function declaration, it must not suppress its initialization.
+            if (functionScope.Bindings.TryGetValue("arguments", out var existingArguments)
+                && (existingArguments.Kind != BindingKind.Var
+                    || existingArguments.DeclarationNode is FunctionDeclaration)
                 && !Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(functionScope.AstNode))
             {
                 return;

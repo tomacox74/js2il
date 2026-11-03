@@ -27,9 +27,9 @@ public sealed partial class HIRToLIRLowerer
         // end:
 
         var loopHeadLexicalBindings = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-            ? forInStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).ToList()
-            : new List<BindingInfo>();
-        var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
+            ? forInStmt.LoopHeadBindings.Where(static b => b.Kind is BindingKind.Let or BindingKind.Const).ToArray()
+            : Array.Empty<BindingInfo>();
+        var perIterationBindings = loopHeadLexicalBindings.Where(static b => b.IsCaptured).ToArray();
 
         bool useTempPerIterationScope = false;
         TempVariable loopHeadScopeTemp = default;
@@ -37,7 +37,7 @@ public sealed partial class HIRToLIRLowerer
         ScopeId loopScopeId = default;
         string? loopScopeName = null;
 
-        if (loopHeadLexicalBindings.Count > 0
+        if (loopHeadLexicalBindings.Length > 0
             && !_methodBodyIR.IsGenerator)
         {
             var declaringScope = loopHeadLexicalBindings[0].DeclaringScope;

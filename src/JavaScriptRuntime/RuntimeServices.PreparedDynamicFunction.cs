@@ -50,6 +50,13 @@ public partial class RuntimeServices
         object? syntaxError,
         bool construct)
     {
+        if (!construct && constructor is BuiltinDelegateFunctionAdapter callAdapter
+            && Function.IsPrototypeCall(callAdapter.Target))
+        {
+            return CreatePreparedDynamicFunction(
+                receiver, arguments.Length > 0 ? arguments[0] : null,
+                arguments.Skip(1).ToArray(), factory, sources, syntaxError, construct: false);
+        }
         if (constructor is JsClassConstructorObject && factory is not null)
         {
             var previous = _currentInvocation.Value;

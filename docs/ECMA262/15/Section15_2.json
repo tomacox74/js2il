@@ -50,6 +50,22 @@
     "entries": [
       {
         "clause": "15.2",
+        "feature": "Pinned function-declaration conformance completion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/function/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/function/dstr/RemainingStatementExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/function/S13_A15_T4.js",
+          "test/language/statements/function/S13.2.2_A8_T3.js",
+          "test/language/statements/function/dstr/obj-ptrn-prop-ary.js"
+        ],
+        "notes": "All 451 applicable pinned function-declaration cases have outcomes on the development branch: 422 verified passing and 29 explicitly skipped eval dependencies. Coverage includes var arguments preserving implicit arguments-object initialization, statically prepared Function.call construction with receiver evaluation and replaced-intrinsic fallbacks, and nested parameter destructuring. All 60 existing parse negatives remain verified. Branch-local native validation is not central trusted acceptance."
+      },
+      {
+        "clause": "15.2",
         "feature": "function declarations (global + nested) and calls",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",

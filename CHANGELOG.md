@@ -6,7 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: complete the remaining 74 classic-for, function-declaration,
+  generator-declaration and if-statement cases: 38 verified passing additions
+  and 36 explicit eval skips. All 1,171 pinned cases in these areas now have
+  outcomes: 1,121 verified passing and 50 unsupported eval dependencies.
+- fix(compiler): create the first captured for-loop let environment before
+  testing the condition, initialize implicit arguments for `var arguments`,
+  and prepare statically discoverable `Function.call` constructor sources
+  while preserving receiver evaluation and replacement-call behavior.
+- fix(test262): insert strict-only directives before the first source token
+  without splitting leading string-valued expressions.
 
 ## v0.12.34 - 2026-10-26
 

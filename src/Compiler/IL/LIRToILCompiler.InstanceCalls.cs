@@ -261,24 +261,23 @@ internal sealed partial class LIRToILCompiler
                 inherit: false)
             .Length == 1;
         var allMethods = receiverType
-            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-            .ToList();
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
         var namedMethods = allMethods
             .Where(mi => string.Equals(GetJavaScriptMethodName(mi), methodName, StringComparison.Ordinal))
-            .ToList();
+            .ToArray();
 
         // Prefer exact JS casing, but keep a case-insensitive fallback for CLR surfaces
         // that only expose PascalCase method names.
-        if (namedMethods.Count == 0)
+        if (namedMethods.Length == 0)
         {
             namedMethods = allMethods
                 .Where(mi => string.Equals(GetJavaScriptMethodName(mi), methodName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+                .ToArray();
         }
 
-        var methods = namedMethods.Where(mi => mi.DeclaringType == receiverType).ToList();
-        if (methods.Count == 0)
+        var methods = namedMethods.Where(mi => mi.DeclaringType == receiverType).ToArray();
+        if (methods.Length == 0)
         {
             methods = namedMethods;
         }

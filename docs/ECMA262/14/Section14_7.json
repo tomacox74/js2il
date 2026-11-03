@@ -188,6 +188,19 @@
   "support": {
     "entries": [
       {
+        "clause": "14.7.4",
+        "feature": "Pinned classic-for conformance completion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-for-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/for/RemainingStatementExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/for/scope-body-lex-open.js"
+        ],
+        "notes": "All 385 applicable pinned classic-for cases have outcomes on the development branch: 376 verified passing and nine explicitly skipped eval dependencies. Captured let bindings receive their first per-iteration environment after initialization and before the first condition, so initializer closures keep their original binding; const bindings do not receive per-iteration copies. All 49 existing parse negatives remain verified. Branch-local native validation is not central trusted acceptance."
+      },
+      {
         "clause": "14.7.2.2",
         "feature": "do-while loop (CountDownFromFive)",
         "status": "Supported",
