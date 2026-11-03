@@ -47,6 +47,22 @@ class CollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'does not match'):
             collection.terminal_proof(context, REPO, read=self.history('success', head_sha=REVISION))
 
+    def test_matrix_requires_distinct_terminal_jobs_and_slot_recovery(self):
+        context = dict(self.context(), worker_producers=['first', 'second'])
+        run, jobs, artifacts = self.history('success').side_effect
+        first = dict(jobs[0]['jobs'][0], name='execute (1)')
+        second = dict(first, name='execute (2)', id=48, conclusion='failure')
+        read = Mock(side_effect=[run, [{'jobs': [second, first]}], artifacts])
+        self.assertEqual(collection.terminal_proof(context, REPO, read=read), {'workers': [
+            {'slot': 1, 'job_id': 46, 'state': 'success', 'retained': True},
+            {'slot': 2, 'job_id': 48, 'state': 'failure', 'retained': False},
+        ]})
+        for invalid in ([first], [first, dict(second, id=46)], [first, second, second]):
+            with self.subTest(jobs=invalid):
+                with self.assertRaises(ValueError):
+                    collection.terminal_proof(context, REPO,
+                                              read=Mock(side_effect=[run, [{'jobs': invalid}]]))
+
     def test_wrong_attempt_or_context_fails_before_claiming(self):
         client = Mock(contract={'managed_actions_collection_version': 1})
         with tempfile.TemporaryDirectory() as directory:
@@ -133,6 +149,10 @@ class CollectionTests(unittest.TestCase):
         validation = workflow.split('\n  validate:\n')[1].split('\n  publish:\n')[0]
         publication = workflow.split('\n  publish:\n')[1]
         self.assertIn('needs: prepare', execute)
+        self.assertIn('fail-fast: false', execute)
+        self.assertIn('environment: test262-catalogue-worker-' + chr(36) + '{{ matrix.slot }}', execute)
+        self.assertIn('--slot "' + chr(36) + '{{ matrix.slot }}"', execute)
+        self.assertIn('github.run_attempt }}-' + chr(36) + '{{ matrix.slot }}', execute)
         self.assertIn('TEST262_SPLIT_WORKER_DATABASE_URL', execute)
         self.assertNotIn('TEST262_COORDINATOR_DATABASE_URL', execute)
         self.assertIn('needs: [prepare, execute]', finalize)

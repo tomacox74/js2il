@@ -1,4 +1,4 @@
-"""Version one of the split Actions collection, with one execution slot."""
+"""Prepare, execute and reconcile a bounded Actions worker matrix."""
 
 from contextlib import closing
 from datetime import datetime, timezone
@@ -52,6 +52,9 @@ def digest_string(value):
 
 def prepared_context(client, args):
     capability(client)
+    max_slots = client.contract.get('managed_actions_collection_slots', 0)
+    require(1 <= len(args.managed_worker) <= max_slots,
+            'Database does not support the requested execution matrix')
     run_id, attempt, _ = actions_origin()
     require(args.run_key == f'actions:{run_id}:{attempt}' and args.budget_key == f'actions:{run_id}',
             'Managed preparation keys must match the Actions origin')
@@ -72,7 +75,7 @@ def preparation_fields(args):
     run_id, attempt, event_sha = actions_origin()
     return {
         'managed_version': 1, 'actions_run_id': run_id, 'actions_attempt': attempt,
-        'event_sha': event_sha, 'worker_producer': args.managed_worker,
+        'event_sha': event_sha, 'worker_producers': args.managed_worker,
         'runtime_digest': digest_string(args.runtime_digest), 'image_digest': digest_string(args.image_digest),
         'area': args.area,
         'limits': {'candidate_limit': args.candidate_limit, 'accepted_limit': args.accepted_limit,
@@ -117,7 +120,7 @@ def open_collection(client, args):
     return {'run': context['run'], 'phase': result['phase'], 'artifact_id': result['artifact_id']}
 
 
-def history(context, repository, *, completed, read=gh):
+def history(context, repository, *, completed, slots, read=gh):
     run_id, attempt = context['actions_run_id'], context['actions_attempt']
     runs = read(f'repos/{repository}/actions/runs/{run_id}/attempts/{attempt}')
     require(len(runs) == 1, 'Ambiguous Actions attempt')
@@ -131,13 +134,19 @@ def history(context, repository, *, completed, read=gh):
     if completed:
         require(run.get('status') == 'completed', 'Actions attempt is still active')
     pages = read(f'repos/{repository}/actions/runs/{run_id}/attempts/{attempt}/jobs?per_page=100')
-    jobs = [job for page in pages for job in page['jobs'] if job['name'] == EXECUTE_JOB]
-    require(len(jobs) == 1, 'Missing or ambiguous execution job')
-    job = jobs[0]
-    require(job.get('run_id') == run_id and job.get('run_attempt') == attempt
-            and job.get('head_sha') == context['event_sha'] and type(job.get('id')) is int,
-            'Execution job does not match the prepared context')
-    return job
+    jobs = [job for page in pages for job in page['jobs']]
+    result = {}
+    for slot in slots:
+        name = f'{EXECUTE_JOB} ({slot})' if 'worker_producers' in context else EXECUTE_JOB
+        matches = [job for job in jobs if job['name'] == name]
+        require(len(matches) == 1, f'Missing or ambiguous execution job for slot {slot}')
+        job = matches[0]
+        require(job.get('run_id') == run_id and job.get('run_attempt') == attempt
+                and job.get('head_sha') == context['event_sha'] and type(job.get('id')) is int,
+                'Execution job does not match the prepared context')
+        result[slot] = job
+    require(len({job['id'] for job in result.values()}) == len(result), 'Duplicate execution job ID')
+    return result
 
 
 def artifact_proof(context, repository, name, read=gh):
@@ -159,7 +168,9 @@ def work_collection(client, args):
     require(registered['artifact_id'] == args.artifact_id
             and registered['artifact_digest'] == '\\x' + digest_string(args.artifact_digest),
             'Execution artifact differs from the committed preparation')
-    require(args.producer == context['worker_producer'] and args.producer != context['producer'],
+    producers = context.get('worker_producers') or [context['worker_producer']]
+    require(1 <= args.slot <= len(producers) and args.producer == producers[args.slot - 1]
+            and args.producer != context['producer'],
             'Execution requires its registered worker identity')
     args.kind = context['kind']
     args.budget = context['budget']
@@ -170,9 +181,9 @@ def work_collection(client, args):
     args.seconds = MAX_WORKER_SECONDS
     args.limit = MAX_WORKER_ATTEMPTS
     check_checkout(args, context)
-    job = history(context, args.repository_name, completed=False)
+    job = history(context, args.repository_name, completed=False, slots=[args.slot])[args.slot]
     require(job.get('status') == 'in_progress', 'Execution job is not active')
-    key = f"worker:{args.producer}:actions:{context['actions_run_id']}:{context['actions_attempt']}:1:1"
+    key = f"worker:{args.producer}:actions:{context['actions_run_id']}:{context['actions_attempt']}:{args.slot}:1"
     args.run = identity(args.repository, args.producer, key)
     require(not Path(args.outbox).exists(), 'Existing execution outbox requires upload-only recovery')
     child = client.call('join_collection', context['run'], args.run, job['id'], sha(context))
@@ -183,13 +194,24 @@ def work_collection(client, args):
         require(pending == 0, 'Unacknowledged worker outbox')
     finish(client, child, 'complete', datetime.now(timezone.utc).isoformat(),
            'supervisor', 'collection-finished', True)
-    result.update(collection_run_id=context['run'], job_id=job['id'], flush_verified=True)
+    result.update(collection_run_id=context['run'], job_id=job['id'], slot=args.slot, flush_verified=True)
     write_json(args.output, result)
     return result
 
 
 def terminal_proof(context, repository, *, completed=False, read=gh):
-    job = history(context, repository, completed=completed, read=read)
+    slots = range(1, len(context.get('worker_producers', [None])) + 1)
+    jobs = history(context, repository, completed=completed, slots=slots, read=read)
+    proofs = [dict(worker_proof(context, repository, job, slot, read), slot=slot)
+              for slot, job in jobs.items()]
+    if 'worker_producers' in context:
+        return {'workers': proofs}
+    legacy = proofs[0]
+    del legacy['slot']
+    return legacy
+
+
+def worker_proof(context, repository, job, slot, read):
     require(job.get('status') == 'completed' and job.get('completed_at'), 'Execution is not proven terminal')
     state = job.get('conclusion')
     if state in ('timed_out', 'action_required', 'stale'):
@@ -199,7 +221,7 @@ def terminal_proof(context, repository, *, completed=False, read=gh):
     retained = False
     if state == 'success' and any(step['name'] == RECOVERY_STEP and step.get('conclusion') == 'success'
                                   for step in job.get('steps', [])):
-        name = f"test262-split-worker-{context['actions_run_id']}-{context['actions_attempt']}-1"
+        name = f"test262-split-worker-{context['actions_run_id']}-{context['actions_attempt']}-{slot}"
         try:
             artifact_proof(context, repository, name, read)
             retained = True
