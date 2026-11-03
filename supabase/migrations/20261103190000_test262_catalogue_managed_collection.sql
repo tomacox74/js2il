@@ -581,7 +581,7 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE s test262.api_subjects; w test262.work_items;
 BEGIN
  s=test262.api_identity(epoch,true); PERFORM test262.api_lock(s.repository_id);
- IF EXISTS (SELECT 1 FROM test262.work_leases l JOIN test262.collection_workers w ON w.run_id=l.run_id
+ IF EXISTS (SELECT 1 FROM test262.work_leases l JOIN test262.collection_workers managed_worker ON managed_worker.run_id=l.run_id
    WHERE l.repository_id=s.repository_id AND l.work_item_id=work_id AND l.lease_generation=generation) THEN
   RAISE EXCEPTION 'Managed leases have a fixed expiration' USING ERRCODE='42501';
  END IF;
