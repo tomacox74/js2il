@@ -9,7 +9,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-from scripts.test262.central import collection
+from scripts.test262.central import collection, execution_identity
 from scripts.test262.central.client import sha
 from scripts.test262.central.collection_bundle import digest, install
 
@@ -114,6 +114,34 @@ class CollectionTests(unittest.TestCase):
                     copy.close()
             finally:
                 db.close()
+
+    def test_bundled_identity_matches_clean_worker_without_build_intermediates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            pin = root / 'tests/test262/test262.pin.json'
+            pin.parent.mkdir(parents=True)
+            pin.write_text(json.dumps({'upstream': {'commit': REVISION}}))
+            host = root / 'scripts/test262/NativeScreeningHost'
+            generated = host / 'obj/Release/net10.0/AssemblyInfo.cs'
+            generated.parent.mkdir(parents=True)
+            generated.write_text('// generated')
+            (host / 'Program.cs').write_text('// tracked source')
+            jroc = root / 'src/Cli/bin/Release/net10.0/Jroc.dll'
+            jroc.parent.mkdir(parents=True)
+            jroc.write_bytes(b'binary')
+            args = SimpleNamespace(root=root, jroc=jroc, kind='mvp-composite',
+                                   runtime_timeout=30, compile_timeout=60, cap_ms=120000)
+            with patch.object(execution_identity, 'REPO', root), patch.object(
+                execution_identity.catalog, 'environment', return_value={'identity': {'os': 'Linux'}}
+            ):
+                prepared = execution_identity.execution_identity(args, 'corpus', bundled=True)
+                legacy = execution_identity.execution_identity(args, 'corpus')
+                self.assertIn(generated.relative_to(root).as_posix(), legacy['tooling'])
+                generated.unlink()
+                worker = execution_identity.execution_identity(args, 'corpus', bundled=True)
+                self.assertEqual(prepared, worker)
+                self.assertIn('Jroc.dll', worker['binaries'])
+                self.assertIn((host / 'Program.cs').relative_to(root).as_posix(), worker['tooling'])
 
     def test_bundle_rejects_digest_and_path_mismatches(self):
         with tempfile.TemporaryDirectory() as directory:

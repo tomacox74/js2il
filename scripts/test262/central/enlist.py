@@ -63,7 +63,7 @@ def check_checkout(args, context):
     require(git(args.root,'rev-parse','HEAD')==upstream and
             not git(args.root,'status','--porcelain','--untracked-files=no'),
             'Pinned upstream checkout differs or has tracked edits')
-    actual=execution_identity(args,context['corpus'])
+    actual=execution_identity(args,context['corpus'],bundled=context.get('managed_version') == 1)
     require(actual==context['identity'], 'Build/harness/tooling/pin/environment identity differs')
     return actual
 
@@ -149,3 +149,4 @@ def replay(client,args,context,key):
     return {'run_id':args.run,'new_attempts':0,'replayed':True,'collection_state':ended['state'],
             'source_revision':context['revision'],'provenance_id':context['provenance'],
             'suite_completion_claimed':False,'publication_eligible':False}
+

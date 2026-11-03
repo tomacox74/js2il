@@ -71,7 +71,7 @@ def prepare_inventory(client, args):
     with stage('prepare.registrations'):
         snapshot = registrations(client,args.repository,source,ids)
     from .execution_identity import execution_identity
-    doc=execution_identity(args,corpus)
+    doc=execution_identity(args,corpus,bundled=bool(getattr(args,'managed_worker',None)))
     capabilities=doc['capabilities']
     pid = provenance(client,args.repository,corpus,args.kind,doc)
     eligibility=[]
