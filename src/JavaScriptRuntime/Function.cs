@@ -315,6 +315,9 @@ public static class Function
             return Apply(thisArgument!, thisArgArgument, argArrayArgument);
         }
 
+        internal static bool IsPrototypeCall(Delegate target)
+            => target.Equals((BuiltinFunctionVariadic)PrototypeCall);
+
         private static object? PrototypeCall(object? thisArgument, in JsCallArguments arguments)
         {
             if (!IsCallableObject(thisArgument))

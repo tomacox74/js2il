@@ -37,6 +37,13 @@ internal static class DynamicFunctionSupport
         => callee is Identifier { Name: "Function" }
             || callee is MemberExpression { Computed: false, Property: Identifier { Name: "Function" } };
 
+    // Function.call(thisArg, ...sources) has the same source arguments as
+    // Function(...sources); the receiver still needs normal runtime evaluation.
+    internal static IEnumerable<Node> GetSourceArguments(Node callee, IEnumerable<Node> arguments)
+        => callee is MemberExpression { Computed: false, Property: Identifier { Name: "call" } }
+            ? arguments.Skip(1)
+            : arguments;
+
     internal static bool TryGetFunctionConstructorKind(Node callee, Func<string, Node?> resolve, out bool generator)
     {
         var visited = new HashSet<string>(StringComparer.Ordinal);
@@ -48,6 +55,8 @@ internal static class DynamicFunctionSupport
             if (IsFunctionConstructorCandidate(node)) return true;
             switch (node)
             {
+                case MemberExpression { Computed: false, Property: Identifier { Name: "call" } } call:
+                    return Resolve(call.Object, out isGenerator);
                 case Identifier identifier when visited.Add(identifier.Name) && resolve(identifier.Name) is { } declaration:
                     return Resolve(declaration, out isGenerator);
                 case ClassDeclaration { SuperClass: { } heritage }:

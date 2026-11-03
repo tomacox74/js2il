@@ -1236,7 +1236,7 @@ partial class HIRMethodBuilder
             : ((NewExpression)siteNode).Arguments.Cast<Node>();
         if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(callee, ResolveInitializer, out _)
             || !DynamicFunctionSupport.TryGetStaticStringArguments(
-                arguments,
+                DynamicFunctionSupport.GetSourceArguments(callee, arguments),
                 ResolveInitializer,
                 out var sources)
             || !TryParseExpression(callee, out var calleeExpression)

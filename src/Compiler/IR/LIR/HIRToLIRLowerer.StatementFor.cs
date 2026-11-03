@@ -28,7 +28,8 @@ public sealed partial class HIRToLIRLowerer
         // end:
 
         var loopHeadLexicalBindings = GetLoopHeadLexicalBindingsForForInit(forStmt.Init);
-        var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
+        var perIterationBindings = loopHeadLexicalBindings
+            .Where(b => b.Kind == BindingKind.Let && b.IsCaptured).ToList();
 
         int loopStartLabel = CreateLabel();
         int loopUpdateLabel = CreateLabel();
@@ -75,6 +76,21 @@ public sealed partial class HIRToLIRLowerer
             if (forStmt.Init != null && !TryLowerStatement(forStmt.Init))
             {
                 return false;
+            }
+
+            // ForBodyEvaluation creates the first iteration environment before
+            // testing the condition. Closures created in the initializer must
+            // retain the initial binding, even when the first test mutates it.
+            if (perIterationBindings.Count > 0)
+            {
+                if (useTempPerIterationScope)
+                {
+                    EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                }
+                else if (shouldRecreateLeafScopeEachIteration)
+                {
+                    EmitRecreateLeafScopeForPerIterationBindings(perIterationBindings);
+                }
             }
 
             int? fastPathEndLabel = null;
@@ -135,7 +151,7 @@ public sealed partial class HIRToLIRLowerer
 
             // CreatePerIterationEnvironment: ensure the update expression mutates the
             // next iteration's environment, not the previous iteration's.
-            if (useTempPerIterationScope)
+            if (useTempPerIterationScope && perIterationBindings.Count > 0)
             {
                 EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
             }

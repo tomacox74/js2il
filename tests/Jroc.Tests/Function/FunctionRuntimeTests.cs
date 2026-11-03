@@ -5,6 +5,55 @@ namespace Jroc.Tests.Function;
 public sealed class FunctionRuntimeTests
 {
     [Fact]
+    public void DynamicFunctionCallPreservesReceiverEvaluationAndSourceBoundaries()
+    {
+        const string source = """
+            var receiverCalls = 0;
+            function receiver() { receiverCalls++; return { ignored: true }; }
+            const subtract = Function.call(receiver(), "a", "b", "return a - b;");
+            assert.sameValue(receiverCalls, 1);
+            assert.sameValue(subtract(9, 4), 5);
+            assert.sameValue(subtract.length, 2);
+            assert.sameValue(subtract.name, "anonymous");
+            assert.sameValue(Function.call()(), undefined);
+            assert.throws(SyntaxError, () => Function.call(null, "if ("));
+            assert.throws(TypeError, () => new Function.call(null, ""));
+            const Dynamic = Function;
+            assert.sameValue(Dynamic.call(null, "return 7;")(), 7);
+            """;
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            nameof(DynamicFunctionCallPreservesReceiverEvaluationAndSourceBoundaries),
+            "FunctionRuntime", _ => (source, "dynamic_function_call.js"));
+        Assert.Empty(result.Output);
+    }
+
+    [Fact]
+    public void DynamicFunctionCallHonorsReplacedCallAndConstructor()
+    {
+        const string source = """
+            const original = Function;
+            const marker = {};
+            original.call = function(receiver, body) {
+              assert.sameValue(this, original);
+              assert.sameValue(receiver, marker);
+              return body;
+            };
+            assert.sameValue(Function.call(marker, "return 23;"), "return 23;");
+            Function = function(parameter, body) {
+              assert.sameValue(this, marker);
+              assert.sameValue(parameter, "a");
+              assert.sameValue(body, "return a;");
+              return 42;
+            };
+            assert.sameValue(Function.call(marker, "a", "return a;"), 42);
+            """;
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            nameof(DynamicFunctionCallHonorsReplacedCallAndConstructor),
+            "FunctionRuntime", _ => (source, "dynamic_function_replaced_call.js"));
+        Assert.Empty(result.Output);
+    }
+
+    [Fact]
     public void DynamicFunctionConstructorsCoerceArgumentsOnceBeforeRejectingHashbang()
     {
         const string source = """
