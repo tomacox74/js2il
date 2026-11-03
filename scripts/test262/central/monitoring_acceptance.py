@@ -137,10 +137,10 @@ def decode_query(document):
         for frame in result['frames']:
             names = [field['name'] for field in frame['schema']['fields']]
             values = frame['data']['values']
-            if (not names or any(not isinstance(name, str) or not name for name in names) or
+            if (any(not isinstance(name, str) or not name for name in names) or
                     len(set(names)) != len(names) or len(names) != len(values) or
                     any(not isinstance(column, list) for column in values) or
-                    len({len(column) for column in values}) != 1):
+                    len({len(column) for column in values}) > 1):
                 raise AuditError('invalid-query-frame')
             frames.append({'fields': names, 'rows': [dict(zip(names, row)) for row in zip(*values)]})
         return {'state': 'ok' if frames and any(f['rows'] for f in frames) else 'no-data',

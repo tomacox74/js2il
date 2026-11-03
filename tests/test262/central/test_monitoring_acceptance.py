@@ -30,6 +30,16 @@ class MonitoringAcceptanceTests(unittest.TestCase):
         self.assertEqual(audit.decode_query(frame())['state'], 'no-data')
         self.assertEqual(audit.decode_query(frame([7]))['frames'][0]['rows'], [{'value': 7}])
 
+    def test_empty_grafana_frame_is_no_data_but_mismatched_empty_columns_are_errors(self):
+        document = {'results': {'A': {'status': 200, 'frames': [
+            {'schema': {'fields': []}, 'data': {'values': []}}]}}}
+        self.assertEqual(audit.decode_query(document),
+                         {'state': 'no-data', 'frames': [{'fields': [], 'rows': []}]})
+        for fields, values in (([], [[1]]), ([{'name': 'value'}], [])):
+            with self.subTest(fields=fields, values=values), self.assertRaises(audit.AuditError):
+                audit.decode_query({'results': {'A': {'status': 200, 'frames': [
+                    {'schema': {'fields': fields}, 'data': {'values': values}}]}}})
+
     def test_drift_blocks_unreviewed_live_queries_but_ignores_visual_defaults(self):
         expected = {'panels': [{'id': 100, 'datasource': audit.DATASOURCE,
             'targets': [{'refId': 'A', 'rawSql': 'SELECT 1', 'format': 'table'}]}]}
