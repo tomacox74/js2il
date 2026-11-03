@@ -29,7 +29,7 @@ public sealed partial class HIRToLIRLowerer
 
         var loopHeadLexicalBindings = GetLoopHeadLexicalBindingsForForInit(forStmt.Init);
         var perIterationBindings = loopHeadLexicalBindings
-            .Where(b => b.Kind == BindingKind.Let && b.IsCaptured).ToList();
+            .Where(static b => b.Kind == BindingKind.Let && b.IsCaptured).ToArray();
 
         int loopStartLabel = CreateLabel();
         int loopUpdateLabel = CreateLabel();
@@ -81,7 +81,7 @@ public sealed partial class HIRToLIRLowerer
             // ForBodyEvaluation creates the first iteration environment before
             // testing the condition. Closures created in the initializer must
             // retain the initial binding, even when the first test mutates it.
-            if (perIterationBindings.Count > 0)
+            if (perIterationBindings.Length > 0)
             {
                 if (useTempPerIterationScope)
                 {
@@ -94,19 +94,19 @@ public sealed partial class HIRToLIRLowerer
             }
 
             int? fastPathEndLabel = null;
-            if (!useTempPerIterationScope && perIterationBindings.Count == 0
+            if (!useTempPerIterationScope && perIterationBindings.Length == 0
                 && forStmt.BitsetCountPattern is { } countPattern
                 && TryEmitBitsetCountFastPath(forStmt, countPattern, out var countEndLabel))
             {
                 fastPathEndLabel = countEndLabel;
             }
-            if (!useTempPerIterationScope && perIterationBindings.Count == 0
+            if (!useTempPerIterationScope && perIterationBindings.Length == 0
                 && forStmt.Int32ArrayVectorOrPattern is { } vectorPattern
                 && TryEmitInt32ArrayVectorOrFastPath(forStmt, vectorPattern, out var vectorEndLabel))
             {
                 fastPathEndLabel = vectorEndLabel;
             }
-            if (!useTempPerIterationScope && perIterationBindings.Count == 0
+            if (!useTempPerIterationScope && perIterationBindings.Length == 0
                 && forStmt.Int32ArrayLocalVectorOrPattern is { } localPattern
                 && TryEmitInt32ArrayLocalVectorOrFastPath(forStmt, localPattern, out var localEndLabel))
             {
@@ -151,7 +151,7 @@ public sealed partial class HIRToLIRLowerer
 
             // CreatePerIterationEnvironment: ensure the update expression mutates the
             // next iteration's environment, not the previous iteration's.
-            if (useTempPerIterationScope && perIterationBindings.Count > 0)
+            if (useTempPerIterationScope && perIterationBindings.Length > 0)
             {
                 EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
             }

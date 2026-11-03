@@ -110,15 +110,17 @@ public sealed partial class HIRToLIRLowerer
             return;
         }
 
+        var regularParameters = parameters.Take(regularParameterCount).ToArray();
+
         // Emit default parameter initializers for identifier parameters with defaults.
-        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters.Take(regularParameterCount).ToList());
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(regularParameters);
         if (!_parameterInitSucceeded)
         {
             return;
         }
 
         // Emit parameter destructuring initializers (object/array patterns).
-        if (!EmitDestructuredParameterInitializers(parameters.Take(regularParameterCount).ToList()))
+        if (!EmitDestructuredParameterInitializers(regularParameters))
         {
             _parameterInitSucceeded = false;
             return;
@@ -185,15 +187,17 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        var regularParameters = parameters.Take(regularParameterCount).ToArray();
+
         // Default parameter initialization
-        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters.Take(regularParameterCount).ToList());
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(regularParameters);
         if (!_parameterInitSucceeded)
         {
             return false;
         }
 
         // Destructuring parameter initialization
-        if (!EmitDestructuredParameterInitializers(parameters.Take(regularParameterCount).ToList()))
+        if (!EmitDestructuredParameterInitializers(regularParameters))
         {
             return false;
         }
