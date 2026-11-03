@@ -407,10 +407,10 @@ BEGIN
   RETURN plan||jsonb_build_object('disposition','unchanged','result',to_jsonb(b));
  END IF;
  IF EXISTS (
-   SELECT 1 FROM test262.collection_attempts c JOIN test262.collection_workers w ON w.collection_run_id=c.run_id
-   LEFT JOIN test262.runs child ON child.run_id=w.run_id
+   SELECT 1 FROM test262.collection_attempts c JOIN test262.collection_workers managed_worker ON managed_worker.collection_run_id=c.run_id
+   LEFT JOIN test262.runs child ON child.run_id=managed_worker.run_id
    WHERE c.budget_scope_id=id AND
-     (c.phase<>'closing' OR (w.run_id IS NOT NULL AND (child.state IN ('running','planned') OR child.ended_at IS NULL)))
+     (c.phase<>'closing' OR (managed_worker.run_id IS NOT NULL AND (child.state IN ('running','planned') OR child.ended_at IS NULL)))
  ) THEN RETURN plan||jsonb_build_object('disposition','active-or-unproven-worker'); END IF;
  IF EXISTS(SELECT 1 FROM test262.work_items x JOIN test262.budget_work_items bw USING(work_item_id)
     WHERE bw.budget_scope_id=id AND x.state='leased' AND x.lease_expires_at>clock_timestamp()) OR
@@ -427,9 +427,9 @@ BEGIN
  IF EXISTS(SELECT 1 FROM test262.budget_reservations br JOIN test262.work_leases wl USING(work_item_id,lease_generation)
     JOIN test262.runs x ON x.run_id=wl.run_id WHERE br.budget_scope_id=id AND
     (x.producer_id<>s.producer_id OR x.trust_class<>'trusted' OR x.external_run_key !~ ('^'||b.external_key||':[1-9][0-9]*$'))
-    AND NOT EXISTS (SELECT 1 FROM test262.collection_attempts c JOIN test262.collection_workers w ON w.collection_run_id=c.run_id
-      WHERE c.budget_scope_id=id AND c.run_id=r.run_id AND w.run_id=x.run_id
-        AND w.producer_id=x.producer_id AND x.trust_class='trusted')) THEN
+    AND NOT EXISTS (SELECT 1 FROM test262.collection_attempts c JOIN test262.collection_workers managed_worker ON managed_worker.collection_run_id=c.run_id
+      WHERE c.budget_scope_id=id AND c.run_id=r.run_id AND managed_worker.run_id=x.run_id
+        AND managed_worker.producer_id=x.producer_id AND x.trust_class='trusted')) THEN
   RETURN plan||jsonb_build_object('disposition','foreign-reservation');
  END IF;
  IF b.reserved_attempts<>(SELECT coalesce(sum(reserved_attempts),0) FROM test262.budget_reservations WHERE budget_scope_id=id AND state='reserved') OR
