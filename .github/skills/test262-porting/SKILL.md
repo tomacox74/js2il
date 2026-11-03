@@ -27,10 +27,16 @@ artifacts do not become authoritative when copied into a checkout.
    `faf01df8-aa65-4375-a708-6c1e555f957b`, the pinned revision in
    `tests/test262/test262.pin.json`, evidence kind and selected channel.
    Use an authorized read-only reporting connection/connector or an
-   operator-provided coherent central export. The configured `test262-catalog`
+   operator-provided coherent central export. Agents may use
+   `TEST262_AGENTRO_DATABASE_URL` for dedicated read-only SQL access to approved
+   `test262_reporting` views/schema metadata; follow **Read-only database
+   environment variable** in the runbook for bounded queries, read-only
+   transactions and credential handling. Never print the URL, pass it in
+   command-line arguments or expose it to fixture/compiler/test processes.
+   The configured `test262-catalog`
    MCP server provides authenticated read-only SQL access; follow **Registered
    MCP access** in the runbook and use it when available. A Data API denial does
-   not imply MCP access is unavailable. For local Data API reads, reuse
+   not imply database/MCP access is unavailable. For local Data API reads, reuse
    `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` from JROC performance analysis;
    follow **Local agent read access** in the runbook for `apikey`, custom-schema
    headers and bounded queries. These variables work for the catalogue only
