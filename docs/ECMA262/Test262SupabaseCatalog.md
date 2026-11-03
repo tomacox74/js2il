@@ -2601,3 +2601,15 @@ production acceptance receipt, archive proof or guaranteed live runtime. Review
 its stage timings separately from export/network latency. After merge, the
 reviewed protected opt-in run still needs a passing live reconciliation receipt
 before closing #2342.
+
+## Split Actions workflow (#2363)
+
+The central workflow supports a separate prepare, execute and finalize path with one worker. The existing supervisor remains the default. The weekly schedule selects native screening and manual dispatch defaults to MVP.
+
+The split path requires migration `20261103190000_test262_catalogue_managed_collection.sql` and an approved execution-only login provisioned with the existing worker enrollment procedure. Configure a distinct worker producer UUID as `TEST262_SPLIT_WORKER_PRODUCER_ID` and the login's connection secret as `TEST262_SPLIT_WORKER_DATABASE_URL` in the protected `test262-catalogue-worker-1` environment. Expose the worker producer UUID to the preparation job through the corresponding repository or coordinator environment variable. The worker uses the same repository and authority epoch variables as the coordinator. Enable `TEST262_SPLIT_WORKFLOW=true` after reviewing deployment and verifying the effective grants.
+
+Preparation commits the selected work and discovery cursor together. The coordinator registers the immutable runtime artifact before admitting claims. The worker verifies the exact build, image and context, then claims under its own run and the collection's shared budget. Finalization verifies the execution job and retained recovery artifact. Missing receipts, unresolved leases and infrastructure errors prevent the collection from reaching the native acceptance gate. The existing reconciliation workflow can assess terminal split runs using Actions job metadata and scoped database records.
+
+Version 1 accepts the original Actions attempt for preparation and execution. A downstream validation or publication rerun can use the previously issued artifact IDs. A screening rerun within the same Actions run is rejected before claims. Recover saved observations with the original worker identity and existing upload-only flush procedure. Start a fresh authorized dispatch for further screening. Budget settlement waits for any live leases to expire and retains conservative charges for abandoned reservations.
+
+Before reverting to the legacy path, allow the split collection to stop claiming and reconcile its leases and budget. Set `TEST262_SPLIT_WORKFLOW=false` for subsequent dispatches. The collection and worker relations are included in coherent exports and database backups when the managed capability is present. The pipeline metrics view reports parent totals, and `test262_reporting.v_collection_workers` exposes individual worker measurements.

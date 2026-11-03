@@ -56,6 +56,30 @@ def parser():
     q.add_argument('--compile-timeout',type=int,default=60); q.add_argument('--area',default='')
     q.add_argument('--compilation-coverage',action='store_true')
     q.add_argument('--output',required=True)
+    q.add_argument('--managed-worker',help='Approved producer UUID for the split workflow')
+    q.add_argument('--runtime-digest')
+    q.add_argument('--image-digest')
+    opened=sub.add_parser('open-collection')
+    opened.add_argument('--context',required=True)
+    opened.add_argument('--artifact-id',required=True,type=int)
+    opened.add_argument('--artifact-digest',required=True)
+    opened.add_argument('--repository-name',default='tomacox74/js2il')
+    wsplit=sub.add_parser('work-collection')
+    wsplit.add_argument('--context',required=True)
+    wsplit.add_argument('--root',required=True)
+    wsplit.add_argument('--outbox',required=True)
+    wsplit.add_argument('--output',required=True)
+    wsplit.add_argument('--artifact-id',required=True,type=int)
+    wsplit.add_argument('--artifact-digest',required=True)
+    wsplit.add_argument('--image',default='test262-fixture:local')
+    wsplit.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll')
+    wsplit.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
+    wsplit.add_argument('--repository-name',default='tomacox74/js2il')
+    fsplit=sub.add_parser('finish-collection')
+    fsplit.add_argument('--repository-name',default='tomacox74/js2il')
+    fsplit.add_argument('--output',required=True)
+    fsplit.add_argument('--context-output',required=True)
+    fsplit.add_argument('--github-output',required=True)
     refresh=sub.add_parser('refresh',help='Refresh validated master registrations without screening/publication')
     refresh.add_argument('--repository-name',default='tomacox74/js2il')
     refresh.add_argument('--revision',required=True); refresh.add_argument('--root',required=True)
@@ -79,6 +103,7 @@ def parser():
     enlist.add_argument('--jroc',default='src/Cli/bin/Release/net10.0/Jroc.dll')
     enlist.add_argument('--host',default='scripts/test262/NativeScreeningHost/bin/Release/net10.0/NativeScreeningHost.dll')
     s=sub.add_parser('seal'); s.add_argument('--context',required=True); s.add_argument('--batch-key',required=True); s.add_argument('--output',required=True)
+    s.add_argument('--repository-name',default='tomacox74/js2il')
     g=sub.add_parser('generate'); g.add_argument('--batch-file',required=True); g.add_argument('--cache',required=True); g.add_argument('--root',required=True); g.add_argument('--output',required=True)
     pub=sub.add_parser('publish'); pub.add_argument('--batch-file',required=True); pub.add_argument('--patch',required=True)
     pub.add_argument('--manifest',required=True); pub.add_argument('--body',required=True)
@@ -107,6 +132,9 @@ def main(argv=None):
             finally:
                 outbox.db.close()
             result={'flushed':True}
+        elif args.command in ('open-collection','work-collection','finish-collection'):
+            from . import collection
+            result=getattr(collection,args.command.replace('-','_'))(client,args)
         elif args.command=='enlist':
             from .enlist import run as enlist
             result=enlist(client,args)
@@ -166,3 +194,4 @@ def run(argv=None):
 
 if __name__=='__main__':
     raise SystemExit(run())
+

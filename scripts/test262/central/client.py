@@ -22,6 +22,17 @@ EXPORT_TABLES = ('corpora', 'repository_corpora', 'fixtures', 'fixture_specifica
                  'native_batches', 'batch_fixtures', 'batch_evidence', 'publications', 'publication_checks', 'imports',
                  'import_records', 'legacy_control_records', 'reconciliation_state', 'reconciliations', 'run_metrics')
 
+MANAGED_EXPORT_TABLES = ('collection_attempts', 'collection_workers')
+
+
+def export_tables(header):
+    version = header.get('managed_actions_collection_version')
+    if version is None:
+        return EXPORT_TABLES
+    if type(version) is not int or version != 1:
+        raise ValueError('Unsupported managed collection export')
+    return EXPORT_TABLES + MANAGED_EXPORT_TABLES
+
 
 def canonical(value, *, database_numbers=False):
     """Keep legacy identity JSON unless PostgreSQL numeric formatting is requested."""
@@ -75,7 +86,9 @@ class Client:
     def call(self, operation, *args):
         arities = {'put': 2, 'start_run': 1, 'ingest': 2, 'claim': 4,
                    'renew': 3, 'complete': 3, 'finish_run': 4, 'finish_budget': 2,
-                   'transition': 4, 'reconcile': 4, 'metric': 6, 'monitor': 2}
+                   'transition': 4, 'reconcile': 4, 'metric': 6, 'monitor': 2,
+                   'collection': 1, 'register_collection': 1, 'open_collection': 3,
+                   'join_collection': 4, 'finish_collection': 2}
         if operation not in arities or len(args) != arities[operation]:
             raise ValueError('Unsupported API operation')
         values = [self.epoch] + [self.Jsonb(x) if isinstance(x, (dict, list)) else x for x in args]
@@ -168,8 +181,11 @@ class Client:
                 digest.update(line.encode())
                 stream.write(line)
 
+            managed = self.contract.get('managed_actions_collection_version') == 1
+            if managed:
+                header['managed_actions_collection_version'] = 1
             emit({'header': header})
-            for table in EXPORT_TABLES:
+            for table in export_tables(header):
                 check_deadline()
                 if os.getenv('TEST262_PROGRESS') == '1':
                     print('Exporting', table, flush=True)
@@ -243,3 +259,4 @@ def fixture_environment(source=None):
     allowed = ('PATH','HOME','TMPDIR','TEMP','TMP','LANG','LC_ALL','DOTNET_ROOT','DOTNET_NOLOGO',
                'DOTNET_SKIP_FIRST_TIME_EXPERIENCE','DOTNET_CLI_TELEMETRY_OPTOUT')
     return {key: source[key] for key in allowed if key in source}
+

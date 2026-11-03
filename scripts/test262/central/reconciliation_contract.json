@@ -1035,5 +1035,84 @@
         ]
       }
     ]
+  },
+  "collection_attempts": {
+    "primary_key": [
+      "run_id"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "run_id"
+        ],
+        "parent": "runs",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "budget_scope_id"
+        ],
+        "parent": "budget_scopes",
+        "parent_columns": [
+          "repository_id",
+          "budget_scope_id"
+        ]
+      }
+    ],
+    "required": [
+      "authority_epoch",
+      "phase",
+      "context_sha256",
+      "expires_at"
+    ]
+  },
+  "collection_workers": {
+    "primary_key": [
+      "collection_run_id",
+      "slot"
+    ],
+    "references": [
+      {
+        "columns": [
+          "repository_id",
+          "collection_run_id"
+        ],
+        "parent": "collection_attempts",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "producer_id"
+        ],
+        "parent": "producers",
+        "parent_columns": [
+          "repository_id",
+          "producer_id"
+        ]
+      },
+      {
+        "columns": [
+          "repository_id",
+          "run_id"
+        ],
+        "parent": "runs",
+        "parent_columns": [
+          "repository_id",
+          "run_id"
+        ]
+      }
+    ],
+    "required": [
+      "actions_job_id"
+    ]
   }
 }
