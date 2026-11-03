@@ -22,10 +22,15 @@ Identify failing test262 test cases that:
    - Follow **Catalog-First Candidate Selection** in `test262-porting`:
      query authorized scoped Supabase reporting or use an approved coherent
      central export. Read **Local agent read access** in
-     `docs/ECMA262/Test262SupabaseCatalog.md`. Use the configured
+     `docs/ECMA262/Test262SupabaseCatalog.md`. Agents may use
+     `TEST262_AGENTRO_DATABASE_URL` for dedicated read-only SQL access to approved
+     `test262_reporting` views/schema metadata; follow **Read-only database
+     environment variable** for bounded queries, read-only transactions and
+     credential handling. Never print the URL, pass it in command-line arguments
+     or expose it to fixture/compiler/test processes. Alternatively, use the configured
      `test262-catalog` MCP server for authenticated read-only reporting when
      available, following **Registered MCP access** in that runbook. A Data API
-     denial does not imply MCP access is unavailable. Reuse `SUPABASE_URL` and
+     denial does not imply database/MCP access is unavailable. Reuse `SUPABASE_URL` and
      `SUPABASE_PUBLISHABLE_KEY` from performance analysis for bounded REST reads
      when catalogue API exposure and read permissions are enabled. The deployed
      `anon` role currently lacks those rights; use the read-only connector/export

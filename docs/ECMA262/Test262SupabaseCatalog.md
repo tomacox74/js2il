@@ -170,6 +170,61 @@ the original evidence and distinguish inventory metadata from later annotation.
 
 ## Local agent read access
 
+### Read-only database environment variable
+
+Agents may use `TEST262_AGENTRO_DATABASE_URL`, when supplied in their environment,
+to query the central Test262 catalogue through the dedicated read-only PostgreSQL
+connection. This is an authorized alternative to the registered MCP connection;
+it does not require PostgREST schema exposure or `anon` grants. Check that the
+variable is non-empty without printing its value. Do not copy the URL into Git,
+prompts, command-line arguments, logs or generated reports, or enable shell tracing.
+Use the operator-supplied TLS settings; do not weaken connection security.
+
+`TEST262_AGENTRO_DATABASE_URL` is exclusively for Test262 catalogue queries.
+Do **not** use it for performance-related investigations, benchmark analysis or
+`perf_results` queries. Performance reads must continue to use `SUPABASE_URL` and
+`SUPABASE_PUBLISHABLE_KEY` as documented in `investigating-benchmark-performance`.
+
+Restrict queries to approved `test262_reporting` views and their schema metadata.
+Inspect actual columns before constructing evidence queries, scope reads to this
+repository, the pinned corpus, channel, evidence kind and requested area, and bound
+results and execution time. For example, with `psql` installed, pass the connection
+through its environment rather than a command-line URL:
+
+```bash
+(
+  set -euo pipefail
+  : "${TEST262_AGENTRO_DATABASE_URL:?Set TEST262_AGENTRO_DATABASE_URL in the trusted shell}"
+  export PGDATABASE="$TEST262_AGENTRO_DATABASE_URL"
+  export PGOPTIONS="-c default_transaction_read_only=on -c statement_timeout=15000"
+  psql -X --no-password --set=ON_ERROR_STOP=1 <<'SQL'
+BEGIN READ ONLY;
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'test262_reporting'
+  AND table_name = 'v_current_fixture_status'
+ORDER BY ordinal_position
+LIMIT 100;
+COMMIT;
+SQL
+)
+```
+
+Use explicit read-only transactions for subsequent reporting SELECTs as well.
+The client-side read-only setting is defense in depth, not a substitute for the
+connection's database-enforced read-only permissions. Do not change grants, invoke
+coordinator/publication APIs or substitute supervisor/service-role credentials.
+Record evidence provenance, source revision, pin, registration/validation identities
+and as-of time, and reconcile central master evidence with local and pending-PR
+registrations as described below. An access error is a limitation, not an empty
+catalogue result; try another authorized read-only connection or approved coherent
+export before applying the explicit offline-diagnosis rules.
+
+Keep this variable and all other database credentials out of upstream fixture,
+compiler and test execution processes; only the trusted catalogue query process
+may receive the connection credentials. Concurrent bounded read-only queries from
+independent agents are supported.
+
 ### Registered MCP access
 
 A user-scoped Copilot CLI MCP server named `test262-catalog` is registered in the
@@ -192,7 +247,8 @@ the await expression area. This verifies reporting access, not complete coverage
 fresh native acceptance, registration refresh or publication.
 
 When the server's tools are available, use this authenticated read-only connection
-before falling back to the Data API or declaring central reporting unavailable.
+or `TEST262_AGENTRO_DATABASE_URL` before falling back to the Data API or declaring
+central reporting unavailable.
 Inspect actual view columns first. Scope evidence queries to repository
 `faf01df8-aa65-4375-a708-6c1e555f957b`, the corpus matching the pinned revision,
 channel, evidence kind and requested area; record the returned as-of,

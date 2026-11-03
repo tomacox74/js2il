@@ -63,6 +63,10 @@ ingester requires the service role key because it upserts rows; the publishable
 key is appropriate only when the database's row-level security policy permits
 the desired reads.
 
+Do **not** use `TEST262_AGENTRO_DATABASE_URL` for performance-related investigations,
+including benchmark or `perf_results` queries. It is exclusively for the Test262
+catalogue. Use `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for performance reads.
+
 Reuse `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for Test262 catalogue Data API
 reads once its read-only API exposure/role permissions are enabled. See
 [Local agent read access](../../../docs/ECMA262/Test262SupabaseCatalog.md#local-agent-read-access)

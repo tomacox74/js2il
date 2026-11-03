@@ -39,10 +39,15 @@ Read scoped Supabase reporting or an approved coherent central export and
 record the selected target, source revision, provenance and as-of time.
 Reconcile central registration snapshots with unmerged working-tree and
 pending-PR registrations. Follow `docs/ECMA262/Test262SupabaseCatalog.md`;
-do not restore a legacy SQLite artifact as shared authority. Use the configured
+do not restore a legacy SQLite artifact as shared authority. Agents may use
+`TEST262_AGENTRO_DATABASE_URL` for dedicated read-only SQL access to approved
+`test262_reporting` views/schema metadata; follow **Read-only database environment
+variable** in that runbook for bounded queries, read-only transactions and
+credential handling. Never print the URL, pass it in command-line arguments or
+expose it to fixture/compiler/test processes. Alternatively, use the configured
 `test262-catalog` MCP server for authenticated read-only reporting when available;
 follow **Registered MCP access** in that runbook. A Data API denial does not imply
-MCP access is unavailable. For local read-only
+database/MCP access is unavailable. For local read-only
 Data API queries, reuse `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` from JROC
 performance analysis. Follow **Local agent read access** in that runbook for
 schema selection, scoped/bounded reads and the required API permissions. The
