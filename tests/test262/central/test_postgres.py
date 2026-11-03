@@ -1254,6 +1254,12 @@ class PostgresTests(unittest.TestCase):
 
 
     def test_managed_collection_uses_one_budget_and_fences_the_worker(self):
+        self.managed_collection_case()
+
+    def test_parallel_collection_fences_workers_and_blocks_partial_failure(self):
+        self.managed_collection_case(parallel=True)
+
+    def managed_collection_case(self, parallel=False):
         from psycopg import sql
         from scripts.test262.central.client import sha
 
@@ -1262,12 +1268,19 @@ class PostgresTests(unittest.TestCase):
         ]
         owner_login = 'split_owner_' + uuid.uuid4().hex
         worker_login = 'split_worker_' + uuid.uuid4().hex
-        actions_id = 23630001
+        second_worker, second_child, second_item, spare_item = [str(uuid.uuid4()) for _ in range(4)]
+        second_login = 'split_worker_' + uuid.uuid4().hex
+        actions_id = 23640001 if parallel else 23630001
+        slots = 2 if parallel else 1
+        candidates = 3 if parallel else 1
         source = 'c' * 40
         self.db.execute(
             "INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,%s)",
             (repo, repo, 'split/test-' + repo))
-        for producer, login, role in ((owner, owner_login, 'test262_coordinator'), (worker, worker_login, 'test262_worker')):
+        logins = [(owner, owner_login, 'test262_coordinator'), (worker, worker_login, 'test262_worker')]
+        if parallel:
+            logins.append((second_worker, second_login, 'test262_worker'))
+        for producer, login, role in logins:
             self.db.execute(sql.SQL('CREATE ROLE {} LOGIN INHERIT').format(sql.Identifier(login)))
             self.db.execute(sql.SQL('GRANT {} TO {}').format(sql.Identifier(role), sql.Identifier(login)))
             self.db.execute(
@@ -1288,10 +1301,10 @@ class PostgresTests(unittest.TestCase):
         self.db.execute("""INSERT INTO test262.reporting_targets
           (repository_id,channel,evidence_kind,provenance_id,registration_snapshot_id)
           VALUES(%s,'master','mvp-composite',%s,%s)""", (repo, provenance, snapshot))
-        limits = dict(candidate_limit=1, accepted_limit=1, attempt_limit=1, time_limit_ms=1000)
+        limits = dict(candidate_limit=candidates, accepted_limit=slots, attempt_limit=slots, time_limit_ms=1000*slots)
         self.db.execute("""INSERT INTO test262.budget_scopes
           (budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms)
-          VALUES(%s,%s,'run',%s,1,1,1,1000)""", (budget, repo, f'actions:{actions_id}'))
+          VALUES(%s,%s,'run',%s,%s,%s,%s,%s)""", (budget, repo, f'actions:{actions_id}', *limits.values()))
         context = dict(run=parent, repository=repo, producer=owner, budget=budget,
                        provenance=provenance, revision=source, kind='mvp-composite',
                        registration_snapshot=snapshot, validation=None, managed_version=1,
@@ -1300,8 +1313,16 @@ class PostgresTests(unittest.TestCase):
                        work_digest=sha([item]))
         row = dict(work_item_id=item, repository_id=repo, provenance_id=provenance,
                    fixture_id=self.fixtures[0], variant='strict', coherent_area='test', attempt_limit=3)
-        plan = Jsonb(dict(context=context, work=[row]))
-        with psycopg.connect(DSN, autocommit=True) as coordinator, psycopg.connect(DSN, autocommit=True) as executor:
+        rows = [row]
+        if parallel:
+            rows.extend(dict(row, work_item_id=work_id, fixture_id=fixture)
+                        for work_id, fixture in zip((second_item, spare_item), self.fixtures[1:3]))
+            context.pop('worker_producer')
+            context.update(worker_producers=[worker, second_worker], work_count=len(rows),
+                           work_digest=sha(sorted(row['work_item_id'] for row in rows)))
+        plan = Jsonb(dict(context=context, work=rows))
+        with psycopg.connect(DSN, autocommit=True) as coordinator, psycopg.connect(DSN, autocommit=True) as executor, \
+                psycopg.connect(DSN, autocommit=True) as peer:
             coordinator.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(owner_login)))
             executor.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(worker_login)))
             coordinator.execute('SELECT test262.api_start_run(1,%s)', (Jsonb(dict(
@@ -1319,12 +1340,29 @@ class PostgresTests(unittest.TestCase):
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                 coordinator.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (parent, budget))
             executor.execute('SELECT test262.api_join_collection(1,%s,%s,89,%s)', (parent, child, sha(context)))
+            if parallel:
+                peer.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(second_login)))
+                peer.execute('SELECT test262.api_join_collection(1,%s,%s,90,%s)', (parent, second_child, sha(context)))
+                with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                    peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget))
             claim = executor.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget)).fetchone()[0]
-            self.assertEqual((claim['work_item_id'], claim['lease_owner']), (item, worker))
+            self.assertEqual(claim['lease_owner'], worker)
+            if parallel:
+                second_claim = peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',
+                                            (second_child, budget)).fetchone()[0]
+                self.assertEqual(second_claim['lease_owner'], second_worker)
+                self.assertNotEqual(claim['work_item_id'], second_claim['work_item_id'])
+                exhausted = peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',
+                                         (second_child, budget)).fetchone()[0]
+                self.assertTrue(exhausted['budget_exhausted'])
+            else:
+                self.assertEqual(claim['work_item_id'], item)
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                 executor.execute('SELECT test262.api_renew(1,%s,%s,60)', (item, claim['lease_generation']))
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                 executor.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, Jsonb({})))
+            row = next(row for row in rows if row['work_item_id'] == claim['work_item_id'])
+            item = row['work_item_id']
             observation = dict(observation_id=str(uuid.uuid4()), repository_id=repo, run_id=child,
                 provenance_id=provenance, fixture_id=row['fixture_id'], variant='strict', work_item_id=item,
                 lease_generation=claim['lease_generation'], outcome='pass', phase='runtime', active_ms=20,
@@ -1338,6 +1376,19 @@ class PostgresTests(unittest.TestCase):
                 source='supervisor', external_run_key=worker_key, source_revision=source,
                 reason='collection-finished', flush_verified=True)),))
             proof = Jsonb(dict(job_id=89, state='success', retained=True))
+            if parallel:
+                first = dict(proof.obj, slot=1)
+                second = dict(slot=2, job_id=90, state='failure', retained=False)
+                for invalid in ([first], [first, dict(second, job_id=89)]):
+                    with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                        coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)',
+                                            (parent, Jsonb(dict(workers=invalid))))
+                result = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)',
+                                             (parent, Jsonb(dict(workers=[second, first])))).fetchone()[0]
+                self.assertEqual(result['state'], 'failed')
+                self.assertEqual(result['budget']['disposition'], 'live-reservations')
+                self.assertEqual([row['reconciled_state'] for row in result['workers']], ['complete', 'failed'])
+                return
             result = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, proof)).fetchone()[0]
             self.assertEqual((result['state'], result['budget']['result']['state']), ('complete', 'closed'))
             self.assertEqual(result['budget']['result']['charged_ms'], 20)

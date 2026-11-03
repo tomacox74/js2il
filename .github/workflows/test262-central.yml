@@ -242,6 +242,7 @@ jobs:
       artifact_id: ${{ steps.bundle.outputs.artifact-id }}
       artifact_digest: ${{ steps.bundle.outputs.artifact-digest }}
       context_digest: ${{ steps.context.outputs.context_digest }}
+      slots: ${{ steps.context.outputs.slots }}
     steps:
       - name: Require the original workflow attempt
         run: |
@@ -297,24 +298,33 @@ jobs:
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
-          WORKER_PRODUCER: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          WORKER_COUNT: ${{ vars.TEST262_SPLIT_WORKER_COUNT || '1' }}
+          WORKER_1: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          WORKER_2: ${{ vars.TEST262_SPLIT_WORKER_2_PRODUCER_ID }}
+          WORKER_3: ${{ vars.TEST262_SPLIT_WORKER_3_PRODUCER_ID }}
+          WORKER_4: ${{ vars.TEST262_SPLIT_WORKER_4_PRODUCER_ID }}
           GH_TOKEN: ${{ github.token }}
           KIND: ${{ steps.collection_plan.outputs.kind }}
           REVISION: ${{ steps.revision.outputs.sha }}
           AREA: ${{ inputs.area }}
           COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
         run: |
-          test -n "$WORKER_PRODUCER"
+          [[ "$WORKER_COUNT" =~ ^[1-4]$ ]]
           ARGS=()
+          for ((slot=1; slot<=WORKER_COUNT; slot++)); do
+            key="WORKER_$slot"
+            test -n "${!key}"
+            ARGS+=(--managed-worker "${!key}")
+          done
           if [ "$COVERAGE" = true ]; then ARGS+=(--compilation-coverage); fi
           python -m scripts.test262.central.cli prepare --kind "$KIND" \
             --root "$TEST262_ROOT" --revision "$REVISION" --area "$AREA" \
             --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" --budget-key "actions:$GITHUB_RUN_ID" \
-            --managed-worker "$WORKER_PRODUCER" \
             --runtime-digest "$(sha256sum artifacts/test262/prepare/runtime.tar.gz | cut -d' ' -f1)" \
             --image-digest "$(sha256sum artifacts/test262/prepare/fixture-image.tar.gz | cut -d' ' -f1)" \
             --output artifacts/test262/prepare/central-context.json "${ARGS[@]}"
           printf 'context_digest=%s\n' "$(sha256sum artifacts/test262/prepare/central-context.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          python -c 'import json,sys; print("slots=" + json.dumps(list(range(1, int(sys.argv[1]) + 1))))' "$WORKER_COUNT" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v7
         id: bundle
         with:
@@ -339,7 +349,12 @@ jobs:
 
   execute:
     needs: prepare
-    environment: test262-catalogue-worker-1
+    name: execute (${{ matrix.slot }})
+    strategy:
+      fail-fast: false
+      matrix:
+        slot: ${{ fromJSON(needs.prepare.outputs.slots || '[1]') }}
+    environment: test262-catalogue-worker-${{ matrix.slot }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -380,13 +395,13 @@ jobs:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_SPLIT_WORKER_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
-          TEST262_PRODUCER_ID: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          TEST262_PRODUCER_ID: ${{ (matrix.slot == 1 && vars.TEST262_SPLIT_WORKER_PRODUCER_ID) || vars[format('TEST262_SPLIT_WORKER_{0}_PRODUCER_ID', matrix.slot)] }}
           GH_TOKEN: ${{ github.token }}
           ARTIFACT_ID: ${{ needs.prepare.outputs.artifact_id }}
           ARTIFACT_DIGEST: ${{ needs.prepare.outputs.artifact_digest }}
           TEST262_DIAGNOSTIC_FILE: artifacts/test262/worker/diagnostic.json
         run: |
-          python -m scripts.test262.central.cli work-collection \
+          python -m scripts.test262.central.cli work-collection --slot "${{ matrix.slot }}" \
             --repository-name "$GITHUB_REPOSITORY" --root "$TEST262_ROOT" \
             --context artifacts/test262/prepare/central-context.json \
             --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST" \
@@ -398,7 +413,7 @@ jobs:
           TEST262_DATABASE_URL: ${{ secrets.TEST262_SPLIT_WORKER_DATABASE_URL }}
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
-          TEST262_PRODUCER_ID: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          TEST262_PRODUCER_ID: ${{ (matrix.slot == 1 && vars.TEST262_SPLIT_WORKER_PRODUCER_ID) || vars[format('TEST262_SPLIT_WORKER_{0}_PRODUCER_ID', matrix.slot)] }}
         run: |
           if [ -f artifacts/test262/worker-outbox.sqlite ]; then
             timeout --signal=TERM --kill-after=15s 240s \
@@ -426,7 +441,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: test262-split-worker-${{ github.run_id }}-${{ github.run_attempt }}-1
+          name: test262-split-worker-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.slot }}
           path: artifacts/test262/worker/
           if-no-files-found: error
           retention-days: 90
