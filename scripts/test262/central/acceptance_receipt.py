@@ -11,7 +11,8 @@ from pathlib import Path
 import re
 import zipfile
 
-from .reconciliation import CONTRACT, EXPORT_TABLES, decode, logical_json
+from .client import export_tables
+from .reconciliation import CONTRACT, decode, logical_json
 
 
 def require(condition, message):
@@ -49,13 +50,14 @@ def build(pins, coordinator_path, reporter_path):
             "Export receipts differ")
     for key in ("snapshot_token", "as_of", "sha256", "file_sha256"):
         require(exported[key] == pins["expected"][key], "Pinned export identity differs")
-    require(set(exported["counts"]) == set(report["tables"]) == set(EXPORT_TABLES),
+    table_names = export_tables(exported)
+    require(set(exported["counts"]) == set(report["tables"]) == set(table_names),
             "Incomplete export table set")
     require(sum(exported["counts"].values()) == pins["expected"]["records"], "Record count differs")
     tables = {}
     root = hashlib.sha256((logical_json({k: exported[k] for k in
                                         ("repository_id", "epoch", "schema", "api")}) + "\n").encode())
-    for table in sorted(EXPORT_TABLES):
+    for table in sorted(table_names):
         row = report["tables"][table]
         require(type(row["rows"]) is int and row["rows"] >= 0
                 and row["rows"] == exported["counts"][table]
@@ -66,8 +68,8 @@ def build(pins, coordinator_path, reporter_path):
     require(root.hexdigest() == report["logical_sha256"] == pins["expected"]["logical_sha256"],
             "Version-1 logical root differs")
     refs = {f"{table}.{','.join(ref['columns'])}->{ref['parent']}"
-            for table, spec in CONTRACT.items() for ref in spec["references"]
-            if ref["parent"] in EXPORT_TABLES}
+            for table in table_names for ref in CONTRACT[table]["references"]
+            if ref["parent"] in table_names}
     require(set(report["relationship_checks"]) == refs
             and len(refs) == pins["expected"]["relationship_checks"], "Relationship coverage differs")
     checks = report["semantic_checks"]
@@ -136,3 +138,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+

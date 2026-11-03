@@ -8,7 +8,7 @@ import re
 import tempfile
 import time
 
-from .client import Client, EXPORT_TABLES
+from .client import Client, export_tables
 
 # Offline verification of the complete catalogue; page and statement bounds stay in Client.
 COORDINATOR_EXPORT_SECONDS = 30 * 60
@@ -31,7 +31,7 @@ def project_reference(settings):
 def verify_export(path, expected):
     """Independently stream-check bytes, counts and the single-snapshot receipt."""
     digest = hashlib.sha256()
-    counts = dict.fromkeys(EXPORT_TABLES, 0)
+    counts = {}
     header = footer = None
     with Path(path).open('rb') as stream:
         for number, line in enumerate(stream):
@@ -40,6 +40,7 @@ def verify_export(path, expected):
                 if set(record) != {'header'}:
                     raise ValueError('Missing export header')
                 header = record['header']
+                counts = dict.fromkeys(export_tables(header), 0)
             elif set(record) == {'footer'}:
                 footer = record['footer']
                 if stream.read(1):
@@ -175,3 +176,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
+

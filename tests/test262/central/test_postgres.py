@@ -676,7 +676,7 @@ class PostgresTests(unittest.TestCase):
             from test_reconciliation import write_export
             reordered=Path(directory)/'reordered.ndjson'
             changed=write_export(reordered,[(r['table'],r['row']) for r in reversed(exported)],
-                                 {k:summary[k] for k in ('repository_id','epoch','schema','api','snapshot_token','as_of')})
+                                 {k:v for k,v in summary.items() if k not in ('sha256','counts')})
             self.assertEqual(report['logical_sha256'],reconcile(reordered,changed)['logical_sha256'])
             if os.getenv('TEST262_RECONCILIATION_REPORT'):
                 target=Path(os.environ['TEST262_RECONCILIATION_REPORT']);target.parent.mkdir(parents=True,exist_ok=True)
@@ -1253,5 +1253,103 @@ class PostgresTests(unittest.TestCase):
                 self.assertIsNotNone(result['ended_at'])
 
 
+    def test_managed_collection_uses_one_budget_and_fences_the_worker(self):
+        from psycopg import sql
+        from scripts.test262.central.client import sha
+
+        repo, owner, worker, parent, child, budget, provenance, snapshot, item = [
+            str(uuid.uuid4()) for _ in range(9)
+        ]
+        owner_login = 'split_owner_' + uuid.uuid4().hex
+        worker_login = 'split_worker_' + uuid.uuid4().hex
+        actions_id = 23630001
+        source = 'c' * 40
+        self.db.execute(
+            "INSERT INTO test262.repositories(repository_id,provider,provider_repository_id,canonical_name) VALUES(%s,'github',%s,%s)",
+            (repo, repo, 'split/test-' + repo))
+        for producer, login, role in ((owner, owner_login, 'test262_coordinator'), (worker, worker_login, 'test262_worker')):
+            self.db.execute(sql.SQL('CREATE ROLE {} LOGIN INHERIT').format(sql.Identifier(login)))
+            self.db.execute(sql.SQL('GRANT {} TO {}').format(sql.Identifier(role), sql.Identifier(login)))
+            self.db.execute(
+                "INSERT INTO test262.producers(producer_id,repository_id,kind,display_name,credential_subject) VALUES(%s,%s,'actions',%s,%s)",
+                (producer, repo, login, login))
+            self.db.execute("INSERT INTO test262.api_subjects VALUES(%s,%s,%s,'coordinator','trusted',true)",
+                            (login, repo, producer))
+
+        self.db.execute("INSERT INTO test262.repository_corpora VALUES(%s,%s)", (repo, self.corpus))
+        self.db.execute("""INSERT INTO test262.provenances
+          (provenance_id,repository_id,corpus_id,evidence_kind,identity_version,identity_sha256,identity_document,capability_sha256)
+          VALUES(%s,%s,%s,'mvp-composite',1,sha256('split'::bytea),'{}',sha256('cap'::bytea))""",
+          (provenance, repo, self.corpus))
+        self.db.execute("""INSERT INTO test262.registration_snapshots
+          (snapshot_id,repository_id,source_revision,inventory_sha256) VALUES(%s,%s,%s,sha256('split'::bytea))""",
+          (snapshot, repo, source))
+        self.db.execute("UPDATE test262.registration_snapshots SET state='sealed' WHERE snapshot_id=%s", (snapshot,))
+        self.db.execute("""INSERT INTO test262.reporting_targets
+          (repository_id,channel,evidence_kind,provenance_id,registration_snapshot_id)
+          VALUES(%s,'master','mvp-composite',%s,%s)""", (repo, provenance, snapshot))
+        limits = dict(candidate_limit=1, accepted_limit=1, attempt_limit=1, time_limit_ms=1000)
+        self.db.execute("""INSERT INTO test262.budget_scopes
+          (budget_scope_id,repository_id,scope_kind,external_key,candidate_limit,accepted_limit,attempt_limit,time_limit_ms)
+          VALUES(%s,%s,'run',%s,1,1,1,1000)""", (budget, repo, f'actions:{actions_id}'))
+        context = dict(run=parent, repository=repo, producer=owner, budget=budget,
+                       provenance=provenance, revision=source, kind='mvp-composite',
+                       registration_snapshot=snapshot, validation=None, managed_version=1,
+                       actions_run_id=actions_id, actions_attempt=1, event_sha='d' * 40,
+                       worker_producer=worker, cap_ms=1000, limits=limits, work_count=1,
+                       work_digest=sha([item]))
+        row = dict(work_item_id=item, repository_id=repo, provenance_id=provenance,
+                   fixture_id=self.fixtures[0], variant='strict', coherent_area='test', attempt_limit=3)
+        plan = Jsonb(dict(context=context, work=[row]))
+        with psycopg.connect(DSN, autocommit=True) as coordinator, psycopg.connect(DSN, autocommit=True) as executor:
+            coordinator.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(owner_login)))
+            executor.execute(sql.SQL('SET SESSION AUTHORIZATION {}').format(sql.Identifier(worker_login)))
+            coordinator.execute('SELECT test262.api_start_run(1,%s)', (Jsonb(dict(
+                run_id=parent, provenance_id=provenance, source_revision=source, run_kind='mvp',
+                external_run_key=f'actions:{actions_id}:1')),))
+            prepared = coordinator.execute('SELECT test262.api_register_collection(1,%s)', (plan,)).fetchone()[0]
+            self.assertEqual(prepared['phase'], 'prepared')
+            self.assertEqual(prepared, coordinator.execute('SELECT test262.api_register_collection(1,%s)', (plan,)).fetchone()[0])
+            self.assertEqual(prepared['context_sha256'], '\\x' + sha(context))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                executor.execute('SELECT test262.api_open_collection(1,%s,88,%s)', (parent, 'f' * 64))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                executor.execute('SELECT test262.api_join_collection(1,%s,%s,89,%s)', (parent, child, sha(context)))
+            coordinator.execute('SELECT test262.api_open_collection(1,%s,88,%s)', (parent, 'f' * 64))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                coordinator.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (parent, budget))
+            executor.execute('SELECT test262.api_join_collection(1,%s,%s,89,%s)', (parent, child, sha(context)))
+            claim = executor.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget)).fetchone()[0]
+            self.assertEqual((claim['work_item_id'], claim['lease_owner']), (item, worker))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                executor.execute('SELECT test262.api_renew(1,%s,%s,60)', (item, claim['lease_generation']))
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                executor.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, Jsonb({})))
+            observation = dict(observation_id=str(uuid.uuid4()), repository_id=repo, run_id=child,
+                provenance_id=provenance, fixture_id=row['fixture_id'], variant='strict', work_item_id=item,
+                lease_generation=claim['lease_generation'], outcome='pass', phase='runtime', active_ms=20,
+                started_at='2026-11-03T00:00:00Z', finished_at='2026-11-03T00:00:01Z', source_kind='live')
+            executor.execute('SELECT test262.api_ingest(1,%s,%s)', (str(uuid.uuid4()), Jsonb([observation])))
+            executor.execute('SELECT test262.api_complete(1,%s,%s,%s)',
+                             (item, claim['lease_generation'], observation['observation_id']))
+            executor.execute("SELECT test262.api_metric(1,%s,'screening',1,20,1,0)", (child,))
+            worker_key = f'worker:{worker}:actions:{actions_id}:1:1:1'
+            executor.execute("SELECT test262.api_finish_run(1,%s,'complete',clock_timestamp(),%s)", (child, Jsonb(dict(
+                source='supervisor', external_run_key=worker_key, source_revision=source,
+                reason='collection-finished', flush_verified=True)),))
+            proof = Jsonb(dict(job_id=89, state='success', retained=True))
+            result = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, proof)).fetchone()[0]
+            self.assertEqual((result['state'], result['budget']['result']['state']), ('complete', 'closed'))
+            self.assertEqual(result['budget']['result']['charged_ms'], 20)
+            replay = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, proof)).fetchone()[0]
+            self.assertEqual(replay['budget']['result'], result['budget']['result'])
+            with self.assertRaises(psycopg.errors.InsufficientPrivilege):
+                executor.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget))
+
+        self.assertEqual(self.db.execute(
+            'SELECT collection_state,worker_state,worker_active_ms FROM test262_reporting.v_collection_workers WHERE collection_run_id=%s',
+            (parent,)).fetchone(), ('complete', 'complete', 20))
+
 if __name__=='__main__':
     unittest.main()
+

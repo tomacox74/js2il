@@ -14,6 +14,7 @@ from scripts.test262.central import cli, commands
 class Coordinator:
     def __init__(self, fixtures=None):
         self.epoch = 2
+        self.contract = {}
         self.fixtures = fixtures or {}
         self.tables = {}
         self.calls = []
@@ -255,3 +256,4 @@ class NativeScopeTests(unittest.TestCase):
                     commands.nativePorting.generate_batch(db, SimpleNamespace(run_id='run',
                         upstream=str(repo / 'upstream'), destination=str(repo / 'checkout')))
             self.assertFalse(target.exists())
+

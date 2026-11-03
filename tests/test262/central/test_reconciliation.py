@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from scripts.test262.central.client import EXPORT_TABLES
+from scripts.test262.central.client import EXPORT_TABLES, export_tables
 from scripts.test262.central.reconciliation import CONTRACT, logical_json, reconcile
 
 IDENTITY = dict(repository_id='repo',epoch=2,schema=1,api=1)
@@ -37,7 +37,7 @@ def frozen():
 
 def write_export(path, rows, header=None):
     digest = hashlib.sha256()
-    counts = dict.fromkeys(EXPORT_TABLES,0)
+    counts = dict.fromkeys(export_tables(header or HEADER),0)
     with path.open('wb') as stream:
         def emit(record):
             data = (logical_json(record)+'\n').encode()
@@ -224,3 +224,4 @@ class ProjectionTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+

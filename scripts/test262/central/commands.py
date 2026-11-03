@@ -138,6 +138,16 @@ def refresh(client, args):
 
 
 def prepare(client, args):
+    if getattr(args, 'managed_worker', None):
+        from .collection import prepared_context
+        existing = prepared_context(client, args)
+        if existing is not None:
+            return existing
+    elif (client.contract.get('managed_actions_collection_version') == 1
+          and args.budget_key.startswith('actions:')):
+        parent = identity(args.repository, args.producer, args.budget_key + ':1')
+        if client.call('collection', parent):
+            raise ValueError('A managed allocation cannot resume through the legacy supervisor')
     prepared=prepare_inventory(client,args)
     return prepare_from_inventory(client,args,prepared)
 
@@ -237,6 +247,7 @@ def prepare_from_inventory(client, args, prepared, *, recovery_drill=None):
         else:
             client.put('reporting_targets',[target])
     cur=reconciliation
+    rec_record = None
     if args.kind=='native' and recovery_drill is None:
         if cur is None:
             cur={'repository_id':args.repository,'pipeline':'native','channel':'master','authority_epoch':client.epoch,'version':0,'fallback_cursor':0}
@@ -246,14 +257,11 @@ def prepare_from_inventory(client, args, prepared, *, recovery_drill=None):
             raise ValueError('Previous target is not an ancestor; explicit audited authority reset required')
         # Independent recovery at the same SHA gets a new run key/plan, even with an unchanged cursor.
         rec=identity(args.repository,'reconcile',args.run_key)
-        client.put('reconciliations',[{'reconciliation_id':rec,'repository_id':args.repository,'pipeline':'native','channel':'master',
-                                       'validation_id':validation,'base_revision':base,'attribution':'validated-range',
-                                       'components':nativePorting.classify_changed_components(git('diff','--name-only',base,source).splitlines()),
-                                       'plan_sha256':bytea(sha({'work':work_rows,'next_cursor':cur['fallback_cursor']+discovery_count})),'expected_cursor_version':cur['version']}])
-        client.call('reconcile',rec,cur['version'],cur['fallback_cursor']+discovery_count,work_rows)
-    else:
-        client.put('work_items',work_rows)
-    client.put('budget_work_items',[{'repository_id':args.repository,'budget_scope_id':budget,'work_item_id':w['work_item_id']} for w in work_rows])
+        rec_record = {'reconciliation_id':rec,'repository_id':args.repository,'pipeline':'native','channel':'master',
+                      'validation_id':validation,'base_revision':base,'attribution':'validated-range',
+                      'components':nativePorting.classify_changed_components(git('diff','--name-only',base,source).splitlines()),
+                      'plan_sha256':bytea(sha({'work':work_rows,'next_cursor':cur['fallback_cursor']+discovery_count})),
+                      'expected_cursor_version':cur['version']}
     result={'repository':args.repository,'producer':args.producer,'run':run,'budget':budget,'provenance':pid,
             'kind':args.kind,'revision':source,'registration_snapshot':snapshot,'validation':validation,
             'corpus':corpus,'candidate_ids':[ids[r['path']] for r in choices],'cap_ms':args.cap_ms,'identity':doc}
@@ -266,6 +274,15 @@ def prepare_from_inventory(client, args, prepared, *, recovery_drill=None):
                         'reused_terminal_variants':sum((ids[r['path']],v['variant']) in terminal for r in choices for v in r['variants']),
                         'cursor_before':cur['fallback_cursor'] if args.kind=='native' else None,
                         'cursor_after':cur['fallback_cursor']+discovery_count if args.kind=='native' else None}
+    if getattr(args, 'managed_worker', None):
+        from .collection import register_plan
+        return register_plan(client, args, result, work_rows, rec_record)
+    if rec_record is not None:
+        client.put('reconciliations',[rec_record])
+        client.call('reconcile',rec_record['reconciliation_id'],cur['version'],cur['fallback_cursor']+discovery_count,work_rows)
+    else:
+        client.put('work_items',work_rows)
+    client.put('budget_work_items',[{'repository_id':args.repository,'budget_scope_id':budget,'work_item_id':w['work_item_id']} for w in work_rows])
     Path(args.output).parent.mkdir(parents=True,exist_ok=True)
     Path(args.output).write_text(canonical(result)+'\n')
     return {key:value for key,value in result.items() if key!='identity'}
@@ -275,8 +292,12 @@ def seal(client,args):
     context=json.loads(Path(args.context).read_text())
     if context['kind']!='native':
         raise ValueError('Native batch needs native context')
+    managed = context.get('managed_version') == 1
+    if managed:
+        from .collection import check_seal
+        check_seal(client, args, context)
     with client.view():
-        trusted={r['run_id'] for r in client.read('runs',{'provenance_id':context['provenance']}) if r['trust_class']=='trusted'}
+        trusted={r['run_id']: r for r in client.read('runs',{'provenance_id':context['provenance']}) if r['trust_class']=='trusted'}
         budget=client.one('budget_scopes',budget_scope_id=context['budget'])
         accepted=[]; bindings=[]
         for fid in context['candidate_ids']:
@@ -292,6 +313,14 @@ def seal(client,args):
                 if o['outcome'] in ('fail','unsupported'):
                     contradicted=True
                 elif o['outcome']=='pass' and o['source_kind']=='live':
+                    diagnostics = trusted[o['run_id']].get('environment_diagnostics') or {}
+                    if diagnostics.get('managed_collection_run_id'):
+                        if not o.get('work_item_id'):
+                            continue
+                        item = client.one('work_items', work_item_id=o['work_item_id'])
+                        if (item is None or item['completion_observation_id'] != o['observation_id']
+                                or item['lease_generation'] != o['lease_generation']):
+                            continue
                     by_variant.setdefault(o['variant'],[]).append(o)
             required=[v['variant'] for v in client.read('fixture_variants',{'fixture_id':fid}) if v['required']]
             if contradicted or not required or any(not by_variant.get(v) for v in required):
@@ -305,6 +334,13 @@ def seal(client,args):
     if not accepted:
         return {'accepted':0,'batch':None}
     batch=identity(args.repository,'native-batch',args.batch_key)
+    if managed:
+        existing = client.one('native_batches', batch_id=batch)
+        if existing and existing['state'] == 'sealed':
+            result = {'batch':batch,'accepted':len(client.rows('batch_fixtures',batch_id=batch,state='accepted')),
+                      'context':context}
+            Path(args.output).write_text(canonical(result)+'\n')
+            return result
     client.put('native_batches',[{'batch_id':batch,'repository_id':args.repository,'batch_key':args.batch_key,'provenance_id':context['provenance'],
                                   'validation_id':context['validation'],'registration_snapshot_id':context['registration_snapshot'],'budget_scope_id':context['budget']}])
     client.put('batch_fixtures',[{'batch_id':batch,'fixture_id':f,'state':'accepted'} for f in accepted])
@@ -355,3 +391,4 @@ def generate_from_view(client,args,context,batch_id):
     result=nativePorting.generate_batch(db,argparse.Namespace(run_id=context['run'],upstream=args.root,destination=str(REPO),output=args.output))
     db.close()
     return result
+

@@ -157,11 +157,21 @@ def reconcile_runs(client, args):
             continue
         item = {'run_id': row['run_id'], 'external_run_key': row['external_run_key']}
         try:
-            plan = actions_plan(row, args.repository_name)
-            item.update(plan)
-            if args.apply and plan['disposition'] == 'terminal':
-                item['result'] = finish(client, row, plan['state'], plan['ended_at'], 'github-actions', plan['reason'], plan['flush_verified'])
+            managed = (client.call('collection', row['run_id'])
+                       if client.contract.get('managed_actions_collection_version') == 1 else None)
+            if managed:
+                from .collection import terminal_proof
+                proof = terminal_proof(managed['context'], args.repository_name, completed=True)
+                item.update(disposition='managed-terminal', worker_proof=proof)
+                if args.apply:
+                    item['result'] = client.call('finish_collection', row['run_id'], proof)
+            else:
+                plan = actions_plan(row, args.repository_name)
+                item.update(plan)
+                if args.apply and plan['disposition'] == 'terminal':
+                    item['result'] = finish(client, row, plan['state'], plan['ended_at'], 'github-actions', plan['reason'], plan['flush_verified'])
         except (subprocess.SubprocessError, OSError, ValueError, KeyError, TypeError):
             item['disposition'] = 'history-unavailable-or-invalid'
         report.append(item)
     return {'apply': args.apply, 'limit': args.limit, 'deadline_reached': stopped, 'runs': report}
+

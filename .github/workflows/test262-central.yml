@@ -37,7 +37,7 @@ jobs:
     concurrency:
       group: test262-central-${{ (inputs.kind || 'native') == 'native' && 'native-target' || 'mvp-target' }}
       cancel-in-progress: false
-    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && github.ref == 'refs/heads/master' }}
+    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && vars.TEST262_SPLIT_WORKFLOW != 'true' && github.ref == 'refs/heads/master' }}
     environment: test262-catalogue
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -226,10 +226,320 @@ jobs:
           retention-days: 90
           overwrite: true
 
+  prepare:
+    if: >-
+      vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' &&
+      vars.TEST262_SPLIT_WORKFLOW == 'true' && github.ref == 'refs/heads/master'
+    concurrency:
+      group: test262-central-${{ (inputs.kind || 'native') == 'native' && 'native-target' || 'mvp-target' }}
+      cancel-in-progress: false
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
+      kind: ${{ steps.collection_plan.outputs.kind }}
+      artifact_id: ${{ steps.bundle.outputs.artifact-id }}
+      artifact_digest: ${{ steps.bundle.outputs.artifact-digest }}
+      context_digest: ${{ steps.context.outputs.context_digest }}
+    steps:
+      - name: Require the original workflow attempt
+        run: |
+          if [ "$GITHUB_RUN_ATTEMPT" != 1 ]; then
+            echo "::error::Split screening requires a new dispatch. Use upload-only recovery for retained evidence."
+            exit 1
+          fi
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Record pinned source revision
+        id: revision
+        run: printf 'sha=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+      - run: npm ci --ignore-scripts
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Resolve scheduled or manual collection policy
+        id: collection_plan
+        env:
+          COLLECTION_EVENT: ${{ github.event_name }}
+          REQUESTED_KIND: ${{ inputs.kind }}
+        run: |
+          python -m scripts.test262.central.schedule --event "$COLLECTION_EVENT" \
+            --kind "$REQUESTED_KIND" --github-output "$GITHUB_OUTPUT" \
+            --output artifacts/test262/prepare/central-schedule.json
+      - name: Build the pinned runtime bundle
+        run: |
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+          docker build --pull -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+          tar -czf artifacts/test262/prepare/runtime.tar.gz \
+            src/Cli/bin/Release/net10.0 scripts/test262/NativeScreeningHost/bin/Release/net10.0
+          set -o pipefail
+          docker save test262-fixture:local | gzip -1 > artifacts/test262/prepare/fixture-image.tar.gz
+      - name: Register the immutable work plan
+        id: context
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          WORKER_PRODUCER: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          KIND: ${{ steps.collection_plan.outputs.kind }}
+          REVISION: ${{ steps.revision.outputs.sha }}
+          AREA: ${{ inputs.area }}
+          COVERAGE: ${{ inputs.compilation_coverage || 'false' }}
+        run: |
+          test -n "$WORKER_PRODUCER"
+          ARGS=()
+          if [ "$COVERAGE" = true ]; then ARGS+=(--compilation-coverage); fi
+          python -m scripts.test262.central.cli prepare --kind "$KIND" \
+            --root "$TEST262_ROOT" --revision "$REVISION" --area "$AREA" \
+            --run-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" --budget-key "actions:$GITHUB_RUN_ID" \
+            --managed-worker "$WORKER_PRODUCER" \
+            --runtime-digest "$(sha256sum artifacts/test262/prepare/runtime.tar.gz | cut -d' ' -f1)" \
+            --image-digest "$(sha256sum artifacts/test262/prepare/fixture-image.tar.gz | cut -d' ' -f1)" \
+            --output artifacts/test262/prepare/central-context.json "${ARGS[@]}"
+          printf 'context_digest=%s\n' "$(sha256sum artifacts/test262/prepare/central-context.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        id: bundle
+        with:
+          name: test262-split-prepare-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/prepare/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Commit preparation artifact and open claims
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.bundle.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.bundle.outputs.artifact-digest }}
+        run: |
+          python -m scripts.test262.central.cli open-collection \
+            --repository-name "$GITHUB_REPOSITORY" --context artifacts/test262/prepare/central-context.json \
+            --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST"
+
+  execute:
+    needs: prepare
+    environment: test262-catalogue-worker-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Require the original execution attempt
+        run: test "$GITHUB_RUN_ATTEMPT" = 1
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.revision }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.prepare.outputs.artifact_id }}
+          path: artifacts/test262/prepare
+          digest-mismatch: error
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+      - run: npm ci --ignore-scripts
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Verify and load the prepared runtime
+        env:
+          CONTEXT_DIGEST: ${{ needs.prepare.outputs.context_digest }}
+        run: |
+          python -m scripts.test262.central.collection_bundle artifacts/test262/prepare "$CONTEXT_DIGEST"
+          docker load --input artifacts/test262/prepare/fixture-image.tar.gz
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Claim and execute registered work
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_SPLIT_WORKER_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ needs.prepare.outputs.artifact_id }}
+          ARTIFACT_DIGEST: ${{ needs.prepare.outputs.artifact_digest }}
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/worker/diagnostic.json
+        run: |
+          python -m scripts.test262.central.cli work-collection \
+            --repository-name "$GITHUB_REPOSITORY" --root "$TEST262_ROOT" \
+            --context artifacts/test262/prepare/central-context.json \
+            --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST" \
+            --outbox artifacts/test262/worker-outbox.sqlite --output artifacts/test262/worker/screening.json
+      - name: Flush retained work with the original worker identity
+        if: always()
+        timeout-minutes: 5
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_SPLIT_WORKER_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
+        run: |
+          if [ -f artifacts/test262/worker-outbox.sqlite ]; then
+            timeout --signal=TERM --kill-after=15s 240s \
+              python -m scripts.test262.central.cli flush --outbox artifacts/test262/worker-outbox.sqlite
+          fi
+      - name: Snapshot the worker outbox
+        if: always()
+        timeout-minutes: 3
+        run: |
+          python - <<'PY'
+          from scripts.test262.central.collection import snapshot_outbox
+          snapshot_outbox('artifacts/test262/worker-outbox.sqlite', 'artifacts/test262/worker/outbox.sqlite')
+          PY
+      - name: Aggregate retained compiler reports
+        if: ${{ always() && inputs.compilation_coverage }}
+        timeout-minutes: 3
+        run: |
+          if [ -f artifacts/test262/worker/outbox.sqlite ]; then
+            python -m scripts.test262.compilationCoverage \
+              --outbox artifacts/test262/worker/outbox.sqlite \
+              --context artifacts/test262/prepare/central-context.json \
+              --output artifacts/test262/worker/compilation-coverage.json
+          fi
+      - name: Retain split worker recovery
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-split-worker-${{ github.run_id }}-${{ github.run_attempt }}-1
+          path: artifacts/test262/worker/
+          if-no-files-found: error
+          retention-days: 90
+
+  finalize:
+    needs: [prepare, execute]
+    if: ${{ always() && needs.prepare.result != 'skipped' && github.run_attempt == '1' }}
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    outputs:
+      has_patch: ${{ steps.native_batch.outputs.has_patch }}
+      kind: ${{ needs.prepare.outputs.kind }}
+      artifact_id: ${{ steps.final_artifact.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.revision || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Reconcile the worker and settle the collection
+        id: lifecycle
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m scripts.test262.central.cli finish-collection --repository-name "$GITHUB_REPOSITORY" \
+            --output artifacts/test262/central-lifecycle.json --context-output artifacts/test262/central-context.json \
+            --github-output "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v6
+        if: steps.lifecycle.outputs.complete == 'true' && needs.prepare.outputs.kind == 'native'
+        with:
+          node-version: '24'
+          check-latest: true
+      - name: Load pinned native source
+        if: steps.lifecycle.outputs.complete == 'true' && needs.prepare.outputs.kind == 'native'
+        run: |
+          npm ci --ignore-scripts
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Seal and generate fresh native acceptance
+        id: native_batch
+        if: steps.lifecycle.outputs.complete == 'true' && needs.prepare.outputs.kind == 'native'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+        run: |
+          python -m scripts.test262.central.cli seal --repository-name "$GITHUB_REPOSITORY" --context artifacts/test262/central-context.json \
+            --batch-key "actions:$GITHUB_RUN_ID:$GITHUB_RUN_ATTEMPT" --output artifacts/test262/central-batch.json
+          if [ -s artifacts/test262/central-batch.json ]; then
+            python -m scripts.test262.central.cli generate --batch-file artifacts/test262/central-batch.json \
+              --cache artifacts/test262/central-generation.sqlite --root "$TEST262_ROOT" \
+              --output artifacts/test262/central-generated.json
+            # Generated fixtures are NOT executed here: this job holds the database credential.
+            TARGET="$(python -c 'import json;print(json.load(open("artifacts/test262/central-context.json"))["revision"])')"
+            git add -N tests/Jroc.Test262.Tests docs/ECMA262 CHANGELOG.md
+            git diff --binary "$TARGET" -- > artifacts/test262/central-patch.diff
+          fi
+          if [ -s artifacts/test262/central-patch.diff ]; then
+            echo 'has_patch=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_patch=false' >> "$GITHUB_OUTPUT"
+            echo 'No generated native patch; skipping validation and publication.'
+          fi
+      - name: Export coherent recovery snapshot when requested
+        if: ${{ always() && inputs.export_snapshot == true }}
+        timeout-minutes: 6
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          TEST262_PROGRESS: '1'
+          TEST262_DIAGNOSTIC_FILE: artifacts/test262/central-export-diagnostic.json
+        run: |
+          timeout --signal=TERM --kill-after=15s 300s \
+            python -m scripts.test262.central.cli export --seconds 270 \
+              --output artifacts/test262/central-snapshot.ndjson
+      - uses: actions/upload-artifact@v7
+        id: final_artifact
+        if: always()
+        with:
+          name: test262-split-finalize-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/test262/central-context.json
+            artifacts/test262/central-lifecycle.json
+            artifacts/test262/central-batch.json
+            artifacts/test262/central-generated.json
+            artifacts/test262/central-patch.diff
+            artifacts/test262/central-snapshot.ndjson
+          if-no-files-found: error
+          retention-days: 90
+
   validate:
     # Executes generated fixtures with no catalogue/GitHub write credentials or environment secrets.
-    needs: supervise
-    if: ${{ needs.supervise.outputs.kind == 'native' && needs.supervise.outputs.has_patch == 'true' }}
+    needs: [supervise, finalize]
+    if: >-
+      always() && !cancelled() &&
+      ((needs.supervise.result == 'success' && needs.supervise.outputs.kind == 'native' && needs.supervise.outputs.has_patch == 'true') ||
+       (needs.finalize.result == 'success' && needs.finalize.outputs.kind == 'native' && needs.finalize.outputs.has_patch == 'true'))
+    outputs:
+      artifact_id: ${{ steps.validation_artifact.outputs.artifact-id }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -241,9 +551,16 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/download-artifact@v8
+        if: needs.supervise.result == 'success'
         with:
           name: test262-central-recovery-${{ github.run_id }}
           path: artifacts/test262
+      - uses: actions/download-artifact@v8
+        if: needs.finalize.result == 'success'
+        with:
+          artifact-ids: ${{ needs.finalize.outputs.artifact_id }}
+          path: artifacts/test262
+          digest-mismatch: error
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
@@ -294,19 +611,24 @@ jobs:
           PYDIGEST
           printf 'Fresh sealed native batch. Focused xUnit validation passed in a credential-free job. Required PR CI and human review remain required.\n' > artifacts/test262/central-pr-body.md
       - uses: actions/upload-artifact@v7
+        id: validation_artifact
         with:
-          name: test262-central-validation-${{ github.run_id }}
+          name: ${{ needs.finalize.result == 'success' && format('test262-split-validation-{0}-{1}', github.run_id, github.run_attempt) || format('test262-central-validation-{0}', github.run_id) }}
           path: |
             artifacts/test262/central-patch-validation.json
             artifacts/test262/central-pr-body.md
             artifacts/test262/central-validation
           if-no-files-found: ignore
           retention-days: 90
-          overwrite: true
+          overwrite: ${{ needs.supervise.result == 'success' }}
 
   publish:
-    needs: [supervise, validate]
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.kind == 'native' && inputs.publish == true && needs.supervise.outputs.has_patch == 'true' }}
+    needs: [supervise, finalize, validate]
+    if: >-
+      always() && !cancelled() && needs.validate.result == 'success' &&
+      github.event_name == 'workflow_dispatch' && inputs.kind == 'native' && inputs.publish == true &&
+      ((needs.supervise.result == 'success' && needs.supervise.outputs.has_patch == 'true') ||
+       (needs.finalize.result == 'success' && needs.finalize.outputs.has_patch == 'true'))
     environment: test262-catalogue-publish
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -322,13 +644,21 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app.outputs.token }}
       - uses: actions/download-artifact@v8
+        if: needs.supervise.result == 'success'
         with:
           name: test262-central-recovery-${{ github.run_id }}
           path: artifacts/test262
       - uses: actions/download-artifact@v8
+        if: needs.finalize.result == 'success'
         with:
-          name: test262-central-validation-${{ github.run_id }}
+          artifact-ids: ${{ needs.finalize.outputs.artifact_id }}
           path: artifacts/test262
+          digest-mismatch: error
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.validate.outputs.artifact_id }}
+          path: artifacts/test262
+          digest-mismatch: error
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'

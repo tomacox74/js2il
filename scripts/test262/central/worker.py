@@ -105,6 +105,11 @@ def work_staged(client, args, *, before_execute=None):
         if lease.get('budget_exhausted'):
             stop_reason='budget-exhausted'
             break
+        if lease.get('temporarily_unavailable'):
+            remaining = args.seconds - (time.monotonic() - started)
+            if remaining > 0:
+                time.sleep(min(2, remaining))
+            continue
         fixture = client.one('fixtures', fixture_id=lease['fixture_id'])
         dependencies = [{'dependency_path':row['dependency_path'],'content_sha256':row['content_sha256'][2:]}
                         for row in client.read('fixture_dependencies', {'fixture_id': fixture['fixture_id']})]
@@ -154,3 +159,4 @@ def work_staged(client, args, *, before_execute=None):
     client.call('metric',args.run,'screening',1,int((time.monotonic()-started)*1000),count,timeouts)
     return {'attempts':count,'seconds':time.monotonic()-started,'stop_reason':stop_reason,
             'run_id':args.run,'budget_scope_id':args.budget}
+

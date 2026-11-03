@@ -13,7 +13,7 @@ import sqlite3
 import tempfile
 import time
 
-from .client import EXPORT_TABLES
+from .client import EXPORT_TABLES, MANAGED_EXPORT_TABLES, export_tables
 
 CONTRACT = json.loads(Path(__file__).with_name('reconciliation_contract.json').read_text())
 MAX_LINE = 32 * 1024 * 1024
@@ -77,7 +77,7 @@ def eq(a, b, fields):
 
 def load_export(db, path, expected, check_deadline=lambda:None, progress=lambda **event:None):
     counts = dict.fromkeys(EXPORT_TABLES, 0)
-    for table in EXPORT_TABLES:
+    for table in EXPORT_TABLES + MANAGED_EXPORT_TABLES:
         # Append first; build uniqueness and relationship indexes in sorted
         # passes instead of maintaining large random-key B-trees per record.
         db.execute(f'CREATE TABLE {table}(key TEXT NOT NULL,digest BLOB NOT NULL,'+
@@ -102,6 +102,7 @@ def load_export(db, path, expected, check_deadline=lambda:None, progress=lambda 
                 header = record['header']
                 if not isinstance(header, dict) or header.get('schema') != 1 or header.get('api') != 1 or any(header.get(k) != expected[k] for k in ('repository_id','epoch','schema','api')):
                     raise ValueError('Wrong export identity')
+                counts = dict.fromkeys(export_tables(header), 0)
                 if not header.get('snapshot_token') or not header.get('as_of'):
                     raise ValueError('Missing snapshot identity')
             elif set(record) == {'footer'}:
@@ -147,8 +148,8 @@ def load_export(db, path, expected, check_deadline=lambda:None, progress=lambda 
     if any(actual.get(k) != expected[k] for k in ('snapshot_token','as_of','counts','sha256') if k in expected):
         raise ValueError('Independent export receipt mismatch')
     db.commit()
-    for table in EXPORT_TABLES:
-        check_deadline();progress(stage='identity-index',table=table,rows=counts[table])
+    for table in EXPORT_TABLES + MANAGED_EXPORT_TABLES:
+        check_deadline();progress(stage='identity-index',table=table,rows=counts.get(table,0))
         try:
             db.execute(f'CREATE UNIQUE INDEX pk_{table} ON {table}(key)')
         except sqlite3.IntegrityError as error:
@@ -156,11 +157,11 @@ def load_export(db, path, expected, check_deadline=lambda:None, progress=lambda 
     return dict(header, **footer, file_sha256=whole.hexdigest())
 
 
-def relationships(db,progress=lambda **event:None):
+def relationships(db,progress=lambda **event:None, *, tables=EXPORT_TABLES):
     checks, external = {}, []
     indexed = set()
-    for table, spec in CONTRACT.items():
-        for ref in spec['references']:
+    for table in tables:
+        for ref in CONTRACT[table]['references']:
             parent, fields = ref['parent'], ref['parent_columns']
             name = table + '.' + ','.join(ref['columns']) + '->' + parent
             if parent not in CONTRACT:
@@ -403,7 +404,7 @@ def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=No
         if deadline is not None:
             db.set_progress_handler(lambda:int(time.monotonic()>=deadline),10000)
         receipt = load_export(db,path,expected,check_deadline,progress)
-        refs, external = relationships(db,progress)
+        refs, external = relationships(db,progress,tables=receipt["counts"])
         progress(stage='query-indexes')
         db.execute('CREATE INDEX import_mapping ON import_records(import_id,entity_kind)')
         db.execute('CREATE INDEX source_records ON legacy_control_records(source_table)')
@@ -414,7 +415,7 @@ def reconcile(path, expected, *, manifest=None, repository_name=None, scratch=No
         root = hashlib.sha256()
         # Snapshot token/as_of are receipt metadata, not logical database content.
         root.update((logical_json({k:receipt[k] for k in ('repository_id','epoch','schema','api')})+'\n').encode())
-        for table in sorted(EXPORT_TABLES):
+        for table in sorted(receipt["counts"]):
             check_deadline()
             progress(stage='logical-digest',table=table)
             digest = hashlib.sha256()
@@ -462,3 +463,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
