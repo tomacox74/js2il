@@ -5,7 +5,7 @@
 For resumable passing-but-unported discovery, see the [Test262 artifact catalog](Test262Catalog.md).
 Its MVP-runner evidence is separate from the native conformance results in this report.
 
-This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.33](https://github.com/tomacox74/js2il/releases/tag/v0.12.33).
+This report provides detailed Test262 conformance evidence for the current development branch following [JROC v0.12.34](https://github.com/tomacox74/js2il/releases/tag/v0.12.34).
 
 ## How to Read This Report
 
@@ -162,6 +162,24 @@ fixed exponential compiler AST traversal. Selection and native validation
 remain branch-local because central reporting access was unavailable; these
 results are not central trusted acceptance.
 
+Classic `for`, function declarations, generator declarations, and `if` statements
+now have published outcomes for all 1,171 applicable pinned cases: 1,121 verified
+passing and 50 known unsupported eval dependencies. The completion adds 74 exact
+upstream cases: 38 runnable cases and 36 explicit eval exclusions. It also
+reconciles seven already-verified `for` cases previously reported without a
+published result, giving a net increase of 45 verified results. Existing
+parse-negative cases remain verified, not excluded merely for mentioning eval.
+
+Coverage includes the first per-iteration lexical environment, implicit arguments
+initialization with `var arguments`, statically prepared `Function.call`
+construction, generator parameter initialization and nested destructuring.
+All 2,106 metadata-required native variants of the 1,121 supported cases pass
+under one unchanged build. Strict-only preparation preserves leading string-valued
+expressions. Selection
+used central reporting for the matching master revision and upstream pin; that
+target had no native observations. Fresh execution results are branch-local PR
+validation, not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -282,8 +300,8 @@ acceptance.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 21,895 | 448 | 1,300 | 23,643 | **92.61%** |
-| **Total** | 39,825 | 479 | 7,937 | 48,241 | **82.55%** |
+| Language syntax and semantics | 21,940 | 484 | 1,219 | 23,643 | **92.80%** |
+| **Total** | 39,870 | 515 | 7,856 | 48,241 | **82.65%** |
 
 ## Language Areas
 
@@ -314,7 +332,7 @@ acceptance.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 8,895 | 177 | 265 | 9,337 | **95.27%** |
+| `statements` | 8,940 | 213 | 184 | 9,337 | **95.75%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -411,10 +429,10 @@ acceptance.
 | `for-await-of` | 1,234 | 0 | 0 | 1,234 | **100.00%** |
 | `for-in` | 102 | 13 | 0 | 115 | **88.70%** |
 | `for-of` | 744 | 7 | 0 | 751 | **99.07%** |
-| `for` | 368 | 0 | 17 | 385 | **95.58%** |
-| `function` | 402 | 14 | 35 | 451 | **89.14%** |
-| `generators` | 247 | 0 | 19 | 266 | **92.86%** |
-| `if` | 59 | 0 | 10 | 69 | **85.51%** |
+| `for` | 376 | 9 | 0 | 385 | **97.66%** |
+| `function` | 422 | 29 | 0 | 451 | **93.57%** |
+| `generators` | 263 | 3 | 0 | 266 | **98.87%** |
+| `if` | 60 | 9 | 0 | 69 | **86.96%** |
 | `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
 | `let` | 140 | 0 | 5 | 145 | **96.55%** |
 | `return` | 1 | 0 | 15 | 16 | **6.25%** |

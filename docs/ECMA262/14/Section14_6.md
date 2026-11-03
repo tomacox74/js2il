@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-11-03T06:22:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,6 +25,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Pinned if-statement conformance completion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/if/RemainingStatementExecutionTests.cs` | `test/language/statements/if/let-identifier-with-newline.js` | All 69 applicable pinned if-statement cases have outcomes on the development branch: 60 verified passing and nine explicitly skipped eval dependencies. The completion adds the valid newline-separated let identifier case and preserves all 40 existing parse negatives. Branch-local native validation is not central trusted acceptance. |
 | Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/if/if-async-fun-else-async-fun.js`<br>`test/language/statements/if/if-async-fun-else-stmt.js` | The native Test262 harness verifies 29 additional pinned parse-negative statement fixtures (29 `if`). All 49 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 14.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-if-statement-static-semantics-early-errors))

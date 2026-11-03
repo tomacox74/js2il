@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-25T04:44:35Z
+> Last generated (UTC): 2026-11-03T06:22:10Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -89,6 +89,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | while loop: continue (skip even) | Supported | [`ControlFlow_While_Continue_SkipEven.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js) |  | continue branches to loop head (LoopContext). |
 | while loop: labeled break | Supported | [`ControlFlow_While_LabeledBreak.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
 | while loop: labeled continue | Supported | [`ControlFlow_While_LabeledContinue.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
+
+### 14.7.4 ([tc39.es](https://tc39.es/ecma262/#sec-for-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Pinned classic-for conformance completion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/for/RemainingStatementExecutionTests.cs` | `test/language/statements/for/scope-body-lex-open.js` | All 385 applicable pinned classic-for cases have outcomes on the development branch: 376 verified passing and nine explicitly skipped eval dependencies. Captured let bindings receive their first per-iteration environment after initialization and before the first condition, so initializer closures keep their original binding; const bindings do not receive per-iteration copies. All 49 existing parse negatives remain verified. Branch-local native validation is not central trusted acceptance. |
 
 ### 14.7.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation))
 

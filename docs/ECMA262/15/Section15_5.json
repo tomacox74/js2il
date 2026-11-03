@@ -43,6 +43,22 @@
   "support": {
     "entries": [
       {
+        "clause": "15.5",
+        "feature": "Pinned generator-declaration conformance completion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/generators/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/generators/dstr/RemainingStatementExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/generators/default-proto.js",
+          "test/language/statements/generators/dflt-params-ref-self.js",
+          "test/language/statements/generators/dstr/obj-ptrn-prop-eval-err.js"
+        ],
+        "notes": "All 266 applicable pinned generator-declaration cases have outcomes on the development branch: 263 verified passing and three explicitly skipped eval dependencies. Coverage includes the default prototype, eager parameter initialization and TDZ errors, nested destructuring, and with-environment lookup. Computed-property evaluation errors do not require the eval intrinsic and remain runnable. All 32 existing parse negatives remain verified. Branch-local native validation is not central trusted acceptance."
+      },
+      {
         "clause": "15.5.1",
         "feature": "Generator function declaration/expression (function*)",
         "status": "Supported with Limitations",

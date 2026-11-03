@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-16T19:43:15Z
+> Last generated (UTC): 2026-11-03T06:22:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,6 +28,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| Pinned generator-declaration conformance completion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/generators/RemainingStatementExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/generators/dstr/RemainingStatementExecutionTests.cs` | `test/language/statements/generators/default-proto.js`<br>`test/language/statements/generators/dflt-params-ref-self.js`<br>`test/language/statements/generators/dstr/obj-ptrn-prop-eval-err.js` | All 266 applicable pinned generator-declaration cases have outcomes on the development branch: 263 verified passing and three explicitly skipped eval dependencies. Coverage includes the default prototype, eager parameter initialization and TDZ errors, nested destructuring, and with-environment lookup. Computed-property evaluation errors do not require the eval intrinsic and remain runnable. All 32 existing parse negatives remain verified. Branch-local native validation is not central trusted acceptance. |
 | Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/generators/array-destructuring-param-strict-body.js`<br>`test/language/statements/generators/dflt-params-duplicates.js` | The native Test262 harness verifies 32 additional pinned parse-negative statement fixtures (32 `generators`). All 62 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
 
 ### 15.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-generator-function-definitions-static-semantics-early-errors))
