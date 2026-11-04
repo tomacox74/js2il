@@ -826,6 +826,16 @@ public sealed partial class HIRToLIRLowerer
             value = EnsureString(value);
         }
 
+        // Destructuring declarations also initialize materialized block/catch
+        // environments, not just the callable's leaf environment.
+        if (TryGetActiveScopeFieldStorage(binding, out var activeScope, out var scopeId, out var fieldId))
+        {
+            var boxedValue = EnsureObject(value);
+            lirInstructions.Add(new LIRStoreScopeField(activeScope, binding, fieldId, scopeId, boxedValue));
+            _variableMap[binding] = value;
+            return true;
+        }
+
         // Captured variable - store to leaf scope field
         if (_environmentLayout != null)
         {

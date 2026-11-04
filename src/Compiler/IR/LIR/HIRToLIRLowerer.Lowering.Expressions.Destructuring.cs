@@ -148,7 +148,7 @@ public sealed partial class HIRToLIRLowerer
                             return true;
                         }
 
-                        if (!TryEnsureLexicalBindingInitializedForDestructuringAssignment(id.Symbol.BindingInfo))
+                        if (!TryEnsureLexicalBindingInitializedForAssignment(id.Symbol.BindingInfo))
                         {
                             return false;
                         }
@@ -524,7 +524,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryEnsureLexicalBindingInitializedForDestructuringAssignment(BindingInfo binding)
+    private bool TryEnsureLexicalBindingInitializedForAssignment(BindingInfo binding)
     {
         if (binding.IsScriptGlobalBinding)
         {

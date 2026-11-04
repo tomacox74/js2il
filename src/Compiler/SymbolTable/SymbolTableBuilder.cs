@@ -2451,15 +2451,22 @@ namespace Jroc.SymbolTables
                     // Process try block
                     BuildScopeRecursive(globalScope, tryStmt.Block, currentScope);
 
-                    // Process catch handler with catch-param binding scoped to the catch block
+                    // Destructuring defaults need a parameter environment distinct from the
+                    // body's lexical environment. Simple/absent parameters have no expressions
+                    // that could observe that distinction, so retain their combined scope.
                     if (tryStmt.Handler != null)
                     {
                         var handler = tryStmt.Handler;
                         if (handler.Body is BlockStatement catchBlock)
                         {
-                            var catchBlockName = $"Block_L{catchBlock.Location.Start.Line}C{catchBlock.Location.Start.Column}";
+                            var hasParameterExpressions = handler.Param is ObjectPattern or ArrayPattern;
+                            var catchBlockName = hasParameterExpressions
+                                ? $"Catch_L{handler.Location.Start.Line}C{handler.Location.Start.Column}"
+                                : $"Block_L{catchBlock.Location.Start.Line}C{catchBlock.Location.Start.Column}";
                             var existingCatchScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == catchBlockName);
-                            var catchScope = existingCatchScope ?? new Scope(catchBlockName, ScopeKind.Block, currentScope, catchBlock);
+                            var catchScope = existingCatchScope ?? new Scope(
+                                catchBlockName, ScopeKind.Block, currentScope,
+                                hasParameterExpressions ? (Node)handler : catchBlock);
 
                             if (handler.Param is Identifier cid)
                             {
@@ -2473,9 +2480,21 @@ namespace Jroc.SymbolTables
                                 BindPatternBindings(handler.Param, BindingKind.Let, catchScope, handler.Param);
                             }
 
-                            foreach (var stmt in catchBlock.Body)
+                            if (handler.Param != null)
                             {
-                                BuildScopeRecursive(globalScope, stmt, catchScope);
+                                // Discover functions/classes and computed keys in binding defaults.
+                                BuildScopeRecursive(globalScope, handler.Param, catchScope);
+                            }
+                            if (hasParameterExpressions)
+                            {
+                                BuildScopeRecursive(globalScope, catchBlock, catchScope);
+                            }
+                            else
+                            {
+                                foreach (var statement in catchBlock.Body)
+                                {
+                                    BuildScopeRecursive(globalScope, statement, catchScope);
+                                }
                             }
                         }
                         else

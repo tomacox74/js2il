@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:57:47Z
+> Last generated (UTC): 2026-11-04T02:43:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -19,6 +19,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.10 ([tc39.es](https://tc39.es/ecma262/#sec-return-statement))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Return-statement Test262 coverage | Supported | `tests/Jroc.Test262.Tests/language/statements/return/RemainingStatementExecutionTests.cs` | `test/language/statements/return/12.9-1.js`<br>`test/language/statements/return/line-terminators.js`<br>`test/language/statements/return/S12.9_A1_T1.js` | All 16 applicable pinned return cases have verified passing results across all 31 required native variants. Coverage includes return values, automatic semicolon insertion and line terminators, and ten parse-negative cases rejecting return outside a function. These negatives do not require runtime eval and remain runnable. Evidence is branch-local PR validation, not central trusted acceptance. |
 
 ### 14.10.1 ([tc39.es](https://tc39.es/ecma262/#sec-return-statement-runtime-semantics-evaluation))
 

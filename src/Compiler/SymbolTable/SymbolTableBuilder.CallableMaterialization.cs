@@ -257,9 +257,8 @@ public partial class SymbolTableBuilder
 
             if (node is CatchClause catchClause)
             {
-                var catchScope = scopeByAstNode.TryGetValue(
-                    catchClause.Body,
-                    out var mappedCatchScope)
+                var catchScope = (scopeByAstNode.TryGetValue(catchClause, out var mappedCatchScope)
+                    || scopeByAstNode.TryGetValue(catchClause.Body, out mappedCatchScope))
                         ? mappedCatchScope
                         : currentScope;
                 if (catchClause.Param != null)

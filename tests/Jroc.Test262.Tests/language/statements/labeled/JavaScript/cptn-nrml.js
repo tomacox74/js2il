@@ -17,6 +17,4 @@ info: |
   5. Return Completion(stmtResult).
 ---*/
 
-var value;
-test262id: value = 2;
-assert.sameValue(value, 2);
+assert.sameValue(eval('test262id: 2;'), 2);

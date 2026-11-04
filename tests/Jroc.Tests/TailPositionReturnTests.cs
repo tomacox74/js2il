@@ -83,6 +83,56 @@ public class TailPositionReturnTests
         Assert.Equal("42 text true", Execute(artifact));
     }
 
+    [Fact]
+    public void CatchAndFinallyTailReturnsEmitTailPrefixOutsideHandlers()
+    {
+        foreach (var statement in new[]
+        {
+            "try { throw 0; } catch (error) { return target(++reads, ++reads); }",
+            "try { } finally { return target(++reads, ++reads); }",
+            "try { } catch (error) { } finally { return target(++reads, ++reads); }"
+        })
+        {
+            var artifact = Compile($$"""
+                "use strict";
+                var reads = 0;
+                function target(a, b) { return a * 10 + b; }
+                function invoke() { {{statement}} }
+                console.log(invoke(), reads);
+                """);
+
+            var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+            Assert.Contains("tail.", il);
+            Assert.Contains("leave", il);
+            Assert.Equal("12 2", Execute(artifact));
+        }
+    }
+
+    [Fact]
+    public void PendingCatchAndFinallyPreventTailPrefix()
+    {
+        var artifact = Compile("""
+            "use strict";
+            var events = "";
+            function fail() { events += "call "; throw "error"; }
+            function guarded() {
+                try { return fail(); }
+                catch (error) { events += error + " "; return "caught"; }
+            }
+            function finalized() {
+                try { throw 0; }
+                catch (error) { return fail(); }
+                finally { events += "finally "; }
+            }
+            console.log(guarded());
+            try { finalized(); } catch (error) { events += "outer " + error; }
+            console.log(events);
+            """);
+
+        Assert.DoesNotContain("tail.", AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName));
+        Assert.Equal("caught\ncall error call finally outer error", Execute(artifact).ReplaceLineEndings("\n"));
+    }
+
     private static JrocCompiledAssemblyArtifact CompileRecursion(string expression)
         => Compile($$"""
             "use strict";

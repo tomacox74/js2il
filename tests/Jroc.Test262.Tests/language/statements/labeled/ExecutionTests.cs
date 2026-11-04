@@ -21,11 +21,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "value-yield-non-strict")]
     public Task value_yield_non_strict()
         => ExecutionTest("value-yield-non-strict");
-    [Fact(DisplayName = "cptn-break")]
+    [Fact(DisplayName = "cptn-break", Skip = "Supported gap: pinned upstream fixture requires runtime eval, which is not supported.")]
     public Task cptn_break()
         => ExecutionTest("cptn-break");
 
-    [Fact(DisplayName = "cptn-nrml")]
+    [Fact(DisplayName = "cptn-nrml", Skip = "Supported gap: pinned upstream fixture requires runtime eval, which is not supported.")]
     public Task cptn_nrml()
         => ExecutionTest("cptn-nrml");
 

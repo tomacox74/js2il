@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-10T01:08:36Z
+> Last generated (UTC): 2026-11-04T02:43:50Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,6 +28,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/switch/S12.11_A3_T3.js`<br>`test/language/statements/switch/S12.11_A3_T4.js` | The native Test262 harness verifies 66 additional pinned parse-negative statement fixtures (66 `switch`). All 131 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
+| Switch-statement Test262 coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/switch/RemainingStatementExecutionTests.cs` | `test/language/statements/switch/scope-lex-async-generator.js`<br>`test/language/statements/switch/cptn-a-abrupt-empty.js` | All 111 applicable pinned switch cases have outcomes: 88 verified passing and 23 unsupported eval dependencies. Coverage includes async-generator declaration isolation in the case-block environment and all 69 syntax-negative cases. Completion-value scenarios requiring eval are explicitly excluded rather than rewritten. All 172 required native variants of the supported cases pass under one unchanged build. Evidence is branch-local PR validation, not central trusted acceptance. |
 
 ### 14.12.1 ([tc39.es](https://tc39.es/ecma262/#sec-switch-statement-static-semantics-early-errors))
 

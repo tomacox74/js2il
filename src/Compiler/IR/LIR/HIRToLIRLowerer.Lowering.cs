@@ -247,13 +247,15 @@ public sealed partial class HIRToLIRLowerer
     }
 
     private bool TryLowerBlockStatement(HIRBlock block)
+        => TryLowerInBlockScope(block.ScopeName, () => TryLowerBlockStatements(block));
+
+    private bool TryLowerInBlockScope(string? scopeName, Func<bool> lowerBody)
     {
-        if (string.IsNullOrEmpty(block.ScopeName))
+        if (string.IsNullOrEmpty(scopeName))
         {
-            return TryLowerBlockStatements(block);
+            return lowerBody();
         }
 
-        var scopeName = block.ScopeName!;
         var blockScopeTemp = CreateTempVariable();
         DefineTempStorage(blockScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName));
         SetTempVariableSlot(blockScopeTemp, CreateAnonymousVariableSlot($"$block_lexenv_{scopeName}", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName)));
@@ -263,7 +265,7 @@ public sealed partial class HIRToLIRLowerer
         _activeScopeTempsByScopeName[scopeName] = blockScopeTemp;
         try
         {
-            return TryLowerBlockStatements(block);
+            return lowerBody();
         }
         finally
         {
@@ -353,13 +355,7 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(clearAfterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, clearAfterTemp));
 
-        if (tryStmt.CatchParamBinding != null &&
-            !TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
-        {
-            return false;
-        }
-
-        if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+        if (!TryLowerCatchBody(tryStmt, pendingTemp))
         {
             return false;
         }
@@ -489,12 +485,6 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, falseTemp));
 
-            if (tryStmt.CatchParamBinding != null &&
-                !TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
-            {
-                return false;
-            }
-
             _asyncTryFinallyStack.Push(finallyContext);
             _asyncTryCatchStack.Push(new AsyncTryCatchContext(
                 CatchStateId: exceptionToFinallyStateId,
@@ -502,7 +492,7 @@ public sealed partial class HIRToLIRLowerer
                 PendingExceptionFieldName: pendingExceptionField));
             try
             {
-                if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                if (!TryLowerCatchBody(tryStmt, pendingTemp))
                 {
                     return false;
                 }

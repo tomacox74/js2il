@@ -37,6 +37,24 @@
   "support": {
     "entries": [
       {
+        "clause": "14.13",
+        "feature": "Labeled-statement Test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-labelled-statements",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/labeled/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/labeled/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/labeled/let-block-with-newline.js",
+          "test/language/statements/labeled/value-await-module.js",
+          "test/language/statements/labeled/value-await-module-escaped.js",
+          "test/language/statements/labeled/cptn-break.js",
+          "test/language/statements/labeled/cptn-nrml.js"
+        ],
+        "notes": "All 24 applicable pinned labeled cases have outcomes: 22 verified passing and two unsupported eval dependencies. Coverage includes let-block syntax and module-goal restrictions on await labels, with all 14 syntax-negative cases retained. The two completion-value scenarios use their original eval-dependent sources and are explicitly excluded, not rewritten to claim a pass. All 33 required native variants of the supported cases pass. Evidence is branch-local PR validation, not central trusted acceptance."
+      },
+      {
         "clause": "14.13.4",
         "feature": "labels used for labeled break/continue",
         "status": "Supported",
@@ -52,11 +70,9 @@
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js",
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js",
-          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js",
-          "tests/Jroc.Test262.Tests/language/statements/labeled/JavaScript/cptn-break.js",
-          "tests/Jroc.Test262.Tests/language/statements/labeled/JavaScript/cptn-nrml.js"
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js"
         ],
-        "notes": "Supports label targeting for break/continue across nested statements and the non-eval labeled completion scenarios covered by the test262 ports. Annex-B labeled function semantics are not exhaustively tested."
+        "notes": "Supports label targeting for break/continue across nested statements. The pinned labeled completion-value scenarios require unsupported eval and are explicitly excluded. Annex-B labeled function semantics are not exhaustively tested."
       },
       {
         "clause": "14.13.4",

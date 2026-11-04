@@ -2268,6 +2268,19 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
+
+            // PutValue must check an existing lexical binding after evaluating the RHS.
+            // Unlike declaration initialization, a closure's simple assignment cannot
+            // replace the captured environment's TDZ sentinel.
+            // HIR explicitly distinguishes declaration initialization (including
+            // class bindings) from ordinary writes to an existing lexical binding.
+            if (!assignExpr.IsBindingInitialization
+                && binding.Kind == BindingKind.Let
+                && binding.RequiresRuntimeTemporalDeadZoneChecks
+                && !TryEnsureLexicalBindingInitializedForAssignment(binding))
+            {
+                return false;
+            }
         }
         else
         {

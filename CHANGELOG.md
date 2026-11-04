@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 141 labeled, let, return, switch, try, and
+  using cases: 100 verified passing additions and 41 explicit eval skips.
+  All 575 pinned cases now have outcomes: 532 verified passing and 43 eval
+  exclusions, including two restored original labeled completion scenarios.
+- fix(compiler): check captured let assignments for temporal-dead-zone access,
+  discover catch-pattern defaults and initialize their distinct lexical
+  environments, and preserve proper tail returns from catch/finally without
+  bypassing pending handlers or placing CLR tail calls inside handlers.
 - test262: complete the remaining 74 classic-for, function-declaration,
   generator-declaration and if-statement cases: 38 verified passing additions
   and 36 explicit eval skips. All 1,171 pinned cases in these areas now have

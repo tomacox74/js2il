@@ -16,6 +16,4 @@ info: |
      a. Let stmtResult be NormalCompletion(stmtResult.[[Value]]).
 ---*/
 
-var value;
-test262id: { value = 5; break test262id; value = 9; }
-assert.sameValue(value, 5);
+assert.sameValue(eval('test262id: { 5; break test262id; 9; }'), 5);
