@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.35 - 2026-11-04
+
 - test262: complete the remaining 132 literals, line-terminators,
   reserved-words, rest-parameters, statementList, types, and white-space cases:
   33 verified passing additions and 99 explicit eval skips. All 873 pinned
