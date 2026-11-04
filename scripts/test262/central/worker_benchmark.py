@@ -57,25 +57,33 @@ class TimedClient:
 
 
 def run_slot(worker, base, context, slot, job, folder, ready):
-    key = f"worker:{worker['producer']}:actions:{context['actions_run_id']}:1:{slot}:1"
+    with closing(Client(dsn=worker['dsn'], epoch=1)) as db:
+        return execute_slot(db, worker['producer'], base, context, slot, job, folder,
+                            lambda: ready.wait(timeout=30))
+
+
+def execute_slot(db, producer, base, context, slot, job, folder, wait_for_peers):
+    key = f"worker:{producer}:actions:{context['actions_run_id']}:1:{slot}:1"
     args = SimpleNamespace(**vars(base))
-    args.producer = worker['producer']
-    args.run = identity(args.repository, args.producer, key)
+    args.producer = producer
+    args.run = identity(args.repository, producer, key)
     args.budget = context['budget']
     args.outbox = str(folder / f'worker-{slot}.sqlite')
-    with closing(Client(dsn=worker['dsn'], epoch=1)) as db:
-        db.call('join_collection', context['run'], args.run, job, sha(context))
-        ready.wait(timeout=30)
-        measured = TimedClient(db)
-        result = work_staged(measured, args)
-        db.call('finish_run', args.run, 'complete', datetime.now(timezone.utc).isoformat(),
-                {'source': 'supervisor', 'external_run_key': key, 'source_revision': context['revision'],
-                 'reason': 'collection-finished', 'flush_verified': True})
-    return dict(result, slot=slot, claims=measured.claims, api_ms=dict(measured.samples))
+    require(not Path(args.outbox).exists(), 'Benchmark outbox already exists')
+    db.call('join_collection', context['run'], args.run, job, sha(context))
+    wait_for_peers()
+    measured = TimedClient(db)
+    started_at = datetime.now(timezone.utc).isoformat()
+    result = work_staged(measured, args)
+    ended_at = datetime.now(timezone.utc).isoformat()
+    db.call('finish_run', args.run, 'complete', datetime.now(timezone.utc).isoformat(),
+            {'source': 'supervisor', 'external_run_key': key, 'source_revision': context['revision'],
+             'reason': 'collection-finished', 'flush_verified': True})
+    return dict(result, slot=slot, claims=measured.claims, api_ms=dict(measured.samples),
+                started_at=started_at, ended_at=ended_at)
 
 
-def run_trial(db, base, document, snapshot, validation, candidates, workers, trial, folder):
-    folder.mkdir()
+def prepare_trial(db, base, document, snapshot, validation, candidates, workers, trial, **origin):
     run_key = f'actions:{trial}'
     pid = provenance(db, base.repository, base.corpus, base.kind, dict(document, disposable_trial=trial))
     run = start_run(db, base, pid, run_key + ':1', base.revision,
@@ -101,9 +109,15 @@ def run_trial(db, base, document, snapshot, validation, candidates, workers, tri
                    validation=validation, managed_version=1, actions_run_id=trial, actions_attempt=1,
                    event_sha=base.revision, worker_producers=[w['producer'] for w in workers],
                    cap_ms=CAP_MS, limits=limits, work_count=limit,
-                   work_digest=sha(sorted(row['work_item_id'] for row in work)))
+                   work_digest=sha(sorted(row['work_item_id'] for row in work)), **origin)
     db.call('register_collection', {'context': context, 'work': work})
-    db.call('open_collection', run, trial, sha(context))
+    return context
+
+
+def run_trial(db, base, document, snapshot, validation, candidates, workers, trial, folder):
+    folder.mkdir()
+    context = prepare_trial(db, base, document, snapshot, validation, candidates, workers, trial)
+    db.call('open_collection', context['run'], trial, sha(context))
     ready = Barrier(len(workers))
     started = monotonic()
     with ThreadPoolExecutor(max_workers=len(workers)) as pool:
@@ -114,7 +128,13 @@ def run_trial(db, base, document, snapshot, validation, candidates, workers, tri
     # Simulated terminal Actions proof is scoped to the fresh loopback catalogue.
     proof = {'workers': [dict(slot=w['slot'], job_id=trial * 10 + w['slot'], state='success', retained=True)
                          for w in results]}
-    settled = db.call('finish_collection', run, proof)
+    return finish_trial(db, context, proof, results, wall_seconds)
+
+
+def finish_trial(db, context, proof, results, wall_seconds):
+    settled = db.call('finish_collection', context['run'], proof)
+    pid = context['provenance']
+    limit = context['work_count']
     observations = list(db.read('observations', {'provenance_id': pid}))
     queue = list(db.read('work_items', {'provenance_id': pid}))
     outcomes = Counter((o['fixture_id'], o['variant'], o['outcome']) for o in observations)
@@ -158,7 +178,7 @@ def summarize(trials, rate):
     return summary
 
 
-def write_plot(path, summary):
+def write_plot(path, summary, title="Median variants per minute on one runner"):
     maximum = max(row['variants_per_minute'] for row in summary.values())
     bars = []
     for index, (count, row) in enumerate(summary.items()):
@@ -172,15 +192,11 @@ def write_plot(path, summary):
                     'role="img" aria-label="Median variants per minute by worker count">'
                     '<rect width="510" height="200" fill="white"/>'
                     '<g font-family="sans-serif" font-size="14" fill="#17212b">'
-                    '<text x="10" y="31" font-weight="bold">Median variants per minute on one runner</text>'
+                    f'<text x="10" y="31" font-weight="bold">{title}</text>'
                     + ''.join(bars) + '</g></svg>\n', encoding='utf-8')
 
 
-def run(args):
-    admin = os.environ['TEST262_PILOT_ADMIN_DSN']
-    repo, owner, dsn = provision(admin)
-    root = Path(args.root).resolve()
-    revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip()
+def select_fixtures(root):
     pin = json.loads((REPO / 'tests/test262/test262.pin.json').read_text())['upstream']
     require(subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip() == pin['commit'],
             'Benchmark upstream pin mismatch')
@@ -189,6 +205,35 @@ def run(args):
                 if row['path'].startswith('test/' + AREA + '/') and row['state'] == 'runnable'
                 and sorted(row['variants']) == ['non-strict', 'strict']][:5]
     require(len(selected) == 5, 'Benchmark needs five fixed two-variant fixtures')
+    return pin, selected
+
+
+def prepare_inventory(db, repo, revision, kind, pin, selected):
+    corpus, ids = register(db, repo, pin, selected, reuse_sealed=True)
+    candidates = [dict(fixture_id=ids[row['path']], variant=v['variant'], coherent_area=AREA)
+                  for row in selected for v in row['variants']]
+    snapshot = identity(repo, 'benchmark-registrations', revision)
+    db.put('registration_snapshots', [{'snapshot_id': snapshot, 'repository_id': repo,
+            'source_revision': revision, 'inventory_sha256': bytea(sha([]))}])
+    registered = db.one('registration_snapshots', snapshot_id=snapshot)
+    if registered['state'] == 'staging':
+        db.call('transition', 'registration_snapshots', {'snapshot_id': snapshot}, 0,
+                {'state': 'sealed'})
+    validation = None
+    if kind == 'native':
+        validation = identity(repo, 'benchmark-validation', revision)
+        db.put('validation_events', [{'validation_id': validation, 'repository_id': repo,
+            'workflow_identity': 'disposable-benchmark', 'external_run_key': revision,
+            'target_revision': revision, 'conclusion': 'success', 'proof': {'synthetic_disposable_validation': True}}])
+    return corpus, candidates, snapshot, validation
+
+
+def run(args):
+    admin = os.environ['TEST262_PILOT_ADMIN_DSN']
+    repo, owner, dsn = provision(admin)
+    root = Path(args.root).resolve()
+    revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip()
+    pin, selected = select_fixtures(root)
     image_id = subprocess.check_output(['docker', 'image', 'inspect', '--format', '{{.Id}}', args.image],
                                        text=True).strip()
     report = dict(complete=False, revision=revision, upstream_commit=pin['commit'], image_id=image_id,
@@ -199,19 +244,7 @@ def run(args):
     output.mkdir(parents=True)
     try:
         with closing(Client(dsn=dsn, epoch=1)) as db, tempfile.TemporaryDirectory(prefix='benchmark-runtime-') as runtime:
-            corpus, ids = register(db, repo, pin, selected)
-            candidates = [dict(fixture_id=ids[row['path']], variant=v['variant'], coherent_area=AREA)
-                          for row in selected for v in row['variants']]
-            snapshot = identity(repo, 'benchmark-registrations', revision)
-            db.put('registration_snapshots', [{'snapshot_id': snapshot, 'repository_id': repo,
-                    'source_revision': revision, 'inventory_sha256': bytea(sha([]))}])
-            db.call('transition', 'registration_snapshots', {'snapshot_id': snapshot}, 0, {'state': 'sealed'})
-            validation = None
-            if args.kind == 'native':
-                validation = identity(repo, 'benchmark-validation', revision)
-                db.put('validation_events', [{'validation_id': validation, 'repository_id': repo,
-                    'workflow_identity': 'disposable-benchmark', 'external_run_key': revision,
-                    'target_revision': revision, 'conclusion': 'success', 'proof': {'synthetic_disposable_validation': True}}])
+            corpus, candidates, snapshot, validation = prepare_inventory(db, repo, revision, args.kind, pin, selected)
             base = SimpleNamespace(**vars(args), repository=repo, producer=owner, corpus=corpus, revision=revision,
                                    runtime_timeout=30, compile_timeout=60, cap_ms=CAP_MS,
                                    limit=len(candidates), seconds=180, runtime=runtime)

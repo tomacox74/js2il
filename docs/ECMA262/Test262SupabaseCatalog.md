@@ -2655,3 +2655,40 @@ inside the job. GitHub Actions bills jobs, so those process timings cannot be
 used as a multi-runner bill. Separate-runner throughput and total Actions cost
 require matched trials on independent runners sharing a disposable catalogue.
 Keep the one-worker default until those measurements support a rollout change.
+
+#### Independent-runner campaign
+
+The manual **Test262 independent-runner benchmark** uses a dedicated TLS
+PostgreSQL database named `catalogue_benchmark`. Apply the catalogue migrations
+to that disposable database, activate its own authority epoch, and bind a
+benchmark-only repository UUID to a coordinator login named
+`catalogue_benchmark_coordinator` and four logins named
+`catalogue_benchmark_worker_1` through `catalogue_benchmark_worker_4`. Grant only
+`test262_worker` to the worker logins. Set repository variables
+`TEST262_BENCHMARK_REPOSITORY_ID`, `TEST262_BENCHMARK_AUTHORITY_EPOCH` and
+`TEST262_BENCHMARK_WORKER_1` through `TEST262_BENCHMARK_WORKER_4`. Put each
+login's TLS connection string in the `TEST262_BENCHMARK_DATABASE_URL` secret of
+its own master-only environment. Use `test262-benchmark-coordinator` for the
+coordinator and `test262-benchmark-worker-1` through
+`test262-benchmark-worker-4` for the slots. The workflow rejects connections
+with a different database, role name, or repository binding.
+
+Dispatch one trial at a time. Hold the requested master SHA constant, rotate
+the 1/2/4 order across repeats, and collect three trials per count for each
+kind. Run one seed dispatch with no bundle run ID, then supply that run ID to
+every measured trial. The seed builds both runtimes and the fixture image once.
+Each measured trial validates the seed's workflow and SHA before downloading
+its artifact by ID. The seed itself is excluded from the comparison. Do not
+reuse a run attempt. Each
+trial freezes the same candidate pool, admits workers only after the runtime
+artifact is registered, and releases each worker to claim after all slots have
+joined. Finalization verifies exact job and recovery artifact receipts and
+settles the budget. There is no native sealing or publication job.
+
+Download each successful trial's `benchmark.json` artifact to its own
+directory. Compare reports with
+`python -m scripts.test262.central.worker_benchmark_remote compare --output campaign TRIAL_REPORTS...`.
+The comparator uses authenticated `gh` access to read the completed jobs.
+Supply `--rate` for an estimate from all measured job minutes rounded per job.
+The estimate excludes storage and account-specific discounts. The comparator rejects incomplete or duplicate trials and
+mismatched source, binaries, image, environment, fixtures, limits, or outcomes.

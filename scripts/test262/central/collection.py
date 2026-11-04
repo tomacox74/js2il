@@ -120,14 +120,14 @@ def open_collection(client, args):
     return {'run': context['run'], 'phase': result['phase'], 'artifact_id': result['artifact_id']}
 
 
-def history(context, repository, *, completed, slots, read=gh):
+def history(context, repository, *, completed, slots, read=gh, workflow=WORKFLOW):
     run_id, attempt = context['actions_run_id'], context['actions_attempt']
     runs = read(f'repos/{repository}/actions/runs/{run_id}/attempts/{attempt}')
     require(len(runs) == 1, 'Ambiguous Actions attempt')
     run = runs[0]
     require(run.get('id') == run_id and run.get('run_attempt') == attempt
             and run.get('head_sha') == context['event_sha'] and run.get('head_branch') == 'master'
-            and run.get('path') == WORKFLOW
+            and run.get('path') == workflow
             and (run.get('repository') or {}).get('full_name') == repository
             and (run.get('head_repository') or {}).get('full_name') == repository,
             'Actions attempt does not match the prepared context')
@@ -199,9 +199,9 @@ def work_collection(client, args):
     return result
 
 
-def terminal_proof(context, repository, *, completed=False, read=gh):
+def terminal_proof(context, repository, *, completed=False, read=gh, workflow=WORKFLOW):
     slots = range(1, len(context.get('worker_producers', [None])) + 1)
-    jobs = history(context, repository, completed=completed, slots=slots, read=read)
+    jobs = history(context, repository, completed=completed, slots=slots, read=read, workflow=workflow)
     proofs = [dict(worker_proof(context, repository, job, slot, read), slot=slot)
               for slot, job in jobs.items()]
     if 'worker_producers' in context:
