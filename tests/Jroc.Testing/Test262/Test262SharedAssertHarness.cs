@@ -22,6 +22,7 @@ public static class Test262SharedAssertHarness
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
+        allowUnhandledException |= metadata.NegativePhase == "runtime";
         var preparedEntryScript = PrepareEntryScript(entryScript, metadata);
         return ExecuteWithFixtureRuntime(
             testName, metadata, allowUnhandledException, (hostRuntimeIntrinsics) =>
@@ -52,6 +53,7 @@ public static class Test262SharedAssertHarness
         int timeoutMs = 30000)
     {
         var metadata = ParseFrontmatter(entryScript);
+        allowUnhandledException |= metadata.NegativePhase == "runtime";
         return ExecuteWithFixtureRuntime(
             testName, metadata, allowUnhandledException, hostRuntimeIntrinsics =>
                 InMemoryTestCompiler.ExecuteLoadedEntry(
@@ -69,6 +71,9 @@ public static class Test262SharedAssertHarness
 
     public static bool IsResolutionSyntaxError(string entryScript)
         => ParseFrontmatter(entryScript) is { NegativePhase: "resolution", NegativeType: "SyntaxError" };
+
+    public static bool IsParseSyntaxError(string entryScript)
+        => ParseFrontmatter(entryScript) is { NegativePhase: "parse", NegativeType: "SyntaxError" };
 
     public static IReadOnlyList<string> GetDynamicImportTargets(string entryScript, string? sourcePath)
     {

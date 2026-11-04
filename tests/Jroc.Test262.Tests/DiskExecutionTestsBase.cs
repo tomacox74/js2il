@@ -44,6 +44,11 @@ public abstract class DiskExecutionTestsBase
         [CallerFilePath] string sourceFilePath = "")
     {
         var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
+        if (Test262SharedAssertHarness.IsParseSyntaxError(script))
+        {
+            Test262CompilationAssertions.AssertParseSyntaxError(testName, script, sourcePath);
+            return Task.CompletedTask;
+        }
         var preparedScript = Test262SharedAssertHarness.PrepareEntryScript(script);
         if (Test262SharedAssertHarness.IsResolutionSyntaxError(script))
         {

@@ -1259,10 +1259,10 @@ namespace JavaScriptRuntime
                 return SetProperty(obj, propName, value, throwOnError);
             }
 
-            // Strings are immutable in JS; silently ignore and return value.
+            // String own indices are immutable, but inherited setters still apply.
             if (obj is string)
             {
-                return value;
+                return SetProperty(obj, propName, value, throwOnError);
             }
 
             // JS Array index assignment
@@ -1343,7 +1343,7 @@ namespace JavaScriptRuntime
 
             if (obj is string)
             {
-                return value;
+                return SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError);
             }
 
             if (obj is Array array)
@@ -1434,10 +1434,10 @@ namespace JavaScriptRuntime
                 return SetProperty(obj, key, value, throwOnError);
             }
 
-            // Strings are immutable in JS; silently ignore and return value.
+            // String own indices are immutable, but inherited setters still apply.
             if (obj is string)
             {
-                return value;
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
@@ -1513,10 +1513,10 @@ namespace JavaScriptRuntime
                 return SetProperty(obj, key, value, throwOnError);
             }
 
-            // Strings are immutable in JS; silently ignore and return value.
+            // String own indices are immutable, but inherited setters still apply.
             if (obj is string)
             {
-                return value;
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
@@ -1593,9 +1593,10 @@ namespace JavaScriptRuntime
 
             var isCanonicalArrayIndex = TryGetCanonicalInt32Index(index, out var intIndex);
 
-            // Strings are immutable in JS; silently ignore and return value.
+            // String own indices are immutable, but inherited setters still apply.
             if (obj is string)
             {
+                SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError);
                 return;
             }
 

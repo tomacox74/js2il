@@ -142,14 +142,14 @@ public sealed partial class RegExp
                 result.Append(source, index, end - index + 1);
                 index = end + 1;
             }
-            else if (ignoreCase && !"*+?{}|".Contains(current))
+            else if ((ignoreCase || unicode && char.IsSurrogate(current)) && !"*+?{}|".Contains(current))
             {
                 var point = (int)source[index++];
                 if (unicode && char.IsHighSurrogate((char)point) && index < source.Length && char.IsLowSurrogate(source[index]))
                 {
                     point = char.ConvertToUtf32((char)point, source[index++]);
                 }
-                result.Append(ScalarPattern(point, unicode, true));
+                result.Append(ScalarPattern(point, unicode, ignoreCase));
             }
             else result.Append(source[index++]);
         }

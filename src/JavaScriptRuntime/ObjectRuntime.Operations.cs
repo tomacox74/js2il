@@ -6838,11 +6838,13 @@ namespace JavaScriptRuntime
                     throw new TypeError($"Cannot assign to module namespace property '{name}'");
                 return value;
             }
-            if (obj is JavaScriptRuntime.Symbol)
+            if (obj is not JsNull && TypeUtilities.IsPrimitive(obj))
             {
-                if (throwOnError)
+                // PutValue boxes the base for [[Set]], but retains the primitive as
+                // Receiver. Inherited accessors and Proxy traps must still run.
+                if (!ReflectSetOrdinary(Construct(obj), name, value, obj) && throwOnError)
                 {
-                    throw new TypeError("Cannot create property on a Symbol value");
+                    throw new TypeError($"Cannot assign to property '{name}' of primitive value");
                 }
 
                 return value;

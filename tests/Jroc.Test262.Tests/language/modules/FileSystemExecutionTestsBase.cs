@@ -37,6 +37,11 @@ public abstract class FileSystemExecutionTestsBase
     {
         string projectRoot = FindProjectRoot(sourceFilePath);
         var (script, sourcePath) = GetJavaScriptAndSourcePath(projectRoot, testName);
+        if (Test262SharedAssertHarness.IsParseSyntaxError(script))
+        {
+            Test262CompilationAssertions.AssertParseSyntaxError(testName, script, sourcePath);
+            return Task.CompletedTask;
+        }
         var preparedScript = Test262SharedAssertHarness.PrepareEntryScript(script);
         Exception? failure = null;
 
