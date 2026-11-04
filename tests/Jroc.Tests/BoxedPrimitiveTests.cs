@@ -251,7 +251,7 @@ public sealed class BoxedPrimitiveTests
         var compiled = CompileBody(body, scheduled);
 
         Assert.Contains("call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)", compiled.Il);
-        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetPropertyAsNumber(object, string)", compiled.Il);
+        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)", compiled.Il);
         Assert.DoesNotContain("ObjectRuntime::SetItem(", compiled.Il);
         if (resultUsed)
         {
@@ -306,7 +306,7 @@ public sealed class BoxedPrimitiveTests
                 ignored, retained: readonly.value, strictRejected, order: events.join(",") };
             """);
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
-        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetPropertyAsNumber(object, string)", il);
+        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)", il);
         Assert.Contains("call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)", il);
 
         WithExports(artifact, exports =>

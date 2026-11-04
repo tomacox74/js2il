@@ -6141,25 +6141,6 @@ namespace JavaScriptRuntime
             return GetPropertySlow(obj, name);
         }
 
-        /// <summary>Reads a property as a number without boxing ordinary numeric slots.</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double GetPropertyAsNumber(object obj, string name)
-        {
-            if (obj is not null
-                && obj.GetType() == typeof(JsObject)
-                && !MayBeStringObjectIndex(name))
-            {
-                var ordinaryObject = (JsObject)obj;
-                if (!ordinaryObject.IsFunctionPrototype
-                    && ordinaryObject.TryGetOwnNumberValue(name, out var value))
-                {
-                    return value;
-                }
-            }
-
-            return TypeUtilities.ToNumber(GetItem(obj!, name));
-        }
-
         private static object? GetPropertySlow(object? obj, string name)
         {
             // Null/undefined -> undefined (modeled as null)

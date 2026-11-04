@@ -196,12 +196,12 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    // Emit: call float64 JavaScriptRuntime.ObjectRuntime.GetPropertyAsNumber(object, string)
+                    // Emit: call float64 JavaScriptRuntime.ObjectRuntime.GetItemAsNumber(object, string)
                     EmitLoadTempAsObject(getItemAsNumberString.Object, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(getItemAsNumberString.Index, ilEncoder, allocation, methodDescriptor);
                     var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.ObjectRuntime),
-                        nameof(JavaScriptRuntime.ObjectRuntime.GetPropertyAsNumber),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetItemAsNumber),
                         parameterTypes: new[] { typeof(object), typeof(string) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getItemAsNumberMethod);
