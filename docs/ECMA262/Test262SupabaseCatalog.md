@@ -2630,3 +2630,28 @@ For a rollout check, dispatch MVP with at least two slots and compare the fixtur
 Version 1 accepts the original Actions attempt for preparation and execution. A downstream validation or publication rerun can use the previously issued artifact IDs. A screening rerun within the same Actions run is rejected before claims. Recover saved observations with the original worker identity and existing upload-only flush procedure. Start a fresh authorized dispatch for further screening. Budget settlement waits for any live leases to expire and retains conservative charges for abandoned reservations.
 
 Before reverting to the legacy path, allow the split collection to stop claiming and reconcile its leases and budget. Set `TEST262_SPLIT_WORKFLOW=false` for subsequent dispatches. The collection and worker relations are included in coherent exports and database backups when the managed capability is present. The pipeline metrics view reports parent totals, and `test262_reporting.v_collection_workers` exposes individual worker measurements.
+
+### Worker-count benchmark (#2366)
+
+Run **Test262 worker benchmark** on the source revision to measure the managed
+queue with one, two and four execution-only logins. The MVP and native jobs
+each use a fresh loopback PostgreSQL service and three rotated repetitions per
+count on one runner. Each trial uses the same five pinned Math.abs fixtures and
+ten variants, the same limits, and the same staged binaries and container image.
+Distinct disposable trial provenance prevents prior completions from reducing
+the next trial's workload. The eight-worker configuration exceeds the current
+four-slot catalogue limit.
+
+Each artifact contains a JSON report and a throughput plot. The report records
+the checkout, upstream commit, fixture hashes, execution identity, image ID,
+per-worker API timing samples, outcome equivalence, final queue states and budget
+charges. Fixture active time includes container execution overhead. The no-op
+isolation probe approximates container launch and teardown on the same host.
+
+The report gives screening runner minutes on the shared host. Supply an optional
+USD-per-minute rate to calculate screening-only estimates. These exclude job setup
+and artifact transfer. The summed worker active minutes describe concurrency
+inside the job. GitHub Actions bills jobs, so those process timings cannot be
+used as a multi-runner bill. Separate-runner throughput and total Actions cost
+require matched trials on independent runners sharing a disposable catalogue.
+Keep the one-worker default until those measurements support a rollout change.

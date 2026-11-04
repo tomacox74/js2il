@@ -27,12 +27,12 @@ from .pilot import disposable_settings
 from .pilot_drills import require, observation, expect_rejection
 
 
-def enroll(admin,repository,index):
+def enroll(admin,repository,index,*,login=None):
     import psycopg
     from psycopg import sql
     from psycopg.conninfo import make_conninfo
     disposable_settings(admin)
-    login='catalogue_pilot_independent_'+('a' if index==0 else 'b')
+    login=login or 'catalogue_pilot_independent_'+('a' if index==0 else 'b')
     producer=str(uuid.uuid4());password=uuid.uuid4().hex
     with psycopg.connect(admin,autocommit=True) as db:
         db.execute(sql.SQL('CREATE ROLE {} LOGIN INHERIT PASSWORD {}').format(sql.Identifier(login),sql.Literal(password)))
