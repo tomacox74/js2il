@@ -51,20 +51,21 @@ jobs:
             const workflowId = 'publish-tool.yml';
             const targetVersion = process.env.TOOL_VERSION;
             const targetTag = `v${targetVersion}`;
-            const deadlineMs = 20 * 60 * 1000;
-            const pollMs = 15 * 1000;
+            // Allow the 90-minute cross-platform release gate plus publication.
+            const deadlineMs = 2 * 60 * 60 * 1000;
+            const pollMs = 60 * 1000;
             const startedAt = Date.now();
 
             while (Date.now() - startedAt < deadlineMs) {
-              const response = await github.request('GET /repos/{owner}/{repo}/actions/runs', {
+              const runs = await github.paginate('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                per_page: 50
+                workflow_id: workflowId,
+                per_page: 100
               });
 
-              const matchingRuns = response.data.workflow_runs.filter(candidate =>
-                candidate.path === '.github/workflows/publish-tool.yml' &&
-                (candidate.display_title ?? '').includes(targetTag)
+              const matchingRuns = runs.filter(candidate =>
+                (candidate.display_title ?? '').endsWith(` - ${targetTag}`)
               );
 
               if (matchingRuns.length === 0) {
