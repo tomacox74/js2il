@@ -1292,7 +1292,8 @@ public partial class SymbolTableBuilder
         if (onlyReturn.Argument is Identifier returnedIdentifier)
         {
             var returnedBinding = TryResolveBinding(callableScope, returnedIdentifier.Name);
-            if (returnedBinding?.Kind == BindingKind.Var
+            if (returnedBinding != null
+                && (returnedBinding.Kind == BindingKind.Var || _unsafeNumericBindings.Contains(returnedBinding))
                 && !returnedBinding.DeclaringScope.Parameters.Contains(returnedBinding.Name)
                 && returnedBinding.ClrType == null)
             {

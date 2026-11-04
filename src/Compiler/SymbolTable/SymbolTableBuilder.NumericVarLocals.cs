@@ -5,7 +5,17 @@ namespace Jroc.SymbolTables;
 
 public partial class SymbolTableBuilder
 {
+    // Unknown lexical types are not inherently unsafe. Keep hoisted-read
+    // provenance separate so unrelated numeric inference can still proceed.
+    private readonly HashSet<BindingInfo> _unsafeNumericBindings = [];
+
     private void InferDefinitelyInitializedNumericVarLocals(Scope root)
+    {
+        _unsafeNumericBindings.Clear();
+        InferDefinitelyInitializedNumericVarLocalsRecursively(root);
+    }
+
+    private void InferDefinitelyInitializedNumericVarLocalsRecursively(Scope root)
     {
         if (root.Kind is ScopeKind.Function or ScopeKind.Global)
         {
@@ -26,9 +36,11 @@ public partial class SymbolTableBuilder
             }
         }
 
+        RemoveUnsafeNumericBindingFacts(root);
+
         foreach (var child in root.Children)
         {
-            InferDefinitelyInitializedNumericVarLocals(child);
+            InferDefinitelyInitializedNumericVarLocalsRecursively(child);
         }
     }
 
@@ -92,34 +104,41 @@ public partial class SymbolTableBuilder
             }
         }
         while (changed);
+    }
 
-        // General stable-type inference can see a later numeric initializer and infer
-        // through an earlier hoisted read (for example, `var y = x; var x = 1`).
-        // Such an initializer evaluates to undefined and must not acquire a numeric
-        // local or callable-return fact.
-        foreach (var binding in scope.Bindings.Values)
+    private void RemoveUnsafeNumericBindingFacts(Scope scope)
+    {
+        // Forwarded hoisted reads can produce undefined even when flow-insensitive
+        // inference sees a numeric initializer. Include lexical scopes and writes,
+        // and invalidate dependent aliases before return/field inference runs.
+        var proposedClrTypes = new Dictionary<string, Type>();
+        bool changed;
+        do
         {
-            if (!IsUnboxedLocalCandidateKind(binding.Kind)
-                || binding.CanUseUnboxedLocal
-                || binding.DeclarationNode is not VariableDeclarator { Init: Expression initializer })
+            changed = false;
+            foreach (var binding in scope.Bindings.Values)
             {
-                continue;
-            }
+                if (binding.Kind is not (BindingKind.Var or BindingKind.Let or BindingKind.Const)
+                    || (binding.ClrType != null && binding.ClrType != typeof(double))
+                    || _unsafeNumericBindings.Contains(binding))
+                {
+                    continue;
+                }
 
-            var analyzer = new NumericVarDefiniteAssignmentAnalyzer(
-                this,
-                scope,
-                binding,
-                proposedClrTypes);
-            if (!analyzer.InitializerForwardsUnsafeNumericDependency(initializer))
-            {
-                continue;
-            }
+                var analyzer = new NumericVarDefiniteAssignmentAnalyzer(
+                    this, scope, binding, proposedClrTypes);
+                if (!analyzer.HasUnsafeNumericWrite(scope.AstNode, scope))
+                {
+                    continue;
+                }
 
-            proposedClrTypes.Remove(binding.Name);
-            binding.ClrType = null;
-            binding.IsStableType = false;
+                binding.ClrType = null;
+                binding.IsStableType = false;
+                binding.CanUseUnboxedLocal = false;
+                changed |= _unsafeNumericBindings.Add(binding);
+            }
         }
+        while (changed);
     }
 
     /// <summary>
@@ -197,8 +216,37 @@ public partial class SymbolTableBuilder
                 && _sawNumericWrite;
         }
 
-        public bool InitializerForwardsUnsafeNumericDependency(Expression expression)
-            => InitializerForwardsUnsafeNumericDependency(expression, _functionScope);
+        public bool HasUnsafeNumericWrite(Node node, Scope currentScope)
+        {
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression
+                && !ReferenceEquals(node, _functionScope.AstNode))
+            {
+                return false;
+            }
+
+            currentScope = GetScopeForNode(currentScope, node);
+            var value = node switch
+            {
+                VariableDeclarator { Id: Identifier id, Init: Expression initializer }
+                    when ResolvesToTarget(currentScope, id.Name) => initializer,
+                AssignmentExpression { Operator: Operator.Assignment, Left: Identifier id } assignment
+                    when ResolvesToTarget(currentScope, id.Name) => assignment.Right,
+                _ => null
+            };
+            if (value != null && InitializerForwardsUnsafeNumericDependency(value, currentScope))
+            {
+                return true;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (HasUnsafeNumericWrite(child, currentScope))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private bool InitializerForwardsUnsafeNumericDependency(
             Expression expression,
@@ -640,9 +688,9 @@ public partial class SymbolTableBuilder
             }
 
             return expression is NonUpdateUnaryExpression
-                   {
-                       Operator: Operator.UnaryNegation or Operator.UnaryPlus
-                   } unary
+            {
+                Operator: Operator.UnaryNegation or Operator.UnaryPlus
+            } unary
                    && InferNumericValueType(unary.Argument, currentScope) == typeof(double)
                 ? typeof(double)
                 : null;
@@ -671,7 +719,8 @@ public partial class SymbolTableBuilder
                 var dependency = TryResolveBinding(currentScope, identifier.Name);
                 return dependency != null
                        && !ReferenceEquals(dependency, _target)
-                       && dependency.Kind == BindingKind.Var
+                       && (dependency.Kind == BindingKind.Var
+                           || _builder._unsafeNumericBindings.Contains(dependency))
                        && !dependency.DeclaringScope.Parameters.Contains(dependency.Name)
                        && !dependency.CanUseUnboxedLocal;
             }

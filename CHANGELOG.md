@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(compiler): preserve undefined when let/const initializers, assignments, or
+  aliases read a hoisted numeric var before initialization, without inferring
+  numeric return signatures for those values.
 - perf(runtime): keep ordinary numeric property reads and existing-property
   assignments unboxed, and select numeric property helpers in generated IL while
   preserving conversion, descriptor, accessor, and exotic-object fallbacks.
