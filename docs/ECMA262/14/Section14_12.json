@@ -37,6 +37,20 @@
   "support": {
     "entries": [
       {
+        "clause": "14.12",
+        "feature": "Switch-statement Test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-switch-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/switch/RemainingStatementExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/switch/scope-lex-async-generator.js",
+          "test/language/statements/switch/cptn-a-abrupt-empty.js"
+        ],
+        "notes": "All 111 applicable pinned switch cases have outcomes: 88 verified passing and 23 unsupported eval dependencies. Coverage includes async-generator declaration isolation in the case-block environment and all 69 syntax-negative cases. Completion-value scenarios requiring eval are explicitly excluded rather than rewritten. All 172 required native variants of the supported cases pass under one unchanged build. Evidence is branch-local PR validation, not central trusted acceptance."
+      },
+      {
         "clause": "14.12.1",
         "feature": "switch statement (cases, fallthrough, default, break)",
         "status": "Supported",

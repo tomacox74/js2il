@@ -32,6 +32,26 @@
   "support": {
     "entries": [
       {
+        "clause": "14.15",
+        "feature": "Try-statement Test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/try/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/try/dstr/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Tests/TailPositionReturnTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/try/scope-catch-param-lex-open.js",
+          "test/language/statements/try/scope-catch-param-lex-close.js",
+          "test/language/statements/try/scope-catch-block-lex-open.js",
+          "test/language/statements/try/tco-catch.js",
+          "test/language/statements/try/tco-finally.js",
+          "test/language/statements/try/tco-catch-finally.js"
+        ],
+        "notes": "All 201 applicable pinned try cases have outcomes: 186 verified passing and 15 unsupported eval dependencies. Catch-pattern defaults discover their nested callables and use the parameter environment rather than body lexical declarations; captured environments are initialized before use. Proper tail returns from catch/finally pass the upstream recursion depth of 100,000. Arguments are evaluated within the owning handler before leaving to a CLR-safe tail-return block, while pending catch/finally obligations prevent premature tail calls. All 361 required native variants of the supported cases pass, including all 27 syntax-negative cases. An ordinary object's eval method does not require the eval intrinsic and remains runnable. Evidence is branch-local PR validation, not central trusted acceptance."
+      },
+      {
         "clause": "14.15.3",
         "feature": "try/catch (no binding)",
         "status": "Supported",

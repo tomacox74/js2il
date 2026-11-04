@@ -180,6 +180,29 @@ used central reporting for the matching master revision and upstream pin; that
 target had no native observations. Fresh execution results are branch-local PR
 validation, not central trusted acceptance.
 
+Labeled statements, `let` declarations, `return`, `switch`, `try`, and synchronous
+`using` declarations now have outcomes for all 575 applicable pinned cases:
+532 verified passing and 43 unsupported eval dependencies. The completion adds
+141 exact upstream cases: 100 verified passing and 41 explicit eval exclusions.
+Two older labeled completion cases now use their original eval-dependent sources
+and are correctly excluded instead of counting rewritten scenarios as passing.
+Revalidating eleven previously registered but unpublished cases gives a net
+increase of 109 verified passing results and resolves all 152 unpublished results
+in these six rows.
+
+Coverage includes captured lexical writes during the temporal dead zone,
+catch-pattern defaults and their separate parameter/body environments,
+proper tail returns from catch/finally, return grammar and line terminators,
+switch lexical isolation, and resource initialization/disposal ordering,
+receivers, lifetimes, and suppressed errors. All 1,030 metadata-required native
+variants of the 532 supported cases pass under one unchanged build, including
+all 174 syntax-negative cases. Parse negatives mentioning eval remain runnable,
+as does an ordinary object method named `eval`.
+Selection used read-only central reporting for the matching master revision
+and pin; its native rows were incomplete or excluded, not fresh acceptance.
+The new execution results are branch-local PR validation, not central trusted
+acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -300,8 +323,8 @@ acceptance.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 21,940 | 484 | 1,219 | 23,643 | **92.80%** |
-| **Total** | 39,870 | 515 | 7,856 | 48,241 | **82.65%** |
+| Language syntax and semantics | 22,049 | 527 | 1,067 | 23,643 | **93.26%** |
+| **Total** | 39,979 | 558 | 7,704 | 48,241 | **82.87%** |
 
 ## Language Areas
 
@@ -332,7 +355,7 @@ acceptance.
 | `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
 | `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
-| `statements` | 8,940 | 213 | 184 | 9,337 | **95.75%** |
+| `statements` | 9,049 | 256 | 32 | 9,337 | **96.92%** |
 | `types` | 91 | 0 | 22 | 113 | **80.53%** |
 | `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
 
@@ -433,13 +456,13 @@ acceptance.
 | `function` | 422 | 29 | 0 | 451 | **93.57%** |
 | `generators` | 263 | 3 | 0 | 266 | **98.87%** |
 | `if` | 60 | 9 | 0 | 69 | **86.96%** |
-| `labeled` | 21 | 0 | 3 | 24 | **87.50%** |
-| `let` | 140 | 0 | 5 | 145 | **96.55%** |
-| `return` | 1 | 0 | 15 | 16 | **6.25%** |
-| `switch` | 86 | 0 | 25 | 111 | **77.48%** |
+| `labeled` | 22 | 2 | 0 | 24 | **91.67%** |
+| `let` | 144 | 1 | 0 | 145 | **99.31%** |
+| `return` | 16 | 0 | 0 | 16 | **100.00%** |
+| `switch` | 88 | 23 | 0 | 111 | **79.28%** |
 | `throw` | 14 | 0 | 0 | 14 | **100.00%** |
-| `try` | 152 | 0 | 49 | 201 | **75.62%** |
-| `using` | 23 | 0 | 55 | 78 | **29.49%** |
+| `try` | 186 | 15 | 0 | 201 | **92.54%** |
+| `using` | 76 | 2 | 0 | 78 | **97.44%** |
 | `variable` | 163 | 15 | 0 | 178 | **91.57%** |
 | `while` | 19 | 0 | 19 | 38 | **50.00%** |
 | `with` | 164 | 17 | 0 | 181 | **90.61%** |

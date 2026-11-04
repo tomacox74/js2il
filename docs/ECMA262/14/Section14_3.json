@@ -74,12 +74,32 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/language/statements/await-using/RemainingLanguageCompletionExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/statements/await-using/syntax/RemainingLanguageCompletionExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/using/RemainingStatementExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/statements/using/syntax/RemainingStatementExecutionTests.cs",
           "tests/Jroc.Test262.Tests/Integration/ResourceManagement/ExecutionTests.cs"
         ],
         "test262Paths": [
-          "test/language/statements/await-using/multiple-resources-disposed-in-reverse-order.js"
+          "test/language/statements/await-using/multiple-resources-disposed-in-reverse-order.js",
+          "test/language/statements/using/multiple-resources-disposed-in-reverse-order.js",
+          "test/language/statements/using/gets-initializer-Symbol.dispose-property-once.js",
+          "test/language/statements/using/throws-suppressederror-if-multiple-errors-during-disposal.js"
         ],
-        "notes": "Synchronous and asynchronous resource declarations use immutable lexical bindings, capture the disposal method at initialization, and dispose in reverse order on normal and abrupt scope exit. Asynchronous cleanup preserves required suspension order, synchronous fallback semantics, and SuppressedError chaining. Returns, throws, labeled break/continue, per-iteration cleanup, iterator closing, callable resources, and exceptions after await/yield retain the correct completion. All 94 pinned await-using cases have outcomes: 93 verified passing and one unsupported eval dependency. Evidence is branch-local native validation, not central trusted acceptance."
+        "notes": "Synchronous and asynchronous resource declarations use immutable lexical bindings, capture the disposal method at initialization, and dispose in reverse order on normal and abrupt scope exit. Asynchronous cleanup preserves required suspension order, synchronous fallback semantics, and SuppressedError chaining. Returns, throws, labeled break/continue, per-iteration cleanup, iterator closing, callable resources, and exceptions after await/yield retain the correct completion. All 94 pinned await-using cases have outcomes: 93 verified passing and one unsupported eval dependency. All 78 pinned using cases also have outcomes: 76 verified passing and two unsupported eval dependencies, covering initializer partitions, TDZ, syntax, disposal receiver/order, generator and async lifetimes, and suppressed errors. Every required native variant of the supported using cases passes under one unchanged build. Evidence is branch-local native validation, not central trusted acceptance."
+      },
+      {
+        "clause": "14.3.1",
+        "feature": "Let-declaration Test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-let-and-const-declarations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statements/let/RemainingStatementExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/let/block-local-closure-set-before-initialization.js",
+          "test/language/statements/let/function-local-closure-set-before-initialization.js",
+          "test/language/statements/let/global-closure-set-before-initialization.js"
+        ],
+        "notes": "All 145 applicable pinned let cases have outcomes: 144 verified passing and one unsupported eval dependency. Captured assignments check the binding's TDZ after evaluating the right-hand side, rather than overwriting an uninitialized environment field. Declaration initialization remains distinct from source-level assignment. All 285 required native variants of the supported cases pass, including the 27 syntax-negative cases. Evidence is branch-local PR validation, not central trusted acceptance."
       },
       {
         "clause": "14.3.2",

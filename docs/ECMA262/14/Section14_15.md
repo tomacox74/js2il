@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-15T07:25:42Z
+> Last generated (UTC): 2026-11-04T02:43:50Z
 
 try/catch/finally is supported for the synchronous cases covered by the current repo tests, including throwing and catching arbitrary JS values plus `finally` blocks on normal completion, return, and escaping throw paths. Remaining caveats are early-error coverage and exact host-level fidelity for uncaught throws after `finally` runs.
 
@@ -29,6 +29,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Statement syntax parse-negative conformance expansion | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/StatementSyntaxConformance8BatchParseTests.cs` | `test/language/statements/try/catch-parameter-boundnames-restriction-arguments-negative-early.js`<br>`test/language/statements/try/catch-parameter-boundnames-restriction-eval-negative-early.js` | The native Test262 harness verifies 2 additional pinned parse-negative statement fixtures (2 `try`). All 2 metadata-selected variants passed the catalog preflight under one current compiler provenance; no compiler, runtime, or harness changes were required. |
+| Try-statement Test262 coverage | Supported with Limitations | `tests/Jroc.Test262.Tests/language/statements/try/RemainingStatementExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/statements/try/dstr/RemainingStatementExecutionTests.cs`<br>`tests/Jroc.Tests/TailPositionReturnTests.cs` | `test/language/statements/try/scope-catch-param-lex-open.js`<br>`test/language/statements/try/scope-catch-param-lex-close.js`<br>`test/language/statements/try/scope-catch-block-lex-open.js`<br>`test/language/statements/try/tco-catch.js`<br>`test/language/statements/try/tco-finally.js`<br>`test/language/statements/try/tco-catch-finally.js` | All 201 applicable pinned try cases have outcomes: 186 verified passing and 15 unsupported eval dependencies. Catch-pattern defaults discover their nested callables and use the parameter environment rather than body lexical declarations; captured environments are initialized before use. Proper tail returns from catch/finally pass the upstream recursion depth of 100,000. Arguments are evaluated within the owning handler before leaving to a CLR-safe tail-return block, while pending catch/finally obligations prevent premature tail calls. All 361 required native variants of the supported cases pass, including all 27 syntax-negative cases. An ordinary object's eval method does not require the eval intrinsic and remains runnable. Evidence is branch-local PR validation, not central trusted acceptance. |
 
 ### 14.15.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-catchclauseevaluation))
 
