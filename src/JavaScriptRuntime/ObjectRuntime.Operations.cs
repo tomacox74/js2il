@@ -1961,6 +1961,10 @@ namespace JavaScriptRuntime
             return obj is string || obj is Symbol || obj.GetType().IsValueType;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool MayBeStringObjectIndex(string name)
+            => !string.IsNullOrEmpty(name) && (uint)(name[0] - '0') <= 9;
+
         private static bool TryGetStringObjectValue(object obj, [NotNullWhen(true)] out string? value)
         {
             if (obj is IExoticJsObject)
@@ -6118,7 +6122,26 @@ namespace JavaScriptRuntime
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object? GetProperty(object obj, string name)
+        {
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && !MayBeStringObjectIndex(name))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.HasNonDataDescriptors
+                    && !ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TryGetBoxedValue(name, out var value))
+                {
+                    return value;
+                }
+            }
+
+            return GetPropertySlow(obj, name);
+        }
+
+        private static object? GetPropertySlow(object? obj, string name)
         {
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
@@ -6156,7 +6179,8 @@ namespace JavaScriptRuntime
                 return bufferValue;
             }
 
-            if (TryGetStringObjectValue(obj, out var stringObjectValue)
+            if (MayBeStringObjectIndex(name)
+                && TryGetStringObjectValue(obj, out var stringObjectValue)
                 && TryParseCanonicalIndexString(name, out var stringObjectIndex)
                 && stringObjectIndex >= 0
                 && stringObjectIndex < stringObjectValue.Length)
