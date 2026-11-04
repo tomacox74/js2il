@@ -3,6 +3,7 @@
 The independent clients use production identity verification, enlistment and Docker
 execution. Faults are restricted to the loopback pilot. No production enrollment.
 """
+from contextlib import closing
 from datetime import datetime, timezone
 import json
 import os
@@ -213,19 +214,24 @@ def run_drill(client,admin,base,fixture,revision,output,report):
                     snapshot_outbox(outbox, before)
                     before_pending = pending(before, base.repository, worker['producer'])
                     require(before_pending == (2 if i == 0 else 0), 'Unexpected pre-recovery receipt count')
-                    flush(worker,outbox,folder/f'flush-{i}.log')
+                    recovered_outbox = folder/f'outbox-{i}-recovered.sqlite'
+                    shutil.copyfile(before, recovered_outbox)
+                    flush(worker,recovered_outbox,folder/f'flush-{i}.log')
                     # A second flush must neither change acknowledged receipts nor
                     # execute a fixture. Compare SQLite receipt rows directly.
-                    with sqlite3.connect(outbox) as db:
+                    with closing(sqlite3.connect(recovered_outbox)) as db:
                         receipts = [db.execute(f'SELECT * FROM {table} ORDER BY rowid').fetchall()
                                     for table in ('messages', 'completions')]
-                        flush(worker,outbox,folder/f'replay-{i}.log')
+                        flush(worker,recovered_outbox,folder/f'replay-{i}.log')
                         require(receipts == [db.execute(f'SELECT * FROM {table} ORDER BY rowid').fetchall()
                                              for table in ('messages', 'completions')],
                                 'Repeated flush changed an acknowledged receipt')
-                    require(pending(outbox,base.repository,worker['producer'])==0,'Independent outbox did not drain')
+                    require(pending(recovered_outbox,base.repository,worker['producer'])==0,
+                            'Independent outbox did not drain')
+                    configs[i]['args']['outbox'] = str(recovered_outbox)
                     checkpoints.append({'producer_id': worker['producer'], 'before': before.name,
-                                        'before_sha256': digest(before), 'pending_before': before_pending})
+                                        'before_sha256': digest(before), 'pending_before': before_pending,
+                                        'recovered': recovered_outbox.name})
                 # End the interrupted supervisor's collection without running a
                 # replacement fixture, even after its local checkout has drifted.
                 replay_args=configs[0]['args']
