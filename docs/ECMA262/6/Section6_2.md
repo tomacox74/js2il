@@ -4,7 +4,7 @@
 
 [Back to Section6](Section6.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T18:52:40Z
+> Last generated (UTC): 2026-11-04T05:36:48Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -89,6 +89,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>`tests/Jroc.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs` |  | Identifier/member references work for supported language forms, including the covered test262 GetValue/PutValue cases for computed members, null/undefined member bases, and function-call reference resolution. Spec-exact modeling of every Reference Record variant remains incomplete. |
+
+### 6.2.5.6 ([tc39.es](https://tc39.es/ecma262/#sec-putvalue))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Primitive-base property assignment | Supported |  | `test/language/types/reference/put-value-prop-base-primitive.js`<br>`test/language/types/reference/S8.7_A5_T2.js` | Property assignment boxes primitive bases for lookup while preserving the original primitive receiver. Inherited Proxy traps and accessors observe number, string, boolean, and symbol assignments instead of being bypassed by primitive fast paths. Native validation preserves the upstream trap counts and reference-deletion state checks. |
 
 ### 6.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-property-descriptor-specification-type))
 

@@ -9,6 +9,4 @@ negative:
   phase: runtime
   type: ReferenceError
 ---*/
-assert.throws(ReferenceError, function() {
-  const x = x + 1;
-});
+const x = x + 1;

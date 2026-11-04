@@ -7,6 +7,27 @@ namespace Jroc.Tests;
 
 public static class Test262CompilationAssertions
 {
+    public static void AssertParseSyntaxError(string testName, string script, string sourcePath)
+    {
+        if (!Test262SharedAssertHarness.IsParseSyntaxError(script))
+            throw new InvalidOperationException($"Test '{testName}' does not declare a parse SyntaxError.");
+
+        var prepared = Test262SharedAssertHarness.PrepareEntryScript(script);
+        var parser = new JavaScriptParser();
+        try
+        {
+            if (Test262SharedAssertHarness.IsModule(script))
+                parser.ParseJavaScriptModule(prepared, sourcePath);
+            else
+                parser.ParseJavaScriptScript(prepared, sourcePath);
+        }
+        catch (Exception error) when (error.InnerException is Acornima.ParseErrorException)
+        {
+            return;
+        }
+        throw new InvalidOperationException($"Expected a parse SyntaxError for test '{testName}', but parsing succeeded.");
+    }
+
     public static void AssertResolutionSyntaxError(string testName, string script, string sourcePath)
     {
         var prepared = Test262SharedAssertHarness.PrepareEntryScript(script);
