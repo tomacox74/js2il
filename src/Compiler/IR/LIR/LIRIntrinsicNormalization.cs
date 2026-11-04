@@ -1115,6 +1115,8 @@ internal static class LIRIntrinsicNormalization
             {
                 LIRGetJsArrayElement getArrayElement
                     => new LIRGetJsArrayElement(getArrayElement.Receiver, getArrayElement.Index, conv.Result),
+                LIRGetItem getItem when IsTempStringReference(methodBody, getItem.Index)
+                    => new LIRGetItemAsNumberString(getItem.Object, getItem.Index, conv.Result),
                 LIRGetItem getItem
                     => new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result),
                 _ => instruction

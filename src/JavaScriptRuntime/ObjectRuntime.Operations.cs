@@ -6339,6 +6339,24 @@ namespace JavaScriptRuntime
             SetProperty(obj!, key, value);
         }
 
+        /// <summary>Assigns a number without boxing existing ordinary data properties.</summary>
+        public static void SetPropertyNumber(object? obj, string key, double value, bool throwOnError)
+        {
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && !MayBeStringObjectIndex(key))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TrySetOwnNumberValue(key, value))
+                {
+                    return;
+                }
+            }
+
+            _ = SetItem(obj, key, value, throwOnError);
+        }
+
         /// <summary>
         /// Sets a boolean property on a JavaScript object without boxing the bool value.
         /// Called from generated IL during object literal initialization.

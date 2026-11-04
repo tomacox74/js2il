@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(runtime): keep ordinary numeric property reads and existing-property
+  assignments unboxed, and select numeric property helpers in generated IL while
+  preserving conversion, descriptor, accessor, and exotic-object fallbacks.
 - perf(runtime): streamline ordinary own-property reads and skip unrelated
   boxed-string metadata probes for named properties while preserving descriptor,
   accessor, prototype, and exotic-object fallbacks.

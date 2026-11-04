@@ -214,6 +214,117 @@ public sealed class BoxedPrimitiveTests
         }, host);
     }
 
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(true, true, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, true, true)]
+    public void NumericPropertyStore_UsesVoidHelperAndPreservesAssignmentResult(
+        bool scheduled, bool resultUsed, bool objectResult)
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, typeof(JsObject));
+        var key = AddTemp(body, typeof(string));
+        var initial = AddTemp(body, typeof(double));
+        var rhs = AddTemp(body, typeof(double));
+        var assigned = AddTemp(body, objectResult ? typeof(object) : typeof(double));
+        var read = AddTemp(body, typeof(double));
+        body.Instructions.Add(new LIRConstNumber(1d, initial));
+        body.Instructions.Add(new LIRNewJsObject([new ObjectProperty("value", initial)], receiver));
+        body.Instructions.Add(new LIRConstString("value", key));
+        body.Instructions.Add(new LIRConstNumber(42.5d, rhs));
+        body.Instructions.Add(new LIRSetItem(receiver, key, rhs, assigned));
+        body.Instructions.Add(new LIRGetItemAsNumberString(receiver, key, read));
+        if (resultUsed)
+        {
+            var pair = AddTemp(body, typeof(JavaScriptRuntime.Array));
+            body.Instructions.Add(new LIRNewJsArray([assigned, read], pair));
+            body.Instructions.Add(new LIRReturn(pair));
+        }
+        else
+        {
+            body.Instructions.Add(new LIRReturn(read));
+        }
+
+        var compiled = CompileBody(body, scheduled);
+
+        Assert.Contains("call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)", compiled.Il);
+        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)", compiled.Il);
+        Assert.DoesNotContain("ObjectRuntime::SetItem(", compiled.Il);
+        if (resultUsed)
+        {
+            var pair = Assert.IsType<JavaScriptRuntime.Array>(compiled.Result);
+            Assert.Equal(2, pair.Count);
+            Assert.Equal(42.5d, pair[0]);
+            Assert.Equal(42.5d, pair[1]);
+        }
+        else
+        {
+            Assert.Equal(42.5d, compiled.Result);
+        }
+    }
+
+    [Fact]
+    public void CompiledNumericProperties_PreserveProxyReceiverCoercionOrderAndSetterResults()
+    {
+        var artifact = Compile("""
+            const events = [];
+            let reads = 0, writes = 0, conversions = 0, stored = 0;
+            let proxy;
+            const coercible = {
+                valueOf() { conversions++; events.push("convert"); return "7"; }
+            };
+            const target = {};
+            Object.defineProperty(target, "value", {
+                get() { reads++; events.push(this === proxy ? "get:receiver" : "get:wrong"); return coercible; },
+                set(value) { writes++; events.push(this === proxy ? "set:receiver" : "set:wrong"); stored = value; }
+            });
+            proxy = new Proxy(target, {
+                get(target, key, receiver) {
+                    events.push("trap:get");
+                    return Reflect.get(target, key, receiver);
+                },
+                set(target, key, value, receiver) {
+                    events.push("trap:set");
+                    return Reflect.set(target, key, value, receiver);
+                }
+            });
+            function other() { events.push("other"); return 3; }
+            const numeric = proxy.value - other();
+            const assigned = (proxy.value = 12.5);
+            const readonly = {};
+            Object.defineProperty(readonly, "value", { value: 1, writable: false });
+            const ignored = (readonly.value = 6);
+            function strictWrite() { "use strict"; readonly.value = 7; }
+            let strictRejected = false;
+            try { strictWrite(); } catch (error) { strictRejected = error instanceof TypeError; }
+            function readNumber(receiver) { return +receiver.value; }
+            const direct = readNumber({ value: 7.5 });
+            module.exports = { numeric, assigned, stored, reads, writes, conversions, direct,
+                ignored, retained: readonly.value, strictRejected, order: events.join(",") };
+            """);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.Contains("call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, string)", il);
+        Assert.Contains("call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)", il);
+
+        WithExports(artifact, exports =>
+        {
+            Assert.Equal(4d, exports["numeric"]);
+            Assert.Equal(12.5d, exports["assigned"]);
+            Assert.Equal(12.5d, exports["stored"]);
+            Assert.Equal(1d, exports["reads"]);
+            Assert.Equal(1d, exports["writes"]);
+            Assert.Equal(1d, exports["conversions"]);
+            Assert.Equal(7.5d, exports["direct"]);
+            Assert.Equal(6d, exports["ignored"]);
+            Assert.Equal(1d, exports["retained"]);
+            Assert.Equal(true, exports["strictRejected"]);
+            Assert.Equal("trap:get,get:receiver,other,convert,trap:set,set:receiver", exports["order"]);
+        });
+    }
+
     private static JrocCompiledAssemblyArtifact Compile(string source, HostRuntimeIntrinsicDescriptors? host = null)
         => JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(
             Path.Combine(Path.GetTempPath(), "shared-primitive-boxes.js"))

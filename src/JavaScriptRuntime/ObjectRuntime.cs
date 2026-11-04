@@ -1207,6 +1207,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double GetItemAsNumber(object obj, object index)
         {
+            if (index is string key)
+            {
+                return GetItemAsNumber(obj, key);
+            }
+
             if (obj is Array array && index is double arrayIndex)
             {
                 return array.GetItemAsNumber(arrayIndex);
@@ -1223,11 +1228,25 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Fast-path overload for string key reads that returns an unboxed number.
         /// Avoids boxing at the call site when the compiler has proven the key is a string
-        /// and the result is consumed as a number.
+        /// and the result is consumed as a number. Reads ordinary numeric slots without boxing.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(
+            System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static double GetItemAsNumber(object obj, string key)
         {
-            return TypeUtilities.ToNumber(GetItem(obj, key));
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && !MayBeStringObjectIndex(key))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TryGetOwnNumberValue(key, out var value))
+                {
+                    return value;
+                }
+            }
+
+            return TypeUtilities.ToNumber(GetItem(obj!, key));
         }
 
         /// <summary>

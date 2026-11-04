@@ -429,7 +429,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1672 (0x688)
+		// Code size: 1670 (0x686)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_Integrity_DefineProperty_And_StrictWrites/Scope,
@@ -799,251 +799,249 @@
 			IL_03c4: ldstr "blocked"
 			IL_03c9: ldc.r8 2
 			IL_03d2: ldc.i4.1
-			IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_03d8: pop
-			IL_03d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03de: stloc.s 22
-			IL_03e0: ldloc.s 22
-			IL_03e2: ldstr "inherited_write=ok"
-			IL_03e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03ec: pop
-			IL_03ed: leave IL_047d
+			IL_03d3: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)
+			IL_03d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03dd: stloc.s 22
+			IL_03df: ldloc.s 22
+			IL_03e1: ldstr "inherited_write=ok"
+			IL_03e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03eb: pop
+			IL_03ec: leave IL_047c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_03f2: stloc.s 14
-			IL_03f4: ldloc.s 14
-			IL_03f6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_03fb: dup
-			IL_03fc: brtrue IL_0412
+			IL_03f1: stloc.s 14
+			IL_03f3: ldloc.s 14
+			IL_03f5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_03fa: dup
+			IL_03fb: brtrue IL_0411
 
-			IL_0401: pop
-			IL_0402: ldloc.s 14
-			IL_0404: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0409: dup
-			IL_040a: brtrue IL_041e
+			IL_0400: pop
+			IL_0401: ldloc.s 14
+			IL_0403: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0408: dup
+			IL_0409: brtrue IL_041d
 
-			IL_040f: pop
-			IL_0410: rethrow
+			IL_040e: pop
+			IL_040f: rethrow
 
-			IL_0412: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0417: stloc.s 15
-			IL_0419: br IL_0420
+			IL_0411: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0416: stloc.s 15
+			IL_0418: br IL_041f
 
-			IL_041e: stloc.s 15
+			IL_041d: stloc.s 15
 
-			IL_0420: ldloc.s 15
-			IL_0422: stloc.s 16
-			IL_0424: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0429: stloc.s 22
-			IL_042b: volatile.
-			IL_042d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_0432: brfalse IL_0448
+			IL_041f: ldloc.s 15
+			IL_0421: stloc.s 16
+			IL_0423: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0428: stloc.s 22
+			IL_042a: volatile.
+			IL_042c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0431: brfalse IL_0447
 
-			IL_0437: ldloc.s 16
-			IL_0439: ldstr "name"
-			IL_043e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0443: br IL_045e
+			IL_0436: ldloc.s 16
+			IL_0438: ldstr "name"
+			IL_043d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0442: br IL_045d
 
-			IL_0448: ldloc.s 16
-			IL_044a: ldstr "name"
-			IL_044f: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:160"
-			IL_0454: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_0459: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0447: ldloc.s 16
+			IL_0449: ldstr "name"
+			IL_044e: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:160"
+			IL_0453: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
+			IL_0458: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_045e: stloc.s 23
-			IL_0460: ldstr "inherited_write="
-			IL_0465: ldloc.s 23
-			IL_0467: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_046c: stloc.s 24
-			IL_046e: ldloc.s 22
-			IL_0470: ldloc.s 24
-			IL_0472: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0477: pop
-			IL_0478: leave IL_047d
+			IL_045d: stloc.s 23
+			IL_045f: ldstr "inherited_write="
+			IL_0464: ldloc.s 23
+			IL_0466: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_046b: stloc.s 24
+			IL_046d: ldloc.s 22
+			IL_046f: ldloc.s 24
+			IL_0471: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0476: pop
+			IL_0477: leave IL_047c
 		} // end handler
 
-		IL_047d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0482: stloc.s 22
-		IL_0484: ldloc.s 13
-		IL_0486: ldstr "blocked"
-		IL_048b: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_0490: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_0495: stloc.s 25
-		IL_0497: ldstr "inherited_has_own="
-		IL_049c: ldloc.s 25
-		IL_049e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_04a3: stloc.s 24
-		IL_04a5: ldloc.s 22
-		IL_04a7: ldloc.s 24
-		IL_04a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04ae: pop
-		IL_04af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04b4: stloc.s 22
-		IL_04b6: volatile.
-		IL_04b8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_04bd: brfalse IL_04d3
+		IL_047c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0481: stloc.s 22
+		IL_0483: ldloc.s 13
+		IL_0485: ldstr "blocked"
+		IL_048a: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_048f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_0494: stloc.s 25
+		IL_0496: ldstr "inherited_has_own="
+		IL_049b: ldloc.s 25
+		IL_049d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_04a2: stloc.s 24
+		IL_04a4: ldloc.s 22
+		IL_04a6: ldloc.s 24
+		IL_04a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04ad: pop
+		IL_04ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04b3: stloc.s 22
+		IL_04b5: volatile.
+		IL_04b7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_04bc: brfalse IL_04d2
 
-		IL_04c2: ldloc.s 13
-		IL_04c4: ldstr "blocked"
-		IL_04c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04ce: br IL_04e9
+		IL_04c1: ldloc.s 13
+		IL_04c3: ldstr "blocked"
+		IL_04c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04cd: br IL_04e8
 
-		IL_04d3: ldloc.s 13
-		IL_04d5: ldstr "blocked"
-		IL_04da: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:179"
-		IL_04df: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-		IL_04e4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_04d2: ldloc.s 13
+		IL_04d4: ldstr "blocked"
+		IL_04d9: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:179"
+		IL_04de: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+		IL_04e3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04e9: stloc.s 23
-		IL_04eb: ldstr "inherited_value="
-		IL_04f0: ldloc.s 23
-		IL_04f2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_04f7: stloc.s 24
-		IL_04f9: ldloc.s 22
-		IL_04fb: ldloc.s 24
-		IL_04fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0502: pop
-		IL_0503: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0508: stloc.s 17
-		IL_050a: ldc.i4.1
-		IL_050b: newarr [System.Runtime]System.Object
-		IL_0510: dup
-		IL_0511: ldc.i4.0
-		IL_0512: ldloc.0
-		IL_0513: stelem.ref
-		IL_0514: stloc.s 26
-		IL_0516: newobj instance void Modules.Object_Integrity_DefineProperty_And_StrictWrites/FunctionExpression_L49C7/FunctionObject::.ctor()
-		IL_051b: ldc.i4.0
-		IL_051c: conv.r8
-		IL_051d: ldstr ""
+		IL_04e8: stloc.s 23
+		IL_04ea: ldstr "inherited_value="
+		IL_04ef: ldloc.s 23
+		IL_04f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_04f6: stloc.s 24
+		IL_04f8: ldloc.s 22
+		IL_04fa: ldloc.s 24
+		IL_04fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0501: pop
+		IL_0502: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0507: stloc.s 17
+		IL_0509: ldc.i4.1
+		IL_050a: newarr [System.Runtime]System.Object
+		IL_050f: dup
+		IL_0510: ldc.i4.0
+		IL_0511: ldloc.0
+		IL_0512: stelem.ref
+		IL_0513: stloc.s 26
+		IL_0515: newobj instance void Modules.Object_Integrity_DefineProperty_And_StrictWrites/FunctionExpression_L49C7/FunctionObject::.ctor()
+		IL_051a: ldc.i4.0
+		IL_051b: conv.r8
+		IL_051c: ldstr ""
+		IL_0521: ldc.i4.0
 		IL_0522: ldc.i4.0
-		IL_0523: ldc.i4.0
-		IL_0524: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_Integrity_DefineProperty_And_StrictWrites/FunctionExpression_L49C7/FunctionObject>(!!0, float64, string, bool, bool)
-		IL_0529: stloc.s 27
-		IL_052b: ldloc.s 27
-		IL_052d: ldstr "get"
-		IL_0532: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0537: stloc.s 23
-		IL_0539: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_053e: dup
-		IL_053f: ldstr "get"
-		IL_0544: ldloc.s 23
-		IL_0546: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_054b: dup
-		IL_054c: ldstr "enumerable"
-		IL_0551: ldc.i4.1
-		IL_0552: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0557: dup
-		IL_0558: ldstr "configurable"
-		IL_055d: ldc.i4.1
-		IL_055e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0563: stloc.s 28
-		IL_0565: ldloc.s 17
-		IL_0567: ldstr "value"
-		IL_056c: ldloc.s 28
-		IL_056e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_0573: pop
+		IL_0523: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Object_Integrity_DefineProperty_And_StrictWrites/FunctionExpression_L49C7/FunctionObject>(!!0, float64, string, bool, bool)
+		IL_0528: stloc.s 27
+		IL_052a: ldloc.s 27
+		IL_052c: ldstr "get"
+		IL_0531: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0536: stloc.s 23
+		IL_0538: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_053d: dup
+		IL_053e: ldstr "get"
+		IL_0543: ldloc.s 23
+		IL_0545: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_054a: dup
+		IL_054b: ldstr "enumerable"
+		IL_0550: ldc.i4.1
+		IL_0551: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0556: dup
+		IL_0557: ldstr "configurable"
+		IL_055c: ldc.i4.1
+		IL_055d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0562: stloc.s 28
+		IL_0564: ldloc.s 17
+		IL_0566: ldstr "value"
+		IL_056b: ldloc.s 28
+		IL_056d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_0572: pop
 		.try
 		{
-			IL_0574: nop
-			IL_0575: ldloc.s 17
-			IL_0577: ldstr "value"
-			IL_057c: ldc.r8 8
-			IL_0585: ldc.i4.1
-			IL_0586: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_058b: pop
-			IL_058c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0591: stloc.s 22
-			IL_0593: ldloc.s 22
-			IL_0595: ldstr "getter_only_write=ok"
-			IL_059a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_059f: pop
-			IL_05a0: leave IL_0630
+			IL_0573: nop
+			IL_0574: ldloc.s 17
+			IL_0576: ldstr "value"
+			IL_057b: ldc.r8 8
+			IL_0584: ldc.i4.1
+			IL_0585: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)
+			IL_058a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_058f: stloc.s 22
+			IL_0591: ldloc.s 22
+			IL_0593: ldstr "getter_only_write=ok"
+			IL_0598: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_059d: pop
+			IL_059e: leave IL_062e
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_05a5: stloc.s 18
-			IL_05a7: ldloc.s 18
-			IL_05a9: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_05ae: dup
-			IL_05af: brtrue IL_05c5
+			IL_05a3: stloc.s 18
+			IL_05a5: ldloc.s 18
+			IL_05a7: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_05ac: dup
+			IL_05ad: brtrue IL_05c3
 
-			IL_05b4: pop
-			IL_05b5: ldloc.s 18
-			IL_05b7: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_05bc: dup
-			IL_05bd: brtrue IL_05d1
+			IL_05b2: pop
+			IL_05b3: ldloc.s 18
+			IL_05b5: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_05ba: dup
+			IL_05bb: brtrue IL_05cf
 
-			IL_05c2: pop
-			IL_05c3: rethrow
+			IL_05c0: pop
+			IL_05c1: rethrow
 
-			IL_05c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_05ca: stloc.s 19
-			IL_05cc: br IL_05d3
+			IL_05c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_05c8: stloc.s 19
+			IL_05ca: br IL_05d1
 
-			IL_05d1: stloc.s 19
+			IL_05cf: stloc.s 19
 
-			IL_05d3: ldloc.s 19
-			IL_05d5: stloc.s 20
-			IL_05d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_05dc: stloc.s 22
-			IL_05de: volatile.
-			IL_05e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_05e5: brfalse IL_05fb
+			IL_05d1: ldloc.s 19
+			IL_05d3: stloc.s 20
+			IL_05d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_05da: stloc.s 22
+			IL_05dc: volatile.
+			IL_05de: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_05e3: brfalse IL_05f9
 
-			IL_05ea: ldloc.s 20
-			IL_05ec: ldstr "name"
-			IL_05f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_05f6: br IL_0611
+			IL_05e8: ldloc.s 20
+			IL_05ea: ldstr "name"
+			IL_05ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_05f4: br IL_060f
 
-			IL_05fb: ldloc.s 20
-			IL_05fd: ldstr "name"
-			IL_0602: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:217"
-			IL_0607: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_060c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_05f9: ldloc.s 20
+			IL_05fb: ldstr "name"
+			IL_0600: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:217"
+			IL_0605: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_060a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0611: stloc.s 23
-			IL_0613: ldstr "getter_only_write="
-			IL_0618: ldloc.s 23
-			IL_061a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_061f: stloc.s 24
-			IL_0621: ldloc.s 22
-			IL_0623: ldloc.s 24
-			IL_0625: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_062a: pop
-			IL_062b: leave IL_0630
+			IL_060f: stloc.s 23
+			IL_0611: ldstr "getter_only_write="
+			IL_0616: ldloc.s 23
+			IL_0618: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_061d: stloc.s 24
+			IL_061f: ldloc.s 22
+			IL_0621: ldloc.s 24
+			IL_0623: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0628: pop
+			IL_0629: leave IL_062e
 		} // end handler
 
-		IL_0630: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0635: stloc.s 22
-		IL_0637: volatile.
-		IL_0639: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_063e: brfalse IL_0654
+		IL_062e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0633: stloc.s 22
+		IL_0635: volatile.
+		IL_0637: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_063c: brfalse IL_0652
 
-		IL_0643: ldloc.s 17
-		IL_0645: ldstr "value"
-		IL_064a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_064f: br IL_066a
+		IL_0641: ldloc.s 17
+		IL_0643: ldstr "value"
+		IL_0648: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_064d: br IL_0668
 
-		IL_0654: ldloc.s 17
-		IL_0656: ldstr "value"
-		IL_065b: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:228"
-		IL_0660: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-		IL_0665: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0652: ldloc.s 17
+		IL_0654: ldstr "value"
+		IL_0659: ldstr "Object_Integrity_DefineProperty_And_StrictWrites:Modules.Object_Integrity_DefineProperty_And_StrictWrites:__js_module_init__:228"
+		IL_065e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+		IL_0663: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_066a: stloc.s 23
-		IL_066c: ldstr "getter_only_value="
-		IL_0671: ldloc.s 23
-		IL_0673: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0678: stloc.s 24
-		IL_067a: ldloc.s 22
-		IL_067c: ldloc.s 24
-		IL_067e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0683: pop
-		IL_0684: ldnull
-		IL_0685: stloc.s 21
-		IL_0687: ret
+		IL_0668: stloc.s 23
+		IL_066a: ldstr "getter_only_value="
+		IL_066f: ldloc.s 23
+		IL_0671: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0676: stloc.s 24
+		IL_0678: ldloc.s 22
+		IL_067a: ldloc.s 24
+		IL_067c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0681: pop
+		IL_0682: ldnull
+		IL_0683: stloc.s 21
+		IL_0685: ret
 	} // end of method Object_Integrity_DefineProperty_And_StrictWrites::__js_module_init__
 
 } // end of class Modules.Object_Integrity_DefineProperty_And_StrictWrites
