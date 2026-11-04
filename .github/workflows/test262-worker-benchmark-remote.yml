@@ -1,0 +1,247 @@
+name: Test262 independent-runner benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Exact master SHA shared by every trial in the campaign
+        required: true
+        type: string
+      kind:
+        type: choice
+        options: [mvp-composite, native]
+        default: mvp-composite
+      workers:
+        type: choice
+        options: ['1', '2', '4']
+        default: '1'
+      bundle_run:
+        description: Prior benchmark seed run ID on the same SHA (empty to build the seed)
+        default: ''
+        type: string
+      repeat:
+        type: choice
+        options: ['1', '2', '3']
+        default: '1'
+
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: test262-dedicated-benchmark-catalogue
+  cancel-in-progress: false
+
+env:
+  BENCHMARK_REPOSITORY_ID: ${{ vars.TEST262_BENCHMARK_REPOSITORY_ID }}
+  TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_BENCHMARK_AUTHORITY_EPOCH || '1' }}
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/master' && github.run_attempt == '1'
+    environment: test262-benchmark-coordinator
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      slots: ${{ steps.plan.outputs.slots }}
+      context_digest: ${{ steps.plan.outputs.context_digest }}
+      artifact_id: ${{ steps.bundle.outputs.artifact-id }}
+      artifact_digest: ${{ steps.bundle.outputs.artifact-digest }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify pinned campaign revision
+        env:
+          REVISION: ${{ inputs.revision }}
+        run: test "$REVISION" = "$GITHUB_SHA" && test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Build the pinned fixture runtime
+        if: inputs.bundle_run == ''
+        run: |
+          mkdir -p artifacts/test262/prepare
+          dotnet build src/Cli/Jroc.csproj -c Release --nologo
+          dotnet build scripts/test262/NativeScreeningHost/NativeScreeningHost.csproj -c Release --nologo
+          docker build --pull -t test262-fixture:local -f scripts/test262/central/fixture.Dockerfile .
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+          tar -czf artifacts/test262/prepare/runtime.tar.gz \
+            src/Cli/bin/Release/net10.0 scripts/test262/NativeScreeningHost/bin/Release/net10.0
+          set -o pipefail
+          docker save test262-fixture:local | gzip -1 > artifacts/test262/prepare/fixture-image.tar.gz
+      - name: Resolve the immutable seed bundle
+        if: inputs.bundle_run != ''
+        id: seed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUNDLE_RUN: ${{ inputs.bundle_run }}
+        run: |
+          python -m scripts.test262.central.worker_benchmark_remote resolve-bundle \
+            --bundle-run "$BUNDLE_RUN" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v8
+        if: inputs.bundle_run != ''
+        with:
+          artifact-ids: ${{ steps.seed.outputs.artifact_id }}
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.bundle_run }}
+          path: artifacts/test262/prepare
+          digest-mismatch: error
+      - name: Verify and load the seed runtime
+        if: inputs.bundle_run != ''
+        run: |
+          digest="$(sha256sum artifacts/test262/prepare/central-context.json | cut -d' ' -f1)"
+          python -m scripts.test262.central.collection_bundle artifacts/test262/prepare "$digest"
+          docker load --input artifacts/test262/prepare/fixture-image.tar.gz
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Freeze the benchmark allocation
+        id: plan
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_BENCHMARK_DATABASE_URL }}
+          KIND: ${{ inputs.kind }}
+          COUNT: ${{ inputs.workers }}
+          REPEAT: ${{ inputs.repeat }}
+          BUNDLE_RUN: ${{ inputs.bundle_run || '0' }}
+          WORKER_1: ${{ vars.TEST262_BENCHMARK_WORKER_1 }}
+          WORKER_2: ${{ vars.TEST262_BENCHMARK_WORKER_2 }}
+          WORKER_3: ${{ vars.TEST262_BENCHMARK_WORKER_3 }}
+          WORKER_4: ${{ vars.TEST262_BENCHMARK_WORKER_4 }}
+        run: |
+          [[ "$COUNT" =~ ^(1|2|4)$ ]]
+          args=()
+          for ((slot=1; slot<=COUNT; slot++)); do
+            name="WORKER_$slot"
+            test -n "${!name}"
+            args+=(--producer "${!name}")
+          done
+          python -m scripts.test262.central.worker_benchmark_remote prepare \
+            --revision "$GITHUB_SHA" --kind "$KIND" --repeat "$REPEAT" --root "$TEST262_ROOT" --bundle-run "$BUNDLE_RUN" \
+            --context artifacts/test262/prepare/central-context.json "${args[@]}"
+          printf 'context_digest=%s\n' "$(sha256sum artifacts/test262/prepare/central-context.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          python -c 'import json,sys; print("slots=" + json.dumps(list(range(1, int(sys.argv[1]) + 1))))' "$COUNT" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        id: bundle
+        with:
+          name: test262-split-prepare-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/prepare/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 7
+      - name: Verify the preparation artifact and open claims
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_BENCHMARK_DATABASE_URL }}
+          ARTIFACT_ID: ${{ steps.bundle.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.bundle.outputs.artifact-digest }}
+        run: |
+          python -m scripts.test262.central.worker_benchmark_remote open \
+            --context artifacts/test262/prepare/central-context.json \
+            --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST"
+
+  execute:
+    name: execute (${{ matrix.slot }})
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        slot: ${{ fromJSON(needs.prepare.outputs.slots || '[1]') }}
+    environment: test262-benchmark-worker-${{ matrix.slot }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.prepare.outputs.artifact_id }}
+          path: artifacts/test262/prepare
+          digest-mismatch: error
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Verify and load the same prepared runtime
+        env:
+          CONTEXT_DIGEST: ${{ needs.prepare.outputs.context_digest }}
+        run: |
+          python -m scripts.test262.central.collection_bundle artifacts/test262/prepare "$CONTEXT_DIGEST"
+          docker load --input artifacts/test262/prepare/fixture-image.tar.gz
+          ROOT="$(node scripts/test262/bootstrap.js --print-root)"
+          git -C "$ROOT" sparse-checkout add /test/
+          echo "TEST262_ROOT=$ROOT" >> "$GITHUB_ENV"
+      - name: Measure the independent worker
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_BENCHMARK_DATABASE_URL }}
+          ARTIFACT_ID: ${{ needs.prepare.outputs.artifact_id }}
+          ARTIFACT_DIGEST: ${{ needs.prepare.outputs.artifact_digest }}
+          SLOT: ${{ matrix.slot }}
+        run: |
+          python -m scripts.test262.central.worker_benchmark_remote work --slot "$SLOT" \
+            --root "$TEST262_ROOT" --context artifacts/test262/prepare/central-context.json \
+            --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST" \
+            --output artifacts/test262/worker
+      - name: Retain split worker recovery
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-split-worker-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.slot }}
+          path: artifacts/test262/worker/
+          if-no-files-found: error
+          retention-days: 90
+
+  finalize:
+    needs: [prepare, execute]
+    if: always() && needs.prepare.result == 'success' && github.run_attempt == '1'
+    environment: test262-benchmark-coordinator
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - uses: actions/download-artifact@v8
+        if: needs.execute.result == 'success'
+        with:
+          pattern: test262-split-worker-${{ github.run_id }}-${{ github.run_attempt }}-*
+          path: artifacts/test262/metrics
+          digest-mismatch: error
+      - name: Reconcile the allocation and record measured job minutes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_BENCHMARK_DATABASE_URL }}
+        run: |
+          python -m scripts.test262.central.worker_benchmark_remote finish \
+            --metrics artifacts/test262/metrics --output artifacts/test262/benchmark.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test262-independent-benchmark-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/benchmark.json
+          if-no-files-found: warn
+          retention-days: 90
