@@ -129,6 +129,16 @@
       },
       {
         "clause": "14.3.1.2",
+        "feature": "Lexical initialization from hoisted numeric var bindings",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_HoistedNumericVarLexicalRead.js"
+        ],
+        "notes": "let/const initializers and lexical assignments preserve undefined when reading a var before its numeric initializer executes. The value also remains undefined through lexical aliases and nested blocks; numeric local and callable-return inference must not coerce it to NaN. Definitely initialized numeric bindings retain their unboxed representation."
+      },
+      {
+        "clause": "14.3.1.2",
         "feature": "const declaration (basic)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation",
@@ -192,7 +202,10 @@
         "feature": "var hoisting edge cases",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-variable-statement-runtime-semantics-evaluation",
-        "notes": "Basic `var` behavior is exercised, but hoisting/redeclaration edge cases are not explicitly covered by dedicated tests."
+        "testScripts": [
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_HoistedNumericVarLexicalRead.js"
+        ],
+        "notes": "Reads before a numeric var initializer executes preserve undefined, including forwarding through lexical declarations, assignments, aliases, and nested blocks. Other hoisting/redeclaration edge cases are not exhaustively covered."
       },
       {
         "clause": "14.3.3.1",

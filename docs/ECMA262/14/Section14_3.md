@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-11-04T02:44:23Z
+> Last generated (UTC): 2026-11-04T18:11:02Z
 
 JROC supports common declaration forms (`let`, `const`, `var`), explicit resource declarations (`using`, `await using`), and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
@@ -50,6 +50,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 | const assignment rejection | Supported | [`Variable_ConstReassignmentError.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js) |  | Reassignment throws and can be caught. |
 | const declaration (basic) | Supported | [`Variable_ConstSimple.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_ConstSimple.js) | `test/language/statements/const/syntax/const.js`<br>`test/language/statements/const/syntax/with-initializer-case-expression-statement-list.js`<br>`test/language/statements/const/syntax/with-initializer-default-statement-list.js` | Basic const declarations are supported, including the single-statement contexts exercised by the current bounded test262 coverage. |
 | let declarations + shadowing | Supported | [`Variable_LetShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetShadowing.js)<br>[`Variable_LetNestedShadowingChain.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js)<br>[`Variable_LetFunctionNestedShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js)<br>[`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |  |
+| Lexical initialization from hoisted numeric var bindings | Supported | [`Variable_HoistedNumericVarLexicalRead.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_HoistedNumericVarLexicalRead.js) |  | let/const initializers and lexical assignments preserve undefined when reading a var before its numeric initializer executes. The value also remains undefined through lexical aliases and nested blocks; numeric local and callable-return inference must not coerce it to NaN. Definitely initialized numeric bindings retain their unboxed representation. |
 | temporal dead zone (TDZ) | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneCapturedRead.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneCapturedRead.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) |  | Reads of lexical bindings throw a ReferenceError before initialization, including captured reads and nested shadowing cases that must still preserve access to the outer initialized binding. |
 
 ### 14.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-variable-statement))
@@ -62,7 +63,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| var hoisting edge cases | Supported with Limitations |  |  | Basic `var` behavior is exercised, but hoisting/redeclaration edge cases are not explicitly covered by dedicated tests. |
+| var hoisting edge cases | Supported with Limitations | [`Variable_HoistedNumericVarLexicalRead.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_HoistedNumericVarLexicalRead.js) |  | Reads before a numeric var initializer executes preserve undefined, including forwarding through lexical declarations, assignments, aliases, and nested blocks. Other hoisting/redeclaration edge cases are not exhaustively covered. |
 | var statement (basic in functions and global) | Supported | [`Function_GlobalFunctionWithArrayIteration.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionWithArrayIteration.js)<br>[`Function_NestedFunctionAccessesMultipleScopes.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js) |  | Covers local `var` bindings, `var` in for-loops, and nested function scopes. |
 
 ### 14.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns))
