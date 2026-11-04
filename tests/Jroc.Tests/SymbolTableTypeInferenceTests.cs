@@ -653,18 +653,21 @@ public class SymbolTableTypeInferenceTests
         Assert.False(binding.CanUseUnboxedLocal);
     }
 
-    [Fact]
-    public void SymbolTable_InferTypes_NumericVarLocal_RejectsHoistedNumericDependency()
+    [Theory]
+    [InlineData("var", false)]
+    [InlineData("let", false)]
+    [InlineData("const", false)]
+    [InlineData("let", true)]
+    [InlineData("const", true)]
+    public void SymbolTable_InferTypes_NumericVarLocal_RejectsHoistedNumericDependency(string kind, bool nested)
     {
-        var symbolTable = BuildSymbolTable(@"
-            function calculate() {
-                var result = value;
-                var value = 1;
-                return result;
-            }
-        ");
+        var statements = $"{kind} result = value; var value = 1; return result;";
+        var symbolTable = BuildSymbolTable(
+            $"function calculate() {{ {(nested ? $"{{ {statements} }}" : statements)} }}");
 
-        var resultBinding = symbolTable.GetBindingInfo("calculate/result");
+        var resultScope = FindFirstScope(symbolTable.Root, scope => scope.Bindings.ContainsKey("result"));
+        Assert.NotNull(resultScope);
+        var resultBinding = resultScope.Bindings["result"];
         var valueBinding = symbolTable.GetBindingInfo("calculate/value");
         Assert.NotNull(resultBinding);
         Assert.NotNull(valueBinding);
@@ -677,6 +680,51 @@ public class SymbolTableTypeInferenceTests
                          && string.Equals(candidate.Name, "calculate", StringComparison.Ordinal));
         Assert.NotNull(functionScope);
         Assert.Null(functionScope!.StableReturnClrType);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SymbolTable_InferTypes_LexicalAssignment_RejectsHoistedNumericDependency(bool initialized)
+    {
+        var symbolTable = BuildSymbolTable($$"""
+            function calculate() {
+                let result{{(initialized ? " = 2" : "")}};
+                result = value;
+                var value = 1;
+                return result;
+            }
+            """);
+
+        var result = symbolTable.GetBindingInfo("calculate/result");
+        Assert.NotNull(result);
+        Assert.False(result.CanUseUnboxedLocal);
+        Assert.Null(result.ClrType);
+        var functionScope = FindFirstScope(symbolTable.Root, scope => scope.Name == "calculate");
+        Assert.NotNull(functionScope);
+        Assert.Null(functionScope.StableReturnClrType);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SymbolTable_InferTypes_LexicalAlias_RejectsHoistedNumericDependency(bool nested)
+    {
+        var symbolTable = BuildSymbolTable($$"""
+            function calculate() {
+                let source = value;
+                var value = 1;
+                {{(nested ? "{ const result = source; return result; }" : "const result = source; return result;")}}
+            }
+            """);
+
+        var resultScope = FindFirstScope(symbolTable.Root, scope => scope.Bindings.ContainsKey("result"));
+        Assert.NotNull(resultScope);
+        Assert.Null(resultScope.Bindings["result"].ClrType);
+        Assert.False(resultScope.Bindings["result"].CanUseUnboxedLocal);
+        var functionScope = FindFirstScope(symbolTable.Root, scope => scope.Name == "calculate");
+        Assert.NotNull(functionScope);
+        Assert.Null(functionScope.StableReturnClrType);
     }
 
     [Fact]
@@ -2285,7 +2333,7 @@ public class SymbolTableTypeInferenceTests
         {
             return binding;
         }
-        
+
         // Recursively search children
         foreach (var child in scope.Children)
         {
@@ -2295,7 +2343,7 @@ public class SymbolTableTypeInferenceTests
                 return found;
             }
         }
-        
+
         return null;
     }
 
