@@ -3,6 +3,7 @@
 The independent clients use production identity verification, enlistment and Docker
 execution. Faults are restricted to the loopback pilot. No production enrollment.
 """
+from contextlib import closing
 from datetime import datetime, timezone
 import json
 import os
@@ -17,6 +18,8 @@ from types import SimpleNamespace
 import uuid
 
 from .client import Client, Outbox, bytea, canonical, fixture_environment, identity, sha
+from .collection import snapshot_outbox
+from .collection_bundle import digest
 from .execution_identity import execution_identity
 from .importer import provenance, start_run
 from .inventory import REPO, register
@@ -201,10 +204,34 @@ def run_drill(client,admin,base,fixture,revision,output,report):
                     for child in children:
                         if child.poll() is None:
                             child.kill();child.wait(timeout=10)
+                checkpoint = json.loads((folder/'checkpoint.json').read_text())
+                present = client.one('observations', observation_id=checkpoint['observation_id']) is not None
+                require(present == (fault == 'lost-ack'), 'Injected fault did not reach the expected commit boundary')
+                checkpoints = []
                 for i,worker in enumerate(workers):
-                    flush(worker,configs[i]['args']['outbox'],folder/f'flush-{i}.log')
-                    flush(worker,configs[i]['args']['outbox'],folder/f'replay-{i}.log')
-                    require(pending(configs[i]['args']['outbox'],base.repository,worker['producer'])==0,'Independent outbox did not drain')
+                    outbox = configs[i]['args']['outbox']
+                    before = folder/f'outbox-{i}-before-recovery.sqlite'
+                    snapshot_outbox(outbox, before)
+                    before_pending = pending(before, base.repository, worker['producer'])
+                    require(before_pending == (2 if i == 0 else 0), 'Unexpected pre-recovery receipt count')
+                    recovered_outbox = folder/f'outbox-{i}-recovered.sqlite'
+                    shutil.copyfile(before, recovered_outbox)
+                    flush(worker,recovered_outbox,folder/f'flush-{i}.log')
+                    # A second flush must neither change acknowledged receipts nor
+                    # execute a fixture. Compare SQLite receipt rows directly.
+                    with closing(sqlite3.connect(recovered_outbox)) as db:
+                        receipts = [db.execute(f'SELECT * FROM {table} ORDER BY rowid').fetchall()
+                                    for table in ('messages', 'completions')]
+                        flush(worker,recovered_outbox,folder/f'replay-{i}.log')
+                        require(receipts == [db.execute(f'SELECT * FROM {table} ORDER BY rowid').fetchall()
+                                             for table in ('messages', 'completions')],
+                                'Repeated flush changed an acknowledged receipt')
+                    require(pending(recovered_outbox,base.repository,worker['producer'])==0,
+                            'Independent outbox did not drain')
+                    configs[i]['args']['outbox'] = str(recovered_outbox)
+                    checkpoints.append({'producer_id': worker['producer'], 'before': before.name,
+                                        'before_sha256': digest(before), 'pending_before': before_pending,
+                                        'recovered': recovered_outbox.name})
                 # End the interrupted supervisor's collection without running a
                 # replacement fixture, even after its local checkout has drifted.
                 replay_args=configs[0]['args']
@@ -231,7 +258,9 @@ def run_drill(client,admin,base,fixture,revision,output,report):
                 report['scenarios'][name]={'complete':True,'identity':document,'provenance_id':pid,
                     'source_revision':revision,'runs':runs,'budget':stored,'fault':fault,
                     'observations':[{k:o[k] for k in ('observation_id','run_id','fixture_id','variant','outcome','lease_generation')} for o in observations],
-                    'pending_outboxes':0,'distinct_claims':2,'fresh_executions':2,'recovery':recovery}
+                    'pending_outboxes':0,'distinct_claims':2,'fresh_executions':2,'recovery':recovery,
+                    'fault_checkpoint':checkpoint,'observation_committed_before_recovery':present,
+                    'context_sha256':digest(context_file),'recovery_inputs':checkpoints}
             negative_launches(client,workers[0],context,output,report)
             cross_worker_controls(client,workers,base,corpus,fid,revision,report)
             report['complete']=True
@@ -344,3 +373,4 @@ def cross_worker_controls(client,workers,base,corpus,fid,revision,report):
             'observation_ids':[o['observation_id'] for o in observations]}
     finally:
         first.close();second.close()
+

@@ -208,6 +208,20 @@ class NativeScopeTests(unittest.TestCase):
         self.assertEqual(result, {'accepted': 0, 'batch': None})
         self.assertNotIn('native_batches', client.tables)
 
+    def test_contradictory_trusted_observation_blocks_native_sealing(self):
+        read = Coordinator.read
+
+        def read_with_contradiction(client, table, filters=None):
+            rows = read(client, table, filters)
+            if table == 'observations' and rows:
+                rows.append(dict(rows[0], observation_id='late-failure', outcome='fail'))
+            return rows
+
+        with patch.object(Coordinator, 'read', read_with_contradiction):
+            result, client = self.seal({'builtin': 'test/built-ins/Array/new.js'})
+        self.assertEqual(result, {'accepted': 0, 'batch': None})
+        self.assertNotIn('native_batches', client.tables)
+
     def test_existing_mixed_sealed_batch_is_rejected_before_generation_writes(self):
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory)

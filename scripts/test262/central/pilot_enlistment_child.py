@@ -30,15 +30,21 @@ class Transport:
         if operation=='ingest' and not self.interrupted:
             self.interrupted=True
             fault=self.control.get('fault')
+            if fault:
+                if fault == 'lost-ack':
+                    self.client.call(operation, *args)
+                checkpoint = Path(self.control['checkpoint'])
+                temporary = checkpoint.with_suffix('.partial')
+                temporary.write_text(canonical({'observation_id': args[1][0]['observation_id'],
+                                                'request_id': args[0], 'fault': fault}))
+                temporary.replace(checkpoint)
             if fault=='pause-before-upload':
-                Path(self.control['checkpoint']).write_text(canonical({'observation_id':args[1][0]['observation_id']}))
                 # The parent kills only this owned supervisor after durable spool.
                 until=time.monotonic()+60
                 while time.monotonic()<until:
                     time.sleep(.1)
                 raise TimeoutError('Disposable kill checkpoint timed out')
             if fault=='lost-ack':
-                self.client.call(operation,*args)
                 raise ConnectionError('Disposable committed acknowledgement lost')
             if fault=='offline-before-upload':
                 raise ConnectionError('Disposable connection lost before upload')
@@ -65,3 +71,4 @@ def main():
 
 if __name__=='__main__':
     raise SystemExit(main())
+
