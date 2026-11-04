@@ -127,6 +127,105 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
         Assert.Equal($"ok{Environment.NewLine}", result.Output);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void GetProperty_NamedReadsDoNotBoxUnrelatedStringData(bool hasCustomDescriptor)
+    {
+        var target = new JsObject();
+        var expected = new object();
+        target.SetNumber(JavaScriptRuntime.String.StringDataPropertyName, 42d);
+        target.SetObject("value", expected);
+        if (hasCustomDescriptor)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, "value", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = expected,
+                Writable = false,
+                Enumerable = true,
+                Configurable = true
+            });
+        }
+
+        for (var i = 0; i < 256; i++)
+        {
+            _ = ObjectRuntime.GetProperty(target, "value");
+        }
+
+        object? actual = null;
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (var i = 0; i < 1_024; i++)
+        {
+            actual = ObjectRuntime.GetProperty(target, "value");
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Same(expected, actual);
+        Assert.InRange(allocated, 0L, 1_024L);
+    }
+
+    [Fact]
+    public void GetProperty_OwnReadTracksDescriptorAndPrototypeChanges()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        var target = new JsObject();
+        var prototype = new JsObject();
+        prototype.SetString("value", "inherited");
+        JavaScriptRuntime.Object.setPrototypeOf(target, prototype);
+        target.SetString("value", "own");
+
+        Assert.Equal("own", ObjectRuntime.GetProperty(target, "value"));
+        target.SetObject("value", null);
+        Assert.Null(ObjectRuntime.GetProperty(target, "value"));
+
+        var reads = 0;
+        BuiltinFunction0 getter = receiver =>
+        {
+            reads++;
+            return receiver;
+        };
+        ObjectRuntime.DefineObjectLiteralAccessorProperty(target, "value", getter, null);
+
+        Assert.Same(target, ObjectRuntime.GetProperty(target, "value"));
+        Assert.Equal(1, reads);
+        Assert.True(ObjectRuntime.DeleteProperty(target, "value"));
+        Assert.Equal("inherited", ObjectRuntime.GetProperty(target, "value"));
+        target.SetString("value", "restored");
+        Assert.Equal("restored", ObjectRuntime.GetProperty(target, "value"));
+    }
+
+    [Theory]
+    [InlineData("0", "a")]
+    [InlineData("1", "b")]
+    [InlineData("2", "own")]
+    [InlineData("01", "own")]
+    [InlineData("-0", "own")]
+    [InlineData("", "own")]
+    public void GetProperty_StringIndicesTakePrecedenceOverOrdinarySlots(string key, string expected)
+    {
+        var target = new JsObject();
+        target.SetString(JavaScriptRuntime.String.StringDataPropertyName, "ab");
+        target.SetString(key, "own");
+
+        Assert.Equal(expected, ObjectRuntime.GetProperty(target, key));
+    }
+
+    [Theory]
+    [InlineData("caller")]
+    [InlineData("arguments")]
+    public void GetProperty_FunctionPrototypeRestrictionsPrecedeOrdinarySlots(string key)
+    {
+        var target = new JsObject();
+        target.SetString(key, "ordinary");
+        Assert.Equal("ordinary", ObjectRuntime.GetProperty(target, key));
+
+        target.MarkFunctionPrototype();
+
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetProperty(target, key));
+    }
+
     [Fact]
     public void CoreDispatch_PreservesJsObjectBehavior()
     {

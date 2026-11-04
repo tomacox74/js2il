@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf(runtime): streamline ordinary own-property reads and skip unrelated
+  boxed-string metadata probes for named properties while preserving descriptor,
+  accessor, prototype, and exotic-object fallbacks.
 
 ## v0.12.35 - 2026-11-04
 
