@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 import math
 import os
+import re
 from pathlib import Path
 from statistics import median
 import subprocess
@@ -47,7 +48,16 @@ def resolve_bundle(args):
 def check_connection(client, *, slot=None):
     info = client.db.info
     login = f'catalogue_benchmark_worker_{slot}' if slot is not None else 'catalogue_benchmark_coordinator'
-    require(info.dbname == BENCHMARK_DB and info.user == login and client.db.pgconn.ssl_in_use,
+    project = os.environ.get('BENCHMARK_SUPABASE_PROJECT')
+    if project:
+        require(re.fullmatch('[a-z0-9]{20}', project), 'Invalid benchmark Supabase project reference')
+        expected = info.dbname == 'postgres' and (
+            (info.host == f'db.{project}.supabase.co' and info.user == login)
+            or (info.host.endswith('.pooler.supabase.com') and info.port == 5432
+                and info.user == f'{login}.{project}'))
+    else:
+        expected = info.dbname == BENCHMARK_DB and info.user == login
+    require(expected and client.db.pgconn.ssl_in_use,
             'Benchmark requires a dedicated TLS database and the expected benchmark login')
     require(client.contract['repository_id'] == str(UUID(os.environ['BENCHMARK_REPOSITORY_ID'])),
             'Benchmark credential is bound to a different repository')

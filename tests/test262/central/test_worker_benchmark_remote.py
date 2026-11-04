@@ -24,6 +24,19 @@ class BenchmarkTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 benchmark.check_connection(client, slot=2)
 
+    def test_supabase_pooler_requires_the_dedicated_project_reference(self):
+        project = 'a' * 20
+        repo = 'a1234567-1234-4234-8234-123456789abc'
+        info = SimpleNamespace(dbname='postgres', host='aws-0-us-west-2.pooler.supabase.com',
+                               port=5432, user=f'catalogue_benchmark_worker_2.{project}')
+        client = SimpleNamespace(db=SimpleNamespace(info=info, pgconn=SimpleNamespace(ssl_in_use=True)),
+                                 contract={'repository_id': repo})
+        with patch.dict(os.environ, {'BENCHMARK_REPOSITORY_ID': repo, 'BENCHMARK_SUPABASE_PROJECT': project}):
+            benchmark.check_connection(client, slot=2)
+            info.user = 'catalogue_benchmark_worker_2.' + 'b' * 20
+            with self.assertRaises(ValueError):
+                benchmark.check_connection(client, slot=2)
+
     def test_compare_verifies_provenance_and_uses_total_job_minutes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
