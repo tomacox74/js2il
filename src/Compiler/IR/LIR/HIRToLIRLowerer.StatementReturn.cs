@@ -9,6 +9,9 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private int _tailCallBarrierDepth;
+    private readonly List<(int Label, LIRTailCallFunctionReturn Return)> _protectedTailReturns = new();
+
     private bool TryLowerReturnStatement(HIRReturnStatement returnStmt)
     {
         var lirInstructions = _methodBodyIR.Instructions;
@@ -240,8 +243,8 @@ public sealed partial class HIRToLIRLowerer
         => _callableKind != CallableKind.Constructor
             && !_isAsync
             && !_isGenerator
-            && _protectedControlFlowDepthStack.Count == 0
-            && !_methodBodyIR.ReturnEpilogueLabelId.HasValue;
+            && _tailCallBarrierDepth == 0
+            && _syncTryFinallyStack.All(context => context.IsInFinally);
 
     private bool TryLowerTailPositionReturnExpression(HIRExpression expression)
     {
@@ -437,7 +440,19 @@ public sealed partial class HIRToLIRLowerer
         }
 
         DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-        _methodBodyIR.Instructions.Add(new LIRTailCallFunctionReturn(symbol, scopesTempVar, arguments, callableId));
+        var tailReturn = new LIRTailCallFunctionReturn(symbol, scopesTempVar, arguments, callableId);
+        if (_protectedControlFlowDepthStack.Count > 0)
+        {
+            // CLR tail calls cannot occur in a catch handler. Evaluate the arguments
+            // there, then leave to a tail-return block outside every EH region.
+            var label = CreateLabel();
+            _protectedTailReturns.Add((label, tailReturn));
+            _methodBodyIR.Instructions.Add(new LIRLeave(label));
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(tailReturn);
+        }
         return true;
     }
 

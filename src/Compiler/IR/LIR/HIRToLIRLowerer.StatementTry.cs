@@ -9,6 +9,33 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private bool TryLowerCatchBody(HIRTryStatement statement, TempVariable catchValue)
+        => TryLowerInBlockScope(statement.CatchScopeName, () =>
+        {
+            if (statement.CatchParamBinding != null
+                && !TryStoreToBinding(statement.CatchParamBinding, catchValue, out _))
+            {
+                return false;
+            }
+            if (statement.CatchParamPattern != null
+                && !TryLowerDestructuringPattern(
+                    statement.CatchParamPattern, EnsureObject(catchValue),
+                    DestructuringWriteMode.Declaration, null))
+            {
+                return false;
+            }
+            return statement.CatchBody == null || TryLowerStatement(statement.CatchBody);
+        });
+
+    private bool TryLowerCatchHandler(HIRTryStatement statement, TempVariable exception)
+    {
+        var catchValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRUnwrapCatchException(exception, catchValue));
+        DefineTempStorage(catchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        SetTempVariableSlot(catchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+        return TryLowerCatchBody(statement, catchValue);
+    }
+
     private bool TryLowerTryStatement(HIRTryStatement tryStmt, Func<bool>? lowerTryBlock = null)
     {
         var lirInstructions = _methodBodyIR.Instructions;
@@ -102,7 +129,19 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRLabel(innerTryStart));
             }
 
-            if (!(lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock)))
+            // Calls made in the try body are not in tail position: their exceptions
+            // still belong to this statement's catch/finally.
+            _tailCallBarrierDepth++;
+            bool loweredTry;
+            try
+            {
+                loweredTry = lowerTryBlock?.Invoke() ?? TryLowerStatement(tryStmt.TryBlock);
+            }
+            finally
+            {
+                _tailCallBarrierDepth--;
+            }
+            if (!loweredTry)
             {
                 return false;
             }
@@ -120,45 +159,23 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception)));
                 SetTempVariableSlot(exTemp, CreateAnonymousVariableSlot("$catch_ex", new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception))));
 
-                if (tryStmt.CatchParamBinding != null)
+                if (hasFinally)
                 {
-                    var jsCatchValue = CreateTempVariable();
-                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
-                    DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-
-                    if (!TryStoreToBinding(tryStmt.CatchParamBinding, jsCatchValue, out _))
+                    _tailCallBarrierDepth++;
+                }
+                bool loweredCatch;
+                try
+                {
+                    loweredCatch = TryLowerCatchHandler(tryStmt, exTemp);
+                }
+                finally
+                {
+                    if (hasFinally)
                     {
-                        return false;
+                        _tailCallBarrierDepth--;
                     }
                 }
-                else if (tryStmt.CatchParamPattern != null)
-                {
-                    var jsCatchValue = CreateTempVariable();
-                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
-                    DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-
-                    if (!TryLowerDestructuringPattern(tryStmt.CatchParamPattern, EnsureObject(jsCatchValue), DestructuringWriteMode.Declaration, null))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    var ignoredCatchValue = CreateTempVariable();
-                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, ignoredCatchValue));
-                    DefineTempStorage(
-                        ignoredCatchValue,
-                        new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    SetTempVariableSlot(
-                        ignoredCatchValue,
-                        CreateAnonymousVariableSlot(
-                            "$catch_value",
-                            new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-                }
-
-                if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                if (!loweredCatch)
                 {
                     return false;
                 }
@@ -289,33 +306,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception)));
                     SetTempVariableSlot(exTemp, CreateAnonymousVariableSlot("$catch_ex", new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception))));
 
-                    if (tryStmt.CatchParamBinding != null)
-                    {
-                        var jsCatchValue = CreateTempVariable();
-                        lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
-                        DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-
-                        if (!TryStoreToBinding(tryStmt.CatchParamBinding, jsCatchValue, out _))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        var ignoredCatchValue = CreateTempVariable();
-                        lirInstructions.Add(new LIRUnwrapCatchException(exTemp, ignoredCatchValue));
-                        DefineTempStorage(
-                            ignoredCatchValue,
-                            new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        SetTempVariableSlot(
-                            ignoredCatchValue,
-                            CreateAnonymousVariableSlot(
-                                "$catch_value",
-                                new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-                    }
-
-                    if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                if (!TryLowerCatchHandler(tryStmt, exTemp))
                     {
                         return false;
                     }
@@ -594,12 +585,6 @@ public sealed partial class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
                 }
 
-                if (tryStmt.CatchParamBinding != null
-                    && !TryStoreToBinding(tryStmt.CatchParamBinding, catchValueTemp, out _))
-                {
-                    return false;
-                }
-
                 if (asyncInfo != null)
                 {
                     _asyncTryCatchStack.Push(new AsyncTryCatchContext(
@@ -609,7 +594,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 try
                 {
-                    if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                    if (!TryLowerCatchBody(tryStmt, catchValueTemp))
                     {
                         return false;
                     }

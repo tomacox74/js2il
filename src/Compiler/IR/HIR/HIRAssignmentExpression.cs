@@ -30,5 +30,12 @@ public sealed class HIRAssignmentExpression : HIRExpression
     /// </summary>
     public HIRExpression Value { get; }
 
+    /// <summary>
+    /// True for declaration initialization represented as an assignment, rather than
+    /// a source-level write to an already initialized binding. Lowering must not
+    /// apply an ordinary assignment's TDZ check while initializing the binding.
+    /// </summary>
+    public bool IsBindingInitialization { get; init; }
+
     public bool InferName { get; init; } = true;
 }

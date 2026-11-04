@@ -1336,7 +1336,10 @@ partial class HIRMethodBuilder
                             }
 
                             var symbol = _currentScope.FindSymbol(id.Name);
-                            expressions.Add(new HIRAssignmentExpression(symbol, Acornima.Operator.Assignment, initExpr));
+                                expressions.Add(new HIRAssignmentExpression(symbol, Acornima.Operator.Assignment, initExpr)
+                                {
+                                    IsBindingInitialization = true
+                                });
                         }
                     }
 
@@ -2774,7 +2777,10 @@ partial class HIRMethodBuilder
                         hirStatement = binding.IsScriptGlobalBinding
                             ? new HIRVariableDeclaration(new Symbol(binding), decoratedClass)
                             : new HIRExpressionStatement(new HIRAssignmentExpression(
-                                new Symbol(binding), Acornima.Operator.Assignment, decoratedClass));
+                                new Symbol(binding), Acornima.Operator.Assignment, decoratedClass)
+                            {
+                                IsBindingInitialization = true
+                            });
                         return true;
                     }
 
@@ -2851,7 +2857,10 @@ partial class HIRMethodBuilder
                             cdClassBinding.IsScriptGlobalBinding
                                 ? new HIRVariableDeclaration(classSymbol, classConstructorValueExpr)
                                 : new HIRExpressionStatement(
-                                    new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
+                                    new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)
+                                    {
+                                        IsBindingInitialization = true
+                                    }));
 
                         if (classDecl.Body.Body.OfType<PropertyDefinition>()
                             .Any(field => field.Static && field.Key is PrivateIdentifier))
@@ -3451,38 +3460,34 @@ partial class HIRMethodBuilder
                     BindingInfo? catchParamBinding = null;
                     HIRPattern? catchParamPattern = null;
                     HIRStatement? catchBody = null;
+                    string? catchScopeName = null;
                     if (tryStmt.Handler != null)
                     {
-                        // Catch clause body is a BlockStatement; parsing it will enter the correct child scope.
-                        if (!TryParseNestedStatement(tryStmt.Handler.Body, out catchBody))
+                        var previousCatchScope = _currentScope;
+                        var catchScope = FindChildScopeForAstNode(tryStmt.Handler)
+                            ?? FindChildScopeForAstNode(tryStmt.Handler.Body)
+                            ?? _currentScope;
+                        catchScopeName = GetMaterializedBlockScopeName(catchScope);
+                        _currentScope = catchScope;
+                        try
                         {
-                            return false;
-                        }
-
-                        if (tryStmt.Handler.Param is Identifier catchId)
-                        {
-                            // Catch parameter is block-scoped to the catch body.
-                            // TryParseStatement restores _currentScope after parsing the catch block,
-                            // so resolve the binding from the catch block's child scope directly.
-                            var catchScope = FindChildScopeForAstNode(tryStmt.Handler.Body) ?? _currentScope;
-                            catchParamBinding = catchScope.FindSymbol(catchId.Name).BindingInfo;
-                        }
-                        else if (tryStmt.Handler.Param != null)
-                        {
-                            var previousCatchPatternScope = _currentScope;
-                            var catchScope = FindChildScopeForAstNode(tryStmt.Handler.Body) ?? _currentScope;
-                            _currentScope = catchScope;
-                            try
+                            if (tryStmt.Handler.Param is Identifier catchId)
                             {
-                                if (!TryParsePattern(tryStmt.Handler.Param, out catchParamPattern))
-                                {
-                                    return false;
-                                }
+                                catchParamBinding = catchScope.FindSymbol(catchId.Name).BindingInfo;
                             }
-                            finally
+                            else if (tryStmt.Handler.Param != null
+                                && !TryParsePattern(tryStmt.Handler.Param, out catchParamPattern))
                             {
-                                _currentScope = previousCatchPatternScope;
+                                return false;
                             }
+                            if (!TryParseNestedStatement(tryStmt.Handler.Body, out catchBody))
+                            {
+                                return false;
+                            }
+                        }
+                        finally
+                        {
+                            _currentScope = previousCatchScope;
                         }
                     }
 
@@ -3495,7 +3500,7 @@ partial class HIRMethodBuilder
                         }
                     }
 
-                    hirStatement = new HIRTryStatement(tryBlock!, catchParamBinding, catchParamPattern, catchBody, finallyBody);
+                    hirStatement = new HIRTryStatement(tryBlock!, catchParamBinding, catchParamPattern, catchBody, finallyBody, catchScopeName);
                     return true;
                 }
 

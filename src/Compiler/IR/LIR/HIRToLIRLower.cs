@@ -337,6 +337,12 @@ public sealed partial class HIRToLIRLowerer
                 lowerer._methodBodyIR.Instructions.Add(new LIRReturn(lowerer._returnEpilogueLoadTemp.Value));
             }
 
+            foreach (var (label, tailReturn) in lowerer._protectedTailReturns)
+            {
+                lowerer._methodBodyIR.Instructions.Add(new LIRLabel(label));
+                lowerer._methodBodyIR.Instructions.Add(tailReturn);
+            }
+
             lirMethod = lowerer._methodBodyIR;
 
 #if DEBUG
