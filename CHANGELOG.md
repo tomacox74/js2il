@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(ci): find release publication runs through paginated workflow-specific
+  history, match exact release tags, and allow cross-platform validation to
+  complete before Linux/Windows smoke and BenchmarkDotNet/Mitata runs proceed.
 - fix(compiler): preserve undefined when let/const initializers, assignments, or
   aliases read a hoisted numeric var before initialization, without inferring
   numeric return signatures for those values.

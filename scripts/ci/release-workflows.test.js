@@ -6,6 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { test } = require('node:test');
+const vm = require('node:vm');
 const YAML = require('yaml');
 
 const root = path.resolve(__dirname, '../..');
@@ -95,3 +96,114 @@ test('release tag parsing accepts tags and rejects branches and injected output 
     }
   }
 });
+
+const releaseConsumers = [
+  ['linux-smoke.yml', 'smoke'],
+  ['windows-smoke.yml', 'smoke'],
+  ['benchmarkdotnet-suite.yml', 'benchmarkdotnet-suite'],
+  ['mitata-suite.yml', 'mitata-suite'],
+];
+
+function publicationRun(id, version, status = 'completed', conclusion = 'success', event = 'push') {
+  return {
+    id,
+    path: '.github/workflows/publish-tool.yml',
+    head_branch: event === 'push' ? `v${version}` : 'master',
+    display_title: `Publish coordinated packages - ${event} - v${version}`,
+    status,
+    conclusion,
+  };
+}
+
+function executePublicationWait(filename, job, runsAt, repositoryRunsAt = runsAt) {
+  const step = workflow(filename).jobs[job].steps.find(item =>
+    item.name.toLowerCase() === 'wait for published jroc packages');
+  const messages = [];
+  let elapsedMs = 0;
+  let polls = 0;
+  const getRuns = source => {
+    polls++;
+    return source(elapsedMs, polls);
+  };
+  const completion = vm.runInNewContext(`(async () => { ${step.with.script} })()`, {
+    github: {
+      request: async () => ({ data: { workflow_runs: getRuns(repositoryRunsAt).slice(0, 50) } }),
+      paginate: async (route, parameters) => {
+        assert.equal(route, 'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs');
+        assert.equal(parameters.owner, 'test-owner');
+        assert.equal(parameters.repo, 'test-repo');
+        assert.equal(parameters.workflow_id, 'publish-tool.yml');
+        return getRuns(runsAt);
+      },
+    },
+    context: { repo: { owner: 'test-owner', repo: 'test-repo' } },
+    core: { info: message => messages.push(message) },
+    process: { env: { TOOL_VERSION: '0.12.35', JROC_PACKAGE_VERSION: '0.12.35' } },
+    Date: { now: () => elapsedMs },
+    setTimeout: (resolve, milliseconds) => {
+      elapsedMs += milliseconds;
+      resolve();
+    },
+  });
+  return { completion, messages, get elapsedMs() { return elapsedMs; }, get polls() { return polls; } };
+}
+
+for (const [filename, job] of releaseConsumers) {
+  test(`${filename}: finds an older publication despite a busy repository and paginated history`, async () => {
+    const olderPublication = publicationRun(41785830082, '0.12.35');
+    const recentPublications = Array.from({ length: 100 }, (_, index) =>
+      publicationRun(index, `0.13.${index}`));
+    const recentRepositoryRuns = Array.from({ length: 50 }, (_, index) => ({
+      id: index,
+      path: '.github/workflows/dotnet.yml',
+      display_title: 'CI',
+      status: 'completed',
+      conclusion: 'success',
+    }));
+    const execution = executePublicationWait(filename, job,
+      () => [...recentPublications, olderPublication], () => recentRepositoryRuns);
+
+    await execution.completion;
+    assert.equal(execution.polls, 1);
+    assert(execution.messages.some(message => message.includes('run 41785830082; proceeding')));
+  });
+
+  test(`${filename}: waits for cross-platform validation and subsequent publication`, async () => {
+    const publishAfterMs = 95 * 60 * 1000;
+    const execution = executePublicationWait(filename, job, elapsedMs => [
+      elapsedMs >= publishAfterMs
+        ? publicationRun(42, '0.12.35')
+        : publicationRun(42, '0.12.35', 'in_progress', null),
+    ]);
+
+    await execution.completion;
+    assert(execution.elapsedMs >= publishAfterMs);
+    assert(execution.messages.some(message => message.includes('run 42 to complete')));
+    assert(execution.messages.some(message => message.includes('run 42; proceeding')));
+  });
+
+  test(`${filename}: requires the exact release and accepts a successful manual publication retry`, async () => {
+    const execution = executePublicationWait(filename, job, (_, poll) => [
+      publicationRun(43, '0.12.350'),
+      ...(poll > 1 ? [publicationRun(44, '0.12.35', 'completed', 'success', 'workflow_dispatch')] : []),
+      publicationRun(42, '0.12.35', 'completed', 'failure'),
+    ]);
+
+    await execution.completion;
+    assert.equal(execution.polls, 2);
+    assert(execution.messages.some(message => message.includes('run 42 concluded failure')));
+    assert(execution.messages.some(message => message.includes('run 44; proceeding')));
+    assert(!execution.messages.some(message => message.includes('run 43; proceeding')));
+  });
+
+  test(`${filename}: fails explicitly if publication never succeeds`, async () => {
+    const execution = executePublicationWait(filename, job, () => [
+      publicationRun(42, '0.12.35', 'completed', 'failure'),
+    ]);
+
+    await assert.rejects(execution.completion,
+      /Timed out waiting for a successful publish-tool\.yml run for v0\.12\.35/);
+    assert(execution.messages.some(message => message.includes('run 42 concluded failure')));
+    assert(!execution.messages.some(message => message.includes('; proceeding')));
+  });
+}
