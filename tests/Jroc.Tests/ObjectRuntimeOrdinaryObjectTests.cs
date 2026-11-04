@@ -5,6 +5,274 @@ namespace Jroc.Tests;
 
 public sealed class ObjectRuntimeOrdinaryObjectTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void NumericPropertyAssignmentAndReads_DoNotAllocatePerIteration(int readPath)
+    {
+        var target = new JsObject();
+        target.SetNumber("value", 0d);
+        object key = "value";
+        for (var i = 0; i < 1_024; i++)
+        {
+            ObjectRuntime.SetPropertyNumber(target, "value", i, throwOnError: true);
+            _ = Read();
+        }
+
+        double sum = 0;
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (var i = 0; i < 10_000; i++)
+        {
+            ObjectRuntime.SetPropertyNumber(target, "value", i, throwOnError: true);
+            sum += Read();
+        }
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(49_995_000d, sum);
+        Assert.Equal(9_999d, ObjectRuntime.GetItem(target, "value"));
+        Assert.InRange(allocated, 0L, 1_024L);
+
+        double Read() => readPath switch
+        {
+            0 => ObjectRuntime.GetPropertyAsNumber(target, "value"),
+            1 => ObjectRuntime.GetItemAsNumber(target, "value"),
+            _ => ObjectRuntime.GetItemAsNumber(target, key)
+        };
+    }
+
+    [Fact]
+    public void NumericPropertyAssignment_PreservesTaggedTransitionsAndNumberBits()
+    {
+        var target = new JsObject();
+        target.SetNumber("value", 7d);
+        object?[] values = ["12.5", true, JsNull.Null, null];
+        double[] expected = [12.5d, 1d, 0d, double.NaN];
+        for (var index = 0; index < values.Length; index++)
+        {
+            ObjectRuntime.SetItem(target, "value", values[index]);
+            Assert.Equal(expected[index], ObjectRuntime.GetPropertyAsNumber(target, "value"));
+            ObjectRuntime.SetPropertyNumber(target, "value", 9.25d, throwOnError: true);
+            Assert.Equal(9.25d, ObjectRuntime.GetItem(target, "value"));
+        }
+
+        double[] numbers = [0d, -0d, double.NaN, double.PositiveInfinity, double.NegativeInfinity, -12.75d];
+        foreach (var number in numbers)
+        {
+            ObjectRuntime.SetPropertyNumber(target, "value", number, throwOnError: true);
+            Assert.Equal(BitConverter.DoubleToInt64Bits(number),
+                BitConverter.DoubleToInt64Bits(ObjectRuntime.GetPropertyAsNumber(target, "value")));
+            Assert.Equal(BitConverter.DoubleToInt64Bits(number),
+                BitConverter.DoubleToInt64Bits(Assert.IsType<double>(ObjectRuntime.GetItem(target, "value"))));
+        }
+    }
+
+    [Fact]
+    public void NumericPropertyRead_PreservesNullishAndConversionErrors()
+    {
+        var target = new JsObject();
+        Assert.True(double.IsNaN(ObjectRuntime.GetPropertyAsNumber(target, "missing")));
+        target.SetObject("value", null);
+        Assert.True(double.IsNaN(ObjectRuntime.GetPropertyAsNumber(target, "value")));
+        target.SetObject("value", new Symbol("numeric-read"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        target.SetObject("value", new System.Numerics.BigInteger(7));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(null!, "value"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(JsNull.Null, "value"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(null, "value", 1d, false));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(JsNull.Null, "value", 1d, false));
+    }
+
+    [Fact]
+    public void NumericPropertyAssignment_RespectsDescriptorsAndNonextensibility()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        var target = new JsObject();
+        target.SetNumber("existing", 1d);
+        JavaScriptRuntime.Object.preventExtensions(target);
+        ObjectRuntime.SetPropertyNumber(target, "existing", 2d, true);
+        Assert.Equal(2d, ObjectRuntime.GetPropertyAsNumber(target, "existing"));
+        ObjectRuntime.SetPropertyNumber(target, "new", 3d, false);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(target, "new"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(target, "new", 3d, true));
+
+        JavaScriptRuntime.Object.freeze(target);
+        ObjectRuntime.SetPropertyNumber(target, "existing", 4d, false);
+        Assert.Equal(2d, ObjectRuntime.GetPropertyAsNumber(target, "existing"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(target, "existing", 4d, true));
+
+        var overlay = new JsObject();
+        overlay.SetNumber("value", 5d);
+        PropertyDescriptorStore.DefineOrUpdate(overlay, "value", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = 6d,
+            Writable = true,
+            Enumerable = false,
+            Configurable = true
+        });
+        Assert.Equal(6d, ObjectRuntime.GetPropertyAsNumber(overlay, "value"));
+        ObjectRuntime.SetPropertyNumber(overlay, "value", 8d, true);
+        var descriptor = Assert.IsType<JsObject>(
+            JavaScriptRuntime.Object.getOwnPropertyDescriptor(overlay, "value"));
+        Assert.Equal(8d, ObjectRuntime.GetProperty(descriptor, "value"));
+        Assert.Equal(false, ObjectRuntime.GetProperty(descriptor, "enumerable"));
+    }
+
+    [Fact]
+    public void NumericPropertyAssignment_SharedIntrinsicDataKeepsRealmOverlay()
+    {
+        var target = new JsObject();
+        using (PropertyDescriptorStore.BeginIntrinsicInitialization())
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, "value", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = 7d,
+                Writable = true,
+                Enumerable = false,
+                Configurable = true
+            });
+        }
+
+        var firstRealm = RuntimeExecutionContext.GetOrCreate(RuntimeServices.BuildServiceProvider());
+        var secondRealm = RuntimeExecutionContext.GetOrCreate(RuntimeServices.BuildServiceProvider());
+        using (firstRealm.EnterAsRoot())
+        {
+            ObjectRuntime.SetPropertyNumber(target, "value", 9d, true);
+            Assert.Equal(9d, ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        }
+        using (secondRealm.EnterAsRoot())
+        {
+            Assert.Equal(7d, ObjectRuntime.GetPropertyAsNumber(target, "value"));
+            ObjectRuntime.SetPropertyNumber(target, "value", 11d, true);
+            Assert.Equal(11d, ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        }
+        using (firstRealm.EnterAsRoot())
+        {
+            Assert.Equal(9d, ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        }
+    }
+
+    [Fact]
+    public void NumericPropertyAccess_InheritedAccessorsKeepReceiverAndCallCounts()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        var target = new JsObject();
+        var prototype = new JsObject();
+        var reads = 0;
+        var writes = 0;
+        object? getterReceiver = null;
+        object? setterReceiver = null;
+        object? assigned = null;
+        ObjectRuntime.DefineObjectLiteralAccessorProperty(prototype, "value",
+            (BuiltinFunction0)(receiver =>
+            {
+                reads++;
+                getterReceiver = receiver;
+                return "17.5";
+            }),
+            (BuiltinFunction1)((receiver, value) =>
+            {
+                writes++;
+                setterReceiver = receiver;
+                assigned = value;
+                return null;
+            }));
+        JavaScriptRuntime.Object.setPrototypeOf(target, prototype);
+
+        Assert.Equal(17.5d, ObjectRuntime.GetPropertyAsNumber(target, "value"));
+        ObjectRuntime.SetPropertyNumber(target, "value", 23d, true);
+        Assert.Equal(1, reads);
+        Assert.Equal(1, writes);
+        Assert.Same(target, getterReceiver);
+        Assert.Same(target, setterReceiver);
+        Assert.Equal(23d, assigned);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(target, "value"));
+
+        prototype.SetNumber("data", 4d);
+        ObjectRuntime.SetPropertyNumber(target, "data", 9d, true);
+        Assert.Equal(9d, ObjectRuntime.GetPropertyAsNumber(target, "data"));
+        Assert.Equal(4d, ObjectRuntime.GetPropertyAsNumber(prototype, "data"));
+        Assert.True(JavaScriptRuntime.Object.hasOwn(target, "data"));
+
+        PropertyDescriptorStore.DefineOrUpdate(prototype, "readonly", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = 5d,
+            Writable = false,
+            Enumerable = true,
+            Configurable = true
+        });
+        ObjectRuntime.SetPropertyNumber(target, "readonly", 10d, false);
+        Assert.False(JavaScriptRuntime.Object.hasOwn(target, "readonly"));
+        Assert.Equal(5d, ObjectRuntime.GetPropertyAsNumber(target, "readonly"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(target, "readonly", 10d, true));
+
+        target.SetNumber("ownAccessor", 99d);
+        ObjectRuntime.DefineObjectLiteralAccessorProperty(target, "ownAccessor",
+            (BuiltinFunction0)(_ => { reads++; return "31"; }),
+            (BuiltinFunction1)((_, value) => { writes++; assigned = value; return null; }));
+        Assert.Equal(31d, ObjectRuntime.GetPropertyAsNumber(target, "ownAccessor"));
+        ObjectRuntime.SetPropertyNumber(target, "ownAccessor", 37d, true);
+        Assert.Equal(2, reads);
+        Assert.Equal(2, writes);
+        Assert.Equal(37d, assigned);
+    }
+
+    [Fact]
+    public void NumericPropertyAccess_ExoticAndIndexedReceiversUseFallback()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        var exotic = new ExoticObjectForTest();
+        exotic.SetNumber("value", 99d);
+        exotic.Seed("value", "12");
+        Assert.Equal(12d, ObjectRuntime.GetPropertyAsNumber(exotic, "value"));
+        Assert.Equal(1, exotic.PropertyReadCount);
+        ObjectRuntime.SetPropertyNumber(exotic, "value", 13d, true);
+        Assert.Equal(13d, ObjectRuntime.GetPropertyAsNumber(exotic, "value"));
+        Assert.Equal(2, exotic.PropertyReadCount);
+
+        var array = new JavaScriptRuntime.Array(new object?[] { "6" });
+        ObjectRuntime.SetPropertyNumber(array, "0", 8d, true);
+        Assert.Equal(8d, ObjectRuntime.GetPropertyAsNumber(array, "0"));
+        Assert.Equal(8d, ObjectRuntime.GetItemAsNumber(array, 0d));
+        Assert.Equal(8d, ObjectRuntime.GetItemAsNumber(array, (object)0d));
+        Assert.Equal(1d, ObjectRuntime.GetPropertyAsNumber(array, "length"));
+        var typed = new Int32Array(1d);
+        ObjectRuntime.SetPropertyNumber(typed, "0", 9.75d, true);
+        Assert.Equal(9d, ObjectRuntime.GetPropertyAsNumber(typed, "0"));
+        Assert.Equal(9d, ObjectRuntime.GetItemAsNumber(typed, 0d));
+        Assert.Equal(9d, ObjectRuntime.GetItemAsNumber(typed, (object)0d));
+    }
+
+    [Fact]
+    public void NumericPropertyAccess_StringCharactersAndFunctionRestrictionsPrecedeSlots()
+    {
+        var services = RuntimeServices.BuildServiceProvider();
+        using var scope = RuntimeExecutionContext.GetOrCreate(services).EnterAsRoot();
+        var boxedString = new JsObject();
+        boxedString.SetString(JavaScriptRuntime.String.StringDataPropertyName, "12");
+        boxedString.SetNumber("0", 99d);
+        Assert.Equal(1d, ObjectRuntime.GetPropertyAsNumber(boxedString, "0"));
+        ObjectRuntime.SetPropertyNumber(boxedString, "0", 7d, false);
+        Assert.Equal(1d, ObjectRuntime.GetPropertyAsNumber(boxedString, "0"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.SetPropertyNumber(boxedString, "0", 7d, true));
+        boxedString.SetNumber("01", 42d);
+        Assert.Equal(42d, ObjectRuntime.GetPropertyAsNumber(boxedString, "01"));
+
+        var functionPrototype = new JsObject();
+        functionPrototype.SetNumber("caller", 77d);
+        functionPrototype.SetNumber("arguments", 88d);
+        functionPrototype.MarkFunctionPrototype();
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(functionPrototype, "caller"));
+        Assert.Throws<TypeError>(() => ObjectRuntime.GetPropertyAsNumber(functionPrototype, "arguments"));
+    }
+
     private sealed class CoercibleReference;
 
     private sealed class ExoticObjectForTest : JsObject, IExoticJsObject

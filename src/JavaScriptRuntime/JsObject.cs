@@ -180,6 +180,31 @@ public partial class JsObject : IDictionary<string, object?>
     public bool TryGetBoxedValue(string key, out object? value)
         => TryGetStoredBoxedValue(key, out value);
 
+    internal bool TryGetOwnNumberValue(string key, out double value)
+    {
+        if (!HasNonDataDescriptors
+            && TryGetJsValue(key, out var stored)
+            && stored.IsNumber)
+        {
+            value = stored.AsNumber;
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
+    internal bool TrySetOwnNumberValue(string key, double value)
+    {
+        if (HasNonDataDescriptors || _shape.GetSlot(key) < 0)
+        {
+            return false;
+        }
+
+        SetValue(key, JsValue.FromNumber(value));
+        return true;
+    }
+
     /// <summary>
     /// Resolves an own JavaScript property while keeping descriptor and exotic-object
     /// semantics internal and preserving the original receiver for inherited accessors.

@@ -395,7 +395,7 @@
 				01 00 02 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 363 (0x16b)
+			// Code size: 362 (0x16a)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -438,111 +438,110 @@
 				IL_0032: ldstr "y"
 				IL_0037: ldc.r8 1
 				IL_0040: ldc.i4.1
-				IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-				IL_0046: pop
-				IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_004c: stloc.s 6
-				IL_004e: ldloc.s 6
-				IL_0050: ldstr "no-throw"
-				IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_005a: pop
-				IL_005b: leave IL_00d4
+				IL_0041: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)
+				IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_004b: stloc.s 6
+				IL_004d: ldloc.s 6
+				IL_004f: ldstr "no-throw"
+				IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0059: pop
+				IL_005a: leave IL_00d3
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0060: stloc.0
-				IL_0061: ldloc.0
-				IL_0062: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0067: dup
-				IL_0068: brtrue IL_007d
+				IL_005f: stloc.0
+				IL_0060: ldloc.0
+				IL_0061: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0066: dup
+				IL_0067: brtrue IL_007c
 
-				IL_006d: pop
-				IL_006e: ldloc.0
-				IL_006f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0074: dup
-				IL_0075: brtrue IL_0088
+				IL_006c: pop
+				IL_006d: ldloc.0
+				IL_006e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0073: dup
+				IL_0074: brtrue IL_0087
 
-				IL_007a: pop
-				IL_007b: rethrow
+				IL_0079: pop
+				IL_007a: rethrow
 
-				IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0082: stloc.1
-				IL_0083: br IL_0089
+				IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0081: stloc.1
+				IL_0082: br IL_0088
 
-				IL_0088: stloc.1
+				IL_0087: stloc.1
 
-				IL_0089: ldloc.1
-				IL_008a: stloc.2
-				IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0090: stloc.s 6
-				IL_0092: volatile.
-				IL_0094: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-				IL_0099: brfalse IL_00ae
+				IL_0088: ldloc.1
+				IL_0089: stloc.2
+				IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_008f: stloc.s 6
+				IL_0091: volatile.
+				IL_0093: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_0098: brfalse IL_00ad
 
-				IL_009e: ldloc.2
-				IL_009f: ldstr "name"
-				IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00a9: br IL_00c3
+				IL_009d: ldloc.2
+				IL_009e: ldstr "name"
+				IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00a8: br IL_00c2
 
-				IL_00ae: ldloc.2
-				IL_00af: ldstr "name"
-				IL_00b4: ldstr "Classes_Inheritance_ThisBeforeSuper_Throws:<TwoPhaseDummy_M6>:.ctor:26"
-				IL_00b9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-				IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+				IL_00ad: ldloc.2
+				IL_00ae: ldstr "name"
+				IL_00b3: ldstr "Classes_Inheritance_ThisBeforeSuper_Throws:<TwoPhaseDummy_M6>:.ctor:26"
+				IL_00b8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+				IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-				IL_00c3: stloc.s 7
-				IL_00c5: ldloc.s 6
-				IL_00c7: ldloc.s 7
-				IL_00c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00ce: pop
-				IL_00cf: leave IL_00d4
+				IL_00c2: stloc.s 7
+				IL_00c4: ldloc.s 6
+				IL_00c6: ldloc.s 7
+				IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00cd: pop
+				IL_00ce: leave IL_00d3
 			} // end handler
 
-			IL_00d4: ldtoken Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D
-			IL_00d9: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_00de: ldtoken Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D
-			IL_00e3: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_00e8: stloc.s 8
-			IL_00ea: ldloc.s 8
-			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
-			IL_00f1: stloc.s 7
-			IL_00f3: ldarg.0
-			IL_00f4: ldloc.s 7
-			IL_00f6: ldc.i4.1
-			IL_00f7: newarr [System.Runtime]System.Object
-			IL_00fc: dup
-			IL_00fd: ldc.i4.0
-			IL_00fe: ldc.r8 5
-			IL_0107: box [System.Runtime]System.Double
-			IL_010c: stelem.ref
-			IL_010d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
-			IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0117: stloc.s 6
-			IL_0119: volatile.
-			IL_011b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_0120: brfalse IL_013e
+			IL_00d3: ldtoken Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D
+			IL_00d8: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_00dd: ldtoken Modules.Classes_Inheritance_ThisBeforeSuper_Throws/D
+			IL_00e2: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_00e7: stloc.s 8
+			IL_00e9: ldloc.s 8
+			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetSuperConstructor(class [System.Runtime]System.Type)
+			IL_00f0: stloc.s 7
+			IL_00f2: ldarg.0
+			IL_00f3: ldloc.s 7
+			IL_00f5: ldc.i4.1
+			IL_00f6: newarr [System.Runtime]System.Object
+			IL_00fb: dup
+			IL_00fc: ldc.i4.0
+			IL_00fd: ldc.r8 5
+			IL_0106: box [System.Runtime]System.Double
+			IL_010b: stelem.ref
+			IL_010c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ConstructDerivedFunctionBase(object, object, object[])
+			IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0116: stloc.s 6
+			IL_0118: volatile.
+			IL_011a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_011f: brfalse IL_013d
 
-			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_012f: ldstr "x"
-			IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0139: br IL_015c
+			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_012e: ldstr "x"
+			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0138: br IL_015b
 
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0148: ldstr "x"
-			IL_014d: ldstr "Classes_Inheritance_ThisBeforeSuper_Throws:<TwoPhaseDummy_M6>:.ctor:44"
-			IL_0152: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0147: ldstr "x"
+			IL_014c: ldstr "Classes_Inheritance_ThisBeforeSuper_Throws:<TwoPhaseDummy_M6>:.ctor:44"
+			IL_0151: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_015c: stloc.s 7
-			IL_015e: ldloc.s 6
-			IL_0160: ldloc.s 7
-			IL_0162: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0167: pop
-			IL_0168: ldnull
-			IL_0169: stloc.3
-			IL_016a: ret
+			IL_015b: stloc.s 7
+			IL_015d: ldloc.s 6
+			IL_015f: ldloc.s 7
+			IL_0161: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0166: pop
+			IL_0167: ldnull
+			IL_0168: stloc.3
+			IL_0169: ret
 		} // end of method D::.ctor
 
 		.method family hidebysig specialname rtspecialname 

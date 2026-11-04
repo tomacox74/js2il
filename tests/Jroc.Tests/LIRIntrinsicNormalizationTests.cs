@@ -1096,4 +1096,45 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.Equal(index, rewritten.Index);
         Assert.Equal(result, rewritten.Result);
     }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void Normalize_StringNumericReadFusesOnlyAdjacentSingleUse(bool interveningInstruction, bool additionalUse)
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var key = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var boxed = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var number = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var other = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        body.Instructions.Add(new LIRGetItem(receiver, key, boxed));
+        if (interveningInstruction)
+            body.Instructions.Add(new LIRConvertToObject(receiver, typeof(object), other));
+        body.Instructions.Add(new LIRConvertToNumber(boxed, number));
+        if (additionalUse)
+            body.Instructions.Add(new LIRReturn(boxed));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        if (!interveningInstruction && !additionalUse)
+        {
+            var fused = Assert.IsType<LIRGetItemAsNumberString>(Assert.Single(body.Instructions));
+            Assert.Equal(receiver, fused.Object);
+            Assert.Equal(key, fused.Index);
+            Assert.Equal(number, fused.Result);
+            Assert.Equal(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)),
+                body.TempStorages[number.Index]);
+        }
+        else
+        {
+            Assert.Equal(3, body.Instructions.Count);
+            var read = Assert.IsType<LIRGetItem>(body.Instructions[0]);
+            Assert.Equal(boxed, read.Result);
+            var conversion = Assert.IsType<LIRConvertToNumber>(body.Instructions[interveningInstruction ? 2 : 1]);
+            Assert.Equal(boxed, conversion.Source);
+            Assert.Equal(number, conversion.Result);
+        }
+    }
 }

@@ -6141,6 +6141,25 @@ namespace JavaScriptRuntime
             return GetPropertySlow(obj, name);
         }
 
+        /// <summary>Reads a property as a number without boxing ordinary numeric slots.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double GetPropertyAsNumber(object obj, string name)
+        {
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && !MayBeStringObjectIndex(name))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TryGetOwnNumberValue(name, out var value))
+                {
+                    return value;
+                }
+            }
+
+            return TypeUtilities.ToNumber(GetItem(obj!, name));
+        }
+
         private static object? GetPropertySlow(object? obj, string name)
         {
             // Null/undefined -> undefined (modeled as null)
@@ -6337,6 +6356,24 @@ namespace JavaScriptRuntime
                 return;
             }
             SetProperty(obj!, key, value);
+        }
+
+        /// <summary>Assigns a number without boxing existing ordinary data properties.</summary>
+        public static void SetPropertyNumber(object? obj, string key, double value, bool throwOnError)
+        {
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && !MayBeStringObjectIndex(key))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TrySetOwnNumberValue(key, value))
+                {
+                    return;
+                }
+            }
+
+            _ = SetItem(obj, key, value, throwOnError);
         }
 
         /// <summary>

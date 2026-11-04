@@ -1207,6 +1207,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double GetItemAsNumber(object obj, object index)
         {
+            if (index is string key)
+            {
+                return GetPropertyAsNumber(obj, key);
+            }
+
             if (obj is Array array && index is double arrayIndex)
             {
                 return array.GetItemAsNumber(arrayIndex);
@@ -1227,7 +1232,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double GetItemAsNumber(object obj, string key)
         {
-            return TypeUtilities.ToNumber(GetItem(obj, key));
+            return GetPropertyAsNumber(obj, key);
         }
 
         /// <summary>

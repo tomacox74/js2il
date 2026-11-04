@@ -196,12 +196,12 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
-                    // Emit: call float64 JavaScriptRuntime.ObjectRuntime.GetItemAsNumber(object, string)
+                    // Emit: call float64 JavaScriptRuntime.ObjectRuntime.GetPropertyAsNumber(object, string)
                     EmitLoadTempAsObject(getItemAsNumberString.Object, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(getItemAsNumberString.Index, ilEncoder, allocation, methodDescriptor);
                     var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.ObjectRuntime),
-                        nameof(JavaScriptRuntime.ObjectRuntime.GetItemAsNumber),
+                        nameof(JavaScriptRuntime.ObjectRuntime.GetPropertyAsNumber),
                         parameterTypes: new[] { typeof(object), typeof(string) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getItemAsNumberMethod);
@@ -671,17 +671,18 @@ internal sealed partial class LIRToILCompiler
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
                              valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, string, double, bool)
+                        // Preserve the unboxed RHS rather than returning a boxed assignment result.
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
                         ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            nameof(JavaScriptRuntime.ObjectRuntime.SetPropertyNumber),
                             parameterTypes: new[] { typeof(object), typeof(string), typeof(double), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
+                        callProducesResult = false;
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
