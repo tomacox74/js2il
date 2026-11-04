@@ -80,7 +80,7 @@ def prepare(client, args):
         client, base, document, snapshot, validation, candidates,
         [{'producer': str(UUID(producer))} for producer in args.producer], run,
         corpus=corpus, identity=document, area=AREA, repeat=args.repeat, bundle_run=args.bundle_run,
-        candidates=[(row['path'], row['sha256']) for row in selected],
+        fixture_manifest=[(row['path'], row['sha256']) for row in selected],
         image_id=subprocess.check_output(['docker', 'image', 'inspect', '--format', '{{.Id}}', args.image],
                                          text=True).strip(),
         runtime_digest=digest(directory / 'runtime.tar.gz'),
@@ -159,7 +159,7 @@ def finish(client, args):
     write_json(args.output, dict(trial, complete=True, runner_topology='independent-actions-runners',
                                  actions_run_id=run, revision=context['revision'], identity=context['identity'],
                                  image_id=context['image_id'], bundle_run=context['bundle_run'],
-                                 candidates=context['candidates'], kind=context['kind'], area=context['area'],
+                                 candidates=context['fixture_manifest'], kind=context['kind'], area=context['area'],
                                  limits=context['limits'], repeat=context['repeat'], worker_count=len(metrics),
                                  prepare_and_execute_runner_minutes=minutes))
 
