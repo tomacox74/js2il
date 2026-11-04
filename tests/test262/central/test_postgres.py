@@ -2,6 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import json
 import os
+from threading import Barrier
 from pathlib import Path
 import unittest
 import uuid
@@ -1345,18 +1346,36 @@ class PostgresTests(unittest.TestCase):
                 peer.execute('SELECT test262.api_join_collection(1,%s,%s,90,%s)', (parent, second_child, sha(context)))
                 with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                     peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget))
-            claim = executor.execute('SELECT test262.api_claim(1,%s,%s,1000,31)', (child, budget)).fetchone()[0]
-            self.assertEqual(claim['lease_owner'], worker)
+            claim_sql = 'SELECT test262.api_claim(1,%s,%s,1000,31)'
             if parallel:
-                second_claim = peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',
-                                            (second_child, budget)).fetchone()[0]
+                barrier = Barrier(2)
+
+                def race_claim(connection, run):
+                    barrier.wait(timeout=5)
+                    return connection.execute(claim_sql, (run, budget)).fetchone()[0]
+
+                with ThreadPoolExecutor(max_workers=2) as pool:
+                    first_claim = pool.submit(race_claim, executor, child)
+                    peer_claim = pool.submit(race_claim, peer, second_child)
+                    claim, second_claim = first_claim.result(), peer_claim.result()
                 self.assertEqual(second_claim['lease_owner'], second_worker)
                 self.assertNotEqual(claim['work_item_id'], second_claim['work_item_id'])
-                exhausted = peer.execute('SELECT test262.api_claim(1,%s,%s,1000,31)',
-                                         (second_child, budget)).fetchone()[0]
-                self.assertTrue(exhausted['budget_exhausted'])
+                # While both leases are live, repeatedly race excess requests
+                # from both producers against the same still-pending item.
+                with ThreadPoolExecutor(max_workers=2) as pool:
+                    for _ in range(12):
+                        first = pool.submit(race_claim, executor, child)
+                        second = pool.submit(race_claim, peer, second_child)
+                        for request in (first, second):
+                            self.assertTrue(request.result()['budget_exhausted'])
+                self.assertEqual(self.db.execute(
+                    'SELECT reserved_attempts,reserved_ms,charged_attempts FROM test262.budget_scopes WHERE budget_scope_id=%s',
+                    (budget,)).fetchone(), (2, 2000, 0))
             else:
+                claim = executor.execute(claim_sql, (child, budget)).fetchone()[0]
                 self.assertEqual(claim['work_item_id'], item)
+            self.assertEqual(claim['lease_owner'], worker)
+            item = claim['work_item_id']
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
                 executor.execute('SELECT test262.api_renew(1,%s,%s,60)', (item, claim['lease_generation']))
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):
@@ -1388,6 +1407,35 @@ class PostgresTests(unittest.TestCase):
                 self.assertEqual(result['state'], 'failed')
                 self.assertEqual(result['budget']['disposition'], 'live-reservations')
                 self.assertEqual([row['reconciled_state'] for row in result['workers']], ['complete', 'failed'])
+                # Move only the crashed lease's clock forward in the disposable
+                # database. Production settlement still runs through the public API.
+                failed_item = second_claim['work_item_id']
+                generation = second_claim['lease_generation']
+                self.db.execute("""UPDATE test262.work_items SET lease_expires_at=clock_timestamp()-interval '1 second'
+                                    WHERE work_item_id=%s""", (failed_item,))
+                self.db.execute("""UPDATE test262.work_leases SET claimed_at=clock_timestamp()-interval '32 seconds',
+                                    expires_at=clock_timestamp()-interval '1 second'
+                                    WHERE work_item_id=%s AND lease_generation=%s""", (failed_item, generation))
+                retry_proof = Jsonb(dict(workers=[first, second]))
+                settled = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)',
+                                              (parent, retry_proof)).fetchone()[0]['budget']
+                self.assertEqual(settled['disposition'], 'terminal')
+                self.assertEqual(settled['result']['charged_attempts'], 2)
+                self.assertEqual(settled['result']['charged_ms'], 1020)
+                self.assertEqual(settled['result']['reserved_attempts'], 0)
+                self.assertEqual(settled['result']['reserved_ms'], 0)
+                states = dict(self.db.execute(
+                    'SELECT work_item_id::text,state FROM test262.work_items WHERE repository_id=%s',
+                    (repo,)).fetchall())
+                self.assertEqual(states[item], 'completed')
+                self.assertEqual(states[failed_item], 'pending')
+                self.assertEqual(list(states.values()).count('pending'), 2)
+                replay = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)',
+                                             (parent, retry_proof)).fetchone()[0]['budget']
+                self.assertEqual(replay['result'], settled['result'])
+                self.assertEqual(self.db.execute(
+                    'SELECT observation_id::text FROM test262.observations WHERE repository_id=%s',
+                    (repo,)).fetchall(), [(observation['observation_id'],)])
                 return
             result = coordinator.execute('SELECT test262.api_finish_collection(1,%s,%s)', (parent, proof)).fetchone()[0]
             self.assertEqual((result['state'], result['budget']['result']['state']), ('complete', 'closed'))

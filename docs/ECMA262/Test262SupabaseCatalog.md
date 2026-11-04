@@ -2087,6 +2087,21 @@ before closing #2339. The ordinary catalogue-only restore drill also includes th
 new records and limited function ACLs. Production onboarding is a separate operator
 decision and is not required to establish the disposable acceptance gates.
 
+For #2365, the retained report identifies the fault checkpoint and records whether
+the observation already existed on the server before recovery. Each worker's
+pre-recovery SQLite snapshot has a SHA-256 digest in the report. Use the snapshot,
+its matching producer and the frozen context from the same artifact to reproduce
+upload-only recovery on the disposable database. The pilot compares acknowledged
+SQLite receipts across two flushes and checks that recovery adds zero fixture
+executions. Use the report's checkout revision, provenance identity, and context
+digest to tie evidence to the exact build.
+
+The disposable PostgreSQL suite also races two authenticated managed workers for
+the same allocation, then repeatedly races excess claims with both leases live.
+It simulates expiry after one worker fails and checks that only eligible work
+remains pending, the successful observation is retained once, and repeated
+settlement cannot charge the expired reservation again.
+
 ## Operational monitoring (#2341)
 
 The GitHub-only recovery coverage artifact now includes the owner-accepted
