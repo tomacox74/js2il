@@ -203,6 +203,27 @@ and pin; its native rows were incomplete or excluded, not fresh acceptance.
 The new execution results are branch-local PR validation, not central trusted
 acceptance.
 
+Literals, line terminators, reserved words, rest parameters, statement lists,
+language types, and white space now have outcomes for all 873 applicable pinned
+cases: 774 verified passing and 99 unsupported eval dependencies. The completion
+accounts for 132 additional cases: 33 verified passing and 99 explicit eval
+exclusions. Unique-file accounting also corrects six previously double-counted
+literal results, giving a net increase of 27 verified passing results and
+resolving all 126 unpublished results in these seven rows.
+
+Coverage includes Unicode RegExp scalar quantification, primitive-property
+assignment receivers and inherited Proxy behavior, line terminators in comments,
+module reserved words, rest-parameter construction and early errors, and
+language-type values and references. All 1,503 required native variants of the
+774 supported cases pass under one unchanged build, including all 367
+syntax-negative cases. Runtime-negative cases must throw their declared error
+type; syntax negatives must fail during parsing under their metadata-selected
+strictness and parse goal. Eval-dependent cases remain excluded without rewriting
+their original assertions. Selection used read-only central reporting for the
+matching master revision and pin; the target had no native observations or
+trusted acceptance. Fresh execution results are branch-local PR validation,
+not central trusted acceptance.
+
 ## Native test runner
 
 Each runnable `[Fact]` in `tests/Jroc.Test262.Tests` remains an independent xUnit case.
@@ -323,8 +344,8 @@ acceptance.
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
-| Language syntax and semantics | 22,049 | 527 | 1,067 | 23,643 | **93.26%** |
-| **Total** | 39,979 | 558 | 7,704 | 48,241 | **82.87%** |
+| Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
+| **Total** | 40,006 | 657 | 7,578 | 48,241 | **82.93%** |
 
 ## Language Areas
 
@@ -347,17 +368,17 @@ acceptance.
 | `identifiers` | 268 | 0 | 0 | 268 | **100.00%** |
 | `import` | 127 | 0 | 0 | 127 | **100.00%** |
 | `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
-| `line-terminators` | 25 | 0 | 16 | 41 | **60.98%** |
-| `literals` | 505 | 0 | 29 | 534 | **94.57%** |
+| `line-terminators` | 32 | 9 | 0 | 41 | **78.05%** |
+| `literals` | 507 | 27 | 0 | 534 | **94.94%** |
 | `module-code` | 48 | 0 | 546 | 594 | **8.08%** |
 | `punctuators` | 11 | 0 | 0 | 11 | **100.00%** |
-| `reserved-words` | 26 | 0 | 1 | 27 | **96.30%** |
-| `rest-parameters` | 9 | 0 | 2 | 11 | **81.82%** |
+| `reserved-words` | 27 | 0 | 0 | 27 | **100.00%** |
+| `rest-parameters` | 11 | 0 | 0 | 11 | **100.00%** |
 | `source-text` | 1 | 0 | 0 | 1 | **100.00%** |
-| `statementList` | 40 | 0 | 40 | 80 | **50.00%** |
+| `statementList` | 40 | 40 | 0 | 80 | **50.00%** |
 | `statements` | 9,049 | 256 | 32 | 9,337 | **96.92%** |
-| `types` | 91 | 0 | 22 | 113 | **80.53%** |
-| `white-space` | 51 | 0 | 16 | 67 | **76.12%** |
+| `types` | 106 | 7 | 0 | 113 | **93.81%** |
+| `white-space` | 51 | 16 | 0 | 67 | **76.12%** |
 
 ## Expression Features
 

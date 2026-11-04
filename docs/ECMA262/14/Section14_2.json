@@ -42,6 +42,17 @@
         "notes": "Statement lists within blocks execute normally; common block bodies are exercised widely (e.g., function bodies)."
       },
       {
+        "clause": "14.2.2",
+        "feature": "Statement-list syntax and completion scenarios",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-block-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/statementList/LexicalSourceConformanceBatchTests.cs",
+          "tests/Jroc.Test262.Tests/language/statementList/RemainingPinnedExecutionTests.cs"
+        ],
+        "notes": "All 80 pinned statement-list cases have outcomes: 40 verified passing across all required native variants and 40 explicit eval exclusions. Covered source forms include arrays, regular expressions, arrows, lexical declarations, classes, blocks, and labelled/with statements. Eval-dependent completion scenarios retain their original assertions and remain excluded."
+      },
+      {
         "clause": "14.2.3",
         "feature": "lexical block scope (let shadowing)",
         "status": "Supported",

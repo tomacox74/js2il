@@ -6,6 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: complete the remaining 132 literals, line-terminators,
+  reserved-words, rest-parameters, statementList, types, and white-space cases:
+  33 verified passing additions and 99 explicit eval skips. All 873 pinned
+  cases now have outcomes: 774 verified passing and 99 eval exclusions.
+- fix(runtime): quantify literal Unicode RegExp surrogate pairs as scalar
+  atoms, and preserve primitive receivers and inherited Proxy/accessor behavior
+  when assigning properties on primitive values.
+- fix(test262): validate runtime-negative exception types automatically and
+  require parser SyntaxErrors at the declared strictness and parse goal for
+  syntax-negative cases.
 - test262: complete the remaining 141 labeled, let, return, switch, try, and
   using cases: 100 verified passing additions and 41 explicit eval skips.
   All 575 pinned cases now have outcomes: 532 verified passing and 43 eval

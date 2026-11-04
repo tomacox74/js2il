@@ -124,9 +124,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar-literals",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/language/literals/**/LiteralsConformanceBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/literals/**/LiteralsConformanceBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/literals/**/RemainingPinnedExecutionTests.cs"
         ],
-        "notes": "Four hundred twenty-eight upstream test262 cases cover numeric, BigInt, string, regular expression, and template literal lexical syntax and early errors. Remaining cases primarily require unsupported regular-expression Unicode and set notation behavior."
+        "notes": "All 534 pinned literal cases have outcomes: 507 verified passing and 27 explicit eval exclusions. All 984 required native variants of the supported cases pass, including 319 syntax negatives. Coverage includes numeric, BigInt, string, regular expression, and template literal lexical syntax and early errors, Unicode escape/case behavior, and astral scalar quantification. Literal surrogate pairs form one Unicode RegExp atom before quantification. Unique-file counts exclude duplicate results."
       }
     ]
   }

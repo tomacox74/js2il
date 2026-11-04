@@ -4,7 +4,7 @@
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-07T05:43:03Z
+> Last generated (UTC): 2026-11-04T05:36:48Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -39,7 +39,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Literal lexical syntax and early errors | Supported with Limitations | `tests/Jroc.Test262.Tests/language/literals/**/LiteralsConformanceBatchExecutionTests.cs` |  | Four hundred twenty-eight upstream test262 cases cover numeric, BigInt, string, regular expression, and template literal lexical syntax and early errors. Remaining cases primarily require unsupported regular-expression Unicode and set notation behavior. |
+| Literal lexical syntax and early errors | Supported with Limitations | `tests/Jroc.Test262.Tests/language/literals/**/LiteralsConformanceBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/literals/**/RemainingPinnedExecutionTests.cs` |  | All 534 pinned literal cases have outcomes: 507 verified passing and 27 explicit eval exclusions. All 984 required native variants of the supported cases pass, including 319 syntax negatives. Coverage includes numeric, BigInt, string, regular expression, and template literal lexical syntax and early errors, Unicode escape/case behavior, and astral scalar quantification. Literal surrogate pairs form one Unicode RegExp atom before quantification. Unique-file counts exclude duplicate results. |
 
 ### 12.9.3 ([tc39.es](https://tc39.es/ecma262/#sec-literals-numeric-literals))
 

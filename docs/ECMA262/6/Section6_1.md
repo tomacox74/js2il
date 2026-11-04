@@ -2,7 +2,7 @@
 
 [Back to Section6](Section6.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T17:43:34Z
+> Last generated (UTC): 2026-11-04T05:36:48Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -78,7 +78,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ECMAScript Language Types | Supported with Limitations |  |  | The primitive-language-type clauses are broadly supported, and the Section 6.1.7 object-model slice is now covered well enough to raise the overall 6.1 status. Remaining limitations are concentrated in edge-case object/proxy semantics and in other already-documented subsection limitations. |
+| ECMAScript Language Types | Supported with Limitations |  |  | The primitive-language-type clauses are broadly supported, and the Section 6.1.7 object-model slice is now covered well enough to raise the overall 6.1 status. All 113 pinned language/types cases have outcomes: 106 verified passing and seven explicit eval exclusions. Every required native variant of supported cases passes, including eleven syntax negatives. Coverage includes primitive values and conversions, UTF-16 strings, object references, and property-reference behavior. Remaining limitations are concentrated in edge-case object/proxy semantics and in other already-documented subsection limitations. |
 
 ### 6.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-undefined-type))
 
