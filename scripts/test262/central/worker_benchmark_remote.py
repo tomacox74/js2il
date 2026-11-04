@@ -131,6 +131,14 @@ def work(client, args):
                                             container_probe_ms=round(probe_ms, 3)))
 
 
+def read_worker_metrics(directory):
+    # A single downloaded artifact is extracted directly into the target.
+    # Multiple artifacts each receive their own subdirectory.
+    root = Path(directory)
+    paths = [*root.glob('metrics.json'), *root.glob('*/metrics.json')]
+    return [json.loads(path.read_text()) for path in paths]
+
+
 def finish(client, args):
     run, attempt, _ = actions_origin()
     owner_run = identity(client.contract['repository_id'], client.contract['producer_id'], f'actions:{run}:{attempt}')
@@ -142,7 +150,7 @@ def finish(client, args):
         result = client.call('finish_collection', owner_run, proof)
         write_json(args.output, result)
         raise ValueError('Benchmark workers failed or lack recovery evidence')
-    metrics = [json.loads(path.read_text()) for path in Path(args.metrics).glob('*/metrics.json')]
+    metrics = read_worker_metrics(args.metrics)
     expected = {(p['slot'], p['job_id']) for p in proof['workers']}
     require(len(metrics) == len(expected) and {(m['slot'], m['job_id']) for m in metrics} == expected,
             'Benchmark metrics are missing or do not match execution jobs')
