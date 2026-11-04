@@ -15,7 +15,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   when assigning properties on primitive values.
 - fix(test262): validate runtime-negative exception types automatically and
   require parser SyntaxErrors at the declared strictness and parse goal for
-  syntax-negative cases.
+  syntax-negative cases. Restore four original let/const temporal-dead-zone
+  fixtures so their expected ReferenceErrors escape as declared by metadata.
 - test262: complete the remaining 141 labeled, let, return, switch, try, and
   using cases: 100 verified passing additions and 41 explicit eval skips.
   All 575 pinned cases now have outcomes: 532 verified passing and 43 eval
