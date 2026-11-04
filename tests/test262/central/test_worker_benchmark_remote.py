@@ -55,6 +55,19 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(trial.call_args.args[5], candidates)
         self.assertEqual(trial.call_args.kwargs['fixture_manifest'], [('test.js', 'digest')])
 
+    def test_reads_single_and_multiple_downloaded_worker_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            single = root / 'metrics.json'
+            single.write_text(json.dumps({'slot': 1}))
+            self.assertEqual(benchmark.read_worker_metrics(root), [{'slot': 1}])
+            single.unlink()
+            for slot in (1, 2):
+                path = root / f'worker-{slot}' / 'metrics.json'
+                path.parent.mkdir()
+                path.write_text(json.dumps({'slot': slot}))
+            self.assertEqual(sorted(row['slot'] for row in benchmark.read_worker_metrics(root)), [1, 2])
+
     def test_compare_verifies_provenance_and_uses_total_job_minutes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
