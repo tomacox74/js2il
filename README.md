@@ -12,6 +12,8 @@ assembly before the program runs. JROC includes a JavaScript runtime and
 support for a growing set of Node.js APIs, making it possible to bring
 JavaScript applications and libraries into the .NET ecosystem.
 
+JROC supports Windows, Linux, and macOS.
+
 JROC currently targets ECMAScript 2025 and .NET 10. The project is under active
 development; compatibility is broad but not yet complete.
 
