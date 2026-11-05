@@ -1,3 +1,4 @@
+using Jroc.IR;
 using Jroc.Services;
 using Jroc.Tests.Utilities;
 
@@ -5,6 +6,104 @@ namespace Jroc.Tests;
 
 public sealed class TaggedNumericConsumerTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Normalize_FiltersIneligibleReadsAndRejectsUnsupportedUsesInEitherOrder(bool unsupportedUseFirst)
+    {
+        var body = new MethodBodyIR();
+        var objectStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        var receiver = AddTemp(body, objectStorage);
+        var key = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var array = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+        var arrayIndex = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var numeric = AddTemp(body, objectStorage);
+        var arrayElement = AddTemp(body, objectStorage);
+        var mapped = AddTemp(body, objectStorage);
+        var redefined = AddTemp(body, objectStorage);
+        var aliased = AddTemp(body, objectStorage);
+        var unused = AddTemp(body, objectStorage);
+        var typed = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        body.TempVariableSlots[mapped.Index] = 0;
+        foreach (var read in new[] { numeric, mapped, redefined, aliased, unused, typed })
+        {
+            body.Instructions.Add(new LIRGetItem(receiver, key, read));
+        }
+        body.Instructions.Add(new LIRGetItem(receiver, key, redefined));
+        body.Instructions.Add(new LIRGetJsArrayElement(array, arrayIndex, arrayElement));
+        if (unsupportedUseFirst)
+        {
+            body.Instructions.Add(new LIRReturn(aliased));
+        }
+        foreach (var read in new[] { numeric, arrayElement, mapped, redefined, aliased, typed })
+        {
+            var converted = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            body.Instructions.Add(new LIRConvertToNumber(read, converted));
+        }
+        if (!unsupportedUseFirst)
+        {
+            body.Instructions.Add(new LIRReturn(aliased));
+        }
+        var instructions = body.Instructions.ToArray();
+        var storages = body.TempStorages.ToArray();
+
+        LIRTaggedNumericNormalization.Normalize(body);
+
+        foreach (var read in new[] { numeric, arrayElement })
+        {
+            Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[read.Index].Kind);
+            Assert.Equal(typeof(JavaScriptRuntime.JsValue), body.TempStorages[read.Index].ClrType);
+        }
+        foreach (var read in new[] { mapped, redefined, aliased, unused, typed })
+        {
+            Assert.Same(storages[read.Index], body.TempStorages[read.Index]);
+        }
+        Assert.Equal(instructions, body.Instructions);
+    }
+
+    [Fact]
+    public void Normalize_PropagatesComparisonRejectionWhileRetainingValidCyclesAndNumericOperands()
+    {
+        var body = new MethodBodyIR();
+        var objectStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        var receiver = AddTemp(body, objectStorage);
+        var key = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var number = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var first = AddTemp(body, objectStorage);
+        var second = AddTemp(body, objectStorage);
+        var third = AddTemp(body, objectStorage);
+        var cycleLeft = AddTemp(body, objectStorage);
+        var cycleRight = AddTemp(body, objectStorage);
+        var numeric = AddTemp(body, objectStorage);
+        foreach (var read in new[] { first, second, third, cycleLeft, cycleRight, numeric })
+        {
+            body.Instructions.Add(new LIRGetItem(receiver, key, read));
+        }
+        foreach (var (left, right) in new[]
+        {
+            (first, second), (second, third), (third, receiver),
+            (cycleLeft, cycleRight), (cycleRight, cycleLeft), (number, numeric)
+        })
+        {
+            var result = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            body.Instructions.Add(new LIRBinaryDynamicOperator(DynamicBinaryOperatorKind.LessThan, left, right, result));
+        }
+        var instructions = body.Instructions.ToArray();
+
+        LIRTaggedNumericNormalization.Normalize(body);
+
+        foreach (var read in new[] { first, second, third })
+        {
+            Assert.Same(objectStorage, body.TempStorages[read.Index]);
+        }
+        foreach (var read in new[] { cycleLeft, cycleRight, numeric })
+        {
+            Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[read.Index].Kind);
+            Assert.Equal(typeof(JavaScriptRuntime.JsValue), body.TempStorages[read.Index].ClrType);
+        }
+        Assert.Equal(instructions, body.Instructions);
+    }
+
     [Fact]
     public void CompiledComparison_UsesTaggedReadWithUnprovenProperty()
     {
@@ -182,6 +281,15 @@ public sealed class TaggedNumericConsumerTests
     }
 
     private static readonly string EntryPath = Path.Combine(Path.GetTempPath(), "TaggedNumericConsumers.js");
+
+    private static TempVariable AddTemp(MethodBodyIR body, ValueStorage storage)
+    {
+        var temp = new TempVariable(body.Temps.Count);
+        body.Temps.Add(temp);
+        body.TempStorages.Add(storage);
+        body.TempVariableSlots.Add(-1);
+        return temp;
+    }
 
     private static JrocCompiledAssemblyArtifact Compile(string source)
         => JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(EntryPath)
