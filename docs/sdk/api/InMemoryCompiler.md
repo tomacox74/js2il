@@ -77,13 +77,18 @@ checked path. The option also applies to multi-entry compilation.
 Strict identity comparisons (`===` and `!==`) of `this` or `globalThis`
 do not by themselves expose the global object, so they preserve the
 branch-free path when the host contract and other source analysis allow it.
-Passing the object to a callback, storing an alias, or writing its
-properties still prevents that optimization.
+Passing the object to a callback or storing an escaping alias still prevents
+that optimization. Known property writes invalidate the affected global names.
 
 Ordinary fixed-name receiver-property access, such as `this.bufferSize`, does
-not by itself expose the receiver. Storing `this` in an alias can expose the
-global object from an ordinary function and disables original-binding
-assumptions across the assembly, even when that function is not executed.
+not by itself expose the receiver. Simple local aliases such as
+`var self = this` also preserve early binding when every use, including captured
+uses in nested functions, is a fixed-name property access. Each accessed name
+is conservatively invalidated: `self.Number = replacement` keeps `Number`
+checked without disabling unrelated `Math` intrinsics. Unknown computed keys,
+alias escapes, calls that pass the alias as their receiver, shadowing, and
+dynamic name resolution retain conservative assembly-wide fallback, even in
+functions that are not executed.
 Dynamic Math calls still resolve the current global/member before evaluating
 arguments, then invoke the selected built-in through fixed-arity,
 receiver-independent adapters rather than reflective CLR overload selection.
