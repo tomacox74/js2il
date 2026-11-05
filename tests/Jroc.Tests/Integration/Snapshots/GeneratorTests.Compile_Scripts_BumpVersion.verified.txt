@@ -3043,12 +3043,13 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 185 (0xb9)
+				// Code size: 147 (0x93)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] bool,
-					[2] object
+					[1] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+					[2] bool,
+					[3] object
 				)
 
 				IL_0000: ldarg.2
@@ -3081,50 +3082,38 @@
 				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
 				IL_0047: stloc.0
 
-				IL_0048: volatile.
-				IL_004a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-				IL_004f: brfalse IL_0064
+				IL_0048: ldloc.0
+				IL_0049: ldstr "length"
+				IL_004e: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+				IL_0053: stloc.1
+				IL_0054: ldloc.1
+				IL_0055: ldc.r8 0.0
+				IL_005e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+				IL_0063: stloc.2
+				IL_0064: ldloc.2
+				IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+				IL_006a: stloc.3
+				IL_006b: ldloc.3
+				IL_006c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0071: stloc.2
+				IL_0072: ldloc.2
+				IL_0073: brfalse IL_0091
 
-				IL_0054: ldloc.0
-				IL_0055: ldstr "length"
-				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_005f: br IL_0079
-
-				IL_0064: ldloc.0
-				IL_0065: ldstr "length"
-				IL_006a: ldstr "Compile_Scripts_BumpVersion:<TwoPhaseDummy_M17>:__js_call__:4"
-				IL_006f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_59
-				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-				IL_0079: stloc.0
-				IL_007a: ldloc.0
-				IL_007b: ldc.r8 0.0
-				IL_0084: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-				IL_0089: stloc.1
-				IL_008a: ldloc.1
+				IL_0078: ldnull
+				IL_0079: ldarg.2
+				IL_007a: call object Modules.Compile_Scripts_BumpVersion/isPlaceholder::__js_call__(object, object)
+				IL_007f: stloc.0
+				IL_0080: ldloc.0
+				IL_0081: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+				IL_0086: ldc.i4.0
+				IL_0087: ceq
+				IL_0089: stloc.2
+				IL_008a: ldloc.2
 				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_0090: stloc.2
-				IL_0091: ldloc.2
-				IL_0092: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0097: stloc.1
-				IL_0098: ldloc.1
-				IL_0099: brfalse IL_00b7
+				IL_0090: ret
 
-				IL_009e: ldnull
-				IL_009f: ldarg.2
-				IL_00a0: call object Modules.Compile_Scripts_BumpVersion/isPlaceholder::__js_call__(object, object)
-				IL_00a5: stloc.0
-				IL_00a6: ldloc.0
-				IL_00a7: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_00ac: ldc.i4.0
-				IL_00ad: ceq
-				IL_00af: stloc.1
-				IL_00b0: ldloc.1
-				IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_00b6: ret
-
-				IL_00b7: ldloc.2
-				IL_00b8: ret
+				IL_0091: ldloc.3
+				IL_0092: ret
 			} // end of method ArrowFunction_L113C44::__js_call__
 
 		} // end of class ArrowFunction_L113C44

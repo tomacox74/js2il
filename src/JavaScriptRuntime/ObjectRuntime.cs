@@ -1249,6 +1249,36 @@ namespace JavaScriptRuntime
             return TypeUtilities.ToNumber(GetItem(obj!, key));
         }
 
+        public static JsValue GetItemValue(object obj, double index)
+            => obj is Array array
+                ? array.GetItemValue(index)
+                : GetItemValue(obj, DotNet2JSConversions.ToString(index));
+
+        public static JsValue GetItemValue(object obj, object index)
+            => index switch
+            {
+                string key => GetItemValue(obj, key),
+                double number => GetItemValue(obj, number),
+                _ => JsValue.FromObject(GetItem(obj, index))
+            };
+
+        public static JsValue GetItemValue(object obj, string key)
+        {
+            if (obj is not null
+                && obj.GetType() == typeof(JsObject)
+                && (!MayBeStringObjectIndex(key) || !TryGetStringObjectValue(obj, out _)))
+            {
+                var ordinaryObject = (JsObject)obj;
+                if (!ordinaryObject.IsFunctionPrototype
+                    && ordinaryObject.TryGetOwnValue(key, out var value))
+                {
+                    return value;
+                }
+            }
+
+            return JsValue.FromObject(GetItem(obj!, key));
+        }
+
         /// <summary>
         /// Sets an item on an object by index/key.
         /// Used by codegen for computed member assignment and property assignment.

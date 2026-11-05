@@ -282,7 +282,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 224 (0xe0)
+		// Code size: 186 (0xba)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_Basic/Scope,
@@ -292,9 +292,10 @@
 			[4] object[],
 			[5] class Modules.Array_Map_Basic/FunctionExpression_lengths/FunctionObject,
 			[6] float64,
-			[7] object,
+			[7] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 			[8] bool,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Map_Basic/Scope::.ctor()
@@ -341,47 +342,35 @@
 		// loop start (head: IL_006c)
 			IL_006c: ldloc.3
 			IL_006d: stloc.s 6
-			IL_006f: volatile.
-			IL_0071: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-			IL_0076: brfalse IL_008b
+			IL_006f: ldloc.2
+			IL_0070: ldstr "length"
+			IL_0075: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_007a: stloc.s 7
+			IL_007c: ldloc.s 6
+			IL_007e: ldloc.s 7
+			IL_0080: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_0085: stloc.s 8
+			IL_0087: ldloc.s 8
+			IL_0089: brfalse IL_00b9
 
-			IL_007b: ldloc.2
-			IL_007c: ldstr "length"
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0086: br IL_00a0
-
-			IL_008b: ldloc.2
-			IL_008c: ldstr "length"
-			IL_0091: ldstr "Array_Map_Basic:Modules.Array_Map_Basic:__js_module_init__:20"
-			IL_0096: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_1
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_00a0: stloc.s 7
-			IL_00a2: ldloc.s 6
-			IL_00a4: ldloc.s 7
-			IL_00a6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
-			IL_00ab: stloc.s 8
-			IL_00ad: ldloc.s 8
-			IL_00af: brfalse IL_00df
-
-			IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b9: stloc.s 9
-			IL_00bb: ldloc.2
-			IL_00bc: ldloc.3
-			IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00c2: stloc.s 7
-			IL_00c4: ldloc.s 9
-			IL_00c6: ldloc.s 7
-			IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00cd: pop
-			IL_00ce: ldloc.3
-			IL_00cf: ldc.r8 1
-			IL_00d8: add
-			IL_00d9: stloc.3
-			IL_00da: br IL_006c
+			IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0093: stloc.s 9
+			IL_0095: ldloc.2
+			IL_0096: ldloc.3
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_009c: stloc.s 10
+			IL_009e: ldloc.s 9
+			IL_00a0: ldloc.s 10
+			IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a7: pop
+			IL_00a8: ldloc.3
+			IL_00a9: ldc.r8 1
+			IL_00b2: add
+			IL_00b3: stloc.3
+			IL_00b4: br IL_006c
 		// end loop
 
-		IL_00df: ret
+		IL_00b9: ret
 	} // end of method Array_Map_Basic::__js_module_init__
 
 } // end of class Modules.Array_Map_Basic

@@ -56,7 +56,8 @@ public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result)
 public record LIRGetStringLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Gets an item from an object by index (calls JavaScriptRuntime.ObjectRuntime.GetItem).
+/// Gets an item from an object by index. Tagged numeric consumers use GetItemValue
+/// to retain the original value without boxing numbers or performing eager coercion.
 /// </summary>
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
@@ -95,7 +96,8 @@ public record LIRSetJsArrayLength(
 /// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
 /// Contract: Receiver is a proven Array; Index is an unboxed double.
-/// Result is an object, or an unboxed double through Array.GetItemAsNumber when consumed numerically.
+/// Result is an object, an unboxed double through Array.GetItemAsNumber, or a tagged
+/// JsValue through Array.GetItemValue when numeric coercion must remain deferred.
 /// </summary>
 public record LIRGetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Result) : LIRInstruction;
 

@@ -84,6 +84,19 @@ Array literals and compiler-proven numeric index operations still target direct
 array intrinsics. The shared object contract does not replace the specialized
 dense path or stringify numeric keys on that path.
 
+`ObjectRuntime.GetItemValue` and `Array.GetItemValue` preserve a read's original
+`JsValue` instead of boxing numeric payloads. Ordinary own data slots and dense
+numeric array elements use guarded backing-store reads; shared intrinsic
+baselines, accessors, exotic receivers, holes, and inherited properties retain
+normal descriptor/prototype lookup. Reads do not perform numeric coercion.
+
+The compiler selects this representation only for single-defined, unmapped
+item-read temps whose consumers are deferred numeric conversions or supported
+tagged/number relational comparisons. Getter and coercion ordering is unchanged,
+including across another operand's evaluation. Proven numbers remain doubles;
+other consumers and the callable ABI remain object-based. Non-number tagged
+operands use the original coercion/comparison semantics.
+
 Array intrinsic prototypes, per-thread prototype overlays, and
 `Array.prototype[Symbol.unscopables]` are ordinary `JsObject` instances. This
 matches all other runtime-owned intrinsic prototypes and leaves no

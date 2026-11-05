@@ -972,6 +972,54 @@ namespace JavaScriptRuntime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThan(double a, JsValue b)
+            => b.IsNumber ? a < b.AsNumber : LessThan(a, b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThan(JsValue a, double b)
+            => a.IsNumber ? a.AsNumber < b : LessThan(a.ToObject(), b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThan(JsValue a, JsValue b)
+            => a.IsNumber && b.IsNumber ? a.AsNumber < b.AsNumber : LessThan(a.ToObject(), b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThan(double a, JsValue b)
+            => b.IsNumber ? a > b.AsNumber : GreaterThan(a, b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThan(JsValue a, double b)
+            => a.IsNumber ? a.AsNumber > b : GreaterThan(a.ToObject(), b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThan(JsValue a, JsValue b)
+            => a.IsNumber && b.IsNumber ? a.AsNumber > b.AsNumber : GreaterThan(a.ToObject(), b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThanOrEqual(double a, JsValue b)
+            => b.IsNumber ? a <= b.AsNumber : LessThanOrEqual(a, b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThanOrEqual(JsValue a, double b)
+            => a.IsNumber ? a.AsNumber <= b : LessThanOrEqual(a.ToObject(), b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool LessThanOrEqual(JsValue a, JsValue b)
+            => a.IsNumber && b.IsNumber ? a.AsNumber <= b.AsNumber : LessThanOrEqual(a.ToObject(), b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThanOrEqual(double a, JsValue b)
+            => b.IsNumber ? a >= b.AsNumber : GreaterThanOrEqual(a, b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThanOrEqual(JsValue a, double b)
+            => a.IsNumber ? a.AsNumber >= b : GreaterThanOrEqual(a.ToObject(), b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool GreaterThanOrEqual(JsValue a, JsValue b)
+            => a.IsNumber && b.IsNumber ? a.AsNumber >= b.AsNumber : GreaterThanOrEqual(a.ToObject(), b.ToObject());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool LessThan(double a, object? b)
         {
             var comparison = CompareRelational(a, b);

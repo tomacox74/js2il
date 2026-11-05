@@ -77,4 +77,9 @@ public readonly struct JsValue
         TagObject => _refValue,
         _ => null
     };
+
+    public static object? ToObject(JsValue value) => value.ToObject();
+
+    public static double ToNumber(JsValue value)
+        => value.IsNumber ? value.AsNumber : TypeUtilities.ToNumber(value.ToObject());
 }

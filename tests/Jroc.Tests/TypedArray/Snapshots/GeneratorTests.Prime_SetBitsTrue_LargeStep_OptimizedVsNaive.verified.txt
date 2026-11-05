@@ -1299,7 +1299,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 2370 (0x942)
+		// Code size: 2331 (0x91b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope,
@@ -1320,9 +1320,10 @@
 			[15] class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/BitArray,
 			[16] object,
 			[17] float64,
-			[18] bool,
-			[19] object,
-			[20] object
+			[18] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+			[19] bool,
+			[20] object,
+			[21] object
 		)
 
 		IL_0000: newobj instance void Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive/Scope::.ctor()
@@ -1703,390 +1704,378 @@
 			IL_0492: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0497: stloc.s 11
-			IL_0499: volatile.
-			IL_049b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-			IL_04a0: brfalse IL_04b6
+			IL_0499: ldloc.s 11
+			IL_049b: ldstr "length"
+			IL_04a0: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_04a5: stloc.s 18
+			IL_04a7: ldloc.s 17
+			IL_04a9: ldloc.s 18
+			IL_04ab: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_04b0: stloc.s 19
+			IL_04b2: ldloc.s 19
+			IL_04b4: brfalse IL_05a0
 
-			IL_04a5: ldloc.s 11
-			IL_04a7: ldstr "length"
-			IL_04ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_04b1: br IL_04cc
+			IL_04b9: volatile.
+			IL_04bb: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_04c0: brfalse IL_04d5
 
-			IL_04b6: ldloc.s 11
-			IL_04b8: ldstr "length"
-			IL_04bd: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:102"
-			IL_04c2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_18
-			IL_04c7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_04c5: ldloc.2
+			IL_04c6: ldstr "wordArray"
+			IL_04cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_04d0: br IL_04ea
 
-			IL_04cc: stloc.s 11
-			IL_04ce: ldloc.s 17
-			IL_04d0: ldloc.s 11
-			IL_04d2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
-			IL_04d7: stloc.s 18
-			IL_04d9: ldloc.s 18
-			IL_04db: brfalse IL_05c7
+			IL_04d5: ldloc.2
+			IL_04d6: ldstr "wordArray"
+			IL_04db: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:107"
+			IL_04e0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
+			IL_04e5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_04e0: volatile.
-			IL_04e2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_04e7: brfalse IL_04fc
+			IL_04ea: stloc.s 11
+			IL_04ec: ldloc.s 11
+			IL_04ee: ldloc.s 6
+			IL_04f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_04f5: stloc.s 11
+			IL_04f7: volatile.
+			IL_04f9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_04fe: brfalse IL_0513
 
-			IL_04ec: ldloc.2
-			IL_04ed: ldstr "wordArray"
-			IL_04f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_04f7: br IL_0511
+			IL_0503: ldloc.3
+			IL_0504: ldstr "wordArray"
+			IL_0509: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_050e: br IL_0528
 
-			IL_04fc: ldloc.2
-			IL_04fd: ldstr "wordArray"
-			IL_0502: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:107"
-			IL_0507: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_050c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0513: ldloc.3
+			IL_0514: ldstr "wordArray"
+			IL_0519: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:110"
+			IL_051e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_0523: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0511: stloc.s 11
-			IL_0513: ldloc.s 11
-			IL_0515: ldloc.s 6
-			IL_0517: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_051c: stloc.s 11
-			IL_051e: volatile.
-			IL_0520: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_0525: brfalse IL_053a
+			IL_0528: stloc.s 10
+			IL_052a: ldloc.s 10
+			IL_052c: ldloc.s 6
+			IL_052e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0533: stloc.s 10
+			IL_0535: ldloc.s 11
+			IL_0537: ldloc.s 10
+			IL_0539: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+			IL_053e: stloc.s 19
+			IL_0540: ldloc.s 19
+			IL_0542: brfalse IL_058d
 
-			IL_052a: ldloc.3
-			IL_052b: ldstr "wordArray"
-			IL_0530: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0535: br IL_054f
+			IL_0547: ldloc.s 4
+			IL_0549: ldc.r8 1
+			IL_0552: add
+			IL_0553: stloc.s 4
+			IL_0555: ldloc.s 5
+			IL_0557: stloc.s 20
+			IL_0559: ldc.r8 1
+			IL_0562: neg
+			IL_0563: stloc.s 17
+			IL_0565: ldloc.s 17
+			IL_0567: box [System.Runtime]System.Double
+			IL_056c: stloc.s 21
+			IL_056e: ldloc.s 20
+			IL_0570: ldloc.s 21
+			IL_0572: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0577: stloc.s 19
+			IL_0579: ldloc.s 19
+			IL_057b: brfalse IL_058d
 
-			IL_053a: ldloc.3
-			IL_053b: ldstr "wordArray"
-			IL_0540: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:110"
-			IL_0545: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_054a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0580: ldloc.s 6
+			IL_0582: box [System.Runtime]System.Double
+			IL_0587: stloc.s 21
+			IL_0589: ldloc.s 21
+			IL_058b: stloc.s 5
 
-			IL_054f: stloc.s 10
-			IL_0551: ldloc.s 10
-			IL_0553: ldloc.s 6
-			IL_0555: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_055a: stloc.s 10
-			IL_055c: ldloc.s 11
-			IL_055e: ldloc.s 10
-			IL_0560: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-			IL_0565: stloc.s 18
-			IL_0567: ldloc.s 18
-			IL_0569: brfalse IL_05b4
-
-			IL_056e: ldloc.s 4
-			IL_0570: ldc.r8 1
-			IL_0579: add
-			IL_057a: stloc.s 4
-			IL_057c: ldloc.s 5
-			IL_057e: stloc.s 19
-			IL_0580: ldc.r8 1
-			IL_0589: neg
-			IL_058a: stloc.s 17
-			IL_058c: ldloc.s 17
-			IL_058e: box [System.Runtime]System.Double
-			IL_0593: stloc.s 20
-			IL_0595: ldloc.s 19
-			IL_0597: ldloc.s 20
-			IL_0599: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_059e: stloc.s 18
-			IL_05a0: ldloc.s 18
-			IL_05a2: brfalse IL_05b4
-
-			IL_05a7: ldloc.s 6
-			IL_05a9: box [System.Runtime]System.Double
-			IL_05ae: stloc.s 20
-			IL_05b0: ldloc.s 20
-			IL_05b2: stloc.s 5
-
-			IL_05b4: ldloc.s 6
-			IL_05b6: ldc.r8 1
-			IL_05bf: add
-			IL_05c0: stloc.s 6
-			IL_05c2: br IL_0462
+			IL_058d: ldloc.s 6
+			IL_058f: ldc.r8 1
+			IL_0598: add
+			IL_0599: stloc.s 6
+			IL_059b: br IL_0462
 		// end loop
 
-		IL_05c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_05cc: stloc.s 12
-		IL_05ce: ldloc.s 4
-		IL_05d0: box [System.Runtime]System.Double
-		IL_05d5: stloc.s 20
-		IL_05d7: ldloc.s 12
-		IL_05d9: ldstr "diffs"
-		IL_05de: ldloc.s 20
-		IL_05e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_05e5: pop
-		IL_05e6: ldloc.s 5
-		IL_05e8: stloc.s 20
-		IL_05ea: ldc.r8 1
-		IL_05f3: neg
-		IL_05f4: stloc.s 17
-		IL_05f6: ldloc.s 17
-		IL_05f8: box [System.Runtime]System.Double
-		IL_05fd: stloc.s 19
-		IL_05ff: ldloc.s 20
-		IL_0601: ldloc.s 19
-		IL_0603: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_0608: stloc.s 18
-		IL_060a: ldloc.s 18
-		IL_060c: brfalse IL_06b9
+		IL_05a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05a5: stloc.s 12
+		IL_05a7: ldloc.s 4
+		IL_05a9: box [System.Runtime]System.Double
+		IL_05ae: stloc.s 21
+		IL_05b0: ldloc.s 12
+		IL_05b2: ldstr "diffs"
+		IL_05b7: ldloc.s 21
+		IL_05b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_05be: pop
+		IL_05bf: ldloc.s 5
+		IL_05c1: stloc.s 21
+		IL_05c3: ldc.r8 1
+		IL_05cc: neg
+		IL_05cd: stloc.s 17
+		IL_05cf: ldloc.s 17
+		IL_05d1: box [System.Runtime]System.Double
+		IL_05d6: stloc.s 20
+		IL_05d8: ldloc.s 21
+		IL_05da: ldloc.s 20
+		IL_05dc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_05e1: stloc.s 19
+		IL_05e3: ldloc.s 19
+		IL_05e5: brfalse IL_0692
 
-		IL_0611: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0616: stloc.s 12
-		IL_0618: volatile.
-		IL_061a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_061f: brfalse IL_0634
+		IL_05ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05ef: stloc.s 12
+		IL_05f1: volatile.
+		IL_05f3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_05f8: brfalse IL_060d
 
-		IL_0624: ldloc.2
-		IL_0625: ldstr "wordArray"
-		IL_062a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_062f: br IL_0649
+		IL_05fd: ldloc.2
+		IL_05fe: ldstr "wordArray"
+		IL_0603: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0608: br IL_0622
 
-		IL_0634: ldloc.2
-		IL_0635: ldstr "wordArray"
-		IL_063a: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:153"
-		IL_063f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-		IL_0644: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_060d: ldloc.2
+		IL_060e: ldstr "wordArray"
+		IL_0613: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:153"
+		IL_0618: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+		IL_061d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0649: stloc.s 10
-		IL_064b: ldloc.s 10
-		IL_064d: ldloc.s 5
-		IL_064f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0654: stloc.s 10
-		IL_0656: volatile.
-		IL_0658: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_065d: brfalse IL_0672
+		IL_0622: stloc.s 10
+		IL_0624: ldloc.s 10
+		IL_0626: ldloc.s 5
+		IL_0628: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_062d: stloc.s 10
+		IL_062f: volatile.
+		IL_0631: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_0636: brfalse IL_064b
 
-		IL_0662: ldloc.3
-		IL_0663: ldstr "wordArray"
-		IL_0668: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_066d: br IL_0687
+		IL_063b: ldloc.3
+		IL_063c: ldstr "wordArray"
+		IL_0641: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0646: br IL_0660
 
-		IL_0672: ldloc.3
-		IL_0673: ldstr "wordArray"
-		IL_0678: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:156"
-		IL_067d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-		IL_0682: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_064b: ldloc.3
+		IL_064c: ldstr "wordArray"
+		IL_0651: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:156"
+		IL_0656: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+		IL_065b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0687: stloc.s 11
+		IL_0660: stloc.s 11
+		IL_0662: ldloc.s 11
+		IL_0664: ldloc.s 5
+		IL_0666: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_066b: stloc.s 11
+		IL_066d: ldloc.s 12
+		IL_066f: ldc.i4.4
+		IL_0670: newarr [System.Runtime]System.Object
+		IL_0675: dup
+		IL_0676: ldc.i4.0
+		IL_0677: ldstr "first"
+		IL_067c: stelem.ref
+		IL_067d: dup
+		IL_067e: ldc.i4.1
+		IL_067f: ldloc.s 5
+		IL_0681: stelem.ref
+		IL_0682: dup
+		IL_0683: ldc.i4.2
+		IL_0684: ldloc.s 10
+		IL_0686: stelem.ref
+		IL_0687: dup
+		IL_0688: ldc.i4.3
 		IL_0689: ldloc.s 11
-		IL_068b: ldloc.s 5
-		IL_068d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0692: stloc.s 11
-		IL_0694: ldloc.s 12
-		IL_0696: ldc.i4.4
-		IL_0697: newarr [System.Runtime]System.Object
-		IL_069c: dup
-		IL_069d: ldc.i4.0
-		IL_069e: ldstr "first"
-		IL_06a3: stelem.ref
-		IL_06a4: dup
-		IL_06a5: ldc.i4.1
-		IL_06a6: ldloc.s 5
-		IL_06a8: stelem.ref
-		IL_06a9: dup
-		IL_06aa: ldc.i4.2
-		IL_06ab: ldloc.s 10
-		IL_06ad: stelem.ref
-		IL_06ae: dup
-		IL_06af: ldc.i4.3
-		IL_06b0: ldloc.s 11
-		IL_06b2: stelem.ref
-		IL_06b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_06b8: pop
+		IL_068b: stelem.ref
+		IL_068c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0691: pop
 
-		IL_06b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_06be: stloc.s 12
-		IL_06c0: volatile.
-		IL_06c2: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_06c7: brfalse IL_06dc
+		IL_0692: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0697: stloc.s 12
+		IL_0699: volatile.
+		IL_069b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_06a0: brfalse IL_06b5
 
-		IL_06cc: ldloc.2
-		IL_06cd: ldstr "wordArray"
-		IL_06d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_06d7: br IL_06f1
+		IL_06a5: ldloc.2
+		IL_06a6: ldstr "wordArray"
+		IL_06ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06b0: br IL_06ca
 
-		IL_06dc: ldloc.2
-		IL_06dd: ldstr "wordArray"
-		IL_06e2: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:164"
-		IL_06e7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-		IL_06ec: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_06b5: ldloc.2
+		IL_06b6: ldstr "wordArray"
+		IL_06bb: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:164"
+		IL_06c0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+		IL_06c5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_06f1: stloc.s 11
-		IL_06f3: ldloc.s 11
-		IL_06f5: ldc.r8 0.0
-		IL_06fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0703: stloc.s 11
-		IL_0705: volatile.
-		IL_0707: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_070c: brfalse IL_0721
+		IL_06ca: stloc.s 11
+		IL_06cc: ldloc.s 11
+		IL_06ce: ldc.r8 0.0
+		IL_06d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_06dc: stloc.s 11
+		IL_06de: volatile.
+		IL_06e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_06e5: brfalse IL_06fa
 
-		IL_0711: ldloc.3
-		IL_0712: ldstr "wordArray"
-		IL_0717: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_071c: br IL_0736
+		IL_06ea: ldloc.3
+		IL_06eb: ldstr "wordArray"
+		IL_06f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_06f5: br IL_070f
 
-		IL_0721: ldloc.3
-		IL_0722: ldstr "wordArray"
-		IL_0727: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:168"
-		IL_072c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-		IL_0731: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_06fa: ldloc.3
+		IL_06fb: ldstr "wordArray"
+		IL_0700: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:168"
+		IL_0705: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+		IL_070a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0736: stloc.s 10
-		IL_0738: ldloc.s 10
-		IL_073a: ldc.r8 0.0
-		IL_0743: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0748: stloc.s 10
-		IL_074a: ldloc.s 12
-		IL_074c: ldstr "w0"
-		IL_0751: ldloc.s 11
-		IL_0753: ldloc.s 10
-		IL_0755: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_075a: pop
-		IL_075b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0760: stloc.s 12
-		IL_0762: volatile.
-		IL_0764: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_0769: brfalse IL_077e
+		IL_070f: stloc.s 10
+		IL_0711: ldloc.s 10
+		IL_0713: ldc.r8 0.0
+		IL_071c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0721: stloc.s 10
+		IL_0723: ldloc.s 12
+		IL_0725: ldstr "w0"
+		IL_072a: ldloc.s 11
+		IL_072c: ldloc.s 10
+		IL_072e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0733: pop
+		IL_0734: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0739: stloc.s 12
+		IL_073b: volatile.
+		IL_073d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+		IL_0742: brfalse IL_0757
 
-		IL_076e: ldloc.2
-		IL_076f: ldstr "wordArray"
-		IL_0774: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0779: br IL_0793
+		IL_0747: ldloc.2
+		IL_0748: ldstr "wordArray"
+		IL_074d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0752: br IL_076c
 
-		IL_077e: ldloc.2
-		IL_077f: ldstr "wordArray"
-		IL_0784: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:176"
-		IL_0789: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-		IL_078e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0757: ldloc.2
+		IL_0758: ldstr "wordArray"
+		IL_075d: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:176"
+		IL_0762: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+		IL_0767: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0793: stloc.s 10
-		IL_0795: ldloc.s 10
-		IL_0797: ldc.r8 1
-		IL_07a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_07a5: stloc.s 10
-		IL_07a7: volatile.
-		IL_07a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_07ae: brfalse IL_07c3
+		IL_076c: stloc.s 10
+		IL_076e: ldloc.s 10
+		IL_0770: ldc.r8 1
+		IL_0779: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_077e: stloc.s 10
+		IL_0780: volatile.
+		IL_0782: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_0787: brfalse IL_079c
 
-		IL_07b3: ldloc.3
-		IL_07b4: ldstr "wordArray"
-		IL_07b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_07be: br IL_07d8
+		IL_078c: ldloc.3
+		IL_078d: ldstr "wordArray"
+		IL_0792: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0797: br IL_07b1
 
-		IL_07c3: ldloc.3
-		IL_07c4: ldstr "wordArray"
-		IL_07c9: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:180"
-		IL_07ce: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-		IL_07d3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_079c: ldloc.3
+		IL_079d: ldstr "wordArray"
+		IL_07a2: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:180"
+		IL_07a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+		IL_07ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_07d8: stloc.s 11
-		IL_07da: ldloc.s 11
-		IL_07dc: ldc.r8 1
-		IL_07e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_07ea: stloc.s 11
-		IL_07ec: ldloc.s 12
-		IL_07ee: ldstr "w1"
-		IL_07f3: ldloc.s 10
-		IL_07f5: ldloc.s 11
-		IL_07f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_07fc: pop
-		IL_07fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0802: stloc.s 12
-		IL_0804: volatile.
-		IL_0806: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_080b: brfalse IL_0820
+		IL_07b1: stloc.s 11
+		IL_07b3: ldloc.s 11
+		IL_07b5: ldc.r8 1
+		IL_07be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_07c3: stloc.s 11
+		IL_07c5: ldloc.s 12
+		IL_07c7: ldstr "w1"
+		IL_07cc: ldloc.s 10
+		IL_07ce: ldloc.s 11
+		IL_07d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_07d5: pop
+		IL_07d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_07db: stloc.s 12
+		IL_07dd: volatile.
+		IL_07df: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_07e4: brfalse IL_07f9
 
-		IL_0810: ldloc.2
-		IL_0811: ldstr "wordArray"
-		IL_0816: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_081b: br IL_0835
+		IL_07e9: ldloc.2
+		IL_07ea: ldstr "wordArray"
+		IL_07ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_07f4: br IL_080e
 
-		IL_0820: ldloc.2
-		IL_0821: ldstr "wordArray"
-		IL_0826: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:188"
-		IL_082b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-		IL_0830: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_07f9: ldloc.2
+		IL_07fa: ldstr "wordArray"
+		IL_07ff: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:188"
+		IL_0804: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
+		IL_0809: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0835: stloc.s 11
-		IL_0837: ldloc.s 11
-		IL_0839: ldc.r8 2
-		IL_0842: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0847: stloc.s 11
-		IL_0849: volatile.
-		IL_084b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-		IL_0850: brfalse IL_0865
+		IL_080e: stloc.s 11
+		IL_0810: ldloc.s 11
+		IL_0812: ldc.r8 2
+		IL_081b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0820: stloc.s 11
+		IL_0822: volatile.
+		IL_0824: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_0829: brfalse IL_083e
 
-		IL_0855: ldloc.3
-		IL_0856: ldstr "wordArray"
-		IL_085b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0860: br IL_087a
+		IL_082e: ldloc.3
+		IL_082f: ldstr "wordArray"
+		IL_0834: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0839: br IL_0853
 
-		IL_0865: ldloc.3
-		IL_0866: ldstr "wordArray"
-		IL_086b: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:192"
-		IL_0870: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-		IL_0875: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_083e: ldloc.3
+		IL_083f: ldstr "wordArray"
+		IL_0844: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:192"
+		IL_0849: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+		IL_084e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_087a: stloc.s 10
-		IL_087c: ldloc.s 10
-		IL_087e: ldc.r8 2
-		IL_0887: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_088c: stloc.s 10
-		IL_088e: ldloc.s 12
-		IL_0890: ldstr "w2"
-		IL_0895: ldloc.s 11
-		IL_0897: ldloc.s 10
-		IL_0899: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_089e: pop
-		IL_089f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_08a4: stloc.s 12
-		IL_08a6: volatile.
-		IL_08a8: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-		IL_08ad: brfalse IL_08c2
+		IL_0853: stloc.s 10
+		IL_0855: ldloc.s 10
+		IL_0857: ldc.r8 2
+		IL_0860: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0865: stloc.s 10
+		IL_0867: ldloc.s 12
+		IL_0869: ldstr "w2"
+		IL_086e: ldloc.s 11
+		IL_0870: ldloc.s 10
+		IL_0872: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0877: pop
+		IL_0878: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_087d: stloc.s 12
+		IL_087f: volatile.
+		IL_0881: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_0886: brfalse IL_089b
 
-		IL_08b2: ldloc.2
-		IL_08b3: ldstr "wordArray"
-		IL_08b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_08bd: br IL_08d7
+		IL_088b: ldloc.2
+		IL_088c: ldstr "wordArray"
+		IL_0891: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0896: br IL_08b0
 
-		IL_08c2: ldloc.2
-		IL_08c3: ldstr "wordArray"
-		IL_08c8: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:200"
-		IL_08cd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-		IL_08d2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_089b: ldloc.2
+		IL_089c: ldstr "wordArray"
+		IL_08a1: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:200"
+		IL_08a6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+		IL_08ab: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_08d7: stloc.s 10
-		IL_08d9: ldloc.s 10
-		IL_08db: ldc.r8 3
-		IL_08e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_08e9: stloc.s 10
-		IL_08eb: volatile.
-		IL_08ed: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-		IL_08f2: brfalse IL_0907
+		IL_08b0: stloc.s 10
+		IL_08b2: ldloc.s 10
+		IL_08b4: ldc.r8 3
+		IL_08bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_08c2: stloc.s 10
+		IL_08c4: volatile.
+		IL_08c6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_08cb: brfalse IL_08e0
 
-		IL_08f7: ldloc.3
-		IL_08f8: ldstr "wordArray"
-		IL_08fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0902: br IL_091c
+		IL_08d0: ldloc.3
+		IL_08d1: ldstr "wordArray"
+		IL_08d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_08db: br IL_08f5
 
-		IL_0907: ldloc.3
-		IL_0908: ldstr "wordArray"
-		IL_090d: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:204"
-		IL_0912: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-		IL_0917: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_08e0: ldloc.3
+		IL_08e1: ldstr "wordArray"
+		IL_08e6: ldstr "Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive:__js_module_init__:204"
+		IL_08eb: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+		IL_08f0: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_091c: stloc.s 11
-		IL_091e: ldloc.s 11
-		IL_0920: ldc.r8 3
-		IL_0929: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_092e: stloc.s 11
-		IL_0930: ldloc.s 12
-		IL_0932: ldstr "w3"
-		IL_0937: ldloc.s 10
-		IL_0939: ldloc.s 11
-		IL_093b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0940: pop
-		IL_0941: ret
+		IL_08f5: stloc.s 11
+		IL_08f7: ldloc.s 11
+		IL_08f9: ldc.r8 3
+		IL_0902: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0907: stloc.s 11
+		IL_0909: ldloc.s 12
+		IL_090b: ldstr "w3"
+		IL_0910: ldloc.s 10
+		IL_0912: ldloc.s 11
+		IL_0914: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_0919: pop
+		IL_091a: ret
 	} // end of method Prime_SetBitsTrue_LargeStep_OptimizedVsNaive::__js_module_init__
 
 } // end of class Modules.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive

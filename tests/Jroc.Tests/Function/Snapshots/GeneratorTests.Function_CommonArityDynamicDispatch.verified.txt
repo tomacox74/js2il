@@ -246,7 +246,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 286 (0x11e)
+			// Code size: 251 (0xfb)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_CommonArityDynamicDispatch/collect/Scope,
@@ -254,8 +254,9 @@
 				[2] object,
 				[3] object,
 				[4] bool,
-				[5] float64,
-				[6] object
+				[5] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+				[6] float64,
+				[7] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_CommonArityDynamicDispatch/collect/Scope::.ctor()
@@ -294,65 +295,54 @@
 
 			IL_0069: ldstr ""
 			IL_006e: stloc.1
-			IL_006f: br IL_00cc
+			IL_006f: br IL_00a9
 
 			IL_0074: ldloc.0
 			IL_0075: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
 			IL_007a: ldloc.0
 			IL_007b: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_0080: volatile.
-			IL_0082: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-			IL_0087: brfalse IL_009b
+			IL_0080: ldstr "length"
+			IL_0085: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_008a: stloc.s 5
+			IL_008c: ldloc.s 5
+			IL_008e: call float64 [JavaScriptRuntime]JavaScriptRuntime.JsValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_0093: ldc.r8 1
+			IL_009c: sub
+			IL_009d: stloc.s 6
+			IL_009f: ldloc.s 6
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00a6: stloc.3
+			IL_00a7: ldloc.3
+			IL_00a8: stloc.1
 
-			IL_008c: ldstr "length"
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0096: br IL_00af
+			IL_00a9: ldloc.1
+			IL_00aa: stloc.2
+			IL_00ab: ldloc.0
+			IL_00ac: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
+			IL_00b1: volatile.
+			IL_00b3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_00b8: brfalse IL_00cc
 
-			IL_009b: ldstr "length"
-			IL_00a0: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:16"
-			IL_00a5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_16
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00bd: ldstr "length"
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00c7: br IL_00e0
 
-			IL_00af: stloc.3
-			IL_00b0: ldloc.3
-			IL_00b1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00b6: ldc.r8 1
-			IL_00bf: sub
-			IL_00c0: stloc.s 5
-			IL_00c2: ldloc.s 5
-			IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00c9: stloc.3
-			IL_00ca: ldloc.3
-			IL_00cb: stloc.1
+			IL_00cc: ldstr "length"
+			IL_00d1: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:27"
+			IL_00d6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
+			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_00cc: ldloc.1
-			IL_00cd: stloc.2
-			IL_00ce: ldloc.0
-			IL_00cf: ldfld object Modules.Function_CommonArityDynamicDispatch/collect/Scope::arguments
-			IL_00d4: volatile.
-			IL_00d6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-			IL_00db: brfalse IL_00ef
-
-			IL_00e0: ldstr "length"
-			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ea: br IL_0103
-
-			IL_00ef: ldstr "length"
-			IL_00f4: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M4>:__js_call__:27"
-			IL_00f9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_17
-			IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0103: stloc.3
-			IL_0104: ldloc.3
-			IL_0105: ldstr ":"
-			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_010f: stloc.s 6
-			IL_0111: ldloc.s 6
-			IL_0113: ldloc.2
-			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0119: stloc.s 6
-			IL_011b: ldloc.s 6
-			IL_011d: ret
+			IL_00e0: stloc.3
+			IL_00e1: ldloc.3
+			IL_00e2: ldstr ":"
+			IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00ec: stloc.s 7
+			IL_00ee: ldloc.s 7
+			IL_00f0: ldloc.2
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00f6: stloc.s 7
+			IL_00f8: ldloc.s 7
+			IL_00fa: ret
 		} // end of method collect::__js_call__
 
 	} // end of class collect
@@ -679,12 +669,13 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 332 (0x14c)
+			// Code size: 295 (0x127)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_CommonArityDynamicDispatch/Box/Scope,
 				[1] object,
-				[2] float64
+				[2] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+				[3] float64
 			)
 
 			IL_0000: newobj instance void Modules.Function_CommonArityDynamicDispatch/Box/Scope::.ctor()
@@ -747,60 +738,49 @@
 			IL_00a2: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
 			IL_00a7: ldloc.0
 			IL_00a8: ldfld object Modules.Function_CommonArityDynamicDispatch/Box/Scope::arguments
-			IL_00ad: volatile.
-			IL_00af: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_00b4: brfalse IL_00c8
+			IL_00ad: ldstr "length"
+			IL_00b2: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_00b7: stloc.2
+			IL_00b8: ldloc.2
+			IL_00b9: call float64 [JavaScriptRuntime]JavaScriptRuntime.JsValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_00be: ldc.r8 1
+			IL_00c7: sub
+			IL_00c8: stloc.3
+			IL_00c9: ldloc.3
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00cf: stloc.1
+			IL_00d0: ldarg.1
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00db: isinst Modules.Function_CommonArityDynamicDispatch/ObjectLiterals/Ctor_L35C1_arguments
+			IL_00e0: dup
+			IL_00e1: brfalse IL_010c
 
-			IL_00b9: ldstr "length"
-			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00c3: br IL_00dc
+			IL_00e6: dup
+			IL_00e7: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
+			IL_00ec: brfalse IL_010c
 
-			IL_00c8: ldstr "length"
-			IL_00cd: ldstr "Function_CommonArityDynamicDispatch:<TwoPhaseDummy_M6>:__js_call__:12"
-			IL_00d2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_00f1: dup
+			IL_00f2: ldstr "last"
+			IL_00f7: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
+			IL_00fc: brfalse IL_010c
 
-			IL_00dc: stloc.1
-			IL_00dd: ldloc.1
-			IL_00de: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00e3: ldc.r8 1
-			IL_00ec: sub
-			IL_00ed: stloc.2
-			IL_00ee: ldloc.2
-			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00f4: stloc.1
-			IL_00f5: ldarg.1
-			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0100: isinst Modules.Function_CommonArityDynamicDispatch/ObjectLiterals/Ctor_L35C1_arguments
-			IL_0105: dup
-			IL_0106: brfalse IL_0131
+			IL_0101: ldloc.1
+			IL_0102: callvirt instance void Modules.Function_CommonArityDynamicDispatch/ObjectLiterals/Ctor_L35C1_arguments::set_last(object)
+			IL_0107: br IL_0125
 
-			IL_010b: dup
-			IL_010c: call bool [JavaScriptRuntime]JavaScriptRuntime.Function::IsCurrentGeneratedConstructionReceiver(object)
-			IL_0111: brfalse IL_0131
+			IL_010c: pop
+			IL_010d: ldarg.1
+			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_0118: ldstr "last"
+			IL_011d: ldloc.1
+			IL_011e: ldc.i4.1
+			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0124: pop
 
-			IL_0116: dup
-			IL_0117: ldstr "last"
-			IL_011c: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CanUseSpecializedDataPropertySetter(object, string)
-			IL_0121: brfalse IL_0131
-
-			IL_0126: ldloc.1
-			IL_0127: callvirt instance void Modules.Function_CommonArityDynamicDispatch/ObjectLiterals/Ctor_L35C1_arguments::set_last(object)
-			IL_012c: br IL_014a
-
-			IL_0131: pop
-			IL_0132: ldarg.1
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_013d: ldstr "last"
-			IL_0142: ldloc.1
-			IL_0143: ldc.i4.1
-			IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0149: pop
-
-			IL_014a: ldnull
-			IL_014b: ret
+			IL_0125: ldnull
+			IL_0126: ret
 		} // end of method Box::__js_call__
 
 	} // end of class Box

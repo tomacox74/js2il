@@ -588,14 +588,14 @@
 				74 61 54 6f 6b 65 6e 1d 00 00 02
 			)
 			// Header size: 12
-			// Code size: 949 (0x3b5)
+			// Code size: 911 (0x38f)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[1] float64,
 				[2] object,
 				[3] float64,
-				[4] object,
+				[4] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 				[5] bool,
 				[6] object,
 				[7] object,
@@ -603,7 +603,8 @@
 				[9] object,
 				[10] object,
 				[11] object,
-				[12] object
+				[12] object,
+				[13] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -621,346 +622,334 @@
 			// loop start (head: IL_0030)
 				IL_0030: ldloc.1
 				IL_0031: stloc.3
-				IL_0032: volatile.
-				IL_0034: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-				IL_0039: brfalse IL_004e
+				IL_0032: ldarg.2
+				IL_0033: ldstr "length"
+				IL_0038: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+				IL_003d: stloc.s 4
+				IL_003f: ldloc.3
+				IL_0040: ldloc.s 4
+				IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+				IL_0047: stloc.s 5
+				IL_0049: ldloc.s 5
+				IL_004b: brfalse IL_038d
 
-				IL_003e: ldarg.2
-				IL_003f: ldstr "length"
-				IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0049: br IL_0063
+				IL_0050: ldarg.2
+				IL_0051: ldloc.1
+				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0057: stloc.2
+				IL_0058: ldloc.2
+				IL_0059: ldstr "--in"
+				IL_005e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0063: stloc.s 5
+				IL_0065: ldloc.s 5
+				IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+				IL_006c: stloc.s 6
+				IL_006e: ldloc.s 6
+				IL_0070: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0075: stloc.s 5
+				IL_0077: ldloc.s 5
+				IL_0079: brtrue IL_009d
 
-				IL_004e: ldarg.2
-				IL_004f: ldstr "length"
-				IL_0054: ldstr "Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown:<TwoPhaseDummy_M18>:__js_call__:12"
-				IL_0059: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-				IL_0063: stloc.s 4
-				IL_0065: ldloc.3
-				IL_0066: ldloc.s 4
-				IL_0068: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
-				IL_006d: stloc.s 5
-				IL_006f: ldloc.s 5
-				IL_0071: brfalse IL_03b3
-
-				IL_0076: ldarg.2
-				IL_0077: ldloc.1
-				IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_007d: stloc.2
 				IL_007e: ldloc.2
-				IL_007f: ldstr "--in"
+				IL_007f: ldstr "-i"
 				IL_0084: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0089: stloc.s 5
 				IL_008b: ldloc.s 5
 				IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_0092: stloc.s 6
-				IL_0094: ldloc.s 6
-				IL_0096: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_009b: stloc.s 5
-				IL_009d: ldloc.s 5
-				IL_009f: brtrue IL_00c3
+				IL_0092: stloc.s 7
+				IL_0094: ldloc.s 7
+				IL_0096: stloc.s 9
+				IL_0098: br IL_00a1
 
-				IL_00a4: ldloc.2
-				IL_00a5: ldstr "-i"
-				IL_00aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_00af: stloc.s 5
-				IL_00b1: ldloc.s 5
-				IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_00b8: stloc.s 7
-				IL_00ba: ldloc.s 7
-				IL_00bc: stloc.s 9
-				IL_00be: br IL_00c7
+				IL_009d: ldloc.s 6
+				IL_009f: stloc.s 9
 
-				IL_00c3: ldloc.s 6
-				IL_00c5: stloc.s 9
+				IL_00a1: ldloc.s 9
+				IL_00a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_00a8: stloc.s 5
+				IL_00aa: ldloc.s 5
+				IL_00ac: brfalse IL_0108
 
-				IL_00c7: ldloc.s 9
-				IL_00c9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_00ce: stloc.s 5
-				IL_00d0: ldloc.s 5
-				IL_00d2: brfalse IL_012e
+				IL_00b1: ldloc.1
+				IL_00b2: stloc.3
+				IL_00b3: ldloc.3
+				IL_00b4: ldc.r8 1
+				IL_00bd: add
+				IL_00be: stloc.3
+				IL_00bf: ldarg.2
+				IL_00c0: ldloc.3
+				IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00c6: stloc.s 10
+				IL_00c8: ldloc.s 10
+				IL_00ca: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_00cf: stloc.s 5
+				IL_00d1: ldloc.s 5
+				IL_00d3: brtrue IL_00e4
 
-				IL_00d7: ldloc.1
-				IL_00d8: stloc.3
-				IL_00d9: ldloc.3
-				IL_00da: ldc.r8 1
-				IL_00e3: add
-				IL_00e4: stloc.3
-				IL_00e5: ldarg.2
-				IL_00e6: ldloc.3
-				IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_00ec: stloc.s 4
-				IL_00ee: ldloc.s 4
-				IL_00f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_00f5: stloc.s 5
-				IL_00f7: ldloc.s 5
-				IL_00f9: brtrue IL_010a
+				IL_00d8: ldstr ""
+				IL_00dd: stloc.s 11
+				IL_00df: br IL_00e8
 
-				IL_00fe: ldstr ""
-				IL_0103: stloc.s 10
-				IL_0105: br IL_010e
+				IL_00e4: ldloc.s 10
+				IL_00e6: stloc.s 11
 
-				IL_010a: ldloc.s 4
-				IL_010c: stloc.s 10
+				IL_00e8: ldloc.0
+				IL_00e9: ldstr "inFile"
+				IL_00ee: ldloc.s 11
+				IL_00f0: ldc.i4.1
+				IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_00f6: pop
+				IL_00f7: ldloc.1
+				IL_00f8: ldc.r8 1
+				IL_0101: add
+				IL_0102: stloc.1
+				IL_0103: br IL_037c
 
-				IL_010e: ldloc.0
-				IL_010f: ldstr "inFile"
-				IL_0114: ldloc.s 10
-				IL_0116: ldc.i4.1
-				IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-				IL_011c: pop
-				IL_011d: ldloc.1
-				IL_011e: ldc.r8 1
-				IL_0127: add
-				IL_0128: stloc.1
-				IL_0129: br IL_03a2
+				IL_0108: ldloc.2
+				IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_010e: stloc.s 10
+				IL_0110: ldc.i4.0
+				IL_0111: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0116: brfalse IL_0152
 
-				IL_012e: ldloc.2
-				IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0134: stloc.s 4
-				IL_0136: ldc.i4.0
-				IL_0137: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_013c: brfalse IL_0178
+				IL_011b: ldloc.s 10
+				IL_011d: isinst [System.Runtime]System.String
+				IL_0122: dup
+				IL_0123: brtrue IL_013b
 
-				IL_0141: ldloc.s 4
-				IL_0143: isinst [System.Runtime]System.String
-				IL_0148: dup
-				IL_0149: brtrue IL_0161
+				IL_0128: pop
+				IL_0129: ldloc.s 10
+				IL_012b: ldstr "startsWith"
+				IL_0130: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0135: dup
+				IL_0136: brfalse IL_0151
 
-				IL_014e: pop
-				IL_014f: ldloc.s 4
-				IL_0151: ldstr "startsWith"
-				IL_0156: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_015b: dup
-				IL_015c: brfalse IL_0177
+				IL_013b: ldstr "--in="
+				IL_0140: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+				IL_0145: box [System.Runtime]System.Boolean
+				IL_014a: stloc.s 10
+				IL_014c: br IL_0165
 
-				IL_0161: ldstr "--in="
-				IL_0166: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
-				IL_016b: box [System.Runtime]System.Boolean
-				IL_0170: stloc.s 4
-				IL_0172: br IL_018b
+				IL_0151: pop
 
-				IL_0177: pop
+				IL_0152: ldloc.s 10
+				IL_0154: ldstr "startsWith"
+				IL_0159: ldstr "--in="
+				IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0163: stloc.s 10
 
-				IL_0178: ldloc.s 4
-				IL_017a: ldstr "startsWith"
-				IL_017f: ldstr "--in="
-				IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_0189: stloc.s 4
+				IL_0165: ldloc.s 10
+				IL_0167: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_016c: stloc.s 5
+				IL_016e: ldloc.s 5
+				IL_0170: brfalse IL_01ea
 
-				IL_018b: ldloc.s 4
-				IL_018d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0192: stloc.s 5
-				IL_0194: ldloc.s 5
-				IL_0196: brfalse IL_0210
+				IL_0175: ldloc.2
+				IL_0176: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_017b: stloc.s 10
+				IL_017d: ldstr "--in="
+				IL_0182: callvirt instance int32 [System.Runtime]System.String::get_Length()
+				IL_0187: conv.r8
+				IL_0188: stloc.3
+				IL_0189: ldc.i4.0
+				IL_018a: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_018f: brfalse IL_01c2
 
-				IL_019b: ldloc.2
-				IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_01a1: stloc.s 4
-				IL_01a3: ldstr "--in="
-				IL_01a8: callvirt instance int32 [System.Runtime]System.String::get_Length()
-				IL_01ad: conv.r8
-				IL_01ae: stloc.3
-				IL_01af: ldc.i4.0
-				IL_01b0: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_01b5: brfalse IL_01e8
+				IL_0194: ldloc.s 10
+				IL_0196: isinst [System.Runtime]System.String
+				IL_019b: dup
+				IL_019c: brtrue IL_01b4
 
-				IL_01ba: ldloc.s 4
-				IL_01bc: isinst [System.Runtime]System.String
-				IL_01c1: dup
-				IL_01c2: brtrue IL_01da
+				IL_01a1: pop
+				IL_01a2: ldloc.s 10
+				IL_01a4: ldstr "substring"
+				IL_01a9: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_01ae: dup
+				IL_01af: brfalse IL_01c1
 
-				IL_01c7: pop
-				IL_01c8: ldloc.s 4
-				IL_01ca: ldstr "substring"
-				IL_01cf: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_01d4: dup
-				IL_01d5: brfalse IL_01e7
+				IL_01b4: ldloc.3
+				IL_01b5: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
+				IL_01ba: stloc.s 10
+				IL_01bc: br IL_01d6
 
-				IL_01da: ldloc.3
-				IL_01db: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
-				IL_01e0: stloc.s 4
-				IL_01e2: br IL_01fc
+				IL_01c1: pop
 
-				IL_01e7: pop
+				IL_01c2: ldloc.s 10
+				IL_01c4: ldstr "substring"
+				IL_01c9: ldloc.3
+				IL_01ca: box [System.Runtime]System.Double
+				IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_01d4: stloc.s 10
 
-				IL_01e8: ldloc.s 4
-				IL_01ea: ldstr "substring"
-				IL_01ef: ldloc.3
-				IL_01f0: box [System.Runtime]System.Double
-				IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_01fa: stloc.s 4
+				IL_01d6: ldloc.0
+				IL_01d7: ldstr "inFile"
+				IL_01dc: ldloc.s 10
+				IL_01de: ldc.i4.1
+				IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_01e4: pop
+				IL_01e5: br IL_037c
 
-				IL_01fc: ldloc.0
-				IL_01fd: ldstr "inFile"
-				IL_0202: ldloc.s 4
-				IL_0204: ldc.i4.1
-				IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-				IL_020a: pop
-				IL_020b: br IL_03a2
+				IL_01ea: ldloc.2
+				IL_01eb: ldstr "--out"
+				IL_01f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_01f5: stloc.s 5
+				IL_01f7: ldloc.s 5
+				IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+				IL_01fe: stloc.s 6
+				IL_0200: ldloc.s 6
+				IL_0202: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0207: stloc.s 5
+				IL_0209: ldloc.s 5
+				IL_020b: brtrue IL_022f
 
 				IL_0210: ldloc.2
-				IL_0211: ldstr "--out"
+				IL_0211: ldstr "-o"
 				IL_0216: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_021b: stloc.s 5
 				IL_021d: ldloc.s 5
 				IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_0224: stloc.s 6
-				IL_0226: ldloc.s 6
-				IL_0228: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_022d: stloc.s 5
-				IL_022f: ldloc.s 5
-				IL_0231: brtrue IL_0255
+				IL_0224: stloc.s 7
+				IL_0226: ldloc.s 7
+				IL_0228: stloc.s 12
+				IL_022a: br IL_0233
 
-				IL_0236: ldloc.2
-				IL_0237: ldstr "-o"
-				IL_023c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0241: stloc.s 5
-				IL_0243: ldloc.s 5
-				IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-				IL_024a: stloc.s 7
-				IL_024c: ldloc.s 7
-				IL_024e: stloc.s 11
-				IL_0250: br IL_0259
+				IL_022f: ldloc.s 6
+				IL_0231: stloc.s 12
 
-				IL_0255: ldloc.s 6
-				IL_0257: stloc.s 11
+				IL_0233: ldloc.s 12
+				IL_0235: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_023a: stloc.s 5
+				IL_023c: ldloc.s 5
+				IL_023e: brfalse IL_029a
 
-				IL_0259: ldloc.s 11
-				IL_025b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0260: stloc.s 5
-				IL_0262: ldloc.s 5
-				IL_0264: brfalse IL_02c0
+				IL_0243: ldloc.1
+				IL_0244: stloc.3
+				IL_0245: ldloc.3
+				IL_0246: ldc.r8 1
+				IL_024f: add
+				IL_0250: stloc.3
+				IL_0251: ldarg.2
+				IL_0252: ldloc.3
+				IL_0253: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0258: stloc.s 10
+				IL_025a: ldloc.s 10
+				IL_025c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0261: stloc.s 5
+				IL_0263: ldloc.s 5
+				IL_0265: brtrue IL_0276
 
-				IL_0269: ldloc.1
-				IL_026a: stloc.3
-				IL_026b: ldloc.3
-				IL_026c: ldc.r8 1
-				IL_0275: add
-				IL_0276: stloc.3
-				IL_0277: ldarg.2
-				IL_0278: ldloc.3
-				IL_0279: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_027e: stloc.s 4
-				IL_0280: ldloc.s 4
-				IL_0282: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0287: stloc.s 5
-				IL_0289: ldloc.s 5
-				IL_028b: brtrue IL_029c
+				IL_026a: ldstr ""
+				IL_026f: stloc.s 13
+				IL_0271: br IL_027a
 
-				IL_0290: ldstr ""
-				IL_0295: stloc.s 12
-				IL_0297: br IL_02a0
+				IL_0276: ldloc.s 10
+				IL_0278: stloc.s 13
 
-				IL_029c: ldloc.s 4
-				IL_029e: stloc.s 12
+				IL_027a: ldloc.0
+				IL_027b: ldstr "outFile"
+				IL_0280: ldloc.s 13
+				IL_0282: ldc.i4.1
+				IL_0283: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_0288: pop
+				IL_0289: ldloc.1
+				IL_028a: ldc.r8 1
+				IL_0293: add
+				IL_0294: stloc.1
+				IL_0295: br IL_037c
 
-				IL_02a0: ldloc.0
-				IL_02a1: ldstr "outFile"
-				IL_02a6: ldloc.s 12
-				IL_02a8: ldc.i4.1
-				IL_02a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-				IL_02ae: pop
-				IL_02af: ldloc.1
-				IL_02b0: ldc.r8 1
-				IL_02b9: add
-				IL_02ba: stloc.1
-				IL_02bb: br IL_03a2
+				IL_029a: ldloc.2
+				IL_029b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_02a0: stloc.s 10
+				IL_02a2: ldc.i4.0
+				IL_02a3: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_02a8: brfalse IL_02e4
 
-				IL_02c0: ldloc.2
-				IL_02c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_02c6: stloc.s 4
-				IL_02c8: ldc.i4.0
-				IL_02c9: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_02ce: brfalse IL_030a
+				IL_02ad: ldloc.s 10
+				IL_02af: isinst [System.Runtime]System.String
+				IL_02b4: dup
+				IL_02b5: brtrue IL_02cd
 
-				IL_02d3: ldloc.s 4
-				IL_02d5: isinst [System.Runtime]System.String
-				IL_02da: dup
-				IL_02db: brtrue IL_02f3
+				IL_02ba: pop
+				IL_02bb: ldloc.s 10
+				IL_02bd: ldstr "startsWith"
+				IL_02c2: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_02c7: dup
+				IL_02c8: brfalse IL_02e3
 
-				IL_02e0: pop
-				IL_02e1: ldloc.s 4
-				IL_02e3: ldstr "startsWith"
-				IL_02e8: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_02ed: dup
-				IL_02ee: brfalse IL_0309
+				IL_02cd: ldstr "--out="
+				IL_02d2: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
+				IL_02d7: box [System.Runtime]System.Boolean
+				IL_02dc: stloc.s 10
+				IL_02de: br IL_02f7
 
-				IL_02f3: ldstr "--out="
-				IL_02f8: call bool [JavaScriptRuntime]JavaScriptRuntime.String::StartsWith(string, string)
-				IL_02fd: box [System.Runtime]System.Boolean
-				IL_0302: stloc.s 4
-				IL_0304: br IL_031d
+				IL_02e3: pop
 
-				IL_0309: pop
+				IL_02e4: ldloc.s 10
+				IL_02e6: ldstr "startsWith"
+				IL_02eb: ldstr "--out="
+				IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_02f5: stloc.s 10
 
-				IL_030a: ldloc.s 4
-				IL_030c: ldstr "startsWith"
-				IL_0311: ldstr "--out="
-				IL_0316: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_031b: stloc.s 4
+				IL_02f7: ldloc.s 10
+				IL_02f9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_02fe: stloc.s 5
+				IL_0300: ldloc.s 5
+				IL_0302: brfalse IL_037c
 
-				IL_031d: ldloc.s 4
-				IL_031f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0324: stloc.s 5
-				IL_0326: ldloc.s 5
-				IL_0328: brfalse IL_03a2
+				IL_0307: ldloc.2
+				IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_030d: stloc.s 10
+				IL_030f: ldstr "--out="
+				IL_0314: callvirt instance int32 [System.Runtime]System.String::get_Length()
+				IL_0319: conv.r8
+				IL_031a: stloc.3
+				IL_031b: ldc.i4.0
+				IL_031c: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+				IL_0321: brfalse IL_0354
 
-				IL_032d: ldloc.2
-				IL_032e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0333: stloc.s 4
-				IL_0335: ldstr "--out="
-				IL_033a: callvirt instance int32 [System.Runtime]System.String::get_Length()
-				IL_033f: conv.r8
-				IL_0340: stloc.3
-				IL_0341: ldc.i4.0
-				IL_0342: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-				IL_0347: brfalse IL_037a
+				IL_0326: ldloc.s 10
+				IL_0328: isinst [System.Runtime]System.String
+				IL_032d: dup
+				IL_032e: brtrue IL_0346
 
-				IL_034c: ldloc.s 4
-				IL_034e: isinst [System.Runtime]System.String
-				IL_0353: dup
-				IL_0354: brtrue IL_036c
+				IL_0333: pop
+				IL_0334: ldloc.s 10
+				IL_0336: ldstr "substring"
+				IL_033b: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+				IL_0340: dup
+				IL_0341: brfalse IL_0353
 
-				IL_0359: pop
-				IL_035a: ldloc.s 4
-				IL_035c: ldstr "substring"
-				IL_0361: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-				IL_0366: dup
-				IL_0367: brfalse IL_0379
+				IL_0346: ldloc.3
+				IL_0347: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
+				IL_034c: stloc.s 10
+				IL_034e: br IL_0368
 
-				IL_036c: ldloc.3
-				IL_036d: call string [JavaScriptRuntime]JavaScriptRuntime.String::Substring(string, float64)
-				IL_0372: stloc.s 4
-				IL_0374: br IL_038e
+				IL_0353: pop
 
-				IL_0379: pop
+				IL_0354: ldloc.s 10
+				IL_0356: ldstr "substring"
+				IL_035b: ldloc.3
+				IL_035c: box [System.Runtime]System.Double
+				IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+				IL_0366: stloc.s 10
 
-				IL_037a: ldloc.s 4
-				IL_037c: ldstr "substring"
-				IL_0381: ldloc.3
-				IL_0382: box [System.Runtime]System.Double
-				IL_0387: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-				IL_038c: stloc.s 4
+				IL_0368: ldloc.0
+				IL_0369: ldstr "outFile"
+				IL_036e: ldloc.s 10
+				IL_0370: ldc.i4.1
+				IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_0376: pop
+				IL_0377: br IL_037c
 
-				IL_038e: ldloc.0
-				IL_038f: ldstr "outFile"
-				IL_0394: ldloc.s 4
-				IL_0396: ldc.i4.1
-				IL_0397: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-				IL_039c: pop
-				IL_039d: br IL_03a2
-
-				IL_03a2: ldloc.1
-				IL_03a3: ldc.r8 1
-				IL_03ac: add
-				IL_03ad: stloc.1
-				IL_03ae: br IL_0030
+				IL_037c: ldloc.1
+				IL_037d: ldc.r8 1
+				IL_0386: add
+				IL_0387: stloc.1
+				IL_0388: br IL_0030
 			// end loop
 
-			IL_03b3: ldloc.0
-			IL_03b4: ret
+			IL_038d: ldloc.0
+			IL_038e: ret
 		} // end of method parseArgs::__js_call__
 
 	} // end of class parseArgs

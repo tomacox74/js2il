@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1707 (0x6ab)
+		// Code size: 1668 (0x684)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_StatSync_RichMetadata/Scope,
@@ -164,8 +164,9 @@
 			[15] object,
 			[16] bool,
 			[17] object,
-			[18] object,
-			[19] object
+			[18] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+			[19] object,
+			[20] object
 		)
 
 		IL_0000: newobj instance void Modules.FS_StatSync_RichMetadata/Scope::.ctor()
@@ -442,271 +443,259 @@
 			IL_034d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0352: stloc.s 16
 			IL_0354: ldloc.s 16
-			IL_0356: brfalse IL_03b4
+			IL_0356: brfalse IL_038d
 
-			IL_035b: volatile.
-			IL_035d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_0362: brfalse IL_0378
+			IL_035b: ldloc.s 7
+			IL_035d: ldstr "mtimeMs"
+			IL_0362: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_0367: stloc.s 18
+			IL_0369: ldloc.s 18
+			IL_036b: ldc.r8 0.0
+			IL_0374: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_0379: stloc.s 16
+			IL_037b: ldloc.s 16
+			IL_037d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0382: stloc.s 19
+			IL_0384: ldloc.s 19
+			IL_0386: stloc.s 20
+			IL_0388: br IL_0391
 
-			IL_0367: ldloc.s 7
-			IL_0369: ldstr "mtimeMs"
-			IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0373: br IL_038e
+			IL_038d: ldloc.s 17
+			IL_038f: stloc.s 20
 
-			IL_0378: ldloc.s 7
-			IL_037a: ldstr "mtimeMs"
-			IL_037f: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:117"
-			IL_0384: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_6
-			IL_0389: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0391: ldloc.s 14
+			IL_0393: ldstr "FileHasMtimeMs:"
+			IL_0398: ldloc.s 20
+			IL_039a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_039f: pop
+			IL_03a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03a5: stloc.s 14
+			IL_03a7: volatile.
+			IL_03a9: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_03ae: brfalse IL_03c4
 
-			IL_038e: stloc.s 10
-			IL_0390: ldloc.s 10
-			IL_0392: ldc.r8 0.0
-			IL_039b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_03a0: stloc.s 16
-			IL_03a2: ldloc.s 16
-			IL_03a4: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_03a9: stloc.s 18
-			IL_03ab: ldloc.s 18
-			IL_03ad: stloc.s 19
-			IL_03af: br IL_03b8
+			IL_03b3: ldloc.s 7
+			IL_03b5: ldstr "mtime"
+			IL_03ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03bf: br IL_03da
 
-			IL_03b4: ldloc.s 17
-			IL_03b6: stloc.s 19
+			IL_03c4: ldloc.s 7
+			IL_03c6: ldstr "mtime"
+			IL_03cb: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:131"
+			IL_03d0: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
+			IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_03b8: ldloc.s 14
-			IL_03ba: ldstr "FileHasMtimeMs:"
-			IL_03bf: ldloc.s 19
-			IL_03c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_03c6: pop
-			IL_03c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03cc: stloc.s 14
-			IL_03ce: volatile.
-			IL_03d0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-			IL_03d5: brfalse IL_03eb
+			IL_03da: stloc.s 10
+			IL_03dc: ldloc.s 10
+			IL_03de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_03e3: volatile.
+			IL_03e5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_03ea: brfalse IL_03fe
 
-			IL_03da: ldloc.s 7
-			IL_03dc: ldstr "mtime"
-			IL_03e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03e6: br IL_0401
+			IL_03ef: ldstr "toISOString"
+			IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_03f9: br IL_0412
 
-			IL_03eb: ldloc.s 7
-			IL_03ed: ldstr "mtime"
-			IL_03f2: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:131"
-			IL_03f7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_7
-			IL_03fc: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_03fe: ldstr "toISOString"
+			IL_0403: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:133"
+			IL_0408: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
+			IL_040d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0401: stloc.s 10
-			IL_0403: ldloc.s 10
-			IL_0405: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_040a: volatile.
-			IL_040c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0411: brfalse IL_0425
+			IL_0412: stloc.s 10
+			IL_0414: volatile.
+			IL_0416: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_041b: brfalse IL_0431
 
-			IL_0416: ldstr "toISOString"
-			IL_041b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_0420: br IL_0439
+			IL_0420: ldloc.s 10
+			IL_0422: ldstr "length"
+			IL_0427: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_042c: br IL_0447
 
-			IL_0425: ldstr "toISOString"
-			IL_042a: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:133"
-			IL_042f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0434: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_0431: ldloc.s 10
+			IL_0433: ldstr "length"
+			IL_0438: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:135"
+			IL_043d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
+			IL_0442: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0439: stloc.s 10
-			IL_043b: volatile.
-			IL_043d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_0442: brfalse IL_0458
+			IL_0447: stloc.s 10
+			IL_0449: ldloc.s 14
+			IL_044b: ldstr "FileMtimeIsoLength:"
+			IL_0450: ldloc.s 10
+			IL_0452: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0457: pop
+			IL_0458: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_045d: stloc.s 14
+			IL_045f: volatile.
+			IL_0461: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_0466: brfalse IL_047c
 
-			IL_0447: ldloc.s 10
-			IL_0449: ldstr "length"
-			IL_044e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0453: br IL_046e
+			IL_046b: ldloc.s 7
+			IL_046d: ldstr "birthtimeMs"
+			IL_0472: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0477: br IL_0492
 
-			IL_0458: ldloc.s 10
-			IL_045a: ldstr "length"
-			IL_045f: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:135"
-			IL_0464: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_9
-			IL_0469: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_047c: ldloc.s 7
+			IL_047e: ldstr "birthtimeMs"
+			IL_0483: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:141"
+			IL_0488: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
+			IL_048d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_046e: stloc.s 10
-			IL_0470: ldloc.s 14
-			IL_0472: ldstr "FileMtimeIsoLength:"
-			IL_0477: ldloc.s 10
-			IL_0479: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_047e: pop
-			IL_047f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0484: stloc.s 14
-			IL_0486: volatile.
-			IL_0488: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_048d: brfalse IL_04a3
+			IL_0492: stloc.s 10
+			IL_0494: ldloc.s 10
+			IL_0496: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_049b: stloc.s 11
+			IL_049d: ldloc.s 11
+			IL_049f: ldstr "number"
+			IL_04a4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_04a9: stloc.s 16
+			IL_04ab: ldloc.s 16
+			IL_04ad: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_04b2: stloc.s 17
+			IL_04b4: ldloc.s 14
+			IL_04b6: ldstr "FileBirthtimeMatchesType:"
+			IL_04bb: ldloc.s 17
+			IL_04bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_04c2: pop
+			IL_04c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_04c8: stloc.s 14
+			IL_04ca: ldloc.s 7
+			IL_04cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_04d1: volatile.
+			IL_04d3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_04d8: brfalse IL_04ec
 
-			IL_0492: ldloc.s 7
-			IL_0494: ldstr "birthtimeMs"
-			IL_0499: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_049e: br IL_04b9
+			IL_04dd: ldstr "isSymbolicLink"
+			IL_04e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_04e7: br IL_0500
 
-			IL_04a3: ldloc.s 7
-			IL_04a5: ldstr "birthtimeMs"
-			IL_04aa: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:141"
-			IL_04af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_10
-			IL_04b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_04ec: ldstr "isSymbolicLink"
+			IL_04f1: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:151"
+			IL_04f6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
+			IL_04fb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_04b9: stloc.s 10
-			IL_04bb: ldloc.s 10
-			IL_04bd: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_04c2: stloc.s 11
-			IL_04c4: ldloc.s 11
-			IL_04c6: ldstr "number"
-			IL_04cb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_04d0: stloc.s 16
-			IL_04d2: ldloc.s 16
-			IL_04d4: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_04d9: stloc.s 17
-			IL_04db: ldloc.s 14
-			IL_04dd: ldstr "FileBirthtimeMatchesType:"
-			IL_04e2: ldloc.s 17
-			IL_04e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_04e9: pop
-			IL_04ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_04ef: stloc.s 14
-			IL_04f1: ldloc.s 7
-			IL_04f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_04f8: volatile.
-			IL_04fa: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_04ff: brfalse IL_0513
+			IL_0500: stloc.s 10
+			IL_0502: ldloc.s 14
+			IL_0504: ldstr "FileIsSymbolicLink:"
+			IL_0509: ldloc.s 10
+			IL_050b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0510: pop
+			IL_0511: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0516: stloc.s 14
+			IL_0518: volatile.
+			IL_051a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_051f: brfalse IL_0535
 
-			IL_0504: ldstr "isSymbolicLink"
-			IL_0509: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_050e: br IL_0527
+			IL_0524: ldloc.s 8
+			IL_0526: ldstr "mode"
+			IL_052b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0530: br IL_054b
 
-			IL_0513: ldstr "isSymbolicLink"
-			IL_0518: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:151"
-			IL_051d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-			IL_0522: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_0535: ldloc.s 8
+			IL_0537: ldstr "mode"
+			IL_053c: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:157"
+			IL_0541: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+			IL_0546: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0527: stloc.s 10
-			IL_0529: ldloc.s 14
-			IL_052b: ldstr "FileIsSymbolicLink:"
-			IL_0530: ldloc.s 10
-			IL_0532: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0537: pop
-			IL_0538: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_053d: stloc.s 14
-			IL_053f: volatile.
-			IL_0541: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-			IL_0546: brfalse IL_055c
+			IL_054b: stloc.s 10
+			IL_054d: ldloc.s 10
+			IL_054f: ldc.r8 16384
+			IL_0558: box [System.Runtime]System.Double
+			IL_055d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_0562: stloc.s 20
+			IL_0564: ldloc.s 20
+			IL_0566: ldc.r8 16384
+			IL_056f: box [System.Runtime]System.Double
+			IL_0574: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0579: stloc.s 16
+			IL_057b: ldloc.s 16
+			IL_057d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0582: stloc.s 17
+			IL_0584: ldloc.s 14
+			IL_0586: ldstr "DirModeHasDirectoryBit:"
+			IL_058b: ldloc.s 17
+			IL_058d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0592: pop
+			IL_0593: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0598: stloc.s 14
+			IL_059a: ldloc.s 8
+			IL_059c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_05a1: volatile.
+			IL_05a3: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_05a8: brfalse IL_05bc
 
-			IL_054b: ldloc.s 8
-			IL_054d: ldstr "mode"
-			IL_0552: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0557: br IL_0572
+			IL_05ad: ldstr "isDirectory"
+			IL_05b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_05b7: br IL_05d0
 
-			IL_055c: ldloc.s 8
-			IL_055e: ldstr "mode"
-			IL_0563: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:157"
-			IL_0568: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-			IL_056d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_05bc: ldstr "isDirectory"
+			IL_05c1: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:170"
+			IL_05c6: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+			IL_05cb: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0572: stloc.s 10
-			IL_0574: ldloc.s 10
-			IL_0576: ldc.r8 16384
-			IL_057f: box [System.Runtime]System.Double
-			IL_0584: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
-			IL_0589: stloc.s 19
-			IL_058b: ldloc.s 19
-			IL_058d: ldc.r8 16384
-			IL_0596: box [System.Runtime]System.Double
-			IL_059b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_05a0: stloc.s 16
-			IL_05a2: ldloc.s 16
-			IL_05a4: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_05a9: stloc.s 17
-			IL_05ab: ldloc.s 14
-			IL_05ad: ldstr "DirModeHasDirectoryBit:"
-			IL_05b2: ldloc.s 17
-			IL_05b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_05b9: pop
-			IL_05ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_05bf: stloc.s 14
-			IL_05c1: ldloc.s 8
-			IL_05c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_05c8: volatile.
-			IL_05ca: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_05cf: brfalse IL_05e3
+			IL_05d0: stloc.s 10
+			IL_05d2: ldloc.s 14
+			IL_05d4: ldstr "DirIsDirectory:"
+			IL_05d9: ldloc.s 10
+			IL_05db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_05e0: pop
+			IL_05e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_05e6: stloc.s 14
+			IL_05e8: ldloc.s 8
+			IL_05ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_05ef: volatile.
+			IL_05f1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_05f6: brfalse IL_060a
 
-			IL_05d4: ldstr "isDirectory"
-			IL_05d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_05de: br IL_05f7
+			IL_05fb: ldstr "isFile"
+			IL_0600: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0605: br IL_061e
 
-			IL_05e3: ldstr "isDirectory"
-			IL_05e8: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:170"
-			IL_05ed: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_05f2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_060a: ldstr "isFile"
+			IL_060f: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:176"
+			IL_0614: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+			IL_0619: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_05f7: stloc.s 10
-			IL_05f9: ldloc.s 14
-			IL_05fb: ldstr "DirIsDirectory:"
-			IL_0600: ldloc.s 10
-			IL_0602: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0607: pop
-			IL_0608: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_060d: stloc.s 14
-			IL_060f: ldloc.s 8
-			IL_0611: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0616: volatile.
-			IL_0618: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-			IL_061d: brfalse IL_0631
-
-			IL_0622: ldstr "isFile"
-			IL_0627: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_062c: br IL_0645
-
-			IL_0631: ldstr "isFile"
-			IL_0636: ldstr "FS_StatSync_RichMetadata:Modules.FS_StatSync_RichMetadata:__js_module_init__:176"
-			IL_063b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-			IL_0640: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_0645: stloc.s 10
-			IL_0647: ldloc.s 14
-			IL_0649: ldstr "DirIsFile:"
-			IL_064e: ldloc.s 10
-			IL_0650: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0655: pop
-			IL_0656: leave IL_06a7
+			IL_061e: stloc.s 10
+			IL_0620: ldloc.s 14
+			IL_0622: ldstr "DirIsFile:"
+			IL_0627: ldloc.s 10
+			IL_0629: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_062e: pop
+			IL_062f: leave IL_0680
 		} // end .try
 		finally
 		{
-			IL_065b: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
-			IL_0660: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0665: dup
-			IL_0666: ldstr "force"
-			IL_066b: ldc.i4.1
-			IL_066c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0671: stloc.s 13
-			IL_0673: ldloc.1
-			IL_0674: ldloc.s 5
-			IL_0676: ldloc.s 13
-			IL_0678: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_067d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0682: dup
-			IL_0683: ldstr "force"
-			IL_0688: ldc.i4.1
-			IL_0689: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_068e: dup
-			IL_068f: ldstr "recursive"
-			IL_0694: ldc.i4.1
-			IL_0695: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_069a: stloc.s 13
-			IL_069c: ldloc.1
-			IL_069d: ldloc.s 6
-			IL_069f: ldloc.s 13
-			IL_06a1: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_06a6: endfinally
+			IL_0634: call void [JavaScriptRuntime]JavaScriptRuntime.ScriptProcessExitControl::ThrowIfRequested()
+			IL_0639: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_063e: dup
+			IL_063f: ldstr "force"
+			IL_0644: ldc.i4.1
+			IL_0645: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_064a: stloc.s 13
+			IL_064c: ldloc.1
+			IL_064d: ldloc.s 5
+			IL_064f: ldloc.s 13
+			IL_0651: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_0656: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_065b: dup
+			IL_065c: ldstr "force"
+			IL_0661: ldc.i4.1
+			IL_0662: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0667: dup
+			IL_0668: ldstr "recursive"
+			IL_066d: ldc.i4.1
+			IL_066e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0673: stloc.s 13
+			IL_0675: ldloc.1
+			IL_0676: ldloc.s 6
+			IL_0678: ldloc.s 13
+			IL_067a: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_067f: endfinally
 		} // end handler
 
-		IL_06a7: ldnull
-		IL_06a8: stloc.s 9
-		IL_06aa: ret
+		IL_0680: ldnull
+		IL_0681: stloc.s 9
+		IL_0683: ret
 	} // end of method FS_StatSync_RichMetadata::__js_module_init__
 
 } // end of class Modules.FS_StatSync_RichMetadata

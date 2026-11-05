@@ -10,6 +10,43 @@ internal sealed partial class LIRToILCompiler
 {
     #region Runtime/Operator Helpers
 
+    private static bool IsTaggedValue(ValueStorage storage)
+        => storage.Kind == ValueStorageKind.UnboxedValue
+            && storage.ClrType == typeof(JavaScriptRuntime.JsValue);
+
+    private static string GetArrayElementGetter(ValueStorage storage)
+        => IsTaggedValue(storage)
+            ? nameof(JavaScriptRuntime.Array.GetItemValue)
+            : storage is { Kind: ValueStorageKind.UnboxedValue, ClrType: var type } && type == typeof(double)
+                ? nameof(JavaScriptRuntime.Array.GetItemAsNumber)
+                : "get_Item";
+
+    private void EmitTaggedItemGet(
+        LIRGetItem getItem,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+        var indexStorage = GetTempStorage(getItem.Index);
+        var indexType = indexStorage is { Kind: ValueStorageKind.UnboxedValue, ClrType: var type } && type == typeof(double)
+            ? typeof(double)
+            : indexStorage.ClrType == typeof(string) ? typeof(string) : typeof(object);
+        if (indexType == typeof(object))
+        {
+            EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+        }
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.GetItemValue),
+            new[] { typeof(object), indexType }));
+    }
+
     private void EmitStringConcat(InstructionEncoder ilEncoder)
     {
         ilEncoder.OpCode(ILOpCode.Call);
@@ -175,6 +212,17 @@ internal sealed partial class LIRToILCompiler
         var leftIsDouble = IsUnboxedDouble(GetTempStorage(binaryDynamic.Left));
         var rightIsDouble = IsUnboxedDouble(GetTempStorage(binaryDynamic.Right));
         var hasMixedOverload = HasMixedDoubleOverload(binaryDynamic.Operator);
+
+        if (IsTaggedValue(GetTempStorage(binaryDynamic.Left))
+            || IsTaggedValue(GetTempStorage(binaryDynamic.Right)))
+        {
+            EmitLoadTemp(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTemp(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+            EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder,
+                GetTempStorage(binaryDynamic.Left).ClrType,
+                GetTempStorage(binaryDynamic.Right).ClrType);
+            return;
+        }
 
         if (hasMixedOverload && leftIsDouble && !rightIsDouble)
         {
