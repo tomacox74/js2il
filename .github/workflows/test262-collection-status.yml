@@ -1,0 +1,40 @@
+name: Test262 collection status
+on:
+  workflow_dispatch:
+    inputs:
+      actions_run_id:
+        description: Central workflow run ID to inspect (original attempt)
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/master' && vars.TEST262_CATALOGUE_AUTHORITY == 'supabase'
+    environment: test262-catalogue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/test262/central/requirements.txt
+      - name: Inspect registered workers and allocation
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+          ACTIONS_RUN_ID: ${{ inputs.actions_run_id }}
+        run: |
+          python -m scripts.test262.central.collection_status --actions-run-id "$ACTIONS_RUN_ID" \
+            --output artifacts/test262/collection-status.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test262-collection-status-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/collection-status.json
+          if-no-files-found: error
+          retention-days: 90
