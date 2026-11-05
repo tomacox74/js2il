@@ -10,7 +10,8 @@ default at one until a representative production pilot supports changing it.
 Use **Test262 central catalogue** on `master`. Select `mvp-composite` for a regression
 collection or `native` for discovery, and an explicit coherent area for a bounded
 pilot. `workers=configured` uses `TEST262_SPLIT_WORKER_COUNT`, falling back to one.
-A manual dispatch can select one, two or four without changing the weekly default.
+A manual dispatch can select one, two or four and enable split execution for that
+dispatch without changing the weekly default.
 Every selected slot needs its own existing producer variable and protected
 `test262-catalogue-worker-N` environment credential. Preparation rejects a missing
 producer before it registers the allocation. `TEST262_SPLIT_WORKFLOW=true` enables

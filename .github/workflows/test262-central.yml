@@ -42,7 +42,10 @@ jobs:
     concurrency:
       group: test262-central-${{ (inputs.kind || 'native') == 'native' && 'native-target' || 'mvp-target' }}
       cancel-in-progress: false
-    if: ${{ vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && vars.TEST262_SPLIT_WORKFLOW != 'true' && github.ref == 'refs/heads/master' }}
+    if: >-
+      vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' && github.ref == 'refs/heads/master' &&
+      vars.TEST262_SPLIT_WORKFLOW != 'true' &&
+      (inputs.workers == '' || inputs.workers == 'configured')
     environment: test262-catalogue
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -234,7 +237,9 @@ jobs:
   prepare:
     if: >-
       vars.TEST262_CATALOGUE_AUTHORITY == 'supabase' &&
-      vars.TEST262_SPLIT_WORKFLOW == 'true' && github.ref == 'refs/heads/master'
+      github.ref == 'refs/heads/master' &&
+      (vars.TEST262_SPLIT_WORKFLOW == 'true' ||
+       (inputs.workers != '' && inputs.workers != 'configured'))
     concurrency:
       group: test262-central-${{ (inputs.kind || 'native') == 'native' && 'native-target' || 'mvp-target' }}
       cancel-in-progress: false
