@@ -21,6 +21,11 @@ on:
         description: Also export the entire catalogue (bounded to five minutes)
         type: boolean
         default: false
+      workers:
+        description: Split execution slots for this dispatch (configured uses the repository default)
+        type: choice
+        options: [configured, '1', '2', '4']
+        default: configured
   schedule:
     # One existing timer: native discovery and same-provenance backlog recovery.
     # Scheduled runs never publish; manual MVP remains the dispatch default.
@@ -298,7 +303,7 @@ jobs:
           TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
           TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
           TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
-          WORKER_COUNT: ${{ vars.TEST262_SPLIT_WORKER_COUNT || '1' }}
+          WORKER_COUNT: ${{ (inputs.workers != '' && inputs.workers != 'configured' && inputs.workers) || vars.TEST262_SPLIT_WORKER_COUNT || '1' }}
           WORKER_1: ${{ vars.TEST262_SPLIT_WORKER_PRODUCER_ID }}
           WORKER_2: ${{ vars.TEST262_SPLIT_WORKER_2_PRODUCER_ID }}
           WORKER_3: ${{ vars.TEST262_SPLIT_WORKER_3_PRODUCER_ID }}
@@ -346,6 +351,22 @@ jobs:
           python -m scripts.test262.central.cli open-collection \
             --repository-name "$GITHUB_REPOSITORY" --context artifacts/test262/prepare/central-context.json \
             --artifact-id "$ARTIFACT_ID" --artifact-digest "$ARTIFACT_DIGEST"
+      - name: Summarize prepared collection
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+        run: |
+          python -m scripts.test262.central.collection_status \
+            --context artifacts/test262/prepare/central-context.json \
+            --output artifacts/test262/central-prepared-status.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test262-split-prepared-status-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/test262/central-prepared-status.json
+          if-no-files-found: error
+          retention-days: 90
 
   execute:
     needs: prepare
@@ -531,6 +552,19 @@ jobs:
           timeout --signal=TERM --kill-after=15s 300s \
             python -m scripts.test262.central.cli export --seconds 270 \
               --output artifacts/test262/central-snapshot.ndjson
+      - name: Summarize terminal collection
+        if: always()
+        env:
+          TEST262_DATABASE_URL: ${{ secrets.TEST262_COORDINATOR_DATABASE_URL }}
+          TEST262_AUTHORITY_EPOCH: ${{ vars.TEST262_AUTHORITY_EPOCH }}
+          TEST262_REPOSITORY_ID: ${{ vars.TEST262_REPOSITORY_ID }}
+          TEST262_PRODUCER_ID: ${{ vars.TEST262_COORDINATOR_PRODUCER_ID }}
+        run: |
+          if [ -f artifacts/test262/central-context.json ]; then
+            python -m scripts.test262.central.collection_status \
+              --context artifacts/test262/central-context.json \
+              --output artifacts/test262/central-status.json
+          fi
       - uses: actions/upload-artifact@v7
         id: final_artifact
         if: always()
@@ -538,6 +572,7 @@ jobs:
           name: test262-split-finalize-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             artifacts/test262/central-context.json
+            artifacts/test262/central-status.json
             artifacts/test262/central-lifecycle.json
             artifacts/test262/central-batch.json
             artifacts/test262/central-generated.json
