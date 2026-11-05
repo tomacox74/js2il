@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): retain early-bound intrinsics for contained local `this`
+  aliases, including closure captures, while preserving per-global invalidation,
+  conservative escape handling, and the unmodified-host-globals contract.
 - fix(ci): find release publication runs through paginated workflow-specific
   history, match exact release tags, and allow cross-platform validation to
   complete before Linux/Windows smoke and BenchmarkDotNet/Mitata runs proceed.

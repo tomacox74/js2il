@@ -78,6 +78,7 @@ namespace Jroc.SymbolTables
         private string? _currentAssignmentTarget = null;
         private string _currentModulePath = string.Empty;
         private int _activeWithDepth;
+        private Dictionary<Node, Node>? _globalBindingParentMap;
 
         private static BindingInfo? TryResolveBinding(Scope scope, string name)
         {
@@ -341,6 +342,7 @@ namespace Jroc.SymbolTables
 
         public void Build(ModuleDefinition module)
         {
+            _globalBindingParentMap = null;
             _currentModulePath = module.Path;
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
             {
@@ -366,7 +368,8 @@ namespace Jroc.SymbolTables
                 globalScope.AwaitPointCount = topLevelAwaitCount;
             }
 
-            BuildScopeRecursive(globalScope,module.Ast, globalScope);
+            BuildScopeRecursive(globalScope, module.Ast, globalScope);
+            _globalBindingParentMap = null;
             if (module.UsesNativeStaticEsm)
             {
                 ApplyNativeEsmBindings(globalScope, module);
@@ -2232,9 +2235,11 @@ namespace Jroc.SymbolTables
                         MarkWritten(currentScope, "Object");
                     }
                     break;
-                case ThisExpression:
+                case ThisExpression thisExpression:
                     {
-                        if (ThisMayBeGlobal(currentScope))
+                        if (!globalScope.MayMutateGlobalCallableBindings
+                            && ThisMayBeGlobal(currentScope)
+                            && !IsNonEscapingGlobalThisAlias(globalScope, currentScope, thisExpression))
                         {
                             globalScope.MayMutateGlobalCallableBindings = true;
                         }

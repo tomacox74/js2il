@@ -25,7 +25,7 @@ public sealed class DynamicDispatchTests
             """;
         if (exposesThis)
         {
-            source += "\nfunction Sampler() { var self = this; }";
+            source += "\nfunction Sampler() { var self = this; return self; }";
         }
         var module = new ModuleDefinition
         {
@@ -50,6 +50,119 @@ public sealed class DynamicDispatchTests
             Assert.Contains("Math::round(float64)", il);
         }
         Assert.Contains("2", Execute(artifact).Output);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void NonEscapingReceiverAliasesPreserveEarlyBoundMath(bool assumeUnmodifiedHostGlobals)
+    {
+        const string source = """
+            function Oscillator(size) {
+                this.bufferSize = size;
+                var self = this;
+                this.generate = function(x) { return Math.round(x / self.bufferSize); };
+                this.resize = function(size) { self["bufferSize"] = size; };
+            }
+            var oscillator = new Oscillator(2);
+            console.log(oscillator.generate(3));
+            oscillator.resize(4);
+            console.log(oscillator.generate(3));
+            """;
+        var artifact = Compile(source, assumeUnmodifiedHostGlobals);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.Equal(assumeUnmodifiedHostGlobals, il.Contains("Math::round(float64)", StringComparison.Ordinal));
+        Assert.Equal("2\n1", Execute(artifact).Output.Replace("\r\n", "\n").Trim());
+    }
+
+    [Fact]
+    public void ReceiverAliasWritesInvalidateOnlyTheAffectedGlobal()
+    {
+        var artifact = Compile(
+            """
+            function change() {
+                const self = (this);
+                self.Number = function() { return 42; };
+            }
+            change();
+            console.log(Number(1), Math.round(1.5));
+            """,
+            assumeUnmodifiedHostGlobals: true);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.Contains("Math::round(float64)", il);
+        Assert.Contains("IsOriginalGlobalBinding", il);
+        Assert.Equal("42 2", Execute(artifact).Output.Trim());
+    }
+
+    [Theory]
+    [InlineData("member-write")]
+    [InlineData("binding-write")]
+    [InlineData("computed-key")]
+    [InlineData("alias-chain")]
+    [InlineData("shorthand-escape")]
+    [InlineData("closure-return")]
+    [InlineData("call-escape")]
+    [InlineData("reassignment")]
+    public void ReceiverAliasMutationAndEscapesKeepMathDynamic(string scenario)
+    {
+        var mutation = scenario switch
+        {
+            "member-write" => "self.Math.round = replacement;",
+            "binding-write" => "self['Math'] = { round: replacement };",
+            "computed-key" => "var key = 'Math'; self[key].round = replacement;",
+            "alias-chain" => "var other = self; other.Math.round = replacement;",
+            "shorthand-escape" => "var holder = { self }; holder.self.Math.round = replacement;",
+            "closure-return" => "var leak = () => self; leak().Math.round = replacement;",
+            "call-escape" => "Object.defineProperty(self, 'Math', { value: { round: replacement } });",
+            "reassignment" => "self = this; self.Math.round = replacement;",
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario))
+        };
+        var artifact = Compile(
+            $$"""
+            function change() {
+                var self = this;
+                var replacement = function() { return 17; };
+                {{mutation}}
+            }
+            change();
+            console.log(Math.round(1.5));
+            """,
+            assumeUnmodifiedHostGlobals: true);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.DoesNotContain("Math::round(float64)", il);
+        Assert.Contains("CallableOperations::Call1", il);
+        Assert.Equal("17", Execute(artifact).Output.Trim());
+    }
+
+    [Theory]
+    [InlineData("method-call")]
+    [InlineData("computed-read")]
+    [InlineData("redeclaration")]
+    [InlineData("shadowed-parameter")]
+    [InlineData("with")]
+    public void ReceiverAliasUnknownUsesRemainConservative(string scenario)
+    {
+        var use = scenario switch
+        {
+            "method-call" => "self.read = function() { return 1; }; self.read();",
+            "computed-read" => "var key = 'value'; self[key];",
+            "redeclaration" => "var self;",
+            "shadowed-parameter" => "function nested(self) { return self.value; }",
+            "with" => "with ({}) { self.value; }",
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario))
+        };
+        var artifact = Compile(
+            $$"""
+            function Receiver() {
+                var self = this;
+                {{use}}
+            }
+            console.log(Math.round(1.5));
+            """,
+            assumeUnmodifiedHostGlobals: true);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.DoesNotContain("Math::round(float64)", il);
+        Assert.Equal("2", Execute(artifact).Output.Trim());
     }
 
     [Theory]
@@ -146,7 +259,7 @@ public sealed class DynamicDispatchTests
                 new(main, "require('./mutation'); console.log(Math.round(1.5));"),
                 new(mutation, mutatesMath
                     ? "var alias = Math; alias['round'] = function() { return 17; };"
-                    : "function Sampler() { var self = this; }")
+                    : "function Sampler() { var self = this; return self; }")
             ])
         {
             AssemblyName = "DynamicMathModules",
