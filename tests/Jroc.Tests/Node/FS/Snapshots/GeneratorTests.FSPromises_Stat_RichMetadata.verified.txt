@@ -324,7 +324,7 @@
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
 			// Header size: 12
-			// Code size: 1308 (0x51c)
+			// Code size: 1237 (0x4d5)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -333,11 +333,12 @@
 				[3] bool,
 				[4] object,
 				[5] string,
-				[6] object,
+				[6] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 				[7] object,
 				[8] object,
-				[9] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
-				[10] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[9] object,
+				[10] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule,
+				[11] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -455,311 +456,288 @@
 			IL_016e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0173: stloc.3
 			IL_0174: ldloc.3
-			IL_0175: brfalse IL_01d1
+			IL_0175: brfalse IL_01ae
 
 			IL_017a: ldarg.0
 			IL_017b: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0180: volatile.
-			IL_0182: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_0187: brfalse IL_019b
+			IL_0180: ldstr "birthtimeMs"
+			IL_0185: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_018a: stloc.s 6
+			IL_018c: ldloc.s 6
+			IL_018e: ldc.r8 0.0
+			IL_0197: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_019c: stloc.3
+			IL_019d: ldloc.3
+			IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_01a3: stloc.s 7
+			IL_01a5: ldloc.s 7
+			IL_01a7: stloc.s 8
+			IL_01a9: br IL_01b2
 
-			IL_018c: ldstr "birthtimeMs"
-			IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0196: br IL_01af
+			IL_01ae: ldloc.s 4
+			IL_01b0: stloc.s 8
 
-			IL_019b: ldstr "birthtimeMs"
-			IL_01a0: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:42"
-			IL_01a5: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_19
-			IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_01b2: ldloc.0
+			IL_01b3: ldstr "FileHasBirthtimeMs:"
+			IL_01b8: ldloc.s 8
+			IL_01ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01bf: pop
+			IL_01c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01c5: stloc.0
+			IL_01c6: ldarg.0
+			IL_01c7: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_01cc: volatile.
+			IL_01ce: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_01d3: brfalse IL_01e7
 
-			IL_01af: stloc.1
-			IL_01b0: ldloc.1
-			IL_01b1: ldc.r8 0.0
-			IL_01ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_01bf: stloc.3
-			IL_01c0: ldloc.3
-			IL_01c1: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_01c6: stloc.s 6
-			IL_01c8: ldloc.s 6
-			IL_01ca: stloc.s 7
-			IL_01cc: br IL_01d5
+			IL_01d8: ldstr "birthtime"
+			IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01e2: br IL_01fb
 
-			IL_01d1: ldloc.s 4
-			IL_01d3: stloc.s 7
+			IL_01e7: ldstr "birthtime"
+			IL_01ec: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:57"
+			IL_01f1: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
+			IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_01d5: ldloc.0
-			IL_01d6: ldstr "FileHasBirthtimeMs:"
-			IL_01db: ldloc.s 7
-			IL_01dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01e2: pop
-			IL_01e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01e8: stloc.0
-			IL_01e9: ldarg.0
-			IL_01ea: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_01ef: volatile.
-			IL_01f1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_01f6: brfalse IL_020a
+			IL_01fb: stloc.1
+			IL_01fc: ldloc.1
+			IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0202: volatile.
+			IL_0204: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_0209: brfalse IL_021d
 
-			IL_01fb: ldstr "birthtime"
-			IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0205: br IL_021e
+			IL_020e: ldstr "toISOString"
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0218: br IL_0231
 
-			IL_020a: ldstr "birthtime"
-			IL_020f: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:57"
-			IL_0214: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_20
-			IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_021d: ldstr "toISOString"
+			IL_0222: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:59"
+			IL_0227: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
+			IL_022c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_021e: stloc.1
-			IL_021f: ldloc.1
-			IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0225: volatile.
-			IL_0227: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_022c: brfalse IL_0240
+			IL_0231: stloc.1
+			IL_0232: volatile.
+			IL_0234: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_0239: brfalse IL_024e
 
-			IL_0231: ldstr "toISOString"
-			IL_0236: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_023b: br IL_0254
+			IL_023e: ldloc.1
+			IL_023f: ldstr "length"
+			IL_0244: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0249: br IL_0263
 
-			IL_0240: ldstr "toISOString"
-			IL_0245: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:59"
-			IL_024a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_21
-			IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_024e: ldloc.1
+			IL_024f: ldstr "length"
+			IL_0254: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:61"
+			IL_0259: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
+			IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0254: stloc.1
-			IL_0255: volatile.
-			IL_0257: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-			IL_025c: brfalse IL_0271
+			IL_0263: stloc.1
+			IL_0264: ldloc.0
+			IL_0265: ldstr "FileBirthtimeIsoLength:"
+			IL_026a: ldloc.1
+			IL_026b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0270: pop
+			IL_0271: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0276: stloc.0
+			IL_0277: ldarg.0
+			IL_0278: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_027d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0282: volatile.
+			IL_0284: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_0289: brfalse IL_029d
 
-			IL_0261: ldloc.1
-			IL_0262: ldstr "length"
-			IL_0267: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_026c: br IL_0286
+			IL_028e: ldstr "isCharacterDevice"
+			IL_0293: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0298: br IL_02b1
 
-			IL_0271: ldloc.1
-			IL_0272: ldstr "length"
-			IL_0277: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:61"
-			IL_027c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_22
-			IL_0281: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_029d: ldstr "isCharacterDevice"
+			IL_02a2: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:68"
+			IL_02a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
+			IL_02ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0286: stloc.1
-			IL_0287: ldloc.0
-			IL_0288: ldstr "FileBirthtimeIsoLength:"
-			IL_028d: ldloc.1
-			IL_028e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0293: pop
-			IL_0294: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0299: stloc.0
-			IL_029a: ldarg.0
-			IL_029b: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_02a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02a5: volatile.
-			IL_02a7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-			IL_02ac: brfalse IL_02c0
+			IL_02b1: stloc.1
+			IL_02b2: ldloc.0
+			IL_02b3: ldstr "FileIsCharacterDevice:"
+			IL_02b8: ldloc.1
+			IL_02b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_02be: pop
+			IL_02bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02c4: stloc.0
+			IL_02c5: volatile.
+			IL_02c7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_02cc: brfalse IL_02e1
 
-			IL_02b1: ldstr "isCharacterDevice"
-			IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_02bb: br IL_02d4
+			IL_02d1: ldarg.2
+			IL_02d2: ldstr "mode"
+			IL_02d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02dc: br IL_02f6
 
-			IL_02c0: ldstr "isCharacterDevice"
-			IL_02c5: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:68"
-			IL_02ca: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_23
-			IL_02cf: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_02e1: ldarg.2
+			IL_02e2: ldstr "mode"
+			IL_02e7: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:75"
+			IL_02ec: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
+			IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_02d4: stloc.1
-			IL_02d5: ldloc.0
-			IL_02d6: ldstr "FileIsCharacterDevice:"
-			IL_02db: ldloc.1
-			IL_02dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_02e1: pop
-			IL_02e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02e7: stloc.0
-			IL_02e8: volatile.
-			IL_02ea: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-			IL_02ef: brfalse IL_0304
+			IL_02f6: stloc.1
+			IL_02f7: ldloc.1
+			IL_02f8: ldc.r8 16384
+			IL_0301: box [System.Runtime]System.Double
+			IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
+			IL_030b: stloc.s 8
+			IL_030d: ldloc.s 8
+			IL_030f: ldc.r8 16384
+			IL_0318: box [System.Runtime]System.Double
+			IL_031d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0322: stloc.3
+			IL_0323: ldloc.3
+			IL_0324: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0329: stloc.s 4
+			IL_032b: ldloc.0
+			IL_032c: ldstr "DirModeHasDirectoryBit:"
+			IL_0331: ldloc.s 4
+			IL_0333: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0338: pop
+			IL_0339: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_033e: stloc.0
+			IL_033f: ldarg.2
+			IL_0340: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0345: volatile.
+			IL_0347: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_034c: brfalse IL_0360
 
-			IL_02f4: ldarg.2
-			IL_02f5: ldstr "mode"
-			IL_02fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02ff: br IL_0319
+			IL_0351: ldstr "isDirectory"
+			IL_0356: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_035b: br IL_0374
 
-			IL_0304: ldarg.2
-			IL_0305: ldstr "mode"
-			IL_030a: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:75"
-			IL_030f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_24
-			IL_0314: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0360: ldstr "isDirectory"
+			IL_0365: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:89"
+			IL_036a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
+			IL_036f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0319: stloc.1
-			IL_031a: ldloc.1
-			IL_031b: ldc.r8 16384
-			IL_0324: box [System.Runtime]System.Double
-			IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
-			IL_032e: stloc.s 7
-			IL_0330: ldloc.s 7
-			IL_0332: ldc.r8 16384
-			IL_033b: box [System.Runtime]System.Double
-			IL_0340: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0345: stloc.3
-			IL_0346: ldloc.3
-			IL_0347: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_034c: stloc.s 4
-			IL_034e: ldloc.0
-			IL_034f: ldstr "DirModeHasDirectoryBit:"
-			IL_0354: ldloc.s 4
-			IL_0356: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_035b: pop
-			IL_035c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0361: stloc.0
-			IL_0362: ldarg.2
-			IL_0363: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0368: volatile.
-			IL_036a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-			IL_036f: brfalse IL_0383
+			IL_0374: stloc.1
+			IL_0375: ldloc.0
+			IL_0376: ldstr "DirIsDirectory:"
+			IL_037b: ldloc.1
+			IL_037c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0381: pop
+			IL_0382: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0387: stloc.0
+			IL_0388: volatile.
+			IL_038a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_038f: brfalse IL_03a4
 
-			IL_0374: ldstr "isDirectory"
-			IL_0379: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_037e: br IL_0397
+			IL_0394: ldarg.2
+			IL_0395: ldstr "ctimeMs"
+			IL_039a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_039f: br IL_03b9
 
-			IL_0383: ldstr "isDirectory"
-			IL_0388: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:89"
-			IL_038d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_25
-			IL_0392: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+			IL_03a4: ldarg.2
+			IL_03a5: ldstr "ctimeMs"
+			IL_03aa: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:96"
+			IL_03af: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
+			IL_03b4: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0397: stloc.1
-			IL_0398: ldloc.0
-			IL_0399: ldstr "DirIsDirectory:"
-			IL_039e: ldloc.1
-			IL_039f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_03a4: pop
-			IL_03a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03aa: stloc.0
-			IL_03ab: volatile.
-			IL_03ad: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-			IL_03b2: brfalse IL_03c7
+			IL_03b9: stloc.1
+			IL_03ba: ldloc.1
+			IL_03bb: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_03c0: stloc.s 5
+			IL_03c2: ldloc.s 5
+			IL_03c4: ldstr "number"
+			IL_03c9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_03ce: stloc.3
+			IL_03cf: ldloc.3
+			IL_03d0: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_03d5: stloc.s 4
+			IL_03d7: ldloc.s 4
+			IL_03d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_03de: stloc.3
+			IL_03df: ldloc.3
+			IL_03e0: brfalse IL_0414
 
-			IL_03b7: ldarg.2
-			IL_03b8: ldstr "ctimeMs"
-			IL_03bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03c2: br IL_03dc
+			IL_03e5: ldarg.2
+			IL_03e6: ldstr "ctimeMs"
+			IL_03eb: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_03f0: stloc.s 6
+			IL_03f2: ldloc.s 6
+			IL_03f4: ldc.r8 0.0
+			IL_03fd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_0402: stloc.3
+			IL_0403: ldloc.3
+			IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0409: stloc.s 7
+			IL_040b: ldloc.s 7
+			IL_040d: stloc.s 9
+			IL_040f: br IL_0418
 
-			IL_03c7: ldarg.2
-			IL_03c8: ldstr "ctimeMs"
-			IL_03cd: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:96"
-			IL_03d2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_26
-			IL_03d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_0414: ldloc.s 4
+			IL_0416: stloc.s 9
 
-			IL_03dc: stloc.1
-			IL_03dd: ldloc.1
-			IL_03de: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_03e3: stloc.s 5
-			IL_03e5: ldloc.s 5
-			IL_03e7: ldstr "number"
-			IL_03ec: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_03f1: stloc.3
-			IL_03f2: ldloc.3
-			IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_03f8: stloc.s 4
-			IL_03fa: ldloc.s 4
-			IL_03fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0401: stloc.3
-			IL_0402: ldloc.3
-			IL_0403: brfalse IL_045b
+			IL_0418: ldloc.0
+			IL_0419: ldstr "DirHasCtimeMs:"
+			IL_041e: ldloc.s 9
+			IL_0420: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0425: pop
+			IL_0426: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_042b: stloc.0
+			IL_042c: ldarg.2
+			IL_042d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0432: volatile.
+			IL_0434: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_0439: brfalse IL_044d
 
-			IL_0408: volatile.
-			IL_040a: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-			IL_040f: brfalse IL_0424
+			IL_043e: ldstr "isFIFO"
+			IL_0443: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+			IL_0448: br IL_0461
 
-			IL_0414: ldarg.2
-			IL_0415: ldstr "ctimeMs"
-			IL_041a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_041f: br IL_0439
+			IL_044d: ldstr "isFIFO"
+			IL_0452: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:120"
+			IL_0457: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
+			IL_045c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-			IL_0424: ldarg.2
-			IL_0425: ldstr "ctimeMs"
-			IL_042a: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:105"
-			IL_042f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_27
-			IL_0434: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0439: stloc.1
-			IL_043a: ldloc.1
-			IL_043b: ldc.r8 0.0
-			IL_0444: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_0449: stloc.3
-			IL_044a: ldloc.3
-			IL_044b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_0450: stloc.s 6
-			IL_0452: ldloc.s 6
-			IL_0454: stloc.s 8
-			IL_0456: br IL_045f
-
-			IL_045b: ldloc.s 4
-			IL_045d: stloc.s 8
-
-			IL_045f: ldloc.0
-			IL_0460: ldstr "DirHasCtimeMs:"
-			IL_0465: ldloc.s 8
-			IL_0467: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_046c: pop
-			IL_046d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0472: stloc.0
-			IL_0473: ldarg.2
-			IL_0474: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0479: volatile.
-			IL_047b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_0480: brfalse IL_0494
-
-			IL_0485: ldstr "isFIFO"
-			IL_048a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-			IL_048f: br IL_04a8
-
-			IL_0494: ldstr "isFIFO"
-			IL_0499: ldstr "FSPromises_Stat_RichMetadata:<TwoPhaseDummy_M5>:__js_call__:120"
-			IL_049e: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_04a3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
-
-			IL_04a8: stloc.1
-			IL_04a9: ldloc.0
-			IL_04aa: ldstr "DirIsFIFO:"
-			IL_04af: ldloc.1
-			IL_04b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_04b5: pop
-			IL_04b6: ldarg.0
-			IL_04b7: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_04bc: stloc.s 9
-			IL_04be: ldarg.0
-			IL_04bf: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
-			IL_04c4: stloc.1
-			IL_04c5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_04ca: dup
-			IL_04cb: ldstr "force"
-			IL_04d0: ldc.i4.1
-			IL_04d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_04d6: stloc.s 10
-			IL_04d8: ldloc.s 9
-			IL_04da: ldloc.1
-			IL_04db: ldloc.s 10
-			IL_04dd: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_04e2: ldarg.0
-			IL_04e3: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_04e8: stloc.s 9
-			IL_04ea: ldarg.0
-			IL_04eb: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
-			IL_04f0: stloc.1
-			IL_04f1: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_04f6: dup
-			IL_04f7: ldstr "force"
-			IL_04fc: ldc.i4.1
-			IL_04fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0502: dup
-			IL_0503: ldstr "recursive"
-			IL_0508: ldc.i4.1
-			IL_0509: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_050e: stloc.s 10
-			IL_0510: ldloc.s 9
-			IL_0512: ldloc.1
-			IL_0513: ldloc.s 10
-			IL_0515: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
-			IL_051a: ldnull
-			IL_051b: ret
+			IL_0461: stloc.1
+			IL_0462: ldloc.0
+			IL_0463: ldstr "DirIsFIFO:"
+			IL_0468: ldloc.1
+			IL_0469: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_046e: pop
+			IL_046f: ldarg.0
+			IL_0470: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_0475: stloc.s 10
+			IL_0477: ldarg.0
+			IL_0478: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
+			IL_047d: stloc.1
+			IL_047e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0483: dup
+			IL_0484: ldstr "force"
+			IL_0489: ldc.i4.1
+			IL_048a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_048f: stloc.s 11
+			IL_0491: ldloc.s 10
+			IL_0493: ldloc.1
+			IL_0494: ldloc.s 11
+			IL_0496: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_049b: ldarg.0
+			IL_049c: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_04a1: stloc.s 10
+			IL_04a3: ldarg.0
+			IL_04a4: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
+			IL_04a9: stloc.1
+			IL_04aa: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_04af: dup
+			IL_04b0: ldstr "force"
+			IL_04b5: ldc.i4.1
+			IL_04b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_04bb: dup
+			IL_04bc: ldstr "recursive"
+			IL_04c1: ldc.i4.1
+			IL_04c2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_04c7: stloc.s 11
+			IL_04c9: ldloc.s 10
+			IL_04cb: ldloc.1
+			IL_04cc: ldloc.s 11
+			IL_04ce: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object, object)
+			IL_04d3: ldnull
+			IL_04d4: ret
 		} // end of method ArrowFunction_L21C9::__js_call__
 
 	} // end of class ArrowFunction_L21C9

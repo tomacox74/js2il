@@ -6,6 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): preserve tagged property and array values through deferred
+  numeric coercion and relational comparisons, avoiding numeric boxing without
+  moving getters or coercions or changing dynamic fallback semantics.
 - perf(compiler): retain early-bound intrinsics for contained local `this`
   aliases, including closure captures, while preserving per-global invalidation,
   conservative escape handling, and the unmodified-host-globals contract.

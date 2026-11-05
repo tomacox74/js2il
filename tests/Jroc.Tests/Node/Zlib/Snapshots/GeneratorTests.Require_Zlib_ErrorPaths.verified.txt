@@ -1122,7 +1122,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1166 (0x48e)
+		// Code size: 1127 (0x467)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_ErrorPaths/Scope,
@@ -1146,9 +1146,10 @@
 			[18] string,
 			[19] bool,
 			[20] object,
-			[21] object,
+			[21] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 			[22] object,
-			[23] object
+			[23] object,
+			[24] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope::.ctor()
@@ -1415,7 +1416,7 @@
 			IL_02d8: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::False
 			IL_02dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_02e2: pop
-			IL_02e3: leave IL_048a
+			IL_02e3: leave IL_0463
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
@@ -1504,7 +1505,7 @@
 			IL_03d6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_03db: stloc.s 19
 			IL_03dd: ldloc.s 19
-			IL_03df: brfalse IL_0472
+			IL_03df: brfalse IL_044b
 
 			IL_03e4: volatile.
 			IL_03e6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
@@ -1522,47 +1523,35 @@
 			IL_0412: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 			IL_0417: stloc.s 11
-			IL_0419: volatile.
-			IL_041b: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_0420: brfalse IL_0436
+			IL_0419: ldloc.s 11
+			IL_041b: ldstr "length"
+			IL_0420: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_0425: stloc.s 21
+			IL_0427: ldloc.s 21
+			IL_0429: ldc.r8 0.0
+			IL_0432: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_0437: stloc.s 19
+			IL_0439: ldloc.s 19
+			IL_043b: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0440: stloc.s 22
+			IL_0442: ldloc.s 22
+			IL_0444: stloc.s 24
+			IL_0446: br IL_044f
 
-			IL_0425: ldloc.s 11
-			IL_0427: ldstr "length"
-			IL_042c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0431: br IL_044c
+			IL_044b: ldloc.s 20
+			IL_044d: stloc.s 24
 
-			IL_0436: ldloc.s 11
-			IL_0438: ldstr "length"
-			IL_043d: ldstr "Require_Zlib_ErrorPaths:Modules.Require_Zlib_ErrorPaths:__js_module_init__:118"
-			IL_0442: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_0447: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_044c: stloc.s 11
-			IL_044e: ldloc.s 11
-			IL_0450: ldc.r8 0.0
-			IL_0459: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_045e: stloc.s 19
-			IL_0460: ldloc.s 19
-			IL_0462: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_0467: stloc.s 21
-			IL_0469: ldloc.s 21
-			IL_046b: stloc.s 23
-			IL_046d: br IL_0476
-
-			IL_0472: ldloc.s 20
-			IL_0474: stloc.s 23
-
-			IL_0476: ldloc.s 8
-			IL_0478: ldstr "gunzip invalid data message length > 0:"
-			IL_047d: ldloc.s 23
-			IL_047f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0484: pop
-			IL_0485: leave IL_048a
+			IL_044f: ldloc.s 8
+			IL_0451: ldstr "gunzip invalid data message length > 0:"
+			IL_0456: ldloc.s 24
+			IL_0458: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_045d: pop
+			IL_045e: leave IL_0463
 		} // end handler
 
-		IL_048a: ldnull
-		IL_048b: stloc.s 5
-		IL_048d: ret
+		IL_0463: ldnull
+		IL_0464: stloc.s 5
+		IL_0466: ret
 	} // end of method Require_Zlib_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Zlib_ErrorPaths

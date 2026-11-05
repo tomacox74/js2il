@@ -143,7 +143,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 552 (0x228)
+		// Code size: 514 (0x202)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Slice_Basic/Scope,
@@ -155,8 +155,9 @@
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 			[7] object,
 			[8] float64,
-			[9] bool,
-			[10] object
+			[9] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+			[10] bool,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Slice_Basic/Scope::.ctor()
@@ -218,111 +219,99 @@
 		// loop start (head: IL_00d8)
 			IL_00d8: ldloc.3
 			IL_00d9: stloc.s 8
-			IL_00db: volatile.
-			IL_00dd: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_00e2: brfalse IL_00f7
+			IL_00db: ldloc.2
+			IL_00dc: ldstr "length"
+			IL_00e1: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_00e6: stloc.s 9
+			IL_00e8: ldloc.s 8
+			IL_00ea: ldloc.s 9
+			IL_00ec: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_00f1: stloc.s 10
+			IL_00f3: ldloc.s 10
+			IL_00f5: brfalse IL_0125
 
-			IL_00e7: ldloc.2
-			IL_00e8: ldstr "length"
-			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f2: br IL_010c
-
-			IL_00f7: ldloc.2
-			IL_00f8: ldstr "length"
-			IL_00fd: ldstr "Int32Array_Slice_Basic:Modules.Int32Array_Slice_Basic:__js_module_init__:30"
-			IL_0102: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-			IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_010c: stloc.s 7
-			IL_010e: ldloc.s 8
-			IL_0110: ldloc.s 7
-			IL_0112: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(float64, object)
-			IL_0117: stloc.s 9
-			IL_0119: ldloc.s 9
-			IL_011b: brfalse IL_014b
-
-			IL_0120: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0125: stloc.s 6
-			IL_0127: ldloc.2
-			IL_0128: ldloc.3
-			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_012e: stloc.s 7
-			IL_0130: ldloc.s 6
-			IL_0132: ldloc.s 7
-			IL_0134: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0139: pop
-			IL_013a: ldloc.3
-			IL_013b: ldc.r8 1
-			IL_0144: add
-			IL_0145: stloc.3
-			IL_0146: br IL_00d8
+			IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ff: stloc.s 6
+			IL_0101: ldloc.2
+			IL_0102: ldloc.3
+			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0108: stloc.s 7
+			IL_010a: ldloc.s 6
+			IL_010c: ldloc.s 7
+			IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0113: pop
+			IL_0114: ldloc.3
+			IL_0115: ldc.r8 1
+			IL_011e: add
+			IL_011f: stloc.3
+			IL_0120: br IL_00d8
 		// end loop
 
-		IL_014b: ldloc.2
-		IL_014c: ldc.r8 0.0
-		IL_0155: ldc.r8 99
-		IL_015e: ldc.i4.1
-		IL_015f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
-		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0169: stloc.s 6
-		IL_016b: ldloc.1
-		IL_016c: ldc.r8 1
-		IL_0175: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_017a: box [System.Runtime]System.Double
-		IL_017f: stloc.s 10
-		IL_0181: ldloc.s 6
-		IL_0183: ldloc.s 10
-		IL_0185: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_018a: pop
-		IL_018b: volatile.
-		IL_018d: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_0192: brfalse IL_01a7
+		IL_0125: ldloc.2
+		IL_0126: ldc.r8 0.0
+		IL_012f: ldc.r8 99
+		IL_0138: ldc.i4.1
+		IL_0139: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNumber(object, float64, float64, bool)
+		IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0143: stloc.s 6
+		IL_0145: ldloc.1
+		IL_0146: ldc.r8 1
+		IL_014f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_0154: box [System.Runtime]System.Double
+		IL_0159: stloc.s 11
+		IL_015b: ldloc.s 6
+		IL_015d: ldloc.s 11
+		IL_015f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0164: pop
+		IL_0165: volatile.
+		IL_0167: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_016c: brfalse IL_0181
 
-		IL_0197: ldloc.1
-		IL_0198: ldstr "slice"
-		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_01a2: br IL_01bc
+		IL_0171: ldloc.1
+		IL_0172: ldstr "slice"
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_017c: br IL_0196
 
-		IL_01a7: ldloc.1
-		IL_01a8: ldstr "slice"
-		IL_01ad: ldstr "Int32Array_Slice_Basic:Modules.Int32Array_Slice_Basic:__js_module_init__:54"
-		IL_01b2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
+		IL_0181: ldloc.1
+		IL_0182: ldstr "slice"
+		IL_0187: ldstr "Int32Array_Slice_Basic:Modules.Int32Array_Slice_Basic:__js_module_init__:54"
+		IL_018c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::CallMember0(object, string, string, int32&)
 
-		IL_01bc: stloc.s 4
-		IL_01be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01c3: stloc.s 6
-		IL_01c5: volatile.
-		IL_01c7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_01cc: brfalse IL_01e2
+		IL_0196: stloc.s 4
+		IL_0198: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019d: stloc.s 6
+		IL_019f: volatile.
+		IL_01a1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01a6: brfalse IL_01bc
 
-		IL_01d1: ldloc.s 4
-		IL_01d3: ldstr "length"
-		IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01dd: br IL_01f8
+		IL_01ab: ldloc.s 4
+		IL_01ad: ldstr "length"
+		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b7: br IL_01d2
 
-		IL_01e2: ldloc.s 4
-		IL_01e4: ldstr "length"
-		IL_01e9: ldstr "Int32Array_Slice_Basic:Modules.Int32Array_Slice_Basic:__js_module_init__:59"
-		IL_01ee: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_01f3: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_01bc: ldloc.s 4
+		IL_01be: ldstr "length"
+		IL_01c3: ldstr "Int32Array_Slice_Basic:Modules.Int32Array_Slice_Basic:__js_module_init__:59"
+		IL_01c8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_01cd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_01f8: stloc.s 7
-		IL_01fa: ldloc.s 6
-		IL_01fc: ldloc.s 7
-		IL_01fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0203: pop
-		IL_0204: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0209: stloc.s 6
-		IL_020b: ldloc.s 4
-		IL_020d: ldc.r8 4
-		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_021b: stloc.s 7
-		IL_021d: ldloc.s 6
-		IL_021f: ldloc.s 7
-		IL_0221: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0226: pop
-		IL_0227: ret
+		IL_01d2: stloc.s 7
+		IL_01d4: ldloc.s 6
+		IL_01d6: ldloc.s 7
+		IL_01d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01dd: pop
+		IL_01de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e3: stloc.s 6
+		IL_01e5: ldloc.s 4
+		IL_01e7: ldc.r8 4
+		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_01f5: stloc.s 7
+		IL_01f7: ldloc.s 6
+		IL_01f9: ldloc.s 7
+		IL_01fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0200: pop
+		IL_0201: ret
 	} // end of method Int32Array_Slice_Basic::__js_module_init__
 
 } // end of class Modules.Int32Array_Slice_Basic

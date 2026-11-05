@@ -221,6 +221,12 @@ internal sealed partial class LIRToILCompiler
 
                     var indexStorage = GetTempStorage(getItem.Index);
                     var resultStorage = GetTempStorage(getItem.Result);
+                    if (IsTaggedValue(resultStorage))
+                    {
+                        EmitTaggedItemGet(getItem, ilEncoder, allocation, methodDescriptor);
+                        EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                        break;
+                    }
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
                         // Emit: call JavaScriptRuntime.ObjectRuntime.GetItem(object, double)
@@ -374,13 +380,9 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(getArray.Index, ilEncoder, allocation, methodDescriptor);
 
                     var resultStorage = GetTempStorage(getArray.Result);
-                    var resultIsNumber = resultStorage.Kind == ValueStorageKind.UnboxedValue
-                        && resultStorage.ClrType == typeof(double);
                     var arrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        resultIsNumber
-                            ? nameof(JavaScriptRuntime.Array.GetItemAsNumber)
-                            : "get_Item",
+                        GetArrayElementGetter(resultStorage),
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(arrayGetter);

@@ -1681,7 +1681,7 @@
 				74 61 54 6f 6b 65 6e 0e 00 00 02
 			)
 			// Header size: 12
-			// Code size: 720 (0x2d0)
+			// Code size: 684 (0x2ac)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope,
@@ -1689,13 +1689,14 @@
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[3] object,
 				[4] object,
-				[5] bool,
-				[6] object,
+				[5] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
+				[6] bool,
 				[7] object,
-				[8] object[],
-				[9] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject,
-				[10] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject,
-				[11] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject
+				[8] object,
+				[9] object[],
+				[10] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject,
+				[11] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject,
+				[12] class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject
 			)
 
 			IL_0000: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::.ctor()
@@ -1767,193 +1768,181 @@
 			IL_00d2: ldstr ":"
 			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_00dc: stloc.s 4
-			IL_00de: volatile.
-			IL_00e0: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_00e5: brfalse IL_00fa
+			IL_00de: ldloc.1
+			IL_00df: ldstr "port"
+			IL_00e4: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_00e9: stloc.s 5
+			IL_00eb: ldloc.s 5
+			IL_00ed: ldc.r8 0.0
+			IL_00f6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_00fb: stloc.s 6
+			IL_00fd: ldloc.s 6
+			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0104: stloc.s 7
+			IL_0106: ldloc.s 4
+			IL_0108: ldloc.s 7
+			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_010f: stloc.s 4
+			IL_0111: ldloc.2
+			IL_0112: ldloc.s 4
+			IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0119: pop
+			IL_011a: ldarg.0
+			IL_011b: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_CreateServer_Connect_Basic/Scope::net
+			IL_0120: volatile.
+			IL_0122: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_0127: brfalse IL_013c
 
-			IL_00ea: ldloc.1
-			IL_00eb: ldstr "port"
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f5: br IL_010f
+			IL_012c: ldloc.1
+			IL_012d: ldstr "port"
+			IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0137: br IL_0151
 
-			IL_00fa: ldloc.1
-			IL_00fb: ldstr "port"
-			IL_0100: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:20"
-			IL_0105: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_28
-			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_013c: ldloc.1
+			IL_013d: ldstr "port"
+			IL_0142: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:29"
+			IL_0147: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
+			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_010f: stloc.3
-			IL_0110: ldloc.3
-			IL_0111: ldc.r8 0.0
-			IL_011a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_011f: stloc.s 5
-			IL_0121: ldloc.s 5
-			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_0128: stloc.s 6
-			IL_012a: ldloc.s 4
-			IL_012c: ldloc.s 6
-			IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0133: stloc.s 4
-			IL_0135: ldloc.2
-			IL_0136: ldloc.s 4
-			IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_013d: pop
-			IL_013e: ldarg.0
-			IL_013f: ldfld class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.INetModule Modules.Net_CreateServer_Connect_Basic/Scope::net
-			IL_0144: volatile.
-			IL_0146: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_014b: brfalse IL_0160
+			IL_0151: stloc.3
+			IL_0152: volatile.
+			IL_0154: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_0159: brfalse IL_016e
 
-			IL_0150: ldloc.1
-			IL_0151: ldstr "port"
-			IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_015b: br IL_0175
+			IL_015e: ldloc.1
+			IL_015f: ldstr "address"
+			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0169: br IL_0183
 
-			IL_0160: ldloc.1
-			IL_0161: ldstr "port"
-			IL_0166: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:29"
-			IL_016b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_29
-			IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_016e: ldloc.1
+			IL_016f: ldstr "address"
+			IL_0174: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:31"
+			IL_0179: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
+			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-			IL_0175: stloc.3
-			IL_0176: volatile.
-			IL_0178: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_017d: brfalse IL_0192
-
-			IL_0182: ldloc.1
-			IL_0183: ldstr "address"
-			IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_018d: br IL_01a7
-
-			IL_0192: ldloc.1
-			IL_0193: ldstr "address"
-			IL_0198: ldstr "Net_CreateServer_Connect_Basic:<TwoPhaseDummy_M5>:__js_call__:31"
-			IL_019d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_30
-			IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_01a7: stloc.s 7
-			IL_01a9: ldc.i4.2
-			IL_01aa: newarr [System.Runtime]System.Object
-			IL_01af: dup
-			IL_01b0: ldc.i4.0
-			IL_01b1: ldarg.0
-			IL_01b2: stelem.ref
-			IL_01b3: dup
-			IL_01b4: ldc.i4.1
-			IL_01b5: ldloc.0
-			IL_01b6: stelem.ref
-			IL_01b7: stloc.s 8
-			IL_01b9: ldloc.s 8
-			IL_01bb: ldc.i4.0
-			IL_01bc: ldelem.ref
-			IL_01bd: castclass Modules.Net_CreateServer_Connect_Basic/Scope
-			IL_01c2: ldloc.s 8
-			IL_01c4: ldc.i4.1
-			IL_01c5: ldelem.ref
-			IL_01c6: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
-			IL_01cb: ldloc.s 8
-			IL_01cd: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
-			IL_01d2: ldc.i4.0
-			IL_01d3: conv.r8
-			IL_01d4: ldstr ""
-			IL_01d9: ldc.i4.0
-			IL_01da: ldc.i4.0
-			IL_01db: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_01e0: stloc.s 9
-			IL_01e2: ldstr "connect"
-			IL_01e7: ldloc.3
-			IL_01e8: ldloc.s 7
-			IL_01ea: ldloc.s 9
-			IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
-			IL_01f1: stloc.s 7
-			IL_01f3: ldloc.0
-			IL_01f4: ldloc.s 7
-			IL_01f6: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
-			IL_01fb: ldloc.0
-			IL_01fc: ldstr ""
-			IL_0201: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::reply
-			IL_0206: ldloc.0
-			IL_0207: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
-			IL_020c: ldstr "Cannot access 'client' before initialization"
-			IL_0211: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_021b: stloc.s 7
-			IL_021d: ldc.i4.2
-			IL_021e: newarr [System.Runtime]System.Object
-			IL_0223: dup
-			IL_0224: ldc.i4.0
-			IL_0225: ldarg.0
-			IL_0226: stelem.ref
-			IL_0227: dup
-			IL_0228: ldc.i4.1
-			IL_0229: ldloc.0
-			IL_022a: stelem.ref
-			IL_022b: stloc.s 8
-			IL_022d: ldloc.s 8
-			IL_022f: ldc.i4.0
-			IL_0230: ldelem.ref
-			IL_0231: castclass Modules.Net_CreateServer_Connect_Basic/Scope
-			IL_0236: ldloc.s 8
-			IL_0238: ldc.i4.1
-			IL_0239: ldelem.ref
-			IL_023a: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
-			IL_023f: ldloc.s 8
-			IL_0241: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
-			IL_0246: ldc.i4.1
-			IL_0247: conv.r8
-			IL_0248: ldstr ""
-			IL_024d: ldc.i4.0
-			IL_024e: ldc.i4.0
-			IL_024f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_0254: stloc.s 10
-			IL_0256: ldloc.s 7
-			IL_0258: ldstr "on"
-			IL_025d: ldstr "data"
-			IL_0262: ldloc.s 10
-			IL_0264: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_0269: pop
-			IL_026a: ldloc.0
-			IL_026b: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
-			IL_0270: ldstr "Cannot access 'client' before initialization"
-			IL_0275: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_027f: stloc.s 7
-			IL_0281: ldc.i4.2
-			IL_0282: newarr [System.Runtime]System.Object
-			IL_0287: dup
-			IL_0288: ldc.i4.0
-			IL_0289: ldarg.0
-			IL_028a: stelem.ref
-			IL_028b: dup
-			IL_028c: ldc.i4.1
-			IL_028d: ldloc.0
-			IL_028e: stelem.ref
-			IL_028f: stloc.s 8
-			IL_0291: ldloc.s 8
-			IL_0293: ldc.i4.0
-			IL_0294: ldelem.ref
-			IL_0295: castclass Modules.Net_CreateServer_Connect_Basic/Scope
-			IL_029a: ldloc.s 8
-			IL_029c: ldc.i4.1
-			IL_029d: ldelem.ref
-			IL_029e: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
-			IL_02a3: ldloc.s 8
-			IL_02a5: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
-			IL_02aa: ldc.i4.0
-			IL_02ab: conv.r8
-			IL_02ac: ldstr ""
-			IL_02b1: ldc.i4.0
-			IL_02b2: ldc.i4.0
-			IL_02b3: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject>(!!0, float64, string, bool, bool)
-			IL_02b8: stloc.s 11
-			IL_02ba: ldloc.s 7
-			IL_02bc: ldstr "on"
-			IL_02c1: ldstr "end"
-			IL_02c6: ldloc.s 11
-			IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
-			IL_02cd: pop
-			IL_02ce: ldnull
-			IL_02cf: ret
+			IL_0183: stloc.s 8
+			IL_0185: ldc.i4.2
+			IL_0186: newarr [System.Runtime]System.Object
+			IL_018b: dup
+			IL_018c: ldc.i4.0
+			IL_018d: ldarg.0
+			IL_018e: stelem.ref
+			IL_018f: dup
+			IL_0190: ldc.i4.1
+			IL_0191: ldloc.0
+			IL_0192: stelem.ref
+			IL_0193: stloc.s 9
+			IL_0195: ldloc.s 9
+			IL_0197: ldc.i4.0
+			IL_0198: ldelem.ref
+			IL_0199: castclass Modules.Net_CreateServer_Connect_Basic/Scope
+			IL_019e: ldloc.s 9
+			IL_01a0: ldc.i4.1
+			IL_01a1: ldelem.ref
+			IL_01a2: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
+			IL_01a7: ldloc.s 9
+			IL_01a9: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
+			IL_01ae: ldc.i4.0
+			IL_01af: conv.r8
+			IL_01b0: ldstr ""
+			IL_01b5: ldc.i4.0
+			IL_01b6: ldc.i4.0
+			IL_01b7: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_client/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_01bc: stloc.s 10
+			IL_01be: ldstr "connect"
+			IL_01c3: ldloc.3
+			IL_01c4: ldloc.s 8
+			IL_01c6: ldloc.s 10
+			IL_01c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember3(object, string, object, object, object)
+			IL_01cd: stloc.s 8
+			IL_01cf: ldloc.0
+			IL_01d0: ldloc.s 8
+			IL_01d2: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
+			IL_01d7: ldloc.0
+			IL_01d8: ldstr ""
+			IL_01dd: stfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::reply
+			IL_01e2: ldloc.0
+			IL_01e3: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
+			IL_01e8: ldstr "Cannot access 'client' before initialization"
+			IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01f7: stloc.s 8
+			IL_01f9: ldc.i4.2
+			IL_01fa: newarr [System.Runtime]System.Object
+			IL_01ff: dup
+			IL_0200: ldc.i4.0
+			IL_0201: ldarg.0
+			IL_0202: stelem.ref
+			IL_0203: dup
+			IL_0204: ldc.i4.1
+			IL_0205: ldloc.0
+			IL_0206: stelem.ref
+			IL_0207: stloc.s 9
+			IL_0209: ldloc.s 9
+			IL_020b: ldc.i4.0
+			IL_020c: ldelem.ref
+			IL_020d: castclass Modules.Net_CreateServer_Connect_Basic/Scope
+			IL_0212: ldloc.s 9
+			IL_0214: ldc.i4.1
+			IL_0215: ldelem.ref
+			IL_0216: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
+			IL_021b: ldloc.s 9
+			IL_021d: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
+			IL_0222: ldc.i4.1
+			IL_0223: conv.r8
+			IL_0224: ldstr ""
+			IL_0229: ldc.i4.0
+			IL_022a: ldc.i4.0
+			IL_022b: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L28C20/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0230: stloc.s 11
+			IL_0232: ldloc.s 8
+			IL_0234: ldstr "on"
+			IL_0239: ldstr "data"
+			IL_023e: ldloc.s 11
+			IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_0245: pop
+			IL_0246: ldloc.0
+			IL_0247: ldfld object Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope::client
+			IL_024c: ldstr "Cannot access 'client' before initialization"
+			IL_0251: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_025b: stloc.s 8
+			IL_025d: ldc.i4.2
+			IL_025e: newarr [System.Runtime]System.Object
+			IL_0263: dup
+			IL_0264: ldc.i4.0
+			IL_0265: ldarg.0
+			IL_0266: stelem.ref
+			IL_0267: dup
+			IL_0268: ldc.i4.1
+			IL_0269: ldloc.0
+			IL_026a: stelem.ref
+			IL_026b: stloc.s 9
+			IL_026d: ldloc.s 9
+			IL_026f: ldc.i4.0
+			IL_0270: ldelem.ref
+			IL_0271: castclass Modules.Net_CreateServer_Connect_Basic/Scope
+			IL_0276: ldloc.s 9
+			IL_0278: ldc.i4.1
+			IL_0279: ldelem.ref
+			IL_027a: castclass Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope
+			IL_027f: ldloc.s 9
+			IL_0281: newobj instance void Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject::.ctor(class Modules.Net_CreateServer_Connect_Basic/Scope, class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/Scope, object[])
+			IL_0286: ldc.i4.0
+			IL_0287: conv.r8
+			IL_0288: ldstr ""
+			IL_028d: ldc.i4.0
+			IL_028e: ldc.i4.0
+			IL_028f: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance<class Modules.Net_CreateServer_Connect_Basic/FunctionExpression_L19C30/FunctionExpression_L32C19/FunctionObject>(!!0, float64, string, bool, bool)
+			IL_0294: stloc.s 12
+			IL_0296: ldloc.s 8
+			IL_0298: ldstr "on"
+			IL_029d: ldstr "end"
+			IL_02a2: ldloc.s 12
+			IL_02a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember2(object, string, object, object)
+			IL_02a9: pop
+			IL_02aa: ldnull
+			IL_02ab: ret
 		} // end of method FunctionExpression_L19C30::__js_call__
 
 	} // end of class FunctionExpression_L19C30

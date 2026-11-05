@@ -194,6 +194,19 @@ public partial class JsObject : IDictionary<string, object?>
         return false;
     }
 
+    internal bool TryGetOwnValue(string key, out JsValue value)
+    {
+        if (!HasNonDataDescriptors
+            && !HasSharedIntrinsicBaseline
+            && TryGetJsValue(key, out value))
+        {
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
     internal bool TrySetOwnNumberValue(string key, double value)
     {
         if (HasNonDataDescriptors || _shape.GetSlot(key) < 0)

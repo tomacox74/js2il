@@ -440,38 +440,24 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 92 (0x5c)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue
 			)
 
-			IL_0000: volatile.
-			IL_0002: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_0007: brfalse IL_0026
-
-			IL_000c: ldarg.1
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0017: ldstr "base"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0021: br IL_0045
-
-			IL_0026: ldarg.1
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0031: ldstr "base"
-			IL_0036: ldstr "ObjectLiteral_AccessorDefinitions:<TwoPhaseDummy_M6>:__js_call__:3"
-			IL_003b: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-			IL_0045: stloc.0
-			IL_0046: ldloc.0
-			IL_0047: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_004c: ldc.r8 2
-			IL_0055: mul
-			IL_0056: box [System.Runtime]System.Double
-			IL_005b: ret
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_000b: ldstr "base"
+			IL_0010: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.JsValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)
+			IL_001c: ldc.r8 2
+			IL_0025: mul
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: ret
 		} // end of method FunctionExpression_obj_L11C16::__js_call__
 
 	} // end of class FunctionExpression_obj_L11C16

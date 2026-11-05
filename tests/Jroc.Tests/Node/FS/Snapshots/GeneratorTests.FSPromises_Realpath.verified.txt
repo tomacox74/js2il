@@ -185,120 +185,109 @@
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
 			// Header size: 12
-			// Code size: 282 (0x11a)
+			// Code size: 254 (0xfe)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[1] object,
+				[1] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 				[2] bool,
 				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate,
-				[5] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule
+				[4] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate,
+				[6] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: stloc.0
-			IL_0006: volatile.
-			IL_0008: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_000d: brfalse IL_0022
+			IL_0006: ldarg.2
+			IL_0007: ldstr "length"
+			IL_000c: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+			IL_0011: stloc.1
+			IL_0012: ldloc.1
+			IL_0013: ldc.r8 0.0
+			IL_001c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+			IL_0021: stloc.2
+			IL_0022: ldloc.2
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+			IL_0028: stloc.3
+			IL_0029: ldloc.0
+			IL_002a: ldstr "Real path exists:"
+			IL_002f: ldloc.3
+			IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0035: pop
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: stloc.0
+			IL_003c: ldarg.2
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0042: stloc.s 4
+			IL_0044: ldc.i4.0
+			IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
+			IL_004a: brfalse IL_0086
 
-			IL_0012: ldarg.2
-			IL_0013: ldstr "length"
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001d: br IL_0037
+			IL_004f: ldloc.s 4
+			IL_0051: isinst [System.Runtime]System.String
+			IL_0056: dup
+			IL_0057: brtrue IL_006f
 
-			IL_0022: ldarg.2
-			IL_0023: ldstr "length"
-			IL_0028: ldstr "FSPromises_Realpath:<TwoPhaseDummy_M4>:__js_call__:5"
-			IL_002d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_8
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+			IL_005c: pop
+			IL_005d: ldloc.s 4
+			IL_005f: ldstr "includes"
+			IL_0064: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
+			IL_0069: dup
+			IL_006a: brfalse IL_0085
 
-			IL_0037: stloc.1
-			IL_0038: ldloc.1
-			IL_0039: ldc.r8 0.0
-			IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-			IL_0047: stloc.2
-			IL_0048: ldloc.2
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-			IL_004e: stloc.3
-			IL_004f: ldloc.0
-			IL_0050: ldstr "Real path exists:"
-			IL_0055: ldloc.3
-			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_005b: pop
-			IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0061: stloc.0
-			IL_0062: ldarg.2
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0068: stloc.1
-			IL_0069: ldc.i4.0
-			IL_006a: call bool [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::IsPristine(valuetype [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeFamily)
-			IL_006f: brfalse IL_00a8
+			IL_006f: ldstr "test-realpath.txt"
+			IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+			IL_0079: box [System.Runtime]System.Boolean
+			IL_007e: stloc.s 4
+			IL_0080: br IL_0099
 
-			IL_0074: ldloc.1
-			IL_0075: isinst [System.Runtime]System.String
-			IL_007a: dup
-			IL_007b: brtrue IL_0092
+			IL_0085: pop
 
-			IL_0080: pop
-			IL_0081: ldloc.1
-			IL_0082: ldstr "includes"
-			IL_0087: call string [JavaScriptRuntime]JavaScriptRuntime.IntrinsicPrototypeEpochs::TryUnwrapStringObjectReceiver(object, string)
-			IL_008c: dup
-			IL_008d: brfalse IL_00a7
+			IL_0086: ldloc.s 4
+			IL_0088: ldstr "includes"
+			IL_008d: ldstr "test-realpath.txt"
+			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
+			IL_0097: stloc.s 4
 
-			IL_0092: ldstr "test-realpath.txt"
-			IL_0097: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
-			IL_009c: box [System.Runtime]System.Boolean
-			IL_00a1: stloc.1
-			IL_00a2: br IL_00b9
+			IL_0099: ldloc.0
+			IL_009a: ldstr "Contains filename:"
+			IL_009f: ldloc.s 4
+			IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a6: pop
+			IL_00a7: ldarg.0
+			IL_00a8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate Modules.FSPromises_Realpath/Scope::require
+			IL_00ad: stloc.s 5
+			IL_00af: ldloc.s 5
+			IL_00b1: ldstr "fs"
+			IL_00b6: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object)
+			IL_00bb: stloc.s 6
+			IL_00bd: ldarg.0
+			IL_00be: ldfld object Modules.FSPromises_Realpath/Scope::testFile
+			IL_00c3: stloc.s 4
+			IL_00c5: ldloc.s 6
+			IL_00c7: ldstr "rmSync"
+			IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
+			IL_00d1: brtrue IL_00e4
 
-			IL_00a7: pop
+			IL_00d6: ldloc.s 6
+			IL_00d8: ldloc.s 4
+			IL_00da: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
+			IL_00df: br IL_00fc
 
-			IL_00a8: ldloc.1
-			IL_00a9: ldstr "includes"
-			IL_00ae: ldstr "test-realpath.txt"
-			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember1(object, string, object)
-			IL_00b8: stloc.1
+			IL_00e4: ldloc.s 6
+			IL_00e6: ldstr "rmSync"
+			IL_00eb: ldc.i4.1
+			IL_00ec: newarr [System.Runtime]System.Object
+			IL_00f1: dup
+			IL_00f2: ldc.i4.0
+			IL_00f3: ldloc.s 4
+			IL_00f5: stelem.ref
+			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
+			IL_00fb: pop
 
-			IL_00b9: ldloc.0
-			IL_00ba: ldstr "Contains filename:"
-			IL_00bf: ldloc.1
-			IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00c5: pop
-			IL_00c6: ldarg.0
-			IL_00c7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate Modules.FSPromises_Realpath/Scope::require
-			IL_00cc: stloc.s 4
-			IL_00ce: ldloc.s 4
-			IL_00d0: ldstr "fs"
-			IL_00d5: call !!0 [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireRuntime::RequireObject<class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule>(class [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate, object)
-			IL_00da: stloc.s 5
-			IL_00dc: ldarg.0
-			IL_00dd: ldfld object Modules.FSPromises_Realpath/Scope::testFile
-			IL_00e2: stloc.1
-			IL_00e3: ldloc.s 5
-			IL_00e5: ldstr "rmSync"
-			IL_00ea: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::HasOwnPropertyOverride(object, string)
-			IL_00ef: brtrue IL_0101
-
-			IL_00f4: ldloc.s 5
-			IL_00f6: ldloc.1
-			IL_00f7: callvirt instance void [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IFsModule::rmSync(object)
-			IL_00fc: br IL_0118
-
-			IL_0101: ldloc.s 5
-			IL_0103: ldstr "rmSync"
-			IL_0108: ldc.i4.1
-			IL_0109: newarr [System.Runtime]System.Object
-			IL_010e: dup
-			IL_010f: ldc.i4.0
-			IL_0110: ldloc.1
-			IL_0111: stelem.ref
-			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallOwnPropertyMember(object, string, object[])
-			IL_0117: pop
-
-			IL_0118: ldnull
-			IL_0119: ret
+			IL_00fc: ldnull
+			IL_00fd: ret
 		} // end of method ArrowFunction_L8C28::__js_call__
 
 	} // end of class ArrowFunction_L8C28

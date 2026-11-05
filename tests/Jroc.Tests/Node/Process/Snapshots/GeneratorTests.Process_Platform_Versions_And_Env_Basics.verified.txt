@@ -103,7 +103,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 1444 (0x5a4)
+		// Code size: 1368 (0x558)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Platform_Versions_And_Env_Basics/Scope,
@@ -121,10 +121,11 @@
 			[12] string,
 			[13] object,
 			[14] object,
-			[15] object,
+			[15] valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue,
 			[16] object,
 			[17] object,
-			[18] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[18] object,
+			[19] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Process_Platform_Versions_And_Env_Basics/Scope::.ctor()
@@ -375,7 +376,7 @@
 		IL_0316: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_031b: stloc.s 5
 		IL_031d: ldloc.s 5
-		IL_031f: brfalse IL_03ed
+		IL_031f: brfalse IL_03c6
 
 		IL_0324: ldstr "process"
 		IL_0329: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -409,170 +410,147 @@
 		IL_038d: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
 		IL_0392: stloc.s 4
-		IL_0394: volatile.
-		IL_0396: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_039b: brfalse IL_03b1
+		IL_0394: ldloc.s 4
+		IL_0396: ldstr "length"
+		IL_039b: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+		IL_03a0: stloc.s 15
+		IL_03a2: ldloc.s 15
+		IL_03a4: ldc.r8 0.0
+		IL_03ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+		IL_03b2: stloc.s 5
+		IL_03b4: ldloc.s 5
+		IL_03b6: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_03bb: stloc.s 6
+		IL_03bd: ldloc.s 6
+		IL_03bf: stloc.s 13
+		IL_03c1: br IL_03c6
 
-		IL_03a0: ldloc.s 4
-		IL_03a2: ldstr "length"
-		IL_03a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_03ac: br IL_03c7
+		IL_03c6: ldloc.s 13
+		IL_03c8: stloc.2
+		IL_03c9: ldstr "process"
+		IL_03ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_03d3: volatile.
+		IL_03d5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_03da: brfalse IL_03ee
 
-		IL_03b1: ldloc.s 4
-		IL_03b3: ldstr "length"
-		IL_03b8: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:104"
-		IL_03bd: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_11
-		IL_03c2: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_03df: ldstr "env"
+		IL_03e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_03e9: br IL_0402
 
-		IL_03c7: stloc.s 4
-		IL_03c9: ldloc.s 4
-		IL_03cb: ldc.r8 0.0
-		IL_03d4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-		IL_03d9: stloc.s 5
-		IL_03db: ldloc.s 5
-		IL_03dd: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_03e2: stloc.s 6
-		IL_03e4: ldloc.s 6
-		IL_03e6: stloc.s 13
-		IL_03e8: br IL_03ed
+		IL_03ee: ldstr "env"
+		IL_03f3: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:118"
+		IL_03f8: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
+		IL_03fd: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_03ed: ldloc.s 13
-		IL_03ef: stloc.2
-		IL_03f0: ldstr "process"
-		IL_03f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_03fa: volatile.
-		IL_03fc: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_0401: brfalse IL_0415
+		IL_0402: stloc.s 4
+		IL_0404: ldloc.s 4
+		IL_0406: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_040b: stloc.s 12
+		IL_040d: ldloc.s 12
+		IL_040f: ldstr "object"
+		IL_0414: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0419: stloc.s 5
+		IL_041b: ldloc.s 5
+		IL_041d: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_0422: stloc.s 6
+		IL_0424: ldloc.s 6
+		IL_0426: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_042b: stloc.s 5
+		IL_042d: ldloc.s 5
+		IL_042f: brfalse IL_048f
 
-		IL_0406: ldstr "env"
-		IL_040b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0410: br IL_0429
+		IL_0434: ldstr "process"
+		IL_0439: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_043e: volatile.
+		IL_0440: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0445: brfalse IL_0459
 
-		IL_0415: ldstr "env"
-		IL_041a: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:118"
-		IL_041f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_12
-		IL_0424: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_044a: ldstr "env"
+		IL_044f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0454: br IL_046d
 
-		IL_0429: stloc.s 4
-		IL_042b: ldloc.s 4
-		IL_042d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0432: stloc.s 12
-		IL_0434: ldloc.s 12
-		IL_0436: ldstr "object"
-		IL_043b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0440: stloc.s 5
-		IL_0442: ldloc.s 5
-		IL_0444: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_0449: stloc.s 6
-		IL_044b: ldloc.s 6
-		IL_044d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0452: stloc.s 5
-		IL_0454: ldloc.s 5
-		IL_0456: brfalse IL_04b6
+		IL_0459: ldstr "env"
+		IL_045e: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:128"
+		IL_0463: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
+		IL_0468: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_045b: ldstr "process"
-		IL_0460: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0465: volatile.
-		IL_0467: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_046c: brfalse IL_0480
+		IL_046d: stloc.s 4
+		IL_046f: ldloc.s 4
+		IL_0471: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
+		IL_0476: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_047b: stloc.s 5
+		IL_047d: ldloc.s 5
+		IL_047f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_0484: stloc.s 7
+		IL_0486: ldloc.s 7
+		IL_0488: stloc.s 17
+		IL_048a: br IL_0493
 
-		IL_0471: ldstr "env"
-		IL_0476: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_047b: br IL_0494
+		IL_048f: ldloc.s 6
+		IL_0491: stloc.s 17
 
-		IL_0480: ldstr "env"
-		IL_0485: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:128"
-		IL_048a: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_13
-		IL_048f: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0493: ldloc.s 17
+		IL_0495: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_049a: stloc.s 5
+		IL_049c: ldloc.s 5
+		IL_049e: brfalse IL_0515
 
-		IL_0494: stloc.s 4
-		IL_0496: ldloc.s 4
-		IL_0498: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Null
-		IL_049d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
-		IL_04a2: stloc.s 5
-		IL_04a4: ldloc.s 5
-		IL_04a6: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_04ab: stloc.s 7
-		IL_04ad: ldloc.s 7
-		IL_04af: stloc.s 16
-		IL_04b1: br IL_04ba
+		IL_04a3: ldstr "process"
+		IL_04a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_04ad: volatile.
+		IL_04af: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_04b4: brfalse IL_04c8
 
-		IL_04b6: ldloc.s 6
-		IL_04b8: stloc.s 16
+		IL_04b9: ldstr "env"
+		IL_04be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_04c3: br IL_04dc
 
-		IL_04ba: ldloc.s 16
-		IL_04bc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_04c1: stloc.s 5
-		IL_04c3: ldloc.s 5
-		IL_04c5: brfalse IL_0561
+		IL_04c8: ldstr "env"
+		IL_04cd: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:143"
+		IL_04d2: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
+		IL_04d7: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_04ca: ldstr "process"
-		IL_04cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_04d4: volatile.
-		IL_04d6: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_04db: brfalse IL_04ef
+		IL_04dc: stloc.s 4
+		IL_04de: ldloc.s 4
+		IL_04e0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_04e5: ldstr "length"
+		IL_04ea: call valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemValue(object, string)
+		IL_04ef: stloc.s 15
+		IL_04f1: ldloc.s 15
+		IL_04f3: ldc.r8 0.0
+		IL_04fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue, float64)
+		IL_0501: stloc.s 5
+		IL_0503: ldloc.s 5
+		IL_0505: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_050a: stloc.s 6
+		IL_050c: ldloc.s 6
+		IL_050e: stloc.s 17
+		IL_0510: br IL_0515
 
-		IL_04e0: ldstr "env"
-		IL_04e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_04ea: br IL_0503
-
-		IL_04ef: ldstr "env"
-		IL_04f4: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:143"
-		IL_04f9: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_14
-		IL_04fe: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_0503: stloc.s 4
-		IL_0505: ldloc.s 4
-		IL_0507: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
-		IL_050c: volatile.
-		IL_050e: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0513: brfalse IL_0527
-
-		IL_0518: ldstr "length"
-		IL_051d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0522: br IL_053b
-
-		IL_0527: ldstr "length"
-		IL_052c: ldstr "Process_Platform_Versions_And_Env_Basics:Modules.Process_Platform_Versions_And_Env_Basics:__js_module_init__:146"
-		IL_0531: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_15
-		IL_0536: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
-
-		IL_053b: stloc.s 4
-		IL_053d: ldloc.s 4
-		IL_053f: ldc.r8 0.0
-		IL_0548: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, float64)
-		IL_054d: stloc.s 5
-		IL_054f: ldloc.s 5
-		IL_0551: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_0556: stloc.s 6
-		IL_0558: ldloc.s 6
-		IL_055a: stloc.s 16
-		IL_055c: br IL_0561
-
-		IL_0561: ldloc.s 16
-		IL_0563: stloc.3
-		IL_0564: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0569: stloc.s 18
-		IL_056b: ldloc.s 18
-		IL_056d: ldstr "known platform"
-		IL_0572: ldloc.1
-		IL_0573: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0578: pop
-		IL_0579: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_057e: stloc.s 18
-		IL_0580: ldloc.s 18
-		IL_0582: ldstr "has versions.node"
-		IL_0587: ldloc.2
-		IL_0588: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_058d: pop
-		IL_058e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0593: stloc.s 18
-		IL_0595: ldloc.s 18
-		IL_0597: ldstr "has env"
-		IL_059c: ldloc.3
-		IL_059d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_05a2: pop
-		IL_05a3: ret
+		IL_0515: ldloc.s 17
+		IL_0517: stloc.3
+		IL_0518: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_051d: stloc.s 19
+		IL_051f: ldloc.s 19
+		IL_0521: ldstr "known platform"
+		IL_0526: ldloc.1
+		IL_0527: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_052c: pop
+		IL_052d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0532: stloc.s 19
+		IL_0534: ldloc.s 19
+		IL_0536: ldstr "has versions.node"
+		IL_053b: ldloc.2
+		IL_053c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0541: pop
+		IL_0542: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0547: stloc.s 19
+		IL_0549: ldloc.s 19
+		IL_054b: ldstr "has env"
+		IL_0550: ldloc.3
+		IL_0551: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0556: pop
+		IL_0557: ret
 	} // end of method Process_Platform_Versions_And_Env_Basics::__js_module_init__
 
 } // end of class Modules.Process_Platform_Versions_And_Env_Basics

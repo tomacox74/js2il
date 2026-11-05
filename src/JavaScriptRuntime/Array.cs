@@ -4026,6 +4026,24 @@ namespace JavaScriptRuntime
             }
         }
 
+        public JsValue GetItemValue(double index)
+        {
+            if (!HasNonDataDescriptors
+                && !HasSharedIntrinsicBaseline
+                && _numberItems is not null
+                && index >= 0 && index <= int.MaxValue
+                && index % 1.0 == 0.0)
+            {
+                var intIndex = (int)index;
+                if (intIndex < Count && HasDenseIndex(intIndex))
+                {
+                    return JsValue.FromNumber(_numberItems[intIndex]);
+                }
+            }
+
+            return JsValue.FromObject(this[index]);
+        }
+
         public double GetItemAsNumber(double index)
         {
             var isDenseIndex = !double.IsNaN(index)
