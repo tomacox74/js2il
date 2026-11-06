@@ -2299,6 +2299,11 @@ in the current fixture view, under the same current reporting targets and
 read-only reporting/backup roles. It grants no raw-table or API access.
 Scope/status totals aggregate per current target to avoid sorting the entire
 inventory by a wide grouping key. Empty targets still produce zero scopes.
+The detail-count join is a parameterized lateral lookup with an `OFFSET 0`
+optimization fence. Keep that fence: without it PostgreSQL can evaluate the
+security-barrier helper for the entire inventory before joining the 500 selected
+rows. Confirm the detail-count subplan loops are bounded by the selected rows in
+the deployed reader's plan; owner-only diagnostic inlining is not sufficient.
 
 `20261106040000_test262_catalogue_current_reporting_performance.sql` aggregates
 required variants once per targeted corpus and recorded required variants before
