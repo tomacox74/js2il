@@ -10,6 +10,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   for private methods without changing their names. Port ten pinned Test262
   Function failures: four private-method cases now pass, and six eval-dependent
   caller cases are explicitly skipped.
+- test262: verify 1 additional pinned fixtures from native batch `c9ff873a-2c94-531e-a278-b041ee41b95a`.
 - perf(compiler): preserve tagged property and array values through deferred
   numeric coercion and relational comparisons, avoiding numeric boxing without
   moving getters or coercions or changing dynamic fallback semantics.

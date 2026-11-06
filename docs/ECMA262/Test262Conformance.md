@@ -351,9 +351,9 @@ is branch-local, not central trusted acceptance.
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,874 | 37 | 5,601 | 23,512 | **76.02%** |
+| Built-in objects and APIs | 17,875 | 37 | 5,600 | 23,512 | **76.03%** |
 | Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
-| **Total** | 40,010 | 663 | 7,568 | 48,241 | **82.94%** |
+| **Total** | 40,011 | 663 | 7,567 | 48,241 | **82.94%** |
 
 ## Language Areas
 
@@ -555,7 +555,7 @@ is branch-local, not central trusted acceptance.
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
-| `Temporal` | 0 | 0 | 4,584 | 4,584 | **0.00%** |
+| `Temporal` | 1 | 0 | 4,583 | 4,584 | **0.02%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,377 | 0 | 61 | 1,438 | **95.76%** |
 | `TypedArrayConstructors` | 703 | 0 | 33 | 736 | **95.52%** |
