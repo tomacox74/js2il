@@ -64,6 +64,21 @@ public sealed partial class HIRToLIRLowerer
                 }));
         }
 
+        foreach (var binding in _scope!.Bindings.Values)
+        {
+            if (binding.Kind != BindingKind.Var || binding.EsModuleExports == null)
+            {
+                continue;
+            }
+            foreach (var export in binding.EsModuleExports)
+            {
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                    EsModuleIntrinsic,
+                    nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.InitializeVarExport),
+                    [CreateEsModuleStringTemp(export.ModuleId), CreateEsModuleStringTemp(export.ExportName)]));
+            }
+        }
+
         // 2. Mark the exports object as an ES module (__esModule) for namespace/interop consumers.
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
             EsModuleIntrinsic,
@@ -226,15 +241,13 @@ public sealed partial class HIRToLIRLowerer
     }
 
     /// <summary>
-    /// Lowers a read of a live named import binding to <c>EsModuleLinker.GetImport(source, name)</c>,
-    /// re-reading the source module property on every access. Returns false when this binding is not a
-    /// named import.
+    /// Lowers a named or default import read to a live source-module lookup.
     /// </summary>
     private bool TryLowerNamedEsModuleImportRead(BindingInfo binding, out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
-        if (binding.EsModuleImport is not { Kind: EsModuleImportKind.Named } namedImport)
+        if (binding.EsModuleImport is not { Kind: EsModuleImportKind.Named or EsModuleImportKind.Default } namedImport)
         {
             return false;
         }
@@ -246,15 +259,17 @@ public sealed partial class HIRToLIRLowerer
         }
 
         resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            EsModuleIntrinsic,
-            nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetImport),
-            new[]
-            {
-                EnsureObject(sourceTemp),
-                CreateEsModuleStringTemp(namedImport.ImportName ?? binding.Name)
-            },
-            resultTempVar));
+        _methodBodyIR.Instructions.Add(namedImport.Kind == EsModuleImportKind.Default
+            ? new LIRCallIntrinsicStatic(
+                EsModuleIntrinsic,
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetDefault),
+                [EnsureObject(sourceTemp)],
+                resultTempVar)
+            : new LIRCallIntrinsicStatic(
+                EsModuleIntrinsic,
+                nameof(JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetImport),
+                [EnsureObject(sourceTemp), CreateEsModuleStringTemp(namedImport.ImportName ?? binding.Name)],
+                resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }

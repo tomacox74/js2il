@@ -9,15 +9,32 @@ namespace Jroc.Tests.Import;
 public sealed class ImportRewriteErrorTests
 {
     [Fact]
-    public void Import_WriteViaDestructuringAssignment_ShouldFailCompilation()
+    public void Import_WriteViaDestructuringAssignment_CompilesAndThrowsTypeErrorAtRuntime()
     {
-        var ex = Assert.Throws<InvalidOperationException>(() => Compile("""
+        const string entrySource = """
 import { x } from "./lib.mjs";
 ({ x } = { x: 1 });
 console.log(x);
-""", libSource: "export let x = 0;\n"));
+""";
+        var root = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "ImportRewriteErrors", Guid.NewGuid().ToString("N"));
+        var entryPath = Path.Combine(root, "main.mjs");
+        var fileSystem = new MockFileSystem();
+        fileSystem.AddFile(entryPath, entrySource, null);
+        fileSystem.AddFile(Path.Combine(root, "lib.mjs"), "export let x = 0;\n", null);
 
-        Assert.Contains("Cannot assign to import binding 'x'", ex.Message);
+        // Compile outside the exception assertion: a compiler rejection must fail this test.
+        var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath)
+        {
+            SourceText = entrySource,
+            FileSystem = fileSystem,
+            ParseAsModule = true
+        });
+        Assert.NotEmpty(artifact.PeBytes);
+
+        Assert.Throws<JavaScriptRuntime.TypeError>(() => InMemoryTestCompiler.ExecuteArtifact(
+            artifact,
+            entryPath,
+            nameof(Import_WriteViaDestructuringAssignment_CompilesAndThrowsTypeErrorAtRuntime)));
     }
 
     [Fact]

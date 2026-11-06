@@ -2989,6 +2989,29 @@ function __jroc_esm_export(name, getter) {
             }
         }
 
+        foreach (var localExport in record.LocalExportEntries.ToArray())
+        {
+            var import = record.ImportEntries.FirstOrDefault(entry =>
+                entry.Kind != ModuleImportKind.SideEffect
+                && string.Equals(entry.LocalName, localExport.LocalName, StringComparison.Ordinal));
+            if (import == null)
+            {
+                continue;
+            }
+
+            record.LocalExportEntries.Remove(localExport);
+            record.IndirectExportEntries.Add(new ModuleExportEntry
+            {
+                Kind = import.Kind == ModuleImportKind.Namespace
+                    ? ModuleExportKind.Namespace
+                    : ModuleExportKind.Indirect,
+                ExportName = localExport.ExportName,
+                LocalName = import.Kind == ModuleImportKind.Namespace ? "*namespace*" : import.ImportName ?? "default",
+                ModuleRequest = import.ModuleRequest,
+                ImportType = import.ImportType
+            });
+        }
+
         return record;
     }
 
@@ -3084,7 +3107,7 @@ function __jroc_esm_export(name, getter) {
                 case ModuleExportResolutionStatus.Resolved:
                     record.ResolvedExports[exportName] = resolution.Export!;
                     break;
-                case ModuleExportResolutionStatus.Ambiguous:
+                case ModuleExportResolutionStatus.Ambiguous when directExportNames.Contains(exportName):
                     record.LinkErrors.Add($"Ambiguous export '{exportName}' in module '{module.ModuleId}'.");
                     hadErrors = true;
                     break;
@@ -3344,7 +3367,6 @@ function __jroc_esm_export(name, getter) {
 
         return ReferenceEquals(current.TargetModule, candidate.TargetModule)
             && string.Equals(current.BindingName, candidate.BindingName, StringComparison.Ordinal)
-            && current.Kind == candidate.Kind
             && current.ImportType == candidate.ImportType;
     }
 
@@ -3397,10 +3419,7 @@ function __jroc_esm_export(name, getter) {
     }
 
     /// <summary>
-    /// Validates native static ESM early errors that the legacy source-rewrite path would otherwise
-    /// enforce, in particular assignments/updates/deletes targeting an imported binding. Reuses the
-    /// scope-aware import-reference walker in check-only mode (mapping each import name to itself so no
-    /// rewrite is applied).
+    /// Validates the supported native static ESM import attributes.
     /// </summary>
     private static bool TryValidateNativeStaticEsmBindings(
         string source,
@@ -3423,26 +3442,7 @@ function __jroc_esm_export(name, getter) {
             }
         }
 
-        var importedBindings = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var importEntry in moduleRecord.ImportEntries)
-        {
-            if (importEntry.Kind == ModuleImportKind.SideEffect
-                || string.IsNullOrEmpty(importEntry.LocalName))
-            {
-                continue;
-            }
-
-            // Map the imported local name to itself: the walker still enforces write/delete early
-            // errors, and any rename edit is a no-op that we discard.
-            importedBindings[importEntry.LocalName!] = importEntry.LocalName!;
-        }
-
-        if (importedBindings.Count == 0)
-        {
-            return true;
-        }
-
-        return TryRewriteImportedBindingReferences(source, ast, importedBindings, out _, out error);
+        return true;
     }
 
     private static bool IsDynamicExportSurface(ModuleDefinition module)

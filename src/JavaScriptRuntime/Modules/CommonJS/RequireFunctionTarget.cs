@@ -23,6 +23,11 @@ internal sealed class RequireFunctionTarget
 
     internal RequireDelegate Require => _require;
 
+    internal object? Import(string requestedSpecifier)
+        => _preserveResolvableParentTraversal && ShouldPreserveRawSpecifier(requestedSpecifier)
+            ? _requireService.ImportModule(requestedSpecifier)
+            : _requireService.ImportModuleFrom(_parentModuleId, requestedSpecifier);
+
     internal bool IsFunctionValueMaterializedForTests
         => Volatile.Read(ref _functionValue) != null;
 

@@ -481,9 +481,9 @@ namespace Jroc.SymbolTables
                 };
                 globalScope.Bindings[localName] = localBinding;
 
-                if (kind != EsModuleImportKind.Named)
+                if (kind == EsModuleImportKind.Namespace)
                 {
-                    // Default/namespace imports hold their value in normal storage, assigned once at init.
+                    // Namespace imports hold a stable object; value imports are read live.
                     localBinding.HasWrite = true;
                     plan.ImportInits.Add(new EsModuleImportInit
                     {

@@ -6,6 +6,13 @@ namespace JavaScriptRuntime.Modules.CommonJS;
 
 internal sealed partial class Require
 {
+    private static Module GetEvaluationCycleRoot(Module module)
+    {
+        while (module.EvaluationCycleRoot is { } root && !ReferenceEquals(root, module))
+            module = root;
+        return module;
+    }
+
     private Dictionary<string, JsCompiledEsModuleAttribute> GetEsModuleInformation()
         => _state.CompiledEsModuleInfo ??= _localModulesAssembly!
             .GetCustomAttributes<JsCompiledEsModuleAttribute>()
@@ -41,7 +48,9 @@ internal sealed partial class Require
             if (info.ResolutionError is { } resolutionError)
                 throw new ReferenceError(resolutionError);
             if (_modules.TryGetValue("compiled:" + id, out var module)
-                && (module.loaded || module.IsSchedulingEvaluation || module.IsExecutingBody))
+                && (GetEvaluationCycleRoot(module).loaded
+                    || GetEvaluationCycleRoot(module).IsSchedulingEvaluation
+                    || GetEvaluationCycleRoot(module).IsExecutingBody))
                 return;
             if (info.HasTopLevelAwait)
             {
@@ -84,7 +93,10 @@ internal sealed partial class Require
         if (!visited.Add(moduleId))
             return true;
         if (_modules.TryGetValue("compiled:" + moduleId, out var module))
-            return module.loaded || module.EvaluationError is not null;
+        {
+            var cycleRoot = GetEvaluationCycleRoot(module);
+            return cycleRoot.loaded || cycleRoot.EvaluationError is not null;
+        }
         if (!GetEsModuleInformation().TryGetValue(moduleId, out var info))
             return true;
         if (info.HasTopLevelAwait)
@@ -103,13 +115,17 @@ internal sealed partial class Require
     internal bool TryExecuteNativeModule(Module module, Action initializer)
     {
         var id = NormalizeModuleIdKey(module.id);
-        if (!GetEsModuleInformation().TryGetValue(id, out var info) || !info.IsNativeEsModule
-            || !HasAsynchronousEvaluation(id, new HashSet<string>(StringComparer.Ordinal)))
+        if (!GetEsModuleInformation().TryGetValue(id, out var info) || !info.IsNativeEsModule)
+            return false;
+
+        ESM.EsModuleLinker.PredeclareExports(module.exports, id, info.ExportNames);
+        if (!HasAsynchronousEvaluation(id, new HashSet<string>(StringComparer.Ordinal)))
             return false;
 
         module.EvaluationPromise = Promise.CreateModuleEvaluation();
+        module.EvaluationCycleRoot = module;
+        module.EvaluationDfsIndex = _state.NextModuleEvaluationDfsIndex++;
         module.IsSchedulingEvaluation = true;
-        ESM.EsModuleLinker.PredeclareExports(module.exports, id, info.ExportNames);
 
         void Complete()
         {
@@ -163,9 +179,18 @@ internal sealed partial class Require
             foreach (var dependency in GetEvaluationDependencies(info))
             {
                 RequireForEvaluation(dependency);
-                if (!_modules.TryGetValue("compiled:" + dependency, out var dependencyModule)
-                    || dependencyModule.IsSchedulingEvaluation
-                    || dependencyModule.EvaluationPromise is not { } evaluation)
+                if (!_modules.TryGetValue("compiled:" + dependency, out var dependencyModule))
+                    continue;
+                var cycleRoot = GetEvaluationCycleRoot(dependencyModule);
+                if (cycleRoot.IsSchedulingEvaluation
+                    && cycleRoot.EvaluationDfsIndex < GetEvaluationCycleRoot(module).EvaluationDfsIndex)
+                    module.EvaluationCycleRoot = cycleRoot;
+                if (dependencyModule.IsSchedulingEvaluation)
+                    continue;
+                // Within an active cycle wait for the dependency body; external importers
+                // must instead wait for the whole cycle to finish.
+                var evaluationModule = cycleRoot.IsSchedulingEvaluation ? dependencyModule : cycleRoot;
+                if (evaluationModule.EvaluationPromise is not { } evaluation)
                     continue;
                 if (!evaluation.TryGetModuleEvaluationResult(out var rejected, out var reason))
                     pending.Add(evaluation);
