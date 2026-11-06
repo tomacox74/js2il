@@ -59,6 +59,9 @@ class PostgresTests(unittest.TestCase):
             contract=self.db.execute("SELECT relacl,reloptions,relowner FROM pg_class WHERE oid='test262_reporting.v_current_fixture_status'::regclass").fetchone()
             self.assertEqual(contract,self.current_reporting_contract)
             self.assertIn('security_barrier=true',contract[1])
+            self.assertTrue(self.db.execute("SELECT has_table_privilege('test262_reporter','test262_reporting.v_current_required_variants','SELECT')").fetchone()[0])
+            for role in ('anon','authenticated','service_role'):
+                self.assertFalse(self.db.execute("SELECT has_table_privilege(%s,'test262_reporting.v_current_required_variants','SELECT')",(role,)).fetchone()[0])
 
     def test_reconciliation_relationship_contract_matches_deployed_schema(self):
         from scripts.test262.central.reconciliation import CONTRACT
