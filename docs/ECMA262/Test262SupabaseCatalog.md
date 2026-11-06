@@ -2290,6 +2290,16 @@ count still returns zero when there are no reporting targets. Inspect panel
 distinct projections. The acceptance collector checks shared-source references
 and transformations as part of the deployed contract, in addition to SQL.
 
+`20261106043000_test262_catalogue_lazy_variant_reporting.sql` keeps exact
+required-variant counts available but skips counting absent evidence when
+deciding that a fixture is incomplete. The shared aggregate query counts detail
+variants only after selecting its first 500 attention rows. Its auxiliary
+`v_current_required_variants` view exposes only keys and counts already readable
+in the current fixture view, under the same current reporting targets and
+read-only reporting/backup roles. It grants no raw-table or API access.
+Scope/status totals aggregate per current target to avoid sorting the entire
+inventory by a wide grouping key. Empty targets still produce zero scopes.
+
 `20261106040000_test262_catalogue_current_reporting_performance.sql` aggregates
 required variants once per targeted corpus and recorded required variants before
 joining the fixture inventory. It materializes only the current eligibility
