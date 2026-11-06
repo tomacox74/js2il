@@ -72,7 +72,7 @@
     {
       "clause": "19.2.6.2",
       "title": "decodeURIComponent ( encodedURIComponent )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent"
     },
     {
@@ -238,7 +238,15 @@
           "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.6_T1.js",
           "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.2_T1.js",
           "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.3_T1.js",
-          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A3_T1.js"
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A3_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A1.13_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.4_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A2.5_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A3_T3.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/S15.1.3.1_A6_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/not-a-constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURI/JavaScript/prop-desc.js"
         ],
         "test262Paths": [
           "test/built-ins/decodeURI/S15.1.3.1_A1.1_T1.js",
@@ -250,9 +258,44 @@
           "test/built-ins/decodeURI/S15.1.3.1_A1.6_T1.js",
           "test/built-ins/decodeURI/S15.1.3.1_A2.2_T1.js",
           "test/built-ins/decodeURI/S15.1.3.1_A2.3_T1.js",
-          "test/built-ins/decodeURI/S15.1.3.1_A3_T1.js"
+          "test/built-ins/decodeURI/S15.1.3.1_A3_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A1.13_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A2.4_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A2.5_T1.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A3_T3.js",
+          "test/built-ins/decodeURI/S15.1.3.1_A6_T1.js",
+          "test/built-ins/decodeURI/name.js",
+          "test/built-ins/decodeURI/not-a-constructor.js",
+          "test/built-ins/decodeURI/prop-desc.js"
         ],
-        "notes": "Implements strict UTF-8 percent decoding, malformed-escape URIError behavior, and decodeURI reserved-character escape preservation. decodeURIComponent and encodeURIComponent remain unsupported, and broader coercion and metadata coverage remains to be added."
+        "notes": "Implements strict UTF-8 percent decoding, malformed-escape URIError behavior, and reserved-character escape preservation. Fresh branch-local native validation covers all 55 pinned decodeURI cases, including 45 newly verified tests for multibyte decoding, malformed continuation bytes, reserved escapes, string coercion, global descriptors, function name/length, and nonconstructibility. The implementation was unchanged by this coverage expansion."
+      },
+      {
+        "clause": "19.2.6.2",
+        "feature": "decodeURIComponent(encodedURIComponent)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/S15.1.3.2_A1.13_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/S15.1.3.2_A2.4_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/S15.1.3.2_A2.5_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/S15.1.3.2_A3_T3.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/S15.1.3.2_A6_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/not-a-constructor.js",
+          "tests/Jroc.Test262.Tests/built-ins/decodeURIComponent/JavaScript/prop-desc.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/decodeURIComponent/S15.1.3.2_A1.13_T1.js",
+          "test/built-ins/decodeURIComponent/S15.1.3.2_A2.4_T1.js",
+          "test/built-ins/decodeURIComponent/S15.1.3.2_A2.5_T1.js",
+          "test/built-ins/decodeURIComponent/S15.1.3.2_A3_T3.js",
+          "test/built-ins/decodeURIComponent/S15.1.3.2_A6_T1.js",
+          "test/built-ins/decodeURIComponent/name.js",
+          "test/built-ins/decodeURIComponent/not-a-constructor.js",
+          "test/built-ins/decodeURIComponent/prop-desc.js"
+        ],
+        "notes": "Fresh branch-local native validation verifies 55 of 56 pinned cases using the existing implementation: strict UTF-8 percent decoding including reserved delimiters, URIError for malformed escapes, string coercion, global descriptors, function name/length, and nonconstructibility. All 110 required strict/non-strict variants of these 55 tests pass without product or harness changes. The remaining throw-URIError.js case is not yet verified by the published coverage."
       },
       {
         "clause": "19.2.6.3",

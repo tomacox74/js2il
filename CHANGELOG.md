@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 100 additional pinned URI-decoding cases: 45 decodeURI and
+  55 decodeURIComponent tests, covering malformed UTF-8, multibyte decoding,
+  reserved characters, string coercion, and function metadata. All 200 required
+  strict/non-strict variants pass without product changes or eval exclusions.
 - fix(runtime): return valid native-function syntax from Function.prototype.toString
   for private methods without changing their names. Port ten pinned Test262
   Function failures: four private-method cases now pass, and six eval-dependent

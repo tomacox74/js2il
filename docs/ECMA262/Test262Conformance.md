@@ -11,9 +11,9 @@ Coverage for the current development branch. Counts and percentages are per stan
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,875 | 37 | 5,600 | 23,512 | **76.03%** |
+| Built-in objects and APIs | 17,975 | 37 | 5,500 | 23,512 | **76.45%** |
 | Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
-| **Total** | 40,011 | 663 | 7,567 | 48,241 | **82.94%** |
+| **Total** | 40,111 | 663 | 7,467 | 48,241 | **83.15%** |
 
 ## Language Areas
 
@@ -176,8 +176,8 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `Boolean` | 50 | 0 | 1 | 51 | **98.04%** |
 | `DataView` | 552 | 0 | 9 | 561 | **98.40%** |
 | `Date` | 594 | 0 | 0 | 594 | **100.00%** |
-| `decodeURI` | 10 | 0 | 45 | 55 | **18.18%** |
-| `decodeURIComponent` | 0 | 0 | 56 | 56 | **0.00%** |
+| `decodeURI` | 55 | 0 | 0 | 55 | **100.00%** |
+| `decodeURIComponent` | 55 | 0 | 1 | 56 | **98.21%** |
 | `DisposableStack` | 93 | 0 | 0 | 93 | **100.00%** |
 | `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
 | `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
