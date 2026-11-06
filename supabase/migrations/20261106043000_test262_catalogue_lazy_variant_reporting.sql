@@ -49,5 +49,11 @@ SELECT t.repository_id,t.channel,t.evidence_kind,t.provenance_id,f.fixture_id,
 FROM test262.reporting_targets t JOIN test262.provenances p USING(provenance_id)
 JOIN test262.fixtures f USING(corpus_id);
 REVOKE ALL ON test262_reporting.v_current_required_variants FROM PUBLIC,anon,authenticated,service_role;
-GRANT SELECT ON test262_reporting.v_current_required_variants TO test262_reporter,test262_backup;
+GRANT SELECT ON test262_reporting.v_current_required_variants TO test262_reporter;
+DO $grant$
+BEGIN
+ IF EXISTS(SELECT 1 FROM pg_roles WHERE rolname='test262_backup') THEN
+  EXECUTE 'GRANT SELECT ON test262_reporting.v_current_required_variants TO test262_backup';
+ END IF;
+END $grant$;
 
