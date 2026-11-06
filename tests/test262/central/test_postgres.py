@@ -15,6 +15,51 @@ ROOT=Path(__file__).resolve().parents[3]
 
 @unittest.skipUnless(DSN,'Disposable PostgreSQL TEST262_TEST_DSN required')
 class PostgresTests(unittest.TestCase):
+    def test_current_reporting_and_shared_panels_preserve_live_semantics(self):
+        from psycopg.rows import dict_row
+        original=(ROOT/'supabase/migrations/20261024010000_test262_catalogue_operational_reporting.sql').read_text()
+        previous=original.split('CREATE OR REPLACE VIEW test262_reporting.v_current_fixture_status WITH (security_barrier=true) AS',1)[1].split('CREATE TABLE test262.monitor_samples',1)[0]
+        dashboard=json.loads((ROOT/'grafana/dashboards/test262-conformance.json').read_text())
+        panels={p['id']:p for p in dashboard['panels']}
+        old_queries=json.loads((ROOT/'tests/test262/central/fixtures/conformance-panel-queries.json').read_text())
+        shared=panels[6]['targets'][0]['rawSql']
+        with self.db.transaction(force_rollback=True):
+            self.db.execute('CREATE TEMP VIEW previous_current_fixture_status AS '+previous)
+            # Existing independent fixtures exercise trusted/untrusted evidence,
+            # all required variants, conflicts and invalidation.
+            self.db.execute((ROOT/'tests/test262/central/api.sql').read_text())
+            self.db.execute((ROOT/'tests/test262/central/native.sql').read_text())
+            difference=self.db.execute('''WITH difference AS (
+                (SELECT * FROM previous_current_fixture_status EXCEPT ALL SELECT * FROM test262_reporting.v_current_fixture_status)
+                UNION ALL
+                (SELECT * FROM test262_reporting.v_current_fixture_status EXCEPT ALL SELECT * FROM previous_current_fixture_status))
+                SELECT count(*) FROM difference''').fetchone()[0]
+            self.assertEqual(difference,0)
+            for repository in [self.db.execute('SELECT repository_id FROM test262.api_subjects WHERE login_name=session_user').fetchone()[0],uuid.uuid4()]:
+                substitution="'"+str(repository)+"'"
+                actual=shared.replace('${repository:sqlstring}',substitution)
+                for panel_id,kind in [(4,'scope-count'),(6,'scope'),(7,'status'),(8,'attention')]:
+                    wanted=old_queries[str(panel_id)].replace('${repository:sqlstring}',substitution)
+                    fields=panels[panel_id]['transformations'][1]['options']['include']['names']
+                    with self.db.cursor(row_factory=dict_row) as cursor:
+                        cursor.execute(wanted)
+                        expected=cursor.fetchall()
+                        cursor.execute('SELECT '+','.join(fields)+' FROM ('+actual+") shared WHERE report_row=%s",(kind,))
+                        result=cursor.fetchall()
+                    self.assertEqual(sorted(map(str,result)),sorted(map(str,expected)),(panel_id,repository))
+
+    def test_current_reporting_keeps_types_security_and_grants(self):
+        original=(ROOT/'supabase/migrations/20261024010000_test262_catalogue_operational_reporting.sql').read_text()
+        previous=original.split('CREATE OR REPLACE VIEW test262_reporting.v_current_fixture_status WITH (security_barrier=true) AS',1)[1].split('CREATE TABLE test262.monitor_samples',1)[0]
+        with self.db.transaction(force_rollback=True):
+            self.db.execute('CREATE TEMP VIEW previous_current_fixture_status AS '+previous)
+            def columns(name):
+                return self.db.execute('SELECT attname,atttypid,atttypmod FROM pg_attribute WHERE attrelid=%s::regclass AND attnum>0 AND NOT attisdropped ORDER BY attnum',(name,)).fetchall()
+            self.assertEqual(columns('pg_temp.previous_current_fixture_status'),columns('test262_reporting.v_current_fixture_status'))
+            contract=self.db.execute("SELECT relacl,reloptions,relowner FROM pg_class WHERE oid='test262_reporting.v_current_fixture_status'::regclass").fetchone()
+            self.assertEqual(contract,self.current_reporting_contract)
+            self.assertIn('security_barrier=true',contract[1])
+
     def test_reconciliation_relationship_contract_matches_deployed_schema(self):
         from scripts.test262.central.reconciliation import CONTRACT
         rows=self.db.execute("""SELECT child.relname,parent.relname,
@@ -274,6 +319,8 @@ class PostgresTests(unittest.TestCase):
         reporting_migration=ROOT/'supabase/migrations/20261027230000_test262_import_reporting_performance.sql'
         migrations=set((ROOT/'supabase/migrations').glob('*test262_catalogue*.sql')) | {reporting_migration}
         for migration in sorted(migrations):
+            if migration.name=='20261106040000_test262_catalogue_current_reporting_performance.sql':
+                cls.current_reporting_contract=cls.db.execute("SELECT relacl,reloptions,relowner FROM pg_class WHERE oid='test262_reporting.v_current_fixture_status'::regclass").fetchone()
             if migration == reporting_migration:
                 cls.import_reporting_contract=cls.db.execute("""
                     SELECT relacl,reloptions FROM pg_class

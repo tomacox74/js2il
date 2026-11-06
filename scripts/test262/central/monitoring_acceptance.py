@@ -180,13 +180,21 @@ def compare_dashboard(expected, deployed):
                 for variable in dashboard.get('templating', {}).get('list', [])]
     navigation_matches = (variables(expected) == variables(deployed) and
                           expected.get('links', []) == deployed.get('links', []))
-    return {'state': 'matched' if left == right and expected_ids == deployed_ids and navigation_matches else 'query-drift',
+    def projections(dashboard):
+        return {panel['id']: {
+            'transformations': panel.get('transformations', []),
+            'shared_queries': [{key: target.get(key) for key in ('panelId', 'withTransforms', 'refId', 'datasource')}
+                              for target in panel.get('targets', []) if 'panelId' in target],
+        } for panel in dashboard['panels']}
+    projections_match = projections(expected) == projections(deployed)
+    return {'state': 'matched' if left == right and expected_ids == deployed_ids and navigation_matches and projections_match else 'query-drift',
             'missing_queries': sorted(left.keys() - right.keys()),
             'extra_queries': sorted(right.keys() - left.keys()),
             'changed_queries': sorted(key for key in left.keys() & right.keys() if left[key] != right[key]),
             'missing_panels': sorted(expected_ids - deployed_ids),
             'extra_panels': sorted(deployed_ids - expected_ids),
             'navigation_matches': navigation_matches,
+            'projections_match': projections_match,
             'expected_sha256': digest(expected), 'deployed_sha256': digest(deployed),
             'query_contract_sha256': digest(right)}
 

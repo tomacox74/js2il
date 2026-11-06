@@ -15,6 +15,18 @@ def frame(rows=None):
 
 
 class MonitoringAcceptanceTests(unittest.TestCase):
+    def test_shared_source_and_projection_drift_block_acceptance(self):
+        expected=json.loads((audit.REPO/'grafana/dashboards/test262-conformance.json').read_text())
+        live=json.loads(json.dumps(expected))
+        self.assertEqual(audit.compare_dashboard(expected,live)['state'],'matched')
+        scope=next(p for p in live['panels'] if p['id']==4)
+        scope['targets'][0]['withTransforms']=True
+        self.assertEqual(audit.compare_dashboard(expected,live)['state'],'query-drift')
+        live=json.loads(json.dumps(expected))
+        status=next(p for p in live['panels'] if p['id']==7)
+        status['transformations'][0]['options']['filters'][0]['config']['options']['value']='scope'
+        self.assertFalse(audit.compare_dashboard(expected,live)['projections_match'])
+
     def test_datasource_errors_and_malformed_frames_cannot_become_healthy(self):
         for name, document in (
                 ('http-ok-query-error', {'results': {'A': {'status': 200, 'error': 'private SQL error'}}}),
@@ -183,6 +195,8 @@ class MonitoringAcceptanceTests(unittest.TestCase):
         self.assertFalse(result['server_read_only_transaction_enforced'])
         for call in grafana.query.call_args_list:
             sql = call.args[0]
-            self.assertTrue(sql.startswith(('SELECT ', 'EXPLAIN (ANALYZE, FORMAT JSON, TIMING OFF) SELECT ')))
+            self.assertTrue(sql.startswith(('SELECT ', 'WITH current_rows AS MATERIALIZED (SELECT ',
+                'EXPLAIN (ANALYZE, FORMAT JSON, TIMING OFF) SELECT ',
+                'EXPLAIN (ANALYZE, FORMAT JSON, TIMING OFF) WITH current_rows AS MATERIALIZED (SELECT ')))
             self.assertNotIn('${repository:', sql)
             self.assertNotIn('$__timeFilter', sql)
