@@ -4,6 +4,17 @@ namespace Jroc.Test262.Tests.built_ins.Promise;
 
 public class ExecutionTests : InMemoryExecutionTestsBase
 {
+    [Fact(DisplayName = "create-resolving-functions-reject.js")] public Task create_resolving_functions_reject() => ExecutionTestFromFile("create-resolving-functions-reject");
+    [Fact(DisplayName = "create-resolving-functions-resolve.js")] public Task create_resolving_functions_resolve() => ExecutionTestFromFile("create-resolving-functions-resolve");
+    [Fact(DisplayName = "exception-after-resolve-in-thenable-job.js")] public Task exception_after_resolve_in_thenable_job() => ExecutionTestFromFile("exception-after-resolve-in-thenable-job");
+    [Fact(DisplayName = "proto-from-ctor-realm.js")] public Task proto_from_ctor_realm() => ExecutionTestFromFile("proto-from-ctor-realm");
+    [Fact(DisplayName = "reject-ignored-via-abrupt.js")] public Task reject_ignored_via_abrupt() => ExecutionTestFromFile("reject-ignored-via-abrupt");
+    [Fact(DisplayName = "reject-ignored-via-fn-deferred.js")] public Task reject_ignored_via_fn_deferred() => ExecutionTestFromFile("reject-ignored-via-fn-deferred");
+    [Fact(DisplayName = "reject-via-abrupt-queue.js")] public Task reject_via_abrupt_queue() => ExecutionTestFromFile("reject-via-abrupt-queue");
+    [Fact(DisplayName = "reject-via-abrupt.js")] public Task reject_via_abrupt() => ExecutionTestFromFile("reject-via-abrupt");
+    [Fact(DisplayName = "reject-via-fn-deferred-queue.js")] public Task reject_via_fn_deferred_queue() => ExecutionTestFromFile("reject-via-fn-deferred-queue");
+    [Fact(DisplayName = "reject-via-fn-deferred.js")] public Task reject_via_fn_deferred() => ExecutionTestFromFile("reject-via-fn-deferred");
+
     public ExecutionTests() : base("built_ins.Promise") { }
 
     [Fact(DisplayName = "constructor")]

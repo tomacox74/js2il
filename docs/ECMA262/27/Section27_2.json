@@ -313,9 +313,13 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/NextBatch100ExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/catch/NextBatch100ExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/finally/NextBatch100ExecutionTests.cs",
-                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/NextBatch100ExecutionTests.cs"
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/NextBatch100ExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/JavaScript/proto-from-ctor-realm.js"
                                                         ],
-                                        "notes":  "Constructor accepts an executor delegate and supports resolving/rejecting, including thenable assimilation in Promise.resolve. Promise.reject is constructor-generic: it creates and validates a NewPromiseCapability from the receiver, invokes the captured rejection function with the supplied reason, and propagates abrupt completions. The checked-in test262 coverage also verifies static and resolving-function metadata."
+                                        "test262Paths": [
+                                                           "test/built-ins/Promise/proto-from-ctor-realm.js"
+                                                        ],
+                                        "notes":  "Constructor accepts an executor delegate and supports resolving/rejecting, including thenable assimilation in Promise.resolve. Promise.reject is constructor-generic: it creates and validates a NewPromiseCapability from the receiver, invokes the captured rejection function with the supplied reason, and propagates abrupt completions. When newTarget.prototype is not an object, the default Promise prototype is selected from newTarget's realm. The checked-in test262 coverage also verifies static and resolving-function metadata."
                                     },
                                     {
                                         "clause":  "27.2.4.8",
@@ -389,9 +393,17 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/JavaScript/length.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/JavaScript/name.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/JavaScript/prop-desc.js",
-                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/FailingBatchExecutionTests.cs"
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/FailingBatchExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/then/JavaScript/S25.4.5.3_A4.2_T2.js",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/finally/JavaScript/rejected-observable-then-calls-argument.js",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/prototype/finally/JavaScript/rejected-observable-then-calls-PromiseResolve.js"
                                                         ],
-                                        "notes":  "Implements then/catch/finally with scheduling, constructor and species selection, and thenable assimilation for returned values. catch and finally generically delegate through the receiver's then property, preserve abrupt completions, handle callable and non-callable finally handlers, and preserve fulfillment values or rejection reasons. Host rejection tracking still has limitations."
+                                        "test262Paths": [
+                                                           "test/built-ins/Promise/prototype/then/S25.4.5.3_A4.2_T2.js",
+                                                           "test/built-ins/Promise/prototype/finally/rejected-observable-then-calls-argument.js",
+                                                           "test/built-ins/Promise/prototype/finally/rejected-observable-then-calls-PromiseResolve.js"
+                                                        ],
+                                        "notes":  "Implements then/catch/finally with scheduling, constructor and species selection, and thenable assimilation for returned values. Non-callable then handlers are ignored without converting rejection into fulfillment. catch and finally generically delegate through the receiver's then property, preserve abrupt completions, handle callable and non-callable finally handlers, and preserve fulfillment values or rejection reasons. The observable CatchFinally thrower throws the original reason directly instead of returning a rejected promise. Host rejection tracking still has limitations."
                                     },
                                     {
                                         "clause":  "27.2.5.5",
@@ -439,7 +451,11 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/CombinatorFailureExecutionTests.cs",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/length.js",
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/name.js",
-                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/prop-desc.js"
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/prop-desc.js",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/allSettled/ExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/allSettledKeyed/ExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/any/ExecutionTests.cs",
+                                                           "tests/Jroc.Test262.Tests/built-ins/Promise/race/ExecutionTests.cs"
                                                         ],
                                         "notes":  "Promise.all, allSettled, any, race, allKeyed, and allSettledKeyed use the receiver constructor, create and validate promise capabilities, obtain the constructor's resolve method once, preserve input ordering where applicable, and apply iterator-close completion rules; per-element closures use an already-called guard where required. Promise.race remains pending for an empty iterable and now forwards each then call to the new promise capability, as verified by 42 previously failing native Test262 cases. Promise subclasses, including implicit derived constructors and rest-parameter constructors, construct through the Promise base constructor. Promise.any rejects with an AggregateError containing ordered rejection reasons. Cross-realm cases remain limited."
                                     }

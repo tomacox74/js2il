@@ -998,6 +998,7 @@ namespace JavaScriptRuntime
             RuntimeIntrinsics intrinsics)
         {
             var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
+                : ReferenceEquals(target, _promiseConstructorValue) ? typeof(JavaScriptRuntime.Promise)
                 : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)
                 : ReferenceEquals(target, _suppressedErrorConstructorValue) ? typeof(JavaScriptRuntime.SuppressedError)
                 : ReferenceEquals(target, _errorConstructorValue) ? typeof(JavaScriptRuntime.Error)

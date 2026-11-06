@@ -14,6 +14,47 @@ Its MVP-runner evidence is separate from the native conformance results.
 Keep future batch narratives and detailed validation notes here rather than in
 the table-first summary.
 
+## Promise Coverage Batch (2026-11-06)
+
+This batch adds 200 byte-identical fixtures from Test262 revision
+`2b2ecead6e828dd9af13a9ec72065e645724a50f`: 62 Promise.any, 55 then,
+43 race, 12 allSettledKeyed, ten allSettled, eight finally, and ten constructor
+or static-property cases. Selection took the first 200 complete-path-sorted
+unregistered Promise cases out of 226; 26 remain deferred. None of the selected
+cases depends on eval, so no eval skips were added.
+
+Four preserved upstream cases initially failed. Runtime fixes ignore
+non-callable reaction handlers, make the observable CatchFinally thrower throw
+the original rejection reason, and select a missing newTarget prototype from
+the constructor's realm. The original failing cases were
+`prototype/then/S25.4.5.3_A4.2_T2.js`,
+`prototype/finally/rejected-observable-then-calls-argument.js`,
+`prototype/finally/rejected-observable-then-calls-PromiseResolve.js`, and
+`proto-from-ctor-realm.js`, relative to `test/built-ins/Promise/`.
+
+Fresh local native validation passes all 652 Promise xUnit registrations and
+all 396 metadata-required variants of the selected batch (198 strict and 198
+non-strict) under one frozen build. All four original failures and 56 existing
+runtime-intrinsic isolation regressions pass. Existing fixtures and upstream
+assertions were not changed. These are branch-local PR results, not trusted
+central native acceptance.
+
+Selection used authorized read-only Supabase reporting, reconciled after #2456
+against master `4b436ee84c721ff67ea4d9706198ea7d15ec1c8f`. The refreshed target
+has provenance `6b7cc464-2a04-5031-9dd9-c131a42e03e9`, corpus
+`024b79d7-0f92-5f9d-ade7-8bdf3907e097`, and registration snapshot
+`1dd473dc-ef8a-5e89-b977-8f15c84b05a4`, as of
+`2026-11-06 04:02:28.507085+00:00`. All 200 selected paths were unregistered
+with incomplete central observations; central reporting did not establish
+their passing status. The exact-SHA master CI and central registration refresh
+for the preceding URI batch succeeded before this reconciliation.
+
+The previous Promise count included two byte-identical registrations of
+`test/built-ins/Promise/prototype/Symbol.toStringTag.js`. Both registrations
+remain intact, but the upstream case is counted once. The unique baseline is
+therefore 451, not 452; adding 200 cases produces 651 of 677 verified passing
+Promise cases and a net increase of 199 in the published aggregates.
+
 ## Earlier Coverage Updates
 
 Class statements, await-using, and async-function statements now have outcomes
