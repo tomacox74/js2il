@@ -14,7 +14,10 @@ public partial class Promise : JsObject, IJavaScriptPromise
     private static readonly BuiltinFunction1 PrototypeFinallyValue = PrototypeFinally;
     /// <summary>Realm-owned <c>Promise.prototype</c> intrinsic (issue #1824).</summary>
     internal static object Prototype
-        => RuntimeIntrinsics.Current.GetOrCreate(
+        => GetPrototype(RuntimeIntrinsics.Current);
+
+    internal static object GetPrototype(RuntimeIntrinsics intrinsics)
+        => intrinsics.GetOrCreate(
             RuntimeIntrinsicSlot.PromisePrototype,
             static () => new JsObject(),
             static prototype => InitializePrototype(prototype));
@@ -51,8 +54,8 @@ public partial class Promise : JsObject, IJavaScriptPromise
 
         public Reaction(object? onFulfilled, object? onRejected, Promise nextPromise, bool isFinally)
         {
-            OnFulfilled = onFulfilled;
-            OnRejected = onRejected;
+            OnFulfilled = CallableOperations.IsCallable(onFulfilled) ? onFulfilled : null;
+            OnRejected = CallableOperations.IsCallable(onRejected) ? onRejected : null;
             NextPromise = nextPromise;
             CapabilityResolve = null;
             CapabilityReject = null;
@@ -62,8 +65,8 @@ public partial class Promise : JsObject, IJavaScriptPromise
 
         private Reaction(object? onFulfilled, object? onRejected, object? capabilityResolve, object? capabilityReject)
         {
-            OnFulfilled = onFulfilled;
-            OnRejected = onRejected;
+            OnFulfilled = CallableOperations.IsCallable(onFulfilled) ? onFulfilled : null;
+            OnRejected = CallableOperations.IsCallable(onRejected) ? onRejected : null;
             NextPromise = null;
             CapabilityResolve = capabilityResolve;
             CapabilityReject = capabilityReject;
@@ -226,10 +229,7 @@ public partial class Promise : JsObject, IJavaScriptPromise
             {
                 var result = CallableOperations.Call0(onFinally, null);
                 var resultPromise = ResolveForConstructor(capturedConstructor, result);
-                // The spec thrower rethrows `reason`; returning an already-rejected
-                // promise propagates `reason` verbatim through thenable assimilation
-                // without wrapping it in a CLR exception.
-                BuiltinFunction1 thrower = (_, _) => Promise.reject(reason);
+                BuiltinFunction1 thrower = (_, _) => throw new JsThrownValueException(reason);
                 Function.InitializeFunctionInstance(thrower, 0d, string.Empty, requiresInvocationContext: false);
                 Function.MarkUndefinedPrototype(thrower);
                 var throwerValue = BuiltinDelegateFunctionAdapter.FromDelegate(thrower);
