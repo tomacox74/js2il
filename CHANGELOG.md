@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): preserve Promise rejection when then handlers are non-callable,
+  make finally's thrower throw the original reason directly, and select the
+  default Promise prototype from newTarget's realm. Port 200 pinned Promise
+  cases covering combinators, reactions, and settlement ordering; none require
+  eval. Correct one duplicate in the published Promise coverage count.
 - test262: verify 100 additional pinned URI-decoding cases: 45 decodeURI and
   55 decodeURIComponent tests, covering malformed UTF-8, multibyte decoding,
   reserved characters, string coercion, and function metadata. All 200 required

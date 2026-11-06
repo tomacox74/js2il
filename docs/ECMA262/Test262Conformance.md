@@ -11,9 +11,9 @@ Coverage for the current development branch. Counts and percentages are per stan
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,975 | 37 | 5,500 | 23,512 | **76.45%** |
+| Built-in objects and APIs | 18,174 | 37 | 5,301 | 23,512 | **77.30%** |
 | Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
-| **Total** | 40,111 | 663 | 7,467 | 48,241 | **83.15%** |
+| **Total** | 40,310 | 663 | 7,268 | 48,241 | **83.56%** |
 
 ## Language Areas
 
@@ -202,7 +202,7 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `Object` | 3,369 | 1 | 41 | 3,411 | **98.77%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
-| `Promise` | 452 | 0 | 225 | 677 | **66.77%** |
+| `Promise` | 651 | 0 | 26 | 677 | **96.16%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
 | `RegExp` | 1,872 | 7 | 0 | 1,879 | **99.63%** |
