@@ -2281,6 +2281,23 @@ the chosen dashboard-first policy; do not route notifications to an invented add
 
 ### Read-only acceptance rehearsal
 
+The conformance dashboard shares panel 6's untransformed result with panels
+4, 7 and 8. One live query calculates scope totals, status counts, the first
+500 attention rows and the scope count from the same statement snapshot.
+Each panel filters its tagged rows and projects its original fields; scope
+count still returns zero when there are no reporting targets. Inspect panel
+6 for database/request timing and verify the dependent panels render their
+distinct projections. The acceptance collector checks shared-source references
+and transformations as part of the deployed contract, in addition to SQL.
+
+`20261106040000_test262_catalogue_current_reporting_performance.sql` aggregates
+required variants once per targeted corpus and recorded required variants before
+joining the fixture inventory. It materializes only the current eligibility
+projection, avoiding repeated lookups into historical eligibility. It preserves
+the live view's column types, owner, security barrier and grants. Apply it in
+one transaction with its existing bounded lock/statement settings. It changes
+reporting only; it does not change evidence, targets or scheduling.
+
 Use the existing Grafana token and datasource; no database-owner or coordinator
 credential is needed for measurement:
 
