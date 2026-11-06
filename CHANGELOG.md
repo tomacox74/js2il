@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: verify 1 additional pinned fixtures from native batch `c9ff873a-2c94-531e-a278-b041ee41b95a`.
 - perf(compiler): preserve tagged property and array values through deferred
   numeric coercion and relational comparisons, avoiding numeric boxing without
   moving getters or coercions or changing dynamic fallback semantics.
