@@ -348,3 +348,20 @@ variants of the four supported cases pass. Selection used recent central native
 failure evidence reconciled with current master coverage; validation of the fix
 is branch-local, not central trusted acceptance.
 
+## URI Decoder Coverage (2026-11-06)
+
+The URI-decoding batch adds 100 verified passing cases: 45 `decodeURI` and
+55 `decodeURIComponent` tests. All 200 required strict/non-strict variants pass,
+as does the 110-case native xUnit suite including ten existing `decodeURI` cases.
+The batch covers malformed UTF-8 and percent escapes, valid multibyte sequences,
+reserved delimiters, string coercion, property descriptors, and nonconstructibility.
+No selected case requires eval, and no product or harness fix was needed.
+
+Selection used the first 100 path-sorted, unregistered decoder cases from scoped
+central native reporting, reconciled against master
+`b3d19d44e3ca6eb50697a7c392b49883db824ac8` with no pending PRs. Central observations
+were incomplete, not evidence of passing or failure; acceptance is fresh
+branch-local native validation, not trusted central acceptance.
+The remaining `decodeURIComponent/throw-URIError.js` case was outside the requested
+100-case batch. `decodeURI` now has results for all 55 pinned cases;
+`decodeURIComponent` has 55 verified results out of 56.
