@@ -350,7 +350,7 @@ public static class Function
             {
                 var name = ObjectRuntime.GetProperty(thisArgument!, "name") as string
                     ?? string.Empty;
-                return $"function {name}() {{ [native code] }}";
+                return FormatNativeSource(name);
             }
             throw new TypeError("Function.prototype.toString called on non-function");
         }
@@ -1391,8 +1391,13 @@ public static class Function
         public static string ToSourceString(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            var name = GetName(target);
-            return string.IsNullOrEmpty(name)
+            return FormatNativeSource(GetName(target));
+        }
+
+        private static string FormatNativeSource(string name)
+        {
+            // A private identifier cannot occupy NativeFunction's optional IdentifierName.
+            return string.IsNullOrEmpty(name) || name.StartsWith('#')
                 ? "function () { [native code] }"
                 : $"function {name}() {{ [native code] }}";
         }

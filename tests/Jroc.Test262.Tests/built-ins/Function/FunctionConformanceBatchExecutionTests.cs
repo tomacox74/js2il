@@ -6,6 +6,24 @@ public class FunctionConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public FunctionConformanceBatchExecutionTests() : base("built_ins.Function") { }
 
+    [Fact(DisplayName = "15.3.5.4_2-11gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_11gs() => ExecutionTestFromFile("15.3.5.4_2-11gs");
+
+    [Fact(DisplayName = "15.3.5.4_2-12gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_12gs() => ExecutionTestFromFile("15.3.5.4_2-12gs");
+
+    [Fact(DisplayName = "15.3.5.4_2-13gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_13gs() => ExecutionTestFromFile("15.3.5.4_2-13gs");
+
+    [Fact(DisplayName = "15.3.5.4_2-14gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_14gs() => ExecutionTestFromFile("15.3.5.4_2-14gs");
+
+    [Fact(DisplayName = "15.3.5.4_2-57gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_57gs() => ExecutionTestFromFile("15.3.5.4_2-57gs");
+
+    [Fact(DisplayName = "15.3.5.4_2-76gs.js", Skip = "Blocked: eval is not supported yet.")]
+    public Task _15_3_5_4_2_76gs() => ExecutionTestFromFile("15.3.5.4_2-76gs");
+
     [Fact(DisplayName = "15.3.2.1-11-1-s.js")]
     public Task _15_3_2_1_11_1_s() => ExecutionTestFromFile("15.3.2.1-11-1-s");
 

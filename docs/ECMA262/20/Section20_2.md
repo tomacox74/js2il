@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-17T02:29:17Z
+> Last generated (UTC): 2026-11-06T01:27:59Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -76,7 +76,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs` |  | Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. The pinned Test262 coverage includes 70 source-form and native-function syntax cases. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
+| Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Function/prototype/toString/FunctionConformanceBatchExecutionTests.cs` |  | Implemented through the common callable path with a native-source style string for generated, bound, method, class, proxy-backed, and explicit built-in/host delegate-adapted callables. Private instance and static methods omit the optional native-source name because a private identifier is not an IdentifierName; their name properties are unchanged. The pinned Test262 coverage includes 74 source-form and native-function syntax cases, including private methods in class declarations and expressions. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
 
 ### 20.2.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%))
 
