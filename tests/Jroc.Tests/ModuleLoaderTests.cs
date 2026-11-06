@@ -158,10 +158,12 @@ export const value = 1;
             && entry.ModuleRequest == "./dep.mjs"
             && entry.LocalName == "importedValue"
             && entry.ImportName == "value");
-        Assert.Contains(record.LocalExportEntries, entry =>
-            entry.Kind == ModuleExportKind.Local
-            && entry.ExportName == "renamed"
-            && entry.LocalName == "importedValue");
+        var reexport = Assert.Single(record.IndirectExportEntries);
+        Assert.Equal(ModuleExportKind.Indirect, reexport.Kind);
+        Assert.Equal("renamed", reexport.ExportName);
+        Assert.Equal("./dep.mjs", reexport.ModuleRequest);
+        Assert.Equal("value", reexport.LocalName);
+        Assert.Empty(record.LocalExportEntries);
     }
 
     [Fact]
@@ -216,18 +218,35 @@ export const value = 41;
         var loader = new ModuleLoader(new CompilerOptions(), fileSystem, new NodeModuleResolver(fileSystem), logger);
         var directory = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "jroc-tests", Guid.NewGuid().ToString("N")));
         var rootPath = Path.Combine(directory, "root.mjs");
+        var leftPath = Path.Combine(directory, "left.mjs");
+        var rightPath = Path.Combine(directory, "right.mjs");
+        var resourcePath = Path.Combine(directory, "resource.json");
         var clause = namespaceExport ? "* as shared" : "{ default as shared }";
-        fileSystem.AddFile(rootPath, "export * from './left.mjs'; export * from './right.mjs';");
-        fileSystem.AddFile(Path.Combine(directory, "left.mjs"),
-            $"export {clause} from './resource.txt' with {{ type: 'text' }};");
-        fileSystem.AddFile(Path.Combine(directory, "right.mjs"),
-            $"export {clause} from './resource.txt' with {{ type: 'bytes' }};");
-        fileSystem.AddFile(Path.Combine(directory, "resource.txt"), "original bytes");
+        fileSystem.AddFile(rootPath,
+            "import { shared } from './root.mjs'; export * from './left.mjs'; export * from './right.mjs';");
+        fileSystem.AddFile(leftPath,
+            $"export {clause} from './resource.json' with {{ type: 'text' }};");
+        fileSystem.AddFile(rightPath,
+            $"export {clause} from './resource.json' with {{ type: 'json' }};");
+        fileSystem.AddFile(resourcePath, """{"value": 1}""");
 
         var modules = loader.LoadModules(rootPath);
         Assert.NotNull(modules);
         Assert.False(loader.LinkModules(modules));
-        Assert.Contains("Ambiguous export 'shared'", logger.Errors);
+        Assert.Contains("exports 'shared' ambiguously", logger.Errors);
+
+        // Same file and binding, but different import types: neither may collapse to the other.
+        var left = Assert.Single(modules!._modules.Values, module => module.Path == leftPath);
+        var right = Assert.Single(modules._modules.Values, module => module.Path == rightPath);
+        var textExport = left.ModuleRecord!.ResolvedExports["shared"];
+        var jsonExport = right.ModuleRecord!.ResolvedExports["shared"];
+        Assert.Equal("text", textExport.ImportType);
+        Assert.Equal("json", jsonExport.ImportType);
+        Assert.Equal(resourcePath, textExport.TargetModule.Path);
+        Assert.Equal(resourcePath, jsonExport.TargetModule.Path);
+        var bindingName = namespaceExport ? "*namespace*" : "default";
+        Assert.Equal(bindingName, textExport.BindingName);
+        Assert.Equal(bindingName, jsonExport.BindingName);
     }
 
     [Fact]

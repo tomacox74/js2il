@@ -638,7 +638,7 @@ namespace Jroc.Services
             var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
             var typeMapCtorRef = _bclReferences.JsCompiledModuleTypeAttribute_Ctor_Ref;
             var entryModuleCtorRef = _bclReferences.JsCompiledEntryModuleAttribute_Ctor_Ref;
-            var needsImportMetadata = false;
+            var needsImportMetadata = modules._modules.Values.Any(module => module.UsesNativeStaticEsm);
             var walker = new Jroc.Utilities.AstWalker();
             foreach (var module in modules._modules.Values)
             {

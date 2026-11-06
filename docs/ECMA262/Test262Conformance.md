@@ -12,8 +12,8 @@ Coverage for the current development branch. Counts and percentages are per stan
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
 | Built-in objects and APIs | 18,174 | 37 | 5,301 | 23,512 | **77.30%** |
-| Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
-| **Total** | 40,310 | 663 | 7,268 | 48,241 | **83.56%** |
+| Language syntax and semantics | 22,276 | 626 | 741 | 23,643 | **94.22%** |
+| **Total** | 40,510 | 663 | 7,068 | 48,241 | **83.97%** |
 
 ## Language Areas
 
@@ -38,7 +38,7 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `keywords` | 25 | 0 | 0 | 25 | **100.00%** |
 | `line-terminators` | 32 | 9 | 0 | 41 | **78.05%** |
 | `literals` | 507 | 27 | 0 | 534 | **94.94%** |
-| `module-code` | 48 | 0 | 546 | 594 | **8.08%** |
+| `module-code` | 248 | 0 | 346 | 594 | **41.75%** |
 | `punctuators` | 11 | 0 | 0 | 11 | **100.00%** |
 | `reserved-words` | 27 | 0 | 0 | 27 | **100.00%** |
 | `rest-parameters` | 11 | 0 | 0 | 11 | **100.00%** |

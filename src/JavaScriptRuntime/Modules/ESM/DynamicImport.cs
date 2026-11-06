@@ -58,7 +58,16 @@ namespace JavaScriptRuntime.Modules.ESM
                         if (phase != "None" || type is not null)
                             return new CommonJS.Require(RuntimeExecutionContext.Current!.Realm.ModuleState)
                                 .ImportWithPhase((string)currentModuleId!, specifierStr, phase, type);
-                        var exports = requireDelegate(specifierStr);
+                        var exports = requireDelegate.Target is CommonJS.RequireFunctionTarget target
+                            ? target.Import(specifierStr)
+                            : requireDelegate(specifierStr);
+                        if (currentModuleId is string moduleId
+                            && new CommonJS.Require(RuntimeExecutionContext.Current!.Realm.ModuleState)
+                                .GetModuleEvaluationPromise(moduleId, specifierStr) is { } evaluation)
+                        {
+                            return evaluation.then(new BuiltinFunction1((_, _) =>
+                                EsModuleInterop.ToDynamicImportResult(exports)));
+                        }
                         return EsModuleInterop.ToDynamicImportResult(exports);
                     }))!;
             }

@@ -651,6 +651,14 @@ namespace JavaScriptRuntime
                 return DeletePropertyCore(target, key, throwOnError);
             }
 
+            if (receiver is Modules.ESM.ModuleNamespace moduleNamespace)
+            {
+                var deleted = moduleNamespace.DeleteOwnProperty(key);
+                if (!deleted && throwOnError)
+                    throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
+                return deleted;
+            }
+
             if (TryGetOwnPropertyDescriptor(receiver, key, out var ownDescriptor)
                 && !ownDescriptor.Configurable)
             {

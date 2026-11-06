@@ -8,6 +8,7 @@ namespace JavaScriptRuntime.Modules.ESM
     {
         internal ModuleNamespace? Namespace { get; set; }
         internal HashSet<string>? PredeclaredExports { get; set; }
+        internal HashSet<string>? ResolvedExportNames { get; set; }
     }
 
     /// <summary>
@@ -81,8 +82,9 @@ namespace JavaScriptRuntime.Modules.ESM
             foreach (var name in names)
                 RegisterLocalExport(exports, moduleId, name);
             MarkEsModule(exports);
-            State.EsModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker())
-                .PredeclaredExports = new HashSet<string>(names, StringComparer.Ordinal);
+            var marker = State.EsModuleNamespaces.GetValue(exports, static _ => new ModuleNamespaceMarker());
+            marker.PredeclaredExports = new HashSet<string>(names, StringComparer.Ordinal);
+            marker.ResolvedExportNames = new HashSet<string>(names, StringComparer.Ordinal);
         }
 
         private static RuntimeModuleState State
@@ -171,6 +173,15 @@ namespace JavaScriptRuntime.Modules.ESM
             return value;
         }
 
+        public static void InitializeVarExport(string moduleId, string name)
+        {
+            var binding = GetOrCreateBinding(moduleId, name);
+            if (!binding.Initialized)
+            {
+                binding.Set(null);
+            }
+        }
+
         /// <summary>
         /// Registers a re-export of a named import (<c>export { imported as exported }</c>) or an indirect
         /// export (<c>export { imported as exported } from "mod"</c>). Installs a live, enumerable
@@ -229,6 +240,11 @@ namespace JavaScriptRuntime.Modules.ESM
             foreach (var key in ObjectRuntime.GetOwnEnumerableKeysInOrder(sourceModule))
             {
                 if (IsReservedStarExportKey(key)
+                    || State.EsModuleNamespaces.TryGetValue(sourceModule, out var sourceMarker)
+                        && sourceMarker.ResolvedExportNames is not null
+                        && State.EsModuleNamespaces.TryGetValue(exports, out var namespaceMarker)
+                        && namespaceMarker.ResolvedExportNames is { } resolvedNames
+                        && !resolvedNames.Contains(key)
                     || ObjectRuntime.hasOwn(exports, key)
                         && !(State.EsModuleNamespaces.TryGetValue(exports, out var marker)
                             && marker.PredeclaredExports?.Contains(key) == true))

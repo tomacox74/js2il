@@ -1911,7 +1911,9 @@ namespace JavaScriptRuntime
             }
 
             var key = ToPropertyKeyString(prop);
-            return HasOwnProperty(obj, key);
+            return obj is Modules.ESM.ModuleNamespace
+                ? TryGetOwnPropertyDescriptor(obj, key, out _)
+                : HasOwnProperty(obj, key);
         }
 
         public static object getOwnPropertyDescriptors(object obj)
@@ -2212,7 +2214,9 @@ namespace JavaScriptRuntime
         {
             var key = ToPropertyKeyString(prop);
             var target = RequireObjectCoercibleReceiver(thisArgument);
-            return HasOwnProperty(target, key);
+            return target is Modules.ESM.ModuleNamespace
+                ? TryGetOwnPropertyDescriptor(target, key, out _)
+                : HasOwnProperty(target, key);
         }
 
         private static object? PrototypeIsPrototypeOf(object? thisArgument, object? value)

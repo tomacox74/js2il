@@ -26,6 +26,8 @@ public sealed record CallableSemantics
 
     public bool IsAnonymousFunctionExpression { get; init; }
 
+    public bool IsAnonymousFunctionDeclaration { get; init; }
+
     public bool UsesThis { get; init; }
 
     public bool UsesNewTarget { get; init; }
@@ -95,6 +97,7 @@ public sealed record CallableSemantics
             HasSimpleParameters = parameters.All(parameter => parameter is Identifier),
             IsNamedFunctionExpression = callable is FunctionExpression { Id: not null },
             IsAnonymousFunctionExpression = callable is FunctionExpression { Id: null },
+            IsAnonymousFunctionDeclaration = callable is FunctionDeclaration { Id: null },
             UsesThis = requirements.UsesThis,
             UsesNewTarget = requirements.UsesNewTarget,
             UsesSuper = requirements.UsesSuper,

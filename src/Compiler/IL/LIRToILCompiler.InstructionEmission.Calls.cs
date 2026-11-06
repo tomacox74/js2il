@@ -22,7 +22,9 @@ internal sealed partial class LIRToILCompiler
         => callableId.Semantics.FunctionLength;
 
     private static string GetFunctionName(CallableId callableId)
-        => callableId.Name ?? string.Empty;
+        => callableId.Semantics.IsAnonymousFunctionDeclaration
+            ? "default"
+            : callableId.Name ?? string.Empty;
 
     private Type GetFunctionCallTargetParameterType(TempVariable functionValue, Type specializedType)
         => GetTempStorage(functionValue).ClrType == specializedType

@@ -61,6 +61,25 @@ public class ModuleObjectRepresentationTests
         Assert.Equal(42d, ObjectRuntime.GetProperty(jsNamespace, "module.exports"));
     }
 
+    [Fact]
+    public void NativeNamespace_StarReexportsFromCjs_WithEmptyInventoryPreserveLiveBindings()
+    {
+        using var scope = EnterRealm();
+        var consumer = new JsObject();
+        JavaScriptRuntime.Modules.ESM.EsModuleLinker.PredeclareExports(consumer, "native-consumer", []);
+        var source = new JsObject();
+        ObjectRuntime.SetProperty(source, "foo", 1d);
+
+        JavaScriptRuntime.Modules.ESM.EsModuleLinker.RegisterStarReexports(consumer, source);
+        var namespaceObject = JavaScriptRuntime.Modules.ESM.EsModuleLinker.GetNamespace(consumer);
+
+        Assert.Equal(1d, ObjectRuntime.GetProperty(namespaceObject, "foo"));
+
+        ObjectRuntime.SetProperty(source, "foo", 2d);
+
+        Assert.Equal(2d, ObjectRuntime.GetProperty(namespaceObject, "foo"));
+    }
+
     private static IDisposable EnterRealm()
     {
         var services = RuntimeServices.BuildServiceProvider();

@@ -47,6 +47,7 @@ internal sealed class RuntimeModuleState : IDisposable
     }
 
     internal Module? MainModule { get; set; }
+    internal long NextModuleEvaluationDfsIndex { get; set; }
 
     public void Dispose()
     {
@@ -65,5 +66,6 @@ internal sealed class RuntimeModuleState : IDisposable
         ModulesAssembly = null;
         CompiledModuleTypeMap = null;
         MainModule = null;
+        NextModuleEvaluationDfsIndex = 0;
     }
 }

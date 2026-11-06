@@ -44,8 +44,8 @@ public sealed class EsModuleLinkPlan
     public List<EsModuleSourceRequire> Requires { get; } = new();
 
     /// <summary>
-    /// Default/namespace import bindings that receive a single value at module initialization.
-    /// Named imports are excluded because their reads are intercepted live.
+    /// Namespace import bindings that receive a stable object at module initialization.
+    /// Named and default imports are excluded because their reads are intercepted live.
     /// </summary>
     public List<EsModuleImportInit> ImportInits { get; } = new();
 
