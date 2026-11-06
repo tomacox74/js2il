@@ -340,12 +340,20 @@ same fresh native evidence, producing a net increase of 292 verified results.
 This remains explicitly branch-local native evidence, not central trusted
 acceptance.
 
+Function gains ten previously unpublished outcomes: four verified private-method
+`toString` cases and six known-unsupported eval-dependent caller cases. Private
+instance and static methods in both class declarations and expressions now
+produce valid native-function syntax. All eight required strict/non-strict
+variants of the four supported cases pass. Selection used recent central native
+failure evidence reconciled with current master coverage; validation of the fix
+is branch-local, not central trusted acceptance.
+
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 17,870 | 31 | 5,611 | 23,512 | **76.00%** |
+| Built-in objects and APIs | 17,874 | 37 | 5,601 | 23,512 | **76.02%** |
 | Language syntax and semantics | 22,076 | 626 | 941 | 23,643 | **93.37%** |
-| **Total** | 40,006 | 657 | 7,578 | 48,241 | **82.93%** |
+| **Total** | 40,010 | 663 | 7,568 | 48,241 | **82.94%** |
 
 ## Language Areas
 
@@ -516,7 +524,7 @@ acceptance.
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 423 | 1 | 85 | 509 | **83.10%** |
+| `Function` | 427 | 7 | 75 | 509 | **83.89%** |
 | `GeneratorFunction` | 22 | 0 | 1 | 23 | **95.65%** |
 | `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |

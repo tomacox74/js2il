@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(runtime): return valid native-function syntax from Function.prototype.toString
+  for private methods without changing their names. Port ten pinned Test262
+  Function failures: four private-method cases now pass, and six eval-dependent
+  caller cases are explicitly skipped.
 - perf(compiler): preserve tagged property and array values through deferred
   numeric coercion and relational comparisons, avoiding numeric boxing without
   moving getters or coercions or changing dynamic fallback semantics.
