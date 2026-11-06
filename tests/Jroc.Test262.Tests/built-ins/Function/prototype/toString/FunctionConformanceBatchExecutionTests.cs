@@ -6,6 +6,18 @@ public class FunctionConformanceBatchExecutionTests : InMemoryExecutionTestsBase
 {
     public FunctionConformanceBatchExecutionTests() : base("built_ins.Function.prototype.toString") { }
 
+    [Fact(DisplayName = "private-method-class-expression.js")]
+    public Task private_method_class_expression() => ExecutionTestFromFile("private-method-class-expression");
+
+    [Fact(DisplayName = "private-method-class-statement.js")]
+    public Task private_method_class_statement() => ExecutionTestFromFile("private-method-class-statement");
+
+    [Fact(DisplayName = "private-static-method-class-expression.js")]
+    public Task private_static_method_class_expression() => ExecutionTestFromFile("private-static-method-class-expression");
+
+    [Fact(DisplayName = "private-static-method-class-statement.js")]
+    public Task private_static_method_class_statement() => ExecutionTestFromFile("private-static-method-class-statement");
+
     [Fact(DisplayName = "AsyncFunction.js")]
     public Task AsyncFunction() => ExecutionTestFromFile("AsyncFunction");
 
