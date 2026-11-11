@@ -4,7 +4,8 @@ jroc is a JavaScript to .NET compiler, available as a .NET global tool. It compi
 
 ## Install
 
-- Prerequisite: .NET 10 SDK or later installed.
+- Prerequisite: .NET 10 SDK or later installed. The CLI targets .NET 10 and
+  rolls forward to a later installed .NET runtime when .NET 10 is unavailable.
 - Install the tool globally:
 
 ```powershell
@@ -69,11 +70,12 @@ jroc .\tests\simple.js -o .\out -v
 Given an input like `C:\code\sample.js`, jroc will emit the following into the output directory (default: alongside the input file):
 
 - `sample.dll`
-	- A .NET assembly (targeting net10.0) containing IL corresponding to your JavaScript.
+	- A .NET assembly containing IL corresponding to your JavaScript.
 	- The assembly name is the input file name without extension.
 	- Contains a `Program.Main` entry point that executes your script when run.
 - `sample.runtimeconfig.json`
-	- Runtime configuration for the `dotnet` host (framework: .NET 10).
+	- Runtime configuration for the `dotnet` host, based on the .NET runtime
+	  running the CLI (for example, .NET 10 or .NET 11).
 - `JavaScriptRuntime.dll` (+ optional `JavaScriptRuntime.pdb` if available)
 	- Required runtime support library that provides JS primitives (e.g., `console.log`, arrays, objects) used by the emitted IL.
 	- This file is copied next to your generated assembly and must be present at runtime.
@@ -92,7 +94,8 @@ Notes:
 
 ## Limitations
 
-- Target framework: net10.0
+- CLI target framework: net10.0; later installed .NET runtimes are supported
+  through major roll-forward.
 - Not all JS features are supported; some constructs may be validated and rejected with explanations.
 - Emitted IL and runtime surface are subject to change between previews.
 

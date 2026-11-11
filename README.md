@@ -14,12 +14,14 @@ JavaScript applications and libraries into the .NET ecosystem.
 
 JROC supports Windows, Linux, and macOS.
 
-JROC currently targets ECMAScript 2025 and .NET 10. The project is under active
-development; compatibility is broad but not yet complete.
+JROC currently targets ECMAScript 2025 and .NET 10. The command-line tool can
+also run on later installed .NET runtimes; compiled programs use the runtime
+that runs JROC. The project is under active development; compatibility is broad
+but not yet complete.
 
 ## Install JROC
 
-Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0),
+Install the [.NET 10 SDK or later](https://dotnet.microsoft.com/download/dotnet/10.0),
 then install JROC from NuGet as a global .NET tool:
 
 ```shell

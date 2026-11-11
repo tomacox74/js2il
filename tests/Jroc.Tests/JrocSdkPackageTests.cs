@@ -140,6 +140,17 @@ public class JrocSdkPackageTests
             Assert.Contains("https://www.nuget.org/packages/Jroc.Core", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("https://www.nuget.org/packages/Jroc.SDK", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("https://www.nuget.org/packages/Jroc.Runtime", package.ReadmeText, StringComparison.Ordinal);
+
+            using var archive = ZipFile.OpenRead(toolPackagePath);
+            var runtimeConfigEntry = archive.GetEntry("tools/net10.0/any/Jroc.runtimeconfig.json");
+            Assert.NotNull(runtimeConfigEntry);
+            using var runtimeConfigDocument = JsonDocument.Parse(runtimeConfigEntry!.Open());
+            Assert.Equal(
+                "Major",
+                runtimeConfigDocument.RootElement
+                    .GetProperty("runtimeOptions")
+                    .GetProperty("rollForward")
+                    .GetString());
         }
         finally
         {
