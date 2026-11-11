@@ -21,7 +21,7 @@ but not yet complete.
 
 ## Install JROC
 
-Install the [.NET 10 SDK or later](https://dotnet.microsoft.com/download/dotnet/10.0),
+Install the [.NET 10 SDK or later](https://dotnet.microsoft.com/download/dotnet),
 then install JROC from NuGet as a global .NET tool:
 
 ```shell

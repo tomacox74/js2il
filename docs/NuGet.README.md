@@ -101,7 +101,8 @@ Notes:
 
 ## Troubleshooting
 
-- Ensure the .NET 10 SDK/runtime is on PATH: `dotnet --info`
+- Run `dotnet --info` to check which SDK and runtimes the `dotnet` command can
+  see. The JROC CLI can run on .NET 10 or .NET 11.
 - Use `-v` to print diagnostics to the console, or `--diagnostic-file <path>` to capture diagnostics to a file.
 - File an issue with a minimal JS sample if you suspect a bug.
 
