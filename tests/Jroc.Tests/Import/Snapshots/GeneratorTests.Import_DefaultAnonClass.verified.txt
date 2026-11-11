@@ -324,15 +324,14 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 234 (0xea)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_DefaultAnonClass/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[5] string
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] string
 		)
 
 		IL_0000: newobj instance void Modules.Import_DefaultAnonClass/Scope::.ctor()
@@ -343,83 +342,87 @@
 		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_DefaultAnonClass_Lib.mjs"
 		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
-		IL_001c: stloc.3
+		IL_001c: stloc.2
 		IL_001d: ldloc.0
-		IL_001e: ldloc.3
+		IL_001e: ldloc.2
 		IL_001f: stfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
-		IL_0024: ldloc.0
-		IL_0025: ldfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
-		IL_002a: stloc.3
-		IL_002b: ldloc.3
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
-		IL_0031: stloc.3
-		IL_0032: ldloc.3
-		IL_0033: stloc.1
-		IL_0034: nop
-		IL_0035: nop
-		IL_0036: ldloc.1
-		IL_0037: dup
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
-		IL_003d: stloc.2
-		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0043: stloc.s 4
-		IL_0045: ldloc.2
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: isinst Modules.Import_DefaultAnonClass_Lib/Class1
-		IL_0052: dup
-		IL_0053: brfalse IL_0063
+		IL_0024: nop
+		IL_0025: nop
+		IL_0026: ldloc.0
+		IL_0027: ldfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
+		IL_002c: stloc.2
+		IL_002d: ldloc.2
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
+		IL_0033: stloc.2
+		IL_0034: ldloc.2
+		IL_0035: dup
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.CallableOperations::Construct0(object, object)
+		IL_003b: stloc.1
+		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0041: stloc.3
+		IL_0042: ldloc.1
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0048: stloc.2
+		IL_0049: ldloc.2
+		IL_004a: isinst Modules.Import_DefaultAnonClass_Lib/Class1
+		IL_004f: dup
+		IL_0050: brfalse IL_0060
 
-		IL_0058: callvirt instance object Modules.Import_DefaultAnonClass_Lib/Class1::greet()
-		IL_005d: stloc.3
-		IL_005e: br IL_0070
+		IL_0055: callvirt instance object Modules.Import_DefaultAnonClass_Lib/Class1::greet()
+		IL_005a: stloc.2
+		IL_005b: br IL_006d
 
-		IL_0063: pop
-		IL_0064: ldloc.3
-		IL_0065: ldstr "greet"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
-		IL_006f: stloc.3
+		IL_0060: pop
+		IL_0061: ldloc.2
+		IL_0062: ldstr "greet"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::CallMember0(object, string)
+		IL_006c: stloc.2
 
-		IL_0070: ldloc.s 4
-		IL_0072: ldstr "greet:"
-		IL_0077: ldloc.3
-		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_007d: pop
-		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0083: stloc.s 4
-		IL_0085: volatile.
-		IL_0087: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_008c: brfalse IL_00a1
+		IL_006d: ldloc.3
+		IL_006e: ldstr "greet:"
+		IL_0073: ldloc.2
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0079: pop
+		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007f: stloc.3
+		IL_0080: volatile.
+		IL_0082: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0087: brfalse IL_009c
 
-		IL_0091: ldloc.2
-		IL_0092: ldstr "kind"
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_009c: br IL_00b6
+		IL_008c: ldloc.1
+		IL_008d: ldstr "kind"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0097: br IL_00b1
 
-		IL_00a1: ldloc.2
-		IL_00a2: ldstr "kind"
-		IL_00a7: ldstr "Import_DefaultAnonClass:Modules.Import_DefaultAnonClass:__js_module_init__:27"
-		IL_00ac: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_009c: ldloc.1
+		IL_009d: ldstr "kind"
+		IL_00a2: ldstr "Import_DefaultAnonClass:Modules.Import_DefaultAnonClass:__js_module_init__:25"
+		IL_00a7: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00b6: stloc.3
-		IL_00b7: ldloc.s 4
-		IL_00b9: ldstr "kind:"
-		IL_00be: ldloc.3
-		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c4: pop
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: stloc.s 4
-		IL_00cc: ldloc.1
-		IL_00cd: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00d2: stloc.s 5
-		IL_00d4: ldloc.s 4
-		IL_00d6: ldstr "type:"
-		IL_00db: ldloc.s 5
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_00b1: stloc.2
+		IL_00b2: ldloc.3
+		IL_00b3: ldstr "kind:"
+		IL_00b8: ldloc.2
+		IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00be: pop
+		IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c4: stloc.3
+		IL_00c5: ldloc.0
+		IL_00c6: ldfld object Modules.Import_DefaultAnonClass/Scope::'*esm-src:./Import_DefaultAnonClass_Lib.mjs'
+		IL_00cb: stloc.2
+		IL_00cc: ldloc.2
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
+		IL_00d2: stloc.2
+		IL_00d3: ldloc.2
+		IL_00d4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00d9: stloc.s 4
+		IL_00db: ldloc.3
+		IL_00dc: ldstr "type:"
+		IL_00e1: ldloc.s 4
+		IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00e8: pop
+		IL_00e9: ret
 	} // end of method Import_DefaultAnonClass::__js_module_init__
 
 } // end of class Modules.Import_DefaultAnonClass

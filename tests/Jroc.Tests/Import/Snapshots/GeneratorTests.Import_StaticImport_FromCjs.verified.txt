@@ -325,14 +325,13 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 375 (0x177)
+		// Code size: 362 (0x16a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_StaticImport_FromCjs/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: newobj instance void Modules.Import_StaticImport_FromCjs/Scope::.ctor()
@@ -343,129 +342,124 @@
 		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate
 		IL_0012: ldstr "./Import_StaticImport_FromCjs_Lib.cjs"
 		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Modules.CommonJS.RequireDelegate::Invoke(object)
-		IL_001c: stloc.3
+		IL_001c: stloc.2
 		IL_001d: ldloc.0
-		IL_001e: ldloc.3
+		IL_001e: ldloc.2
 		IL_001f: stfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
 		IL_0024: ldloc.0
 		IL_0025: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
-		IL_002a: stloc.3
-		IL_002b: ldloc.3
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
-		IL_0031: stloc.3
-		IL_0032: ldloc.3
+		IL_002a: stloc.2
+		IL_002b: ldloc.2
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetNamespace(object)
+		IL_0031: stloc.2
+		IL_0032: ldloc.2
 		IL_0033: stloc.1
-		IL_0034: ldloc.0
-		IL_0035: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
-		IL_003a: stloc.3
-		IL_003b: ldloc.3
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetNamespace(object)
-		IL_0041: stloc.3
-		IL_0042: ldloc.3
+		IL_0034: nop
+		IL_0035: nop
+		IL_0036: nop
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: stloc.3
+		IL_003d: ldloc.0
+		IL_003e: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
 		IL_0043: stloc.2
-		IL_0044: nop
-		IL_0045: nop
-		IL_0046: nop
-		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004c: stloc.s 4
-		IL_004e: volatile.
-		IL_0050: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_0055: brfalse IL_006a
+		IL_0044: ldloc.2
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetDefault(object)
+		IL_004a: volatile.
+		IL_004c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0051: brfalse IL_0065
 
-		IL_005a: ldloc.1
-		IL_005b: ldstr "value"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0065: br IL_007f
+		IL_0056: ldstr "value"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0060: br IL_0079
 
-		IL_006a: ldloc.1
-		IL_006b: ldstr "value"
-		IL_0070: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:23"
-		IL_0075: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0065: ldstr "value"
+		IL_006a: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:21"
+		IL_006f: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_2
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_007f: stloc.3
-		IL_0080: ldloc.s 4
-		IL_0082: ldstr "default.value:"
-		IL_0087: ldloc.3
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_008d: pop
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: stloc.s 4
-		IL_0095: ldloc.0
-		IL_0096: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
-		IL_009b: stloc.3
-		IL_009c: ldloc.3
-		IL_009d: ldstr "value"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
-		IL_00a7: stloc.3
-		IL_00a8: ldloc.s 4
-		IL_00aa: ldstr "named:"
-		IL_00af: ldloc.3
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00b5: pop
-		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00bb: stloc.s 4
-		IL_00bd: volatile.
-		IL_00bf: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00c4: brfalse IL_00d9
+		IL_0079: stloc.2
+		IL_007a: ldloc.3
+		IL_007b: ldstr "default.value:"
+		IL_0080: ldloc.2
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0086: pop
+		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008c: stloc.3
+		IL_008d: ldloc.0
+		IL_008e: ldfld object Modules.Import_StaticImport_FromCjs/Scope::'*esm-src:./Import_StaticImport_FromCjs_Lib.cjs'
+		IL_0093: stloc.2
+		IL_0094: ldloc.2
+		IL_0095: ldstr "value"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Modules.ESM.EsModuleLinker::GetImport(object, string)
+		IL_009f: stloc.2
+		IL_00a0: ldloc.3
+		IL_00a1: ldstr "named:"
+		IL_00a6: ldloc.2
+		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ac: pop
+		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b2: stloc.3
+		IL_00b3: volatile.
+		IL_00b5: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00ba: brfalse IL_00cf
 
-		IL_00c9: ldloc.2
-		IL_00ca: ldstr "default"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d4: br IL_00ee
+		IL_00bf: ldloc.1
+		IL_00c0: ldstr "default"
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ca: br IL_00e4
 
-		IL_00d9: ldloc.2
-		IL_00da: ldstr "default"
-		IL_00df: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:36"
-		IL_00e4: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_00cf: ldloc.1
+		IL_00d0: ldstr "default"
+		IL_00d5: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:34"
+		IL_00da: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_3
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_00ee: stloc.3
-		IL_00ef: volatile.
-		IL_00f1: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_00f6: brfalse IL_010b
+		IL_00e4: stloc.2
+		IL_00e5: volatile.
+		IL_00e7: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_00ec: brfalse IL_0101
 
-		IL_00fb: ldloc.3
-		IL_00fc: ldstr "value"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0106: br IL_0120
+		IL_00f1: ldloc.2
+		IL_00f2: ldstr "value"
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00fc: br IL_0116
 
-		IL_010b: ldloc.3
-		IL_010c: ldstr "value"
-		IL_0111: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:38"
-		IL_0116: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
-		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0101: ldloc.2
+		IL_0102: ldstr "value"
+		IL_0107: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:36"
+		IL_010c: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_4
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0120: stloc.3
-		IL_0121: ldloc.s 4
-		IL_0123: ldstr "namespace.default.value:"
-		IL_0128: ldloc.3
-		IL_0129: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_012e: pop
-		IL_012f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0134: stloc.s 4
-		IL_0136: volatile.
-		IL_0138: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_013d: brfalse IL_0152
+		IL_0116: stloc.2
+		IL_0117: ldloc.3
+		IL_0118: ldstr "namespace.default.value:"
+		IL_011d: ldloc.2
+		IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0123: pop
+		IL_0124: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0129: stloc.3
+		IL_012a: volatile.
+		IL_012c: ldsfld int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0131: brfalse IL_0146
 
-		IL_0142: ldloc.2
-		IL_0143: ldstr "value"
-		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_014d: br IL_0167
+		IL_0136: ldloc.1
+		IL_0137: ldstr "value"
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0141: br IL_015b
 
-		IL_0152: ldloc.2
-		IL_0153: ldstr "value"
-		IL_0158: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:44"
-		IL_015d: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
-		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
+		IL_0146: ldloc.1
+		IL_0147: ldstr "value"
+		IL_014c: ldstr "Import_StaticImport_FromCjs:Modules.Import_StaticImport_FromCjs:__js_module_init__:42"
+		IL_0151: ldsflda int32 Jroc.Generated.DynamicLookupSites::__jroc_dynamicLookup_5
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.DynamicLookupInlineCache::GetItem(object, string, string, int32&)
 
-		IL_0167: stloc.3
-		IL_0168: ldloc.s 4
-		IL_016a: ldstr "namespace.value:"
-		IL_016f: ldloc.3
-		IL_0170: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0175: pop
-		IL_0176: ret
+		IL_015b: stloc.2
+		IL_015c: ldloc.3
+		IL_015d: ldstr "namespace.value:"
+		IL_0162: ldloc.2
+		IL_0163: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0168: pop
+		IL_0169: ret
 	} // end of method Import_StaticImport_FromCjs::__js_module_init__
 
 } // end of class Modules.Import_StaticImport_FromCjs

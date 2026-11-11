@@ -118,6 +118,12 @@ namespace JavaScriptRuntime.Modules.CommonJS
 
         // require("module") returns a Node core module instance; modules are singletons.
         public object? RequireModule(string specifier)
+            => RequireModuleCore(specifier, awaitEvaluation: true);
+
+        internal object? ImportModule(string specifier)
+            => RequireModuleCore(specifier, awaitEvaluation: false);
+
+        private object? RequireModuleCore(string specifier, bool awaitEvaluation)
         {
             if (string.IsNullOrWhiteSpace(specifier))
             {
@@ -153,10 +159,16 @@ namespace JavaScriptRuntime.Modules.CommonJS
 
             // Everything else (relative paths + bare specifiers resolved at compile-time) is treated
             // as a compiled module inside the provided local modules assembly.
-            return RequireLocalModule(key);
+            return RequireLocalModule(key, awaitEvaluation);
         }
 
         internal object? RequireModuleFrom(string parentModuleIdOrFilename, string specifier)
+            => RequireModuleFromCore(parentModuleIdOrFilename, specifier, awaitEvaluation: true);
+
+        internal object? ImportModuleFrom(string parentModuleIdOrFilename, string specifier)
+            => RequireModuleFromCore(parentModuleIdOrFilename, specifier, awaitEvaluation: false);
+
+        private object? RequireModuleFromCore(string parentModuleIdOrFilename, string specifier, bool awaitEvaluation)
         {
             if (string.IsNullOrWhiteSpace(specifier))
             {
@@ -164,8 +176,8 @@ namespace JavaScriptRuntime.Modules.CommonJS
             }
 
             return IsNodeBuiltinSpecifier(specifier)
-                ? RequireModule(specifier)
-                : RequireModule(ResolveLocalSpecifier(parentModuleIdOrFilename, specifier));
+                ? RequireModuleCore(specifier, awaitEvaluation)
+                : RequireModuleCore(ResolveLocalSpecifier(parentModuleIdOrFilename, specifier), awaitEvaluation);
         }
 
         internal object? ExecuteModuleAsMain(string parentModuleIdOrFilename, string requestedSpecifier)
@@ -208,6 +220,18 @@ namespace JavaScriptRuntime.Modules.CommonJS
             var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
             return _localModulesAssembly.GetType($"Modules.{legacyModuleId}") != null
                 || _localModulesAssembly.GetType($"Scripts.{legacyModuleId}") != null;
+        }
+
+        internal Promise? GetModuleEvaluationPromise(string currentModuleId, string specifier)
+        {
+            if (IsNodeBuiltinSpecifier(specifier))
+                return null;
+            var resolved = ResolveLocalSpecifier(currentModuleId, specifier);
+            if (!TryResolveCompiledModule(resolved, out var canonicalId, out _))
+                return null;
+            return _modules.TryGetValue("compiled:" + canonicalId, out var module)
+                ? GetEvaluationCycleRoot(module).EvaluationPromise
+                : null;
         }
 
         internal object ImportWithPhase(string currentModuleId, string specifier, string phase, string? type)
@@ -256,7 +280,7 @@ namespace JavaScriptRuntime.Modules.CommonJS
             {
                 RequireForEvaluation(dependency);
                 if (_modules.TryGetValue("compiled:" + dependency, out var dependencyModule)
-                    && dependencyModule.EvaluationPromise is { } evaluation)
+                    && GetEvaluationCycleRoot(dependencyModule).EvaluationPromise is { } evaluation)
                     pending.Add(evaluation);
             }
             foreach (var evaluation in pending)
@@ -270,7 +294,7 @@ namespace JavaScriptRuntime.Modules.CommonJS
                         throw new TypeError($"Module '{canonicalId}' is not ready for synchronous evaluation");
                     var exports = RequireModule(canonicalId);
                     if (_modules.TryGetValue(cacheKey, out var module))
-                        Promise.AwaitTopLevel(module.EvaluationPromise);
+                        Promise.AwaitTopLevel(GetEvaluationCycleRoot(module).EvaluationPromise);
                     return EsModuleInterop.ToDynamicImportResult(exports);
                 });
                 _state.DeferredNamespaces.Add(canonicalId, deferredNamespace);
@@ -281,7 +305,7 @@ namespace JavaScriptRuntime.Modules.CommonJS
         /// <summary>
         /// Requires a local module (user code compiled with the main script).
         /// </summary>
-        private object? RequireLocalModule(string key)
+        private object? RequireLocalModule(string key, bool awaitEvaluation)
         {
             if (_localModulesAssembly == null)
                 throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
@@ -295,7 +319,7 @@ namespace JavaScriptRuntime.Modules.CommonJS
             }
 
             var exports = RequireCompiledModule(canonicalId, typeName, requestKey: key);
-            if (_modules.TryGetValue("compiled:" + canonicalId, out var module)
+            if (awaitEvaluation && _modules.TryGetValue("compiled:" + canonicalId, out var module)
                 && !module.IsSchedulingEvaluation && !module.IsExecutingBody)
                 Promise.AwaitTopLevel(module.EvaluationPromise);
             return exports;

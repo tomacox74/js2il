@@ -173,6 +173,8 @@ public sealed class ModuleImportEntry
 
     public required string ModuleRequest { get; set; }
 
+    public string Phase { get; init; } = "None";
+
     public string? LocalName { get; set; }
 
     public string? ImportName { get; set; }
@@ -185,6 +187,8 @@ public sealed class ModuleExportEntry
     public required ModuleExportKind Kind { get; set; }
 
     public required string ExportName { get; set; }
+
+    public string Phase { get; init; } = "None";
 
     public string? ImportType { get; init; }
 

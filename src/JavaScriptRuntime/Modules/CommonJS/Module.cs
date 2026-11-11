@@ -68,6 +68,8 @@ public class Module : DynamicObject
     internal Promise? AsyncBodyPromise { get; set; }
     internal bool IsSchedulingEvaluation { get; set; }
     internal bool IsExecutingBody { get; set; }
+    internal Module? EvaluationCycleRoot { get; set; }
+    internal long EvaluationDfsIndex { get; set; }
 
     /// <summary>
     /// The module that first required this one, or null if this is the main module.

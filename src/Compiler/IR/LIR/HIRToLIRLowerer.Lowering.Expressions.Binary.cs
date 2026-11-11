@@ -833,6 +833,7 @@ public sealed partial class HIRToLIRLowerer
             var boxedValue = EnsureObject(value);
             lirInstructions.Add(new LIRStoreScopeField(activeScope, binding, fieldId, scopeId, boxedValue));
             _variableMap[binding] = value;
+            MirrorEsModuleExport(binding, boxedValue);
             return true;
         }
 
@@ -848,6 +849,7 @@ public sealed partial class HIRToLIRLowerer
                 var boxedValue = EnsureObject(value);
                 lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
                 _variableMap[binding] = value;
+                MirrorEsModuleExport(binding, boxedValue);
                 return true;
             }
         }
@@ -859,6 +861,7 @@ public sealed partial class HIRToLIRLowerer
         var slot = GetOrCreateVariableSlot(binding, symbol.Name, storageInfo);
         SetTempVariableSlot(value, slot);
         _methodBodyIR.SingleAssignmentSlots.Add(slot);
+        MirrorEsModuleExport(binding, value);
         return true;
     }
 

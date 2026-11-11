@@ -14,6 +14,68 @@ Its MVP-runner evidence is separate from the native conformance results.
 Keep future batch narratives and detailed validation notes here rather than in
 the table-first summary.
 
+## Module-Code Coverage Batch (2026-11-06)
+
+This batch adds 200 byte-identical standalone fixtures and 107 required sibling
+dependencies from Test262 revision
+`2b2ecead6e828dd9af13a9ec72065e645724a50f`. The standalone cases comprise 108
+root module-code cases, 35 namespace internals, 32 top-level-await cases,
+17 top-level-await syntax cases, five ambiguous-export cases, two namespace
+cases, and one import-attributes case. None depends on eval; no skips or
+execution snapshots were added.
+
+Selection used scoped, read-only Supabase reporting, reconciled against all
+48 existing unique module-code cases and pending PRs. The first 200 of 250
+runnable, unregistered leads were selected; central incomplete results were
+discovery evidence, not proof that all leads failed. The initial native run
+passed 115 of 248 registrations and failed 133.
+
+Compiler/runtime fixes preserve live default reads, normalize re-exported
+imports to their underlying binding identity, omit ambiguous star names,
+initialize exported var cells before dependency evaluation, and mirror
+destructuring initialization into export cells. Namespace inventories now
+include all resolved names before evaluation. Strict module mutation throws
+TypeError without reading an uninitialized binding; descriptor/hasOwnProperty
+queries do read bindings, while the in operator does not. Anonymous default
+function/generator names no longer expose synthetic Closure names.
+
+All native ESM graphs now carry evaluation metadata. Asynchronous cycle roots
+govern external dependency completion and deferred readiness. Dynamic import
+uses nonblocking loading instead of synchronous require's nested event-loop
+pump, then awaits the cached evaluation capability. This preserves repeated
+import order and leaf-to-root fulfillment/rejection. Dynamic CommonJS star
+forwarding remains live even when the consumer has a static export inventory.
+The screening host forwards the explicit .NET stack-size and package-cache
+settings while retaining its credential-free worker environment.
+
+Fresh local validation covers all 248 native registrations and all 250 required
+variants, including 202 variants of the selected 200 cases. Representative
+repaired cases include `get-str-found-uninit`, `delete-exported-uninit`,
+`instn-named-bndng-dflt-fun-anon`, `instn-named-bndng-dflt-gen-anon`,
+`dynamic-import-of-waiting-module`, `fulfillment-order`, `rejection-order`,
+and `pending-async-dep-from-cycle`. Module-code coverage becomes 248/594
+(41.75%); language coverage becomes 22,276/23,643 (94.22%); overall coverage
+becomes 40,510/48,241 (83.97%). Support files and execution variants do not
+increase standalone counts.
+
+The initial central target was native/master provenance
+`1e7df726-2470-518d-ad69-e4a4c5180958`, source/validation revision
+`c820427b30d07f0cce81911344600ec62976fb6b`, as of
+2026-11-06 06:23:05 UTC. After Promise PR #2458 merged, a bounded 400-path
+reconciliation found all 200 Promise cases mapped and the 200 selected module
+cases still unregistered/incomplete. That coherent sealed registration target
+used provenance `66d43a1c-795a-50bb-9e11-60cab4454f7a`, snapshot
+`2c05c9aa-1804-51eb-a204-3f010b899618`, validation
+`0d1552d7-abf2-5a38-939a-155a7bb7cbbf`, source/validation revision
+`61597c5edc33e5404ef24cd9c39a5b7122c9b909`, as of
+2026-11-06 06:27:41 UTC. The observed-master field still lagged at `c820427...`;
+the registration and validation revisions themselves matched the exact merged
+SHA, whose master CI and central refresh succeeded.
+
+These branch-local native results validate the PR; they do not publish trusted
+Supabase acceptance or refresh central registrations. Exact-SHA master CI and
+a central registration refresh are still required after this batch merges.
+
 ## Promise Coverage Batch (2026-11-06)
 
 This batch adds 200 byte-identical fixtures from Test262 revision

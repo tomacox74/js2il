@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(modules): preserve live default imports, indirect export identity, exported
+  var initialization and destructuring updates; omit ambiguous star bindings.
+  Enforce strict module namespace mutation and descriptor/TDZ semantics, name
+  anonymous default declarations correctly, and await asynchronous module
+  cycles without blocking dynamic imports. Port 200 pinned module-code cases
+  with their sibling dependencies; none require eval.
 - fix(runtime): preserve Promise rejection when then handlers are non-callable,
   make finally's thrower throw the original reason directly, and select the
   default Promise prototype from newTarget's realm. Port 200 pinned Promise

@@ -13,7 +13,9 @@ boundary for all mutable CommonJS and ECMAScript module graph state:
 - synthesized CommonJS namespace objects;
 - deferred ESM namespace identities and JSON/text import namespace identities;
 - lazily read compiled-module metadata for static dependencies, top-level
-  await, export names, deferred loading errors, and original JSON source.
+  await, export names, deferred loading errors, and original JSON source;
+- asynchronous evaluation capabilities, dependency completion, cycle-root
+  links, and the depth-first evaluation index counter.
 
 Identical canonical module IDs can therefore exist concurrently in different
 realms without sharing exports, bindings, namespace identity, or
@@ -37,3 +39,8 @@ asynchronous transitive dependencies finish before the import promise resolves.
 Evaluation failures remain attached to the realm's ESM module record so later
 imports reject with the same JavaScript error value rather than retrying the
 module body. Namespace and compiled-metadata caches are cleared with the realm.
+
+Asynchronous cycle members retain their own body completion capability.
+Importers outside an active cycle await its root capability, including dynamic
+imports and deferred-namespace readiness checks. Evaluation indices and cycle
+links belong to the realm's module graph, never to process-wide static state.

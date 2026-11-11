@@ -37,7 +37,7 @@ internal static class ArgumentsObjectSemantics
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (scope.Kind == ScopeKind.Class)
+        if (scope.Kind == ScopeKind.Class || scope.EsModuleLink != null)
         {
             return true;
         }
