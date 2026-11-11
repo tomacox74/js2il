@@ -433,9 +433,13 @@ namespace Jroc.SymbolTables
             // 1. Imports: one hidden source binding per distinct specifier, plus per-specifier local bindings.
             var sourceBindingBySpecifier = new Dictionary<(string Specifier, string Phase, string? Type), BindingInfo>();
 
-            BindingInfo GetOrCreateSourceBinding(string specifier, Node declarationNode, string? importType = null)
+            BindingInfo GetOrCreateSourceBinding(
+                string specifier,
+                Node declarationNode,
+                string? importType = null,
+                string? phaseOverride = null)
             {
-                var phase = ModuleRequestSyntax.GetPhase(declarationNode);
+                var phase = phaseOverride ?? ModuleRequestSyntax.GetPhase(declarationNode);
                 importType ??= ModuleRequestSyntax.GetImportType(declarationNode);
                 var key = (specifier, phase, importType);
                 if (sourceBindingBySpecifier.TryGetValue(key, out var existing))
@@ -612,7 +616,11 @@ namespace Jroc.SymbolTables
                     continue;
                 }
 
-                var sourceBinding = GetOrCreateSourceBinding(indirectExport.ModuleRequest!, module.Ast, indirectExport.ImportType);
+                var sourceBinding = GetOrCreateSourceBinding(
+                    indirectExport.ModuleRequest!,
+                    module.Ast,
+                    indirectExport.ImportType,
+                    indirectExport.Phase);
                 if (indirectExport.Kind == ModuleExportKind.Namespace)
                 {
                     plan.NamespaceReexports.Add(new EsModuleNamespaceReexport

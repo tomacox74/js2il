@@ -2864,6 +2864,7 @@ function __jroc_esm_export(name, getter) {
                         {
                             Kind = ModuleImportKind.SideEffect,
                             ModuleRequest = sourceLiteral.Value,
+                            Phase = ModuleRequestSyntax.GetPhase(importDeclaration),
                             ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                         });
                         break;
@@ -2878,6 +2879,7 @@ function __jroc_esm_export(name, getter) {
                                 {
                                     Kind = ModuleImportKind.Default,
                                     ModuleRequest = sourceLiteral.Value,
+                                    Phase = ModuleRequestSyntax.GetPhase(importDeclaration),
                                     LocalName = defaultLocal.Name,
                                     ImportName = "default",
                                     ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
@@ -2889,6 +2891,7 @@ function __jroc_esm_export(name, getter) {
                                 {
                                     Kind = ModuleImportKind.Namespace,
                                     ModuleRequest = sourceLiteral.Value,
+                                    Phase = ModuleRequestSyntax.GetPhase(importDeclaration),
                                     LocalName = namespaceLocal.Name,
                                     ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
                                 });
@@ -2899,6 +2902,7 @@ function __jroc_esm_export(name, getter) {
                                 {
                                     Kind = ModuleImportKind.Named,
                                     ModuleRequest = sourceLiteral.Value,
+                                    Phase = ModuleRequestSyntax.GetPhase(importDeclaration),
                                     LocalName = importLocal.Name,
                                     ImportName = GetExpressionName(importSpecifier.Imported),
                                     ImportType = ModuleRequestSyntax.GetImportType(importDeclaration)
@@ -2923,6 +2927,7 @@ function __jroc_esm_export(name, getter) {
                         {
                             Kind = ModuleExportKind.Indirect,
                             ExportName = GetExpressionName(specifier.Exported),
+                            Phase = ModuleRequestSyntax.GetPhase(exportNamedFrom),
                             LocalName = GetExpressionName(specifier.Local),
                             ModuleRequest = sourceLiteral.Value,
                             ImportType = ModuleRequestSyntax.GetImportType(exportNamedFrom)
@@ -2969,6 +2974,7 @@ function __jroc_esm_export(name, getter) {
                     {
                         Kind = ModuleExportKind.Namespace,
                         ExportName = GetExpressionName(exportAllDeclaration.Exported),
+                        Phase = ModuleRequestSyntax.GetPhase(exportAllDeclaration),
                         LocalName = "*namespace*",
                         ModuleRequest = sourceLiteral.Value,
                         ImportType = ModuleRequestSyntax.GetImportType(exportAllDeclaration)
@@ -2982,6 +2988,7 @@ function __jroc_esm_export(name, getter) {
                     {
                         Kind = ModuleExportKind.Star,
                         ExportName = "*",
+                        Phase = ModuleRequestSyntax.GetPhase(exportAllDeclaration),
                         ModuleRequest = sourceLiteral.Value,
                         ImportType = ModuleRequestSyntax.GetImportType(exportAllDeclaration)
                     });
@@ -3006,6 +3013,7 @@ function __jroc_esm_export(name, getter) {
                     ? ModuleExportKind.Namespace
                     : ModuleExportKind.Indirect,
                 ExportName = localExport.ExportName,
+                Phase = import.Phase,
                 LocalName = import.Kind == ModuleImportKind.Namespace ? "*namespace*" : import.ImportName ?? "default",
                 ModuleRequest = import.ModuleRequest,
                 ImportType = import.ImportType
