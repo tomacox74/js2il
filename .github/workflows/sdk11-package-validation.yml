@@ -64,6 +64,11 @@ jobs:
             -p:SourceRevisionId="$source_sha" -p:UseSharedCompilation=false \
             | tee "$artifact_root/build.log"
           for project in src/JavaScriptRuntime/JavaScriptRuntime.csproj src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj; do
+            # Solution configuration mappings can differ from project configurations.
+            dotnet build "$project" -c Release --no-restore --nologo \
+              -p:Version="$package_version" -p:ContinuousIntegrationBuild=true \
+              -p:SourceRevisionId="$source_sha" -p:UseSharedCompilation=false \
+              | tee -a "$artifact_root/build.log"
             dotnet pack "$project" -c Release --no-build --no-restore -o "$feed" --nologo \
               -p:Version="$package_version" -p:PackageVersion="$package_version" \
               -p:ContinuousIntegrationBuild=true -p:SourceRevisionId="$source_sha" \
@@ -72,8 +77,11 @@ jobs:
           # Mirror restored dependencies so consumers need only the candidate's local feed.
           find "$NUGET_PACKAGES" -name '*.nupkg' -exec cp '{}' "$feed/" \;
           dotnet_root="$(dirname "$(readlink -f "$(command -v dotnet)")")"
-          pack="$(find "$NUGET_PACKAGES/microsoft.netcore.app.ref" "$dotnet_root/packs/Microsoft.NETCore.App.Ref" \
-            -mindepth 1 -maxdepth 1 -type d -name '10.*' 2>/dev/null | sort -V | tail -n 1)"
+          pack="$(for root in "$NUGET_PACKAGES/microsoft.netcore.app.ref" "$dotnet_root/packs/Microsoft.NETCore.App.Ref"; do
+            if [[ -d "$root" ]]; then
+              find "$root" -mindepth 1 -maxdepth 1 -type d -name '10.*'
+            fi
+          done | sort -V | tail -n 1)"
           test -f "$pack/ref/net10.0/System.Runtime.dll"
           mkdir -p "$artifact_root/targeting-packs/Microsoft.NETCore.App.Ref"
           cp -r "$pack" "$artifact_root/targeting-packs/Microsoft.NETCore.App.Ref/"
