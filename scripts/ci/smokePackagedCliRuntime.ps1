@@ -31,6 +31,9 @@ function Invoke-Captured {
 
     $output = @(& $FilePath @Arguments 2>&1)
     $exitCode = $LASTEXITCODE
+    if ($AllowFailure) {
+        $global:LASTEXITCODE = 0
+    }
     $output | Set-Content -Path $LogPath -Encoding utf8
     foreach ($line in $output) {
         Write-Host "$line"
