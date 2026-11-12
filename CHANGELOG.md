@@ -6,29 +6,29 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.37 - 2026-11-12
+
 - docs(packaging): audit published NuGet metadata, branding, source debugging,
   legacy migration, and framework compatibility. Correct package README links,
   add complete examples and migration guidance, clarify compiler versus generated
   target requirements, and expose package homepage/release-history metadata.
-
-- feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
-  resolving installed or explicitly supplied targeting packs with actionable
-  validation errors. Preserve the no-option target and verify packaged .NET 11
-  compilation followed by deployment to a separate .NET 10-only runtime.
-
+- feat(cli): add `--target-framework net10.0|net11.0` for standalone output.
+  Explicit targeting requires the matching .NET targeting pack. JROC can find
+  an installed pack, or you can specify one with `--targeting-pack`. To build
+  on .NET 11 and deploy to .NET 10, select `--target-framework net10.0` and
+  provide a .NET 10 targeting pack. The default follows the compiler runtime.
 - chore(build): adopt NuGet Central Package Management for third-party
   dependencies without changing versions. Keep packaged samples self-contained
   and preserve published-benchmark version selection and ingestion metadata.
-
 - fix(cli): report argument-parsing failures on stderr and exit with status 1
   instead of returning success. Preserve successful explicit help and show
   the supported output flag for module-id compilation.
-
 - fix(sdk): use the consuming project's targeting-pack assembly identities and
   runtime configuration when compiling JavaScript during MSBuild. Support
   .NET 11 SDK builds of `net10.0` hosts that execute on .NET 10-only runtimes,
   with packaged Basic-sample coverage for same-major and cross-major builds.
-
 - fix(benchmarks): compare the same classic, non-strict Kraken source on JROC,
   Jint, Okojo, YantraJS, and SharpTS, preserving setup-only initialization and
   persistent timed workloads. Keep JROC hosting glue outside the workload and
