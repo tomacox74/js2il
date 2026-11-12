@@ -1,6 +1,7 @@
-# jroc – JavaScript .NET compiler (consumer guide)
+# jroc - JavaScript-to-.NET command-line compiler
 
-jroc is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
+JROC compiles JavaScript ahead of time to .NET IL assemblies. Use the `jroc`
+global tool to compile and run scripts without creating a C# host project.
 
 ## Install
 
@@ -44,25 +45,38 @@ Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` to
 jroc <InputFile> [<OutputPath>] [options]
 ```
 
-Options
+Common options:
 
-- -i, --input           The JavaScript file to convert (positional supported)
-- -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
-- -v, --verbose         Print compiler diagnostics to the console
-- --diagnostic-file <path>  Write compiler diagnostics to a text file
-- -a, --analyzeunused   Report unused functions/properties/variables
-	--version         Show version information and exit
+| Option | Purpose |
+|---|---|
+| `-i`, `--input` | Input JavaScript file; also accepted positionally |
+| `-o`, `--output` | Output directory; defaults to the input file's directory |
+| `-a`, `--additional-input <file>` | Additional entry file; repeat for multiple files |
+| `-v` | Print compiler diagnostics |
+| `--diagnostic-file <path>` | Write compiler diagnostics to a text file |
+| `--analyzeunused` | Report unused functions, properties, and variables |
+| `--pdb` | Emit Portable PDB debug symbols for the generated assembly |
+| `--version` | Show version information and exit |
 
 Help: `-h`, `--help`, `-?`
 
-Example:
+Create `hello.js`:
 
-```powershell
-# Convert tests\simple.js and write output next to the file
-jroc .\tests\simple.js
+```javascript
+console.log("Hello from JROC!");
+```
 
-# Convert to a specific directory with verbose output
-jroc .\tests\simple.js -o .\out -v
+Compile and run it from the same directory:
+
+```shell
+jroc hello.js out
+dotnet out/hello.dll
+```
+
+Output:
+
+```text
+Hello from JROC!
 ```
 
 ## What gets generated?
@@ -90,7 +104,18 @@ Notes:
 
 - Console output (e.g., `console.log`) is implemented via the bundled `JavaScriptRuntime.dll`.
 - This is a prototype and doesn’t yet support all JavaScript features. See the repo docs for supported syntax and feature coverage.
- - Errors are written to stderr and known failures return a non-zero exit code.
+- Errors are written to stderr and known failures return a non-zero exit code.
+
+## .NET compatibility
+
+The tool is packaged for `net10.0` and can execute on .NET 10 or, through
+major roll-forward, .NET 11. Its generated framework references and
+`runtimeconfig.json` follow the runtime **executing the compiler**: output
+compiled on .NET 11 requires .NET 11, not just the tool's `net10.0` target.
+
+To compile JavaScript for a .NET project's chosen target framework instead,
+use `Jroc.SDK`. An SDK 11 build of a `net10.0` project then generates output
+for .NET 10 rather than for the compiler's .NET 11 process.
 
 ## Limitations
 
@@ -118,6 +143,10 @@ See:
 
 ## Links
 
+- Quick start: https://github.com/tomacox74/js2il/blob/master/docs/sdk/tutorials/GettingStarted.md
 - SDK (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md
-- Source, issues, docs: https://github.com/tomacox74/js2il
+- Migrating from JS2IL: https://github.com/tomacox74/js2il/blob/master/docs/sdk/LegacyPackageMigration.md
+- Release history: https://github.com/tomacox74/js2il/blob/master/CHANGELOG.md
+- Source: https://github.com/tomacox74/js2il
+- Issues: https://github.com/tomacox74/js2il/issues
 - License: Apache-2.0

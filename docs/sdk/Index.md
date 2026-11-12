@@ -96,8 +96,8 @@ The source path provides identity and dependency-resolution context; with
 `SourceText` supplied, the entry file need not exist. Compilation and loading
 do not write generated assemblies to disk. Because the assembly is created
 after the host was built, its generated types cannot be referenced statically
-by that host. Access exports dynamically or use `Get` / `Invoke` on
-`module.Exports`.
+by that host. Access exports dynamically, or cast `module.Exports` to
+`Jroc.Runtime.JsDynamicExports` for `Get` / `Invoke` operations.
 
 See [in-memory compilation](tutorials/InMemoryCompileAndRun.md) for packages,
 async calls, lifetime, and limitations. In-memory execution is not a sandbox:
@@ -116,6 +116,9 @@ Runnable MSBuild examples are in [Basic](../../samples/Basic),
 [Picocolors](../../samples/Picocolors).
 
 For maintainers, see [building and releasing](../BuildingAndReleasing.md)
-and [package validation](PackagingValidation.md). Compiler/runtime design
+and [package validation](PackagingValidation.md), including the
+[NuGet presentation audit](NuGetPackageAudit.md).
+For older package consumers, see [migrating from JS2IL](LegacyPackageMigration.md).
+Compiler/runtime design
 documents describe implementation details, not additional supported consumer
 workflows.

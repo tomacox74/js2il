@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs(packaging): audit published NuGet metadata, branding, source debugging,
+  legacy migration, and framework compatibility. Correct package README links,
+  add complete examples and migration guidance, clarify compiler versus generated
+  target requirements, and expose package homepage/release-history metadata.
+
 - chore(build): adopt NuGet Central Package Management for third-party
   dependencies without changing versions. Keep packaged samples self-contained
   and preserve published-benchmark version selection and ingestion metadata.

@@ -36,6 +36,7 @@ Replace `VERSION` with the same released version for both packages.
 
 ```csharp
 using Jroc;
+using Jroc.Runtime;
 
 // Replace with source selected by the application at runtime.
 var sourceText = "exports.add = (left, right) => left + right;";
@@ -44,7 +45,8 @@ var path = Path.Combine(Path.GetTempPath(), "jroc-input", "math.js");
 using var module = JrocInMemoryCompiler.CompileAndLoadModule(
     new JrocInMemoryCompileRequest(path) { SourceText = sourceText });
 
-Console.WriteLine(module.Exports.Invoke("add", 1d, 2d));
+var exports = (JsDynamicExports)module.Exports;
+Console.WriteLine(exports.Invoke("add", 1d, 2d));
 ```
 
 The entry path supplies identity and dependency-resolution context. It need
@@ -52,7 +54,9 @@ not exist when `SourceText` is provided. Omitting `SourceText` reads an
 existing entry file while still emitting and loading the generated assembly
 in memory.
 
-`module.Exports` supports `Get`, `Invoke`, `Value`, and C# `dynamic` access.
+The non-generic `module.Exports` property is typed as `object`; cast it to
+`JsDynamicExports` for `Get`, `Invoke`, and `Value`, as above, or assign it to
+a C# `dynamic` variable for JavaScript-style member access.
 Dispose the module when finished; it owns the execution runtime and
 collectible load context. Keep it alive until any required async work settles.
 No generated output files are written implicitly.
@@ -71,9 +75,24 @@ compiler diagnostics.
 For JavaScript known at build time, prefer `Jroc.SDK` and generated typed
 contracts rather than embedding compiler services in application code.
 
+## .NET compatibility
+
+The compiler library targets `net10.0`; .NET 10 and .NET 11 hosts can reference
+it. In-memory compilation uses the runtime executing the host, so artifacts
+compiled in a .NET 11 process require .NET 11. A `net10.0` package does not
+mean that every generated assembly targets .NET 10.
+
+For build-time compilation that follows a project's target framework, use
+`Jroc.SDK`. JavaScript compatibility is still evolving; see the
+[ECMAScript support index](https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Index.md).
+`eval` is not currently supported.
+
 ## Links
 
-- SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
-- In-memory tutorial: https://github.com/tomacox74/jroc/blob/master/docs/sdk/tutorials/InMemoryCompileAndRun.md
-- Source, issues, docs: https://github.com/tomacox74/jroc
+- SDK docs: https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md
+- In-memory tutorial: https://github.com/tomacox74/js2il/blob/master/docs/sdk/tutorials/InMemoryCompileAndRun.md
+- Migrating from JS2IL: https://github.com/tomacox74/js2il/blob/master/docs/sdk/LegacyPackageMigration.md
+- Release history: https://github.com/tomacox74/js2il/blob/master/CHANGELOG.md
+- Source: https://github.com/tomacox74/js2il
+- Issues: https://github.com/tomacox74/js2il/issues
 - License: Apache-2.0
