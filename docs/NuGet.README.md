@@ -118,6 +118,6 @@ See:
 
 ## Links
 
-- SDK (.NET library mode): https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
-- Source, issues, docs: https://github.com/tomacox74/jroc
+- SDK (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md
+- Source, issues, docs: https://github.com/tomacox74/js2il
 - License: Apache-2.0

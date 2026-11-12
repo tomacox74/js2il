@@ -61,7 +61,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.SDK",
                 expectedDescription: "MSBuild SDK package for compiling JavaScript sources into .NET assemblies during dotnet build.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "compiler",
@@ -140,6 +140,12 @@ public class JrocSdkPackageTests
             Assert.Contains("https://www.nuget.org/packages/Jroc.Core", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("https://www.nuget.org/packages/Jroc.SDK", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("https://www.nuget.org/packages/Jroc.Runtime", package.ReadmeText, StringComparison.Ordinal);
+            Assert.Contains(
+                "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
+                package.ReadmeText,
+                StringComparison.Ordinal);
+            Assert.Contains("https://github.com/tomacox74/js2il", package.ReadmeText, StringComparison.Ordinal);
+            Assert.Equal("https://github.com/tomacox74/js2il", GetRepositoryUrl(package.Nuspec));
 
             using var archive = ZipFile.OpenRead(toolPackagePath);
             var runtimeConfigEntry = archive.GetEntry("tools/net10.0/any/Jroc.runtimeconfig.json");
@@ -181,7 +187,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.Core",
                 expectedDescription: "Reusable jroc compiler library for embedding JavaScript-to-.NET compilation in custom .NET tools and hosts.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "compiler",
@@ -228,7 +234,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.Runtime",
                 expectedDescription: "Runtime support library for executing and hosting JROC-compiled assemblies from .NET.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "runtime",
@@ -1049,7 +1055,7 @@ public class JrocSdkPackageTests
         Assert.Equal("README.md", GetMetadataValue(package.Nuspec, "readme"));
         Assert.Equal("icon.jpg", GetMetadataValue(package.Nuspec, "icon"));
         Assert.Equal(expectedProjectUrl, GetMetadataValue(package.Nuspec, "projectUrl"));
-        Assert.Equal("https://github.com/tomacox74/jroc", GetRepositoryUrl(package.Nuspec));
+        Assert.Equal("https://github.com/tomacox74/js2il", GetRepositoryUrl(package.Nuspec));
         Assert.Equal("git", GetRepositoryType(package.Nuspec));
 
         var tags = GetMetadataValue(package.Nuspec, "tags");
