@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.36 - 2026-11-12
+
 - fix(modules): preserve live default imports, indirect export identity, exported
   var initialization and destructuring updates; omit ambiguous star bindings.
   Enforce strict module namespace mutation and descriptor/TDZ semantics, name
