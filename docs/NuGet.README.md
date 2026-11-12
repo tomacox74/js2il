@@ -50,6 +50,8 @@ Options
 - -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
 - -v, --verbose         Print compiler diagnostics to the console
 - --diagnostic-file <path>  Write compiler diagnostics to a text file
+- --target-framework <tfm>  Target `net10.0` or `net11.0` independently of the runtime running JROC
+- --targeting-pack <path>  Use a specific `Microsoft.NETCore.App.Ref` pack directory (requires `--target-framework`)
 - -a, --analyzeunused   Report unused functions/properties/variables
 	--version         Show version information and exit
 
@@ -65,6 +67,48 @@ jroc .\tests\simple.js
 jroc .\tests\simple.js -o .\out -v
 ```
 
+### Selecting the output framework
+
+Without `--target-framework`, output continues to target the .NET runtime running
+the CLI: .NET 10 on a .NET 10 host, or .NET 11 on a .NET 11 host. This default does
+not require a targeting pack.
+
+An explicit target uses that framework's reference assemblies and writes matching
+assembly identities and runtime configuration:
+
+```powershell
+# Build on .NET 11, then copy the complete out directory to a .NET 10 machine.
+jroc tests/simple.js -o out --target-framework net10.0
+dotnet out/simple.dll
+
+jroc tests/simple.js -o out11 --target-framework net11.0
+```
+
+JROC looks for the newest matching pack under
+`packs/Microsoft.NETCore.App.Ref/<version>/ref/<tfm>` in the .NET installation
+running the CLI. The selected SDK normally supplies its own framework's pack.
+For a different target, copy the required pack from another SDK installation into
+that `packs` directory, or supply its version directory explicitly:
+
+```powershell
+jroc tests/simple.js -o out --target-framework net10.0 `
+  --targeting-pack /reference-packs/Microsoft.NETCore.App.Ref/10.0.0
+```
+
+The supplied directory must contain `data/FrameworkList.xml`,
+`ref/net10.0/System.Runtime.dll` (or the corresponding `net11.0` directory), and
+the pack's other reference DLLs. An extracted
+`Microsoft.NETCore.App.Ref` NuGet package has this layout too; for example, use
+`~/.nuget/packages/microsoft.netcore.app.ref/10.0.0` if a .NET 11 SDK restored that
+pack for a .NET 10 project. A targeting pack is compile-time metadata: providing
+the .NET 10 pack does **not** require installing a .NET 10 SDK or runtime on the
+build machine. JROC does not download missing packs automatically.
+
+Only `net10.0` and `net11.0` are supported. Invalid targets, missing/incomplete packs, and
+packs with mismatched `System.Runtime` identities fail with a nonzero exit code
+and a diagnostic explaining how to provide the correct pack.
+These options apply to standalone assembly compilation, not coverage-only analysis.
+
 ## What gets generated?
 
 Given an input like `C:\code\sample.js`, jroc will emit the following into the output directory (default: alongside the input file):
@@ -74,8 +118,8 @@ Given an input like `C:\code\sample.js`, jroc will emit the following into the o
 	- The assembly name is the input file name without extension.
 	- Contains a `Program.Main` entry point that executes your script when run.
 - `sample.runtimeconfig.json`
-	- Runtime configuration for the `dotnet` host, based on the .NET runtime
-	  running the CLI (for example, .NET 10 or .NET 11).
+	- Runtime configuration for the selected output framework, or the .NET runtime
+	  running the CLI when `--target-framework` is omitted.
 - `JavaScriptRuntime.dll` (+ optional `JavaScriptRuntime.pdb` if available)
 	- Required runtime support library that provides JS primitives (e.g., `console.log`, arrays, objects) used by the emitted IL.
 	- This file is copied next to your generated assembly and must be present at runtime.

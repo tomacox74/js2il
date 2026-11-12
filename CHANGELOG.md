@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
+  resolving installed or explicitly supplied targeting packs with actionable
+  validation errors. Preserve the no-option target and verify packaged .NET 11
+  compilation followed by deployment to a separate .NET 10-only runtime.
+
 - fix(sdk): use the consuming project's targeting-pack assembly identities and
   runtime configuration when compiling JavaScript during MSBuild. Support
   .NET 11 SDK builds of `net10.0` hosts that execute on .NET 10-only runtimes,

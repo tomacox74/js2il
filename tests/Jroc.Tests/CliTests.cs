@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Text.Json;
 using Xunit;
 
 namespace Jroc.Tests
@@ -104,11 +107,11 @@ namespace Jroc.Tests
 
             Console.WriteLine($"[CliTests] Starting process: {psi.FileName} {psi.Arguments}");
             using var process = Process.Start(psi)!;
-            
+
             // Use async reads to avoid deadlock and add a timeout
             var stdoutTask = process.StandardOutput.ReadToEndAsync();
             var stderrTask = process.StandardError.ReadToEndAsync();
-            
+
             var exited = process.WaitForExit(30000); // 30 second timeout
             if (!exited)
             {
@@ -116,13 +119,13 @@ namespace Jroc.Tests
                 process.Kill();
                 throw new TimeoutException($"Process '{psi.FileName}' timed out after 30 seconds");
             }
-            
+
             var stdout = stdoutTask.GetAwaiter().GetResult();
             var stderr = stderrTask.GetAwaiter().GetResult();
-            
+
             Console.WriteLine($"[CliTests] Process exited with code: {process.ExitCode}");
             Console.WriteLine($"[CliTests] stdout length: {stdout.Length}, stderr length: {stderr.Length}");
-            
+
             return (process.ExitCode, stdout, stderr);
         }
 
@@ -202,11 +205,173 @@ namespace Jroc.Tests
                 Assert.True(File.Exists(dllPath), $"Missing output: {dllPath}");
                 Assert.True(File.Exists(runtimeConfig), $"Missing output: {runtimeConfig}");
                 Assert.True(File.Exists(jsRuntime), $"Missing runtime: {jsRuntime}");
+                AssertTargetFramework(dllPath, Environment.Version.Major);
             }
             finally
             {
                 try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
             }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Convert_TargetFramework_Net10_UsesMatchingReferencesAndRuntimeConfig(bool supplyPack)
+        {
+            var testRoot = Path.Combine(Path.GetTempPath(), "jroc_cli_target_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(testRoot);
+            var entry = Path.Combine(testRoot, "simple.js");
+            var output = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('x is', 3);");
+            try
+            {
+                var arguments = new System.Collections.Generic.List<string>
+                {
+                    entry, "-o", output, "--target-framework", "net10.0"
+                };
+                if (supplyPack)
+                {
+                    arguments.AddRange(["--targeting-pack", GetNet10TargetingPack()]);
+                }
+                var (code, _, stderr) = RunOutOfProc(arguments.ToArray());
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), stderr);
+                AssertTargetFramework(Path.Combine(output, "simple.dll"), 10);
+                Assert.True(File.Exists(Path.Combine(output, "JavaScriptRuntime.dll")));
+                Assert.True(File.Exists(Path.Combine(output, "Acornima.dll")));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Theory]
+        [InlineData("net8.0")]
+        [InlineData("net12.0")]
+        [InlineData("net10.0-windows")]
+        public void TargetFramework_UnsupportedTarget_ReportsSupportedTargets(string target)
+        {
+            var (code, _, stderr) = RunOutOfProc("--target-framework", target);
+            Assert.NotEqual(0, code);
+            Assert.Contains($"Unsupported target framework '{target}'", stderr, StringComparison.Ordinal);
+            Assert.Contains("net10.0", stderr, StringComparison.Ordinal);
+            Assert.Contains("net11.0", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TargetFramework_MissingPack_IdentifiesTargetPathAndRemedy()
+        {
+            var missing = Path.Combine(Path.GetTempPath(), "jroc_missing_pack_" + Guid.NewGuid().ToString("n"));
+            var (code, _, stderr) = RunOutOfProc(
+                "--target-framework", "net10.0", "--targeting-pack", missing);
+            Assert.NotEqual(0, code);
+            Assert.Contains("net10.0", stderr, StringComparison.Ordinal);
+            Assert.Contains(missing, stderr, StringComparison.Ordinal);
+            Assert.Contains("Microsoft.NETCore.App.Ref", stderr, StringComparison.Ordinal);
+            Assert.Contains("--targeting-pack", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TargetingPack_WithoutTargetFramework_ReportsConflict()
+        {
+            var (code, _, stderr) = RunOutOfProc("--targeting-pack", "unused-pack");
+            Assert.NotEqual(0, code);
+            Assert.Contains("--targeting-pack requires --target-framework", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TargetFramework_CoverageOnly_RejectsOutputTargetOptions()
+        {
+            var (code, _, stderr) = RunOutOfProc("coverage", "--target-framework", "net10.0");
+            Assert.NotEqual(0, code);
+            Assert.Contains("not coverage-only analysis", stderr, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TargetFramework_MismatchedPack_RejectsIncorrectAssemblyIdentity()
+        {
+            var testRoot = Path.Combine(Path.GetTempPath(), "jroc_wrong_pack_" + Guid.NewGuid().ToString("n"));
+            var references = Path.Combine(testRoot, "ref", "net11.0");
+            Directory.CreateDirectory(references);
+            File.Copy(
+                Path.Combine(GetNet10TargetingPack(), "ref", "net10.0", "System.Runtime.dll"),
+                Path.Combine(references, "System.Runtime.dll"));
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(
+                    "--target-framework", "net11.0", "--targeting-pack", testRoot);
+                Assert.NotEqual(0, code);
+                Assert.Contains("System.Runtime", stderr, StringComparison.Ordinal);
+                Assert.Contains("11.0.0.0", stderr, StringComparison.Ordinal);
+                Assert.Contains("10.0.0.0", stderr, StringComparison.Ordinal);
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void TargetFramework_IncompletePack_RejectsMissingFrameworkReference()
+        {
+            var testRoot = Path.Combine(Path.GetTempPath(), "jroc_partial_pack_" + Guid.NewGuid().ToString("n"));
+            var references = Path.Combine(testRoot, "ref", "net10.0");
+            Directory.CreateDirectory(references);
+            Directory.CreateDirectory(Path.Combine(testRoot, "data"));
+            var sourcePack = GetNet10TargetingPack();
+            File.Copy(
+                Path.Combine(sourcePack, "data", "FrameworkList.xml"),
+                Path.Combine(testRoot, "data", "FrameworkList.xml"));
+            foreach (var file in Directory.EnumerateFiles(Path.Combine(sourcePack, "ref", "net10.0"), "*.dll"))
+            {
+                if (Path.GetFileName(file) != "System.Console.dll")
+                {
+                    File.Copy(file, Path.Combine(references, Path.GetFileName(file)));
+                }
+            }
+            var entry = Path.Combine(testRoot, "simple.js");
+            var output = Path.Combine(testRoot, "out");
+            File.WriteAllText(entry, "console.log('x is', 3);");
+            try
+            {
+                var (code, _, stderr) = RunOutOfProc(
+                    entry, "-o", output, "--target-framework", "net10.0", "--targeting-pack", testRoot);
+                Assert.NotEqual(0, code);
+                Assert.Contains("incomplete", stderr, StringComparison.Ordinal);
+                Assert.Contains("System.Console.dll", stderr, StringComparison.Ordinal);
+                Assert.Contains("--targeting-pack", stderr, StringComparison.Ordinal);
+                Assert.False(File.Exists(Path.Combine(output, "simple.dll")));
+            }
+            finally
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
+        }
+
+        private static string GetNet10TargetingPack()
+        {
+            var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+            var dotnetRoot = Path.GetFullPath(Path.Combine(runtimeDirectory, "..", "..", ".."));
+            return Directory.EnumerateDirectories(Path.Combine(dotnetRoot, "packs", "Microsoft.NETCore.App.Ref"))
+                .Where(path => File.Exists(Path.Combine(path, "ref", "net10.0", "System.Runtime.dll")))
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .Last();
+        }
+
+        private static void AssertTargetFramework(string assemblyPath, int major)
+        {
+            using var pe = new PEReader(File.OpenRead(assemblyPath));
+            var metadata = pe.GetMetadataReader();
+            var systemRuntime = Assert.Single(
+                metadata.AssemblyReferences.Select(metadata.GetAssemblyReference),
+                reference => metadata.GetString(reference.Name) == "System.Runtime");
+            Assert.Equal(new Version(major, 0, 0, 0), systemRuntime.Version);
+            using var config = JsonDocument.Parse(File.ReadAllText(Path.ChangeExtension(assemblyPath, ".runtimeconfig.json")));
+            var options = config.RootElement.GetProperty("runtimeOptions");
+            Assert.Equal($"net{major}.0", options.GetProperty("tfm").GetString());
+            Assert.Equal("Microsoft.NETCore.App", options.GetProperty("framework").GetProperty("name").GetString());
+            Assert.Equal($"{major}.0.0", options.GetProperty("framework").GetProperty("version").GetString());
         }
 
         [Theory]
