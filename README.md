@@ -4,6 +4,9 @@
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Target framework: net10.0](https://img.shields.io/badge/.NET_target-net10.0-512BD4?logo=dotnet&logoColor=white)](#compatibility-and-project-status)
 [![Build and tests on master](https://img.shields.io/github/actions/workflow/status/tomacox74/js2il/dotnet.yml?branch=master&event=push&label=build%20%26%20tests)](https://github.com/tomacox74/js2il/actions/workflows/dotnet.yml?query=branch%3Amaster)
+[![Windows](https://img.shields.io/badge/Windows-0078D4?logo=windows&logoColor=white)](#compatibility-and-project-status)
+[![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white)](#compatibility-and-project-status)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#compatibility-and-project-status)
 [![NuGet version](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
 JROC is a JavaScript-to-.NET compiler. It compiles JavaScript source directly
