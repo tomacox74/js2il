@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Jroc;
 
-[ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
+[ArgExceptionBehavior(ArgExceptionPolicy.DontHandleExceptions)]
 public class JrocArgs
 {
     [ArgPosition(0)]
@@ -98,7 +98,7 @@ class Program
             var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
             {
-                // HelpHook likely handled output; treat as successful exit
+                // PowerArgs hooks can cancel parsing without reporting an error.
                 return;
             }
 

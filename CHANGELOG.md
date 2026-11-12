@@ -15,6 +15,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   dependencies without changing versions. Keep packaged samples self-contained
   and preserve published-benchmark version selection and ingestion metadata.
 
+- fix(cli): report argument-parsing failures on stderr and exit with status 1
+  instead of returning success. Preserve successful explicit help and show
+  the supported output flag for module-id compilation.
+
 - fix(sdk): use the consuming project's targeting-pack assembly identities and
   runtime configuration when compiling JavaScript during MSBuild. Support
   .NET 11 SDK builds of `net10.0` hosts that execute on .NET 10-only runtimes,
