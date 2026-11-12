@@ -3,8 +3,10 @@
 Audit for [#2468](https://github.com/tomacox74/js2il/issues/2468), as of
 **2026-11-12 UTC**. Published evidence is the four NuGet.org **0.12.36**
 listings and downloaded `.nupkg` files, all associated with release commit
-`f86bce4c4d10ddee565ccfac9a997e4e049c2413`. Repository findings use master
-`36627f9203699e3785c9c1a25f657c0501a50c2a` plus this audit's changes.
+`f86bce4c4d10ddee565ccfac9a997e4e049c2413`. Initial repository findings use
+master `36627f9203699e3785c9c1a25f657c0501a50c2a` plus this audit's changes.
+Integrated CLI guidance also preserves the later standalone target-framework
+support from #2476 and usage documentation from #2482.
 
 Repository/README changes appear on NuGet.org only after a new release.
 Published `0.12.36` is not modified, and its SDK does not contain the
@@ -104,6 +106,11 @@ the previously merged but unreleased SDK targeting fix:
 | SDK | SDK 10 | `net10.0` target: generated `System.Runtime` 10, executes on .NET 10 | Packaged Basic matrix |
 | SDK | SDK 11 | `net10.0` target: generated `System.Runtime` 10, executes on .NET 10-only installation | Packaged Basic matrix; no MSB3277/CS1705 |
 | SDK | SDK 11 | `net11.0` target: generated `System.Runtime` 11, executes on .NET 11 | Packaged Basic matrix |
+
+The CLI checks above describe default output without `--target-framework`.
+Standalone compilation can now explicitly select `net10.0` or `net11.0`
+using the matching reference pack; see
+[Selecting the output framework](../NuGet.README.md#selecting-the-output-framework).
 
 The SDK is a task package without `lib/` assets. NuGet's framework tab is
 not a complete consumer-support matrix; do not add fake library assets to

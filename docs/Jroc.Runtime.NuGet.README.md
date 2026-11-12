@@ -62,9 +62,11 @@ package reference or manual runtime loading.
 
 The runtime library targets `net10.0` and can be used by .NET 10 and .NET 11
 hosts. Generated assemblies also carry their own framework requirements:
-CLI and in-memory compilation follow the executing .NET runtime, while
-`Jroc.SDK` follows the consuming project's target framework. Installing this
-runtime package does not make .NET 11-generated output executable on .NET 10.
+in-memory compilation follows the executing .NET runtime, while `Jroc.SDK`
+follows the consuming project's target framework. The CLI defaults to the
+executing runtime, but `--target-framework` with a matching reference pack
+can select `net10.0` or `net11.0`. Installing this runtime package does not
+make output targeting .NET 11 executable on .NET 10.
 
 For supported JavaScript features and current limitations, see the
 [ECMAScript support index](https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Index.md).

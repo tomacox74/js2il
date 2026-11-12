@@ -11,9 +11,18 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   add complete examples and migration guidance, clarify compiler versus generated
   target requirements, and expose package homepage/release-history metadata.
 
+- feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
+  resolving installed or explicitly supplied targeting packs with actionable
+  validation errors. Preserve the no-option target and verify packaged .NET 11
+  compilation followed by deployment to a separate .NET 10-only runtime.
+
 - chore(build): adopt NuGet Central Package Management for third-party
   dependencies without changing versions. Keep packaged samples self-contained
   and preserve published-benchmark version selection and ingestion metadata.
+
+- fix(cli): report argument-parsing failures on stderr and exit with status 1
+  instead of returning success. Preserve successful explicit help and show
+  the supported output flag for module-id compilation.
 
 - fix(sdk): use the consuming project's targeting-pack assembly identities and
   runtime configuration when compiling JavaScript during MSBuild. Support
