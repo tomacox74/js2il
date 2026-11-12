@@ -204,6 +204,7 @@ $dotnetPath = Join-Path $dotnetRoot $(if ($IsWindows) { 'dotnet.exe' } else { 'd
 if (-not (Test-Path $dotnetPath)) {
     throw "The isolated dotnet muxer was not installed at $dotnetPath."
 }
+Set-Location $consumerRoot
 
 $environment = @(
     "Operating system: $([System.Environment]::OSVersion.Platform)"
@@ -232,7 +233,6 @@ if (-not (Test-Path $toolExecutable)) {
     throw "The locally installed JROC tool was not found at $toolExecutable."
 }
 $env:PATH = @($toolPath, $env:PATH) -join [System.IO.Path]::PathSeparator
-Set-Location $consumerRoot
 
 $cliTrace = Join-Path $evidenceRoot 'cli-host.trace'
 $env:DOTNET_HOST_TRACE = '1'
