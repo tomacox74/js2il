@@ -141,17 +141,25 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
             var entryNames = package.EntryNames.ToArray();
 
             Assert.DoesNotContain(entryNames, name => name.StartsWith("samples/", StringComparison.OrdinalIgnoreCase));
-            Assert.Contains("README.md", entryNames);
-            Assert.Contains("icon.jpg", entryNames);
-            Assert.Contains("https://www.nuget.org/packages/Jroc.Core", package.ReadmeText, StringComparison.Ordinal);
-            Assert.Contains("https://www.nuget.org/packages/Jroc.SDK", package.ReadmeText, StringComparison.Ordinal);
-            Assert.Contains("https://www.nuget.org/packages/Jroc.Runtime", package.ReadmeText, StringComparison.Ordinal);
-            Assert.Contains(
-                "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
-                package.ReadmeText,
-                StringComparison.Ordinal);
-            Assert.Contains("https://github.com/tomacox74/js2il", package.ReadmeText, StringComparison.Ordinal);
-            Assert.Equal("https://github.com/tomacox74/js2il", GetRepositoryUrl(package.Nuspec));
+            AssertPackagePageMetadata(
+                package,
+                expectedId: "jroc",
+                expectedDescription: "JROC command-line compiler for compiling JavaScript ahead of time to .NET IL assemblies.",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/sdk/tutorials/GettingStarted.md",
+                requiredTags:
+                [
+                    "compiler",
+                    "tool"
+                ],
+                requiredReadmeLinks:
+                [
+                    "https://www.nuget.org/packages/jroc",
+                    "https://www.nuget.org/packages/Jroc.Core",
+                    "https://www.nuget.org/packages/Jroc.SDK",
+                    "https://www.nuget.org/packages/Jroc.Runtime",
+                    "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md"
+                ]);
+            Assert.DoesNotContain("-a, --analyzeunused", package.ReadmeText, StringComparison.Ordinal);
 
             using var archive = ZipFile.OpenRead(toolPackagePath);
             var runtimeConfigEntry = archive.GetEntry("tools/net10.0/any/Jroc.runtimeconfig.json");
@@ -192,7 +200,7 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
             AssertPackagePageMetadata(
                 package,
                 expectedId: "Jroc.Core",
-                expectedDescription: "Reusable jroc compiler library for embedding JavaScript-to-.NET compilation in custom .NET tools and hosts.",
+                expectedDescription: "In-memory JavaScript-to-.NET compiler for .NET applications with runtime-supplied scripts.",
                 expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
@@ -256,6 +264,61 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
 
             Assert.Contains("<PackageReference Include=\"Jroc.Runtime\" Version=\"VERSION\" />", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("JavaScriptRuntime.dll", package.ReadmeText, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Theory]
+    [InlineData("Jroc.Core", "3")]
+    [InlineData("Jroc.Runtime", "42")]
+    [Trait("CiShard", "build")]
+    public void Build_PackedInMemoryReadmeExample_CompilesAndRuns(string packageId, string expectedOutput)
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            var projectDir = Path.Combine(tempRoot, "consumer");
+            Directory.CreateDirectory(feedDir);
+            Directory.CreateDirectory(projectDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var package = ReadPackedPackage(Path.Combine(feedDir, $"{packageId}.{packageVersion}.nupkg"));
+            const string codeFence = "```csharp";
+            var start = package.ReadmeText.IndexOf(codeFence, StringComparison.Ordinal);
+            Assert.True(start >= 0, $"Expected a C# example in {packageId}'s packed README.");
+            start += codeFence.Length;
+            var end = package.ReadmeText.IndexOf("```", start, StringComparison.Ordinal);
+            Assert.True(end > start, $"Expected a complete C# example in {packageId}'s packed README.");
+
+            File.WriteAllText(Path.Combine(projectDir, "Program.cs"), package.ReadmeText[start..end]);
+            File.WriteAllText(Path.Combine(projectDir, "ReadmeExample.csproj"), $$"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>net10.0</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <RestoreSources>{{feedDir}};https://api.nuget.org/v3/index.json</RestoreSources>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <PackageReference Include="Jroc.Core" Version="{{packageVersion}}" />
+                    <PackageReference Include="Jroc.Runtime" Version="{{packageVersion}}" />
+                  </ItemGroup>
+                </Project>
+                """);
+
+            var build = RunProcess("dotnet", "build ReadmeExample.csproj --nologo", projectDir, timeoutSeconds: 180);
+            Assert.True(build.ExitCode == 0, $"README example build failed ({packageId}).\n{build.StdOut}\n{build.StdErr}");
+
+            var run = RunProcess("dotnet", "bin/Debug/net10.0/ReadmeExample.dll", projectDir, timeoutSeconds: 120);
+            Assert.True(run.ExitCode == 0, $"README example execution failed ({packageId}).\n{run.StdOut}\n{run.StdErr}");
+            Assert.Equal(expectedOutput, run.StdOut.Trim());
         }
         finally
         {
@@ -1244,8 +1307,17 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
         Assert.Equal("README.md", GetMetadataValue(package.Nuspec, "readme"));
         Assert.Equal("icon.jpg", GetMetadataValue(package.Nuspec, "icon"));
         Assert.Equal(expectedProjectUrl, GetMetadataValue(package.Nuspec, "projectUrl"));
+        Assert.Equal(
+            "Release history: https://github.com/tomacox74/js2il/blob/master/CHANGELOG.md",
+            GetMetadataValue(package.Nuspec, "releaseNotes"));
         Assert.Equal("https://github.com/tomacox74/js2il", GetRepositoryUrl(package.Nuspec));
         Assert.Equal("git", GetRepositoryType(package.Nuspec));
+        Assert.DoesNotContain("https://github.com/tomacox74/jroc", package.ReadmeText, StringComparison.Ordinal);
+        Assert.Contains(
+            "https://github.com/tomacox74/js2il/blob/master/docs/sdk/LegacyPackageMigration.md",
+            package.ReadmeText,
+            StringComparison.Ordinal);
+        Assert.Contains("https://github.com/tomacox74/js2il/issues", package.ReadmeText, StringComparison.Ordinal);
 
         var tags = GetMetadataValue(package.Nuspec, "tags");
         foreach (var tag in requiredTags)

@@ -63,14 +63,16 @@ evaluated the same way; there are simply no exports for the host to call.
 
 ## 3. Access exports without C# `dynamic`
 
-The non-generic module's `Exports` property also provides explicit operations:
+The non-generic module's `Exports` property is typed as `object`. Cast the
+returned proxy to `JsDynamicExports` for explicit operations:
 
 ```csharp
-Console.WriteLine(module.Exports.Get("version"));
-Console.WriteLine(module.Exports.Invoke("add", 1d, 2d));
+var exportsProxy = (Jroc.Runtime.JsDynamicExports)module.Exports;
+Console.WriteLine(exportsProxy.Get("version"));
+Console.WriteLine(exportsProxy.Invoke("add", 1d, 2d));
 ```
 
-Use `module.Exports.Value` for the complete `module.exports` value, including
+Use `exportsProxy.Value` for the complete `module.exports` value, including
 modules that export a function or primitive directly. Member names in this
 workflow use their JavaScript spelling, such as `add`, not generated
 PascalCase names.
@@ -87,7 +89,7 @@ exported callable and bridge its result to a .NET task:
 ```csharp
 using Jroc.Runtime;
 
-var addAsync = (JsCallable)module.Exports.Get("addAsync")!;
+var addAsync = (JsCallable)exportsProxy.Get("addAsync")!;
 var result = await addAsync.CallAsync<double>(1d, 2d);
 Console.WriteLine(result);
 ```

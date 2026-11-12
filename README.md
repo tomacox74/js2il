@@ -2,8 +2,11 @@
 
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Supported .NET runtime: 10](https://img.shields.io/badge/.NET_runtime-10-512BD4?logo=dotnet&logoColor=white)](#compatibility-and-project-status)
+[![Target framework: net10.0](https://img.shields.io/badge/.NET_target-net10.0-512BD4?logo=dotnet&logoColor=white)](#compatibility-and-project-status)
 [![Build and tests on master](https://img.shields.io/github/actions/workflow/status/tomacox74/js2il/dotnet.yml?branch=master&event=push&label=build%20%26%20tests)](https://github.com/tomacox74/js2il/actions/workflows/dotnet.yml?query=branch%3Amaster)
+[![Windows](https://img.shields.io/badge/Windows-0078D4?logo=windows&logoColor=white)](#compatibility-and-project-status)
+[![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white)](#compatibility-and-project-status)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#compatibility-and-project-status)
 [![NuGet version](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
 JROC is a JavaScript-to-.NET compiler. It compiles JavaScript source directly
@@ -18,10 +21,11 @@ JavaScript applications and libraries into the .NET ecosystem.
 
 JROC supports Windows, Linux, and macOS.
 
-JROC currently targets ECMAScript 2025 and .NET 10. The command-line tool can
-also run on later installed .NET runtimes; compiled programs use the runtime
-that runs JROC. The project is under active development; compatibility is broad
-but not yet complete.
+JROC currently targets ECMAScript 2025 and .NET 10. The command-line tool runs
+on .NET 10 and rolls forward to .NET 11 when only .NET 11 is installed. The
+generated `.runtimeconfig.json` defaults to the runtime version that
+runs JROC. The project is under active development; compatibility is broad but
+not yet complete.
 
 ## Install JROC
 
@@ -86,7 +90,7 @@ the input file.
 ```text
 jroc <InputFile> [<OutputPath>] [options]
 jroc <InputFile> [<OutputPath>] -a <file> [-a <file> ...] [options]
-jroc --moduleid <ModuleId> [<OutputPath>] [options]
+jroc --moduleid <ModuleId> [--output <directory>] [options]
 jroc coverage <InputFile> [--json] [--coverage-report <file>]
 ```
 
@@ -99,10 +103,12 @@ jroc coverage <InputFile> [--json] [--coverage-report <file>]
 | `--assemblyname <name>` | Set the generated assembly identity and artifact basename. |
 | `-v`, `--verbose` | Print compiler diagnostics. |
 | `--diagnostic-file <path>` | Write compiler diagnostics to a text file. |
+| `--target-framework <tfm>` | Target `net10.0` or `net11.0` for the standalone output. Defaults to the runtime running JROC. |
+| `--targeting-pack <path>` | Use a specific `Microsoft.NETCore.App.Ref` pack version directory. Requires `--target-framework`. |
 | `--analyzeunused` | Report unused functions, properties, and variables. |
 | `--pdb` | Emit Portable PDB debug symbols. |
 | `--coverage` | Analyze compilation modes in memory without writing or executing an assembly. |
-| `--json` | Print machine-readable coverage JSON in analysis mode. |
+| `--json` | Print machine-readable JSON with `coverage` or `--coverage`. Cannot be combined with `--verbose` or `--analyzeunused`. |
 | `--coverage-report <file>` | Write a coverage JSON report, also during normal compilation. |
 | `--assume-unmodified-host-globals` | Opt into guard-free calls to provably unchanged built-ins when the host guarantees pristine global bindings throughout execution. |
 | `--version` | Print the installed JROC version. |
@@ -136,8 +142,17 @@ dotnet out/app.dll
 determines the assembly name and output filenames unless `--assemblyname`
 overrides it. Additional files do not produce separate assemblies.
 
+Use `-o` or `--output` to select the output directory with `--moduleid`.
+JROC resolves the module ID from the current working directory.
+
+To compile on .NET 11 for deployment to .NET 10, use
+`jroc app.js out --target-framework net10.0` with a .NET 10 reference pack
+available. See [Selecting the output framework](docs/NuGet.README.md#selecting-the-output-framework)
+for pack discovery and how to supply a pack explicitly.
+
 Use `jroc coverage app.js` to inspect direct IL, bound runtime intrinsics,
 dynamic/fallback paths, and unsupported sites independently of correctness.
+Use `--coverage-report <file>` to save the analysis to a file.
 See [compilation-mode coverage](docs/compiler/CompilationCoverage.md) for the
 source-site measurement and Test262 aggregation.
 
@@ -168,8 +183,8 @@ feature. In particular, `eval` is not currently supported.
 - [Runtime architecture](docs/runtime/Index.md)
 - [Release notes](CHANGELOG.md)
 
-Errors and diagnostics are written to standard error, and known compilation
-failures return a non-zero exit code.
+Compiler errors go to standard error, and compilation failures return a
+nonzero exit code.
 
 ## Contributing
 

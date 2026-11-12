@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Jroc;
 
-[ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
+[ArgExceptionBehavior(ArgExceptionPolicy.DontHandleExceptions)]
 public class JrocArgs
 {
     [ArgPosition(0)]
@@ -98,7 +98,7 @@ class Program
             var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
             {
-                // HelpHook likely handled output; treat as successful exit
+                // PowerArgs hooks can cancel parsing without reporting an error.
                 return;
             }
 
@@ -446,7 +446,7 @@ class Program
     private static void PrintUsage(Action<string> writeLine)
     {
         writeLine("Usage: jroc <InputFile> [<OutputPath>] [options]");
-        writeLine("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
+        writeLine("   or: jroc --moduleid <ModuleId> [--output <directory>] [options]");
         writeLine("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
         writeLine("");
         writeLine("Option                 Description");
@@ -458,9 +458,10 @@ class Program
         writeLine("-v, --verbose          Enable diagnostics output to console");
         writeLine("--diagnostic-file <path> Write diagnostics output to a text file");
         writeLine("--target-framework <tfm> Target net10.0 or net11.0 (default: the runtime running JROC)");
-        writeLine("--targeting-pack <path> Use a Microsoft.NETCore.App.Ref pack version directory");
-        writeLine("--analyzeunused        Analyze and report unused properties and methods");
+        writeLine("--targeting-pack <path> Use a Microsoft.NETCore.App.Ref pack version directory (requires --target-framework)");
+        writeLine("--analyzeunused        Report unused functions, properties, and variables");
         writeLine("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        writeLine("--assume-unmodified-host-globals  Allow guard-free calls when analysis permits and the host preserves built-in global bindings");
         writeLine("--coverage             Analyze compilation modes without writing assemblies");
         writeLine("--json                 Print coverage analysis as JSON");
         writeLine("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");

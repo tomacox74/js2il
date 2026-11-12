@@ -37,7 +37,9 @@ The SDK restores and deploys the compatible runtime automatically.
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,6 +49,25 @@ The SDK restores and deploys the compatible runtime automatically.
   </ItemGroup>
 </Project>
 ```
+
+Replace `VERSION` with a released JROC version. Create
+`JavaScript/HostedMathModule.js`:
+
+```javascript
+exports.version = "1.0.0";
+exports.add = (left, right) => left + right;
+```
+
+Create `Program.cs` alongside the project file:
+
+```csharp
+using var math = HostedMathModule.Import();
+Console.WriteLine(math.Version);
+Console.WriteLine(math.Add(1d, 2d));
+```
+
+Run `dotnet run` in the project directory. It builds the JavaScript module,
+then prints `1.0.0` and `3`. No global compiler installation is required.
 
 By default:
 
@@ -74,6 +95,28 @@ Console.WriteLine(exports.Version);
 
 Side-effect-only modules do not get `Import()`. Dynamic or computed CommonJS
 exports get a safe generated fallback contract rather than being hidden.
+
+## .NET compatibility
+
+The build task ships under `tasks/net10.0` and requires a .NET 10 or .NET 11
+MSBuild host. It is a build integration package, not a `lib/net10.0` library;
+NuGet's framework tab does not describe all supported consumer targets.
+
+Generated framework references and runtime configuration use the consuming
+project's targeting pack, not the runtime executing MSBuild:
+
+| SDK used to build | Host project target | Generated output requires |
+|---|---|---|
+| .NET 10 | `net10.0` | .NET 10 |
+| .NET 11 | `net10.0` | .NET 10 |
+| .NET 11 | `net11.0` | .NET 11 |
+
+The .NET 10 SDK cannot build a `net11.0` project. Using SDK 11 does not require
+retargeting an existing `net10.0` host. These are framework requirements,
+not claims of complete JavaScript or Node.js compatibility; see the
+[ECMAScript support index](https://github.com/tomacox74/js2il/blob/master/docs/ECMA262/Index.md).
+
+## Output deployment
 
 Normal build and publish output receives the runtime implementation through the
 SDK dependency. `CopyToOutputDirectory` controls copying the generated JROC
@@ -153,6 +196,9 @@ If you are validating a locally packed prerelease feed instead of NuGet.org, pac
 
 ## Links
 
-- SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
-- Source, issues, docs: https://github.com/tomacox74/jroc
+- SDK docs: https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md
+- Migrating from JS2IL: https://github.com/tomacox74/js2il/blob/master/docs/sdk/LegacyPackageMigration.md
+- Release history: https://github.com/tomacox74/js2il/blob/master/CHANGELOG.md
+- Source: https://github.com/tomacox74/js2il
+- Issues: https://github.com/tomacox74/js2il/issues
 - License: Apache-2.0
