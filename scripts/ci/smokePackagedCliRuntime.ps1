@@ -34,7 +34,7 @@ function Invoke-Captured {
     if ($AllowFailure) {
         $global:LASTEXITCODE = 0
     }
-    $output | Set-Content -Path $LogPath -Encoding utf8
+    [System.IO.File]::WriteAllLines($LogPath, [string[]]$output, [System.Text.UTF8Encoding]::new($false))
     foreach ($line in $output) {
         Write-Host "$line"
     }
