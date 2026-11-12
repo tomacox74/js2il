@@ -733,7 +733,10 @@ class StableProjectAndWorkflowTests(unittest.TestCase):
                 self.assertEqual(project.findall('.//DeterministicSourcePaths'), [])
                 self.assertEqual(project.findall('Import'), [])
         testing = ET.parse(drill.REPO / paths[0]).getroot()
-        self.assertEqual([p.attrib['Version'] for p in testing.findall('.//PackageReference')
+        self.assertEqual([p.attrib['Include'] for p in testing.findall('.//PackageReference')
+                          if p.attrib['Include'] == 'Verify.Xunit'], ['Verify.Xunit'])
+        packages = ET.parse(drill.REPO / 'Directory.Packages.props').getroot()
+        self.assertEqual([p.attrib['Version'] for p in packages.findall('.//PackageVersion')
                           if p.attrib['Include'] == 'Verify.Xunit'], ['30.4.0'])
         host = ET.parse(drill.REPO / paths[1]).getroot()
         self.assertIn('..\\..\\..\\tests\\Jroc.Testing\\Jroc.Testing.csproj',

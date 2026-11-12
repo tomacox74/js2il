@@ -39,6 +39,7 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
             Assert.Contains("README.md", entryNames);
             Assert.Contains("icon.jpg", entryNames);
             Assert.Contains("samples/Directory.Build.props", entryNames);
+            Assert.Contains("samples/Directory.Packages.props", entryNames);
             Assert.Contains("samples/Basic/host/Basic.csproj", entryNames);
             Assert.Contains("samples/Basic/compiler/JavaScript/HostedMathModule.js", entryNames);
             Assert.DoesNotContain("samples/Basic/compiler/HostedMathModule.proj", entryNames);
