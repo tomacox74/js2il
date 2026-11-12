@@ -288,12 +288,39 @@ If any benchmark case fails, the run now exits non-zero and prints the failing b
 #### Kraken Comparison
 Runs the selected Kraken 1.1 workload with its test and data scripts loaded during setup, then measures only its registered `runTest()` callback. Release and default local runs include `audio-beat-detection`, `audio-dft`, `audio-oscillator`, and `json-parse-financial` on jroc and Jint. The `ai-astar` scenario and the Okojo and YantraJS runtimes remain available but are disabled by default to keep routine benchmark runs focused and shorter.
 
+Every adapter consumes the same `LoadScriptSource()` result: the unchanged data
+script, workload-registration helper, unchanged test script, and benchmark runner,
+in that order, as one classic, non-strict script. JROC explicitly uses
+`ParseAsScript = true`; a separate CommonJS host shim loads that script and exposes
+its global functions to the .NET hosting API. The workload itself contains no
+added `export` or `"use strict"` directive. Jint, Okojo, YantraJS, and SharpTS
+execute that same source, with only host-side function binding differing.
+The registration helper uses a `var runTest` assignment inside a block, retaining
+its global binding while avoiding YantraJS's false redeclaration error when an
+original audio data script already declares `function runTest`.
+
+Setup initializes data and registers the callback once without invoking it.
+Each timed call runs the registered iteration count and retains the same runtime
+and JavaScript state for subsequent calls. Compilation, script initialization,
+and function binding are outside the timed boundary.
+
 ```powershell
 dotnet run -c Release -- --kracken
 dotnet run -c Release -- --kracken --scenario audio-oscillator
 dotnet run -c Release -- --kracken --scenario json-parse-financial
 dotnet run -c Release -- --kracken --comprehensive
+dotnet run -c Release -- --validate-kracken
 ```
+
+`--validate-kracken` checks identical-source workload state across all five
+adapters, including initialization order, replacement of the original data-script
+runner, exact iterations, and two consecutive invocations. It also checks
+undeclared `DSP` global assignment on JROC, Jint,
+Okojo, and YantraJS, and prints the shared source SHA-256 for each passing control.
+SharpTS 1.0.12 emits invalid IL for the implicit-global control; its existing
+audio-scenario exclusions remain in place rather than changing its workload.
+The BenchmarkDotNet smoke workflow runs these controls for source and packaged
+hosts and requires real JROC/Jint measurements for all four default scenarios.
 
 `--comprehensive` includes every checked-in Kraken scenario and runtime, including entries listed in `KrackenBenchmarkSelection.cs` as disabled by default. The manual BenchmarkDotNet workflow exposes the same behavior through its `comprehensive` input. Add future default exclusions to the scenario or runtime-method set in `KrackenBenchmarkSelection.cs`; do not remove their fixtures or benchmark methods.
 

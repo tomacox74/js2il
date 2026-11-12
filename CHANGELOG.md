@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(benchmarks): compare the same classic, non-strict Kraken source on JROC,
+  Jint, Okojo, YantraJS, and SharpTS, preserving setup-only initialization and
+  persistent timed workloads. Keep JROC hosting glue outside the workload and
+  add cross-runtime preparation controls plus JROC/Jint audio smoke coverage.
 
 ## v0.12.36 - 2026-11-12
 

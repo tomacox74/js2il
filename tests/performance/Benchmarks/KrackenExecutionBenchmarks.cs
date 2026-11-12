@@ -11,7 +11,7 @@ namespace Benchmarks;
 /// The Kraken performance benchmarks consist of a test script and a data script.
 /// Compile time, script load time, and data load time are excluded from the measurements.
 /// </summary>
-public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
+public partial class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
 {
     private const string BenchmarkScriptNamePrefix = "kracken-";
 
@@ -20,13 +20,17 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         "Scenarios",
         "kracken-1.1");
 
+    // A block avoids YantraJS's false duplicate-declaration error;
+    // the var binding still belongs to the classic script's global scope.
     private const string WorkloadRegistrationScript = """
         var __jrocKrackenWorkload = null;
         var __jrocKrackenIterations = 0;
-        var runTest = function(workload, iterations) {
-            __jrocKrackenWorkload = workload;
-            __jrocKrackenIterations = iterations;
-        };
+        {
+            var runTest = function(workload, iterations) {
+                __jrocKrackenWorkload = workload;
+                __jrocKrackenIterations = iterations;
+            };
+        }
         """;
 
     private const string BenchmarkRunnerScript = """
@@ -38,14 +42,21 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         }
         """;
 
+    private const string JrocHostScript = """
+        require('./kracken.js');
+        module.exports = globalThis;
+        """;
+
     /// <summary>
     /// Jroc compiled and loaded
     /// </summary>
-    private IDisposable? _jrocExports = null;
+    private JrocLoadedAssembly? _jrocAssembly;
+    private JsDynamicExports? _jrocExports;
 
     /// <summary>
     /// Okojo realm and runTest function
     /// </summary>
+    private Okojo.Runtime.JsRuntime? _okojoRuntime;
     private Okojo.Runtime.JsRealm? _okojoRealm = null;
     private Okojo.JsValue _okojoRunTest;
 
@@ -65,80 +76,111 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
     [GlobalSetup(Target = nameof(RunJrocTest))]
     public void SetupJroc()
     {
-        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
-        var scriptBuilder = new System.Text.StringBuilder();
-        scriptBuilder.Append(dataScriptContent);
-        scriptBuilder.AppendLine();
-        scriptBuilder.Append(WorkloadRegistrationScript);
-        scriptBuilder.AppendLine();
-        scriptBuilder.Append(testScriptContent);
-        scriptBuilder.AppendLine();
-        scriptBuilder.Append("export ");
-        scriptBuilder.Append(BenchmarkRunnerScript);
-        var finalScriptContent = scriptBuilder.ToString();
-
-        var tmpPath = Path.GetTempPath();
-        File.WriteAllText(Path.Combine(tmpPath, "kracken.js"), finalScriptContent);
-
-        var request = new JrocInMemoryCompileRequest("kracken.js")
+        var request = new JrocInMemoryMultiEntryCompileRequest(
+        [
+            new("kracken-host.cjs", JrocHostScript),
+            new("kracken.js", LoadScriptSource()) { ParseAsScript = true }
+        ])
         {
-            SourceText = finalScriptContent,
 #if !JROC_PREVIOUS
             AssumeUnmodifiedHostGlobals = true
 #endif
         };
         var artifact = JrocInMemoryCompiler.Compile(request);
-        var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+        _jrocAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+        try
+        {
+            _jrocExports = JsEngine.LoadDynamicModule(_jrocAssembly.Assembly, artifact.EntryModuleId);
+        }
+        catch
+        {
+            CleanupJroc();
+            throw;
+        }
+    }
 
-        _jrocExports = JsEngine.LoadModule(loadedAssembly.Assembly, artifact.ModuleIds[0]);        
+    [GlobalCleanup(Target = nameof(RunJrocTest))]
+    public void CleanupJroc()
+    {
+        try
+        {
+            _jrocExports?.Dispose();
+        }
+        finally
+        {
+            _jrocExports = null;
+            _jrocAssembly?.Dispose();
+            _jrocAssembly = null;
+        }
     }
 
     [GlobalSetup(Target = nameof(RunOkojoTest))]
     public void SetupOkojo()
     {
-        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
-        var runtime = Okojo.Runtime.JsRuntime.CreateBuilder().Build();
-        this._okojoRealm = runtime.MainRealm;
-        _okojoRealm.Execute(dataScriptContent);
-        _okojoRealm.Execute(WorkloadRegistrationScript);
-        _okojoRealm.Execute(testScriptContent);
-        _okojoRealm.Execute(BenchmarkRunnerScript);
-     
-        this._okojoRunTest = _okojoRealm.Global["runBenchmark"];
+        _okojoRuntime = Okojo.Runtime.JsRuntime.CreateBuilder().Build();
+        _okojoRealm = _okojoRuntime.MainRealm;
+        try
+        {
+            _okojoRealm.Execute(LoadScriptSource());
+            _okojoRunTest = _okojoRealm.Global["runBenchmark"];
+        }
+        catch
+        {
+            CleanupOkojo();
+            throw;
+        }
+    }
+
+    [GlobalCleanup(Target = nameof(RunOkojoTest))]
+    public void CleanupOkojo()
+    {
+        _okojoRunTest = default;
+        _okojoRealm = null;
+        _okojoRuntime?.Dispose();
+        _okojoRuntime = null;
     }
 
     [GlobalSetup(Target = nameof(RunJintTest))]
     public void SetupJint()
     {
-        LoadScriptContents(out var dataScriptContent, out var testScriptContent);   
-        var sourceScriptName = GetSourceScriptName(ScriptName);
         _jintEngine = new Engine();
-        _jintEngine.Execute(dataScriptContent, $"{sourceScriptName}-data.js");
-        _jintEngine.Execute(WorkloadRegistrationScript, "kracken-workload-registration.js");
-        _jintEngine.Execute(testScriptContent, sourceScriptName);
-        _jintEngine.Execute(BenchmarkRunnerScript, "kracken-benchmark-runner.js");
+        _jintEngine.Execute(LoadScriptSource(), GetSourceScriptName(ScriptName));
+    }
+
+    [GlobalCleanup(Target = nameof(RunJintTest))]
+    public void CleanupJint()
+    {
+        _jintEngine = null;
     }
 
     [GlobalSetup(Target = nameof(RunYantraJsTest))]
     public void SetupYantraJs()
     {
-        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
-        var sourceScriptName = GetSourceScriptName(ScriptName);
-        var context = new JSContext();
-        context.Eval(dataScriptContent, $"{sourceScriptName}-data.js");
-        context.Eval(WorkloadRegistrationScript, "kracken-workload-registration.js");
-        context.Eval(testScriptContent, sourceScriptName);
-        _yantraJsRunTest = context.Eval(BenchmarkRunnerScript + "\nrunBenchmark;", "kracken-benchmark-runner.js");
-        _yantraJsContext = context;
+        _yantraJsContext = new JSContext();
+        try
+        {
+            _yantraJsContext.Eval(LoadScriptSource(), GetSourceScriptName(ScriptName));
+            _yantraJsRunTest = _yantraJsContext[new JSString("runBenchmark")];
+        }
+        catch
+        {
+            CleanupYantraJs();
+            throw;
+        }
+    }
+
+    [GlobalCleanup(Target = nameof(RunYantraJsTest))]
+    public void CleanupYantraJs()
+    {
+        _yantraJsRunTest = null;
+        _yantraJsContext?.Dispose();
+        _yantraJsContext = null;
     }
 
     [GlobalSetup(Target = nameof(RunSharpTsTest))]
     public void SetupSharpTs()
     {
-        LoadScriptContents(out var dataScriptContent, out var testScriptContent);
-        var source = string.Join(Environment.NewLine,
-            dataScriptContent, WorkloadRegistrationScript, testScriptContent, BenchmarkRunnerScript);
-        var script = new SharpTsCompiledScript(source, GetSourceScriptName(ScriptName));
+        var script = new SharpTsCompiledScript(LoadScriptSource(), GetSourceScriptName(ScriptName));
         try
         {
             // Initialize data and register the workload once, exactly as for the other runtimes.
@@ -186,23 +228,25 @@ public class KrackenExecutionBenchmarks : ExecutionBenchmarksBase
         return scriptNames;
     }
 
-    private void LoadScriptContents(out string dataScriptContent, out string testScriptContent)
+    private string LoadScriptSource()
     {
         var sourceScriptName = GetSourceScriptName(ScriptName);
         var testScriptPath = Path.Combine(KrackenScriptsDirectory, sourceScriptName);
         var dataScriptPath = Path.Combine(
             KrackenScriptsDirectory,
             GetDataScriptName(sourceScriptName));
-        testScriptContent = File.ReadAllText(testScriptPath);
-        dataScriptContent = File.ReadAllText(dataScriptPath);
+        return string.Join(Environment.NewLine,
+            File.ReadAllText(dataScriptPath),
+            WorkloadRegistrationScript,
+            File.ReadAllText(testScriptPath),
+            BenchmarkRunnerScript);
     }
 
     [Benchmark(Description = JrocBenchmarkLabels.Execute)]
     public void RunJrocTest()
     {
-        dynamic exports = _jrocExports!;
-        var result = exports.runBenchmark();
-        if (result.ToString() != "done")
+        var result = _jrocExports!.Invoke("runBenchmark");
+        if (result?.ToString() != "done")
         {
             throw new InvalidOperationException($"Unexpected result from Jroc test: {result}");
         }
