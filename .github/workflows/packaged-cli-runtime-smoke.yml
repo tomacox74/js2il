@@ -1,0 +1,107 @@
+name: Packaged CLI runtime smoke
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Pack CLI with .NET 10
+    runs-on: ubuntu-latest
+    outputs:
+      tool_version: ${{ steps.package.outputs.tool_version }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore and pack the CLI
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk_version="$(dotnet --version)"
+          [[ "$sdk_version" == 10.* ]] || {
+            echo "Expected .NET 10 SDK, found $sdk_version" >&2
+            exit 1
+          }
+
+          base_version="$(dotnet msbuild src/Cli/Jroc.csproj -getProperty:Version)"
+          tool_version="${base_version}-ci.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}"
+          artifact_root="$RUNNER_TEMP/packaged-cli"
+          feed="$artifact_root/feed"
+          mkdir -p "$feed"
+
+          dotnet restore src/Cli/Jroc.csproj
+          dotnet pack src/Cli/Jroc.csproj \
+            --configuration Release \
+            --no-restore \
+            --output "$feed" \
+            -p:Version="$tool_version" \
+            -p:PackageVersion="$tool_version"
+
+          powerargs_package="$HOME/.nuget/packages/powerargs/4.0.3/powerargs.4.0.3.nupkg"
+          test -f "$powerargs_package"
+          cp "$powerargs_package" "$feed/"
+          cp tests/simple.js "$artifact_root/simple.js"
+          printf '%s\n' "$GITHUB_SHA" > "$artifact_root/source-sha.txt"
+          echo "tool_version=$tool_version" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packaged-cli-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/packaged-cli
+          if-no-files-found: error
+          retention-days: 7
+
+  runtime-smoke:
+    name: ${{ matrix.os_name }} .NET ${{ matrix.runtime_major }}
+    needs: package
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            os_name: Linux
+            runtime_major: 10
+          - runner: ubuntu-latest
+            os_name: Linux
+            runtime_major: 11
+          - runner: windows-latest
+            os_name: Windows
+            runtime_major: 10
+          - runner: windows-latest
+            os_name: Windows
+            runtime_major: 11
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: packaged-cli-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/packaged-cli
+
+      - name: Install isolated SDK and smoke-test the packaged CLI
+        shell: pwsh
+        run: |
+          ./scripts/ci/smokePackagedCliRuntime.ps1 `
+            -RuntimeMajor ${{ matrix.runtime_major }} `
+            -ToolVersion "${{ needs.package.outputs.tool_version }}" `
+            -ArtifactRoot (Join-Path $env:RUNNER_TEMP 'packaged-cli') `
+            -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'runtime-smoke-evidence')
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: packaged-cli-runtime-${{ matrix.os_name }}-${{ matrix.runtime_major }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/runtime-smoke-evidence
+          if-no-files-found: warn
+          retention-days: 30
