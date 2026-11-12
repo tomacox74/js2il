@@ -1,13 +1,15 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Xml.Linq;
 
 namespace Jroc.Tests;
 
 [Collection("RepoDotnetCli")]
-public class JrocSdkPackageTests
+public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelper)
 {
     [Fact]
     [Trait("CiShard", "metadata")]
@@ -566,37 +568,109 @@ public class JrocSdkPackageTests
             var sdkPackagePath = Path.Combine(feedDir, $"Jroc.SDK.{packageVersion}.nupkg");
             Assert.True(File.Exists(sdkPackagePath), $"Expected package was not produced: {sdkPackagePath}");
 
-            ZipFile.ExtractToDirectory(sdkPackagePath, extractDir);
-            WriteNuGetConfig(extractDir, feedDir);
+            var dotnet10 = Environment.GetEnvironmentVariable("JROC_SDK_TEST_DOTNET10") ?? "dotnet";
+            var dotnet11 = Environment.GetEnvironmentVariable("JROC_SDK_TEST_DOTNET11");
+            var scenarios = new List<(string BuildDotnet, string RuntimeDotnet, string TargetFramework)>
+            {
+                (dotnet10, dotnet10, "net10.0")
+            };
+            if (dotnet11 != null)
+            {
+                scenarios.Add((dotnet11, dotnet10, "net10.0"));
+                scenarios.Add((dotnet11, dotnet11, "net11.0"));
+            }
 
-            var hostDir = Path.Combine(extractDir, "samples", "Basic", "host");
-            var build = RunProcess(
-                fileName: "dotnet",
-                arguments: $"build Basic.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
-                workingDirectory: hostDir,
-                timeoutSeconds: 180);
+            for (var scenarioIndex = 0; scenarioIndex < scenarios.Count; scenarioIndex++)
+            {
+                var (buildDotnet, runtimeDotnet, targetFramework) = scenarios[scenarioIndex];
+                // VSTest inherits MSBuild's SDK resolver overrides from the test build.
+                var consumerEnvironment = new Dictionary<string, string?>
+                {
+                    ["MSBuildSDKsPath"] = null,
+                    ["MSBUILD_EXE_PATH"] = null,
+                    ["MSBuildExtensionsPath"] = null,
+                    ["DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR"] = null,
+                    ["DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR"] = null,
+                    ["DOTNET_MSBUILD_SDK_RESOLVER_SDKS_VER"] = null
+                };
+                var scenarioDir = Path.Combine(extractDir, $"scenario-{scenarioIndex}");
+                ZipFile.ExtractToDirectory(sdkPackagePath, scenarioDir);
+                WriteNuGetConfig(scenarioDir, feedDir);
+                var hostDir = Path.Combine(scenarioDir, "samples", "Basic", "host");
+                var projectPath = Path.Combine(hostDir, "Basic.csproj");
+                var project = XDocument.Load(projectPath);
+                Assert.Single(project.Descendants("TargetFramework")).Value = targetFramework;
+                project.Save(projectPath);
+                var frameworkMajor = targetFramework switch
+                {
+                    "net10.0" => 10,
+                    "net11.0" => 11,
+                    _ => throw new InvalidOperationException($"Unsupported test target framework '{targetFramework}'.")
+                };
+                var sdkVersion = RunProcess(buildDotnet, "--version", hostDir, 30);
+                var runtimeVersions = RunProcess(runtimeDotnet, "--list-runtimes", hostDir, 30);
+                Assert.Equal(0, sdkVersion.ExitCode);
+                Assert.Equal(0, runtimeVersions.ExitCode);
+                var resolvedSdk = RunProcess(buildDotnet,
+                    "msbuild Basic.csproj --nologo -getProperty:NETCoreSdkVersion",
+                    hostDir, 30, consumerEnvironment);
+                Assert.Equal(0, resolvedSdk.ExitCode);
+                Assert.Equal(sdkVersion.StdOut.Trim(), resolvedSdk.StdOut.Trim());
+                var evidence = $"Build SDK: {sdkVersion.StdOut.Trim()}; host target: {targetFramework}; execution runtimes:{Environment.NewLine}{runtimeVersions.StdOut}";
+                outputHelper.WriteLine(evidence);
+                if (dotnet11 != null)
+                {
+                    var coreRuntimes = runtimeVersions.StdOut.Split('\n')
+                        .Where(line => line.StartsWith("Microsoft.NETCore.App ", StringComparison.Ordinal)).ToArray();
+                    Assert.NotEmpty(coreRuntimes);
+                    Assert.All(coreRuntimes, line => Assert.StartsWith($"Microsoft.NETCore.App {frameworkMajor}.", line));
+                }
 
-            Assert.True(
-                build.ExitCode == 0,
-                $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
+                var build = RunProcess(
+                    fileName: buildDotnet,
+                    arguments: $"build Basic.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
+                    workingDirectory: hostDir,
+                    timeoutSeconds: 180,
+                    environmentVariables: consumerEnvironment);
 
-            var generatedDir = Path.Combine(hostDir, "obj", "Release", "net10.0", "jroc", "HostedMathModule");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
-            Assert.False(Directory.Exists(Path.Combine(hostDir, "jroc")), $"Expected generated outputs to stay under obj, but found '{Path.Combine(hostDir, "jroc")}'.");
+                Assert.True(
+                    build.ExitCode == 0,
+                    $"{evidence}{Environment.NewLine}dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
+                Assert.DoesNotContain("MSB3277", build.StdOut + build.StdErr, StringComparison.Ordinal);
+                Assert.DoesNotContain("CS1705", build.StdOut + build.StdErr, StringComparison.Ordinal);
 
-            var run = RunProcess(
-                fileName: "dotnet",
-                arguments: $"run --project Basic.csproj -c Release --no-build --nologo -p:JrocPackageVersion={packageVersion}",
-                workingDirectory: hostDir,
-                timeoutSeconds: 180);
+                var generatedDir = Path.Combine(hostDir, "obj", "Release", targetFramework, "jroc", "HostedMathModule");
+                Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
+                Assert.False(Directory.Exists(Path.Combine(hostDir, "jroc")), $"Expected generated outputs to stay under obj, but found '{Path.Combine(hostDir, "jroc")}'.");
+                using (var pe = new PEReader(File.OpenRead(Path.Combine(generatedDir, "HostedMathModule.dll"))))
+                {
+                    var metadata = pe.GetMetadataReader();
+                    var systemRuntime = Assert.Single(metadata.AssemblyReferences.Select(metadata.GetAssemblyReference),
+                        reference => metadata.GetString(reference.Name) == "System.Runtime");
+                    outputHelper.WriteLine($"Generated System.Runtime reference: {systemRuntime.Version}");
+                    Assert.Equal(new Version(frameworkMajor, 0, 0, 0), systemRuntime.Version);
+                }
+                using (var runtimeConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(generatedDir, "HostedMathModule.runtimeconfig.json"))))
+                {
+                    var options = runtimeConfig.RootElement.GetProperty("runtimeOptions");
+                    Assert.Equal(targetFramework, options.GetProperty("tfm").GetString());
+                    Assert.Equal($"{frameworkMajor}.0.0", options.GetProperty("framework").GetProperty("version").GetString());
+                }
 
-            Assert.True(
-                run.ExitCode == 0,
-                $"dotnet run failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{run.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{run.StdErr}");
+                var run = RunProcess(
+                    fileName: runtimeDotnet,
+                    arguments: $"\"{Path.Combine(hostDir, "bin", "Release", targetFramework, "Basic.dll")}\"",
+                    workingDirectory: hostDir,
+                    timeoutSeconds: 180);
 
-            var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
-            Assert.Contains("version=1.0.0\n", output, StringComparison.Ordinal);
-            Assert.Contains("1+2=3\n", output, StringComparison.Ordinal);
+                Assert.True(
+                    run.ExitCode == 0,
+                    $"{evidence}{Environment.NewLine}dotnet execution failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{run.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{run.StdErr}");
+
+                var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
+                Assert.Contains("version=1.0.0\n", output, StringComparison.Ordinal);
+                Assert.Contains("1+2=3\n", output, StringComparison.Ordinal);
+            }
         }
         finally
         {

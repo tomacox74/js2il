@@ -17,6 +17,8 @@ public sealed record JrocCompiledAssemblyArtifact(
 
     public CompilationCoverageReport? CompilationCoverage { get; init; }
 
+    internal Version? TargetRuntimeVersion { get; init; }
+
     /// <summary>
     /// Writes this artifact and its runtime dependencies to <paramref name="outputDirectory"/>.
     /// </summary>
@@ -39,7 +41,12 @@ public sealed record JrocCompiledAssemblyArtifact(
             WriteBytesAtomicallyWithRetry(pdbPath, pdbBytes);
         }
 
-        RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyPath, typeof(object).Assembly.GetName());
+        var runtimeAssembly = typeof(object).Assembly.GetName();
+        if (TargetRuntimeVersion != null)
+        {
+            runtimeAssembly.Version = TargetRuntimeVersion;
+        }
+        RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyPath, runtimeAssembly);
         CopyRuntimeAssembly(fullOutputDirectory);
         var parserAssemblyPath = typeof(Acornima.Parser).Assembly.Location;
         CopyFileIfChanged(

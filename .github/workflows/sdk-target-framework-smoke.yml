@@ -1,0 +1,55 @@
+name: Packaged SDK target framework smoke
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'tests/Jroc.Tests/**'
+      - 'samples/Basic/**'
+      - 'samples/Directory.Build.props'
+      - '.github/workflows/sdk-target-framework-smoke.yml'
+      - 'Directory.Build.*'
+      - 'global.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  basic:
+    name: SDK 10/11 Basic host compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Install isolated .NET 10 and .NET 11 SDKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$RUNNER_TEMP/dotnet-install.sh"
+          bash "$RUNNER_TEMP/dotnet-install.sh" --channel 10.0 --install-dir "$RUNNER_TEMP/jroc-sdk10" --no-path
+          bash "$RUNNER_TEMP/dotnet-install.sh" --channel 11.0 --install-dir "$RUNNER_TEMP/jroc-sdk11" --no-path
+      - name: Build and execute the packaged Basic sample on all three SDK/target combinations
+        shell: bash
+        env:
+          JROC_SDK_TEST_DOTNET10: ${{ runner.temp }}/jroc-sdk10/dotnet
+          JROC_SDK_TEST_DOTNET11: ${{ runner.temp }}/jroc-sdk11/dotnet
+          DOTNET_CLI_USE_MSBUILD_SERVER: '0'
+          MSBUILDDISABLENODEREUSE: '1'
+        run: |
+          set -euo pipefail
+          dotnet test tests/Jroc.Tests/Jroc.Tests.csproj --nologo --verbosity minimal \
+            --filter 'FullyQualifiedName=Jroc.Tests.JrocSdkPackageTests.Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns' \
+            --logger 'console;verbosity=detailed' \
+            --logger trx --results-directory "$RUNNER_TEMP/sdk-target-evidence"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sdk-target-framework-evidence
+          path: ${{ runner.temp }}/sdk-target-evidence
+          if-no-files-found: warn
+          retention-days: 30

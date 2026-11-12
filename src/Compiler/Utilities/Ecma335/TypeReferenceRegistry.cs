@@ -27,9 +27,14 @@ namespace Jroc.Utilities.Ecma335
         };
 
         public TypeReferenceRegistry(MetadataBuilder metadataBuilder)
+            : this(metadataBuilder, [])
+        {
+        }
+
+        public TypeReferenceRegistry(MetadataBuilder metadataBuilder, IReadOnlyList<System.Reflection.AssemblyName> frameworkReferences)
         {
             _metadataBuilder = metadataBuilder ?? throw new ArgumentNullException(nameof(metadataBuilder));
-            _assemblyRefRegistry = new(metadataBuilder);
+            _assemblyRefRegistry = new(metadataBuilder, frameworkReferences);
         }
 
         /// <summary>

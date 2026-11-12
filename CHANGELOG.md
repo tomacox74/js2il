@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(sdk): use the consuming project's targeting-pack assembly identities and
+  runtime configuration when compiling JavaScript during MSBuild. Support
+  .NET 11 SDK builds of `net10.0` hosts that execute on .NET 10-only runtimes,
+  with packaged Basic-sample coverage for same-major and cross-major builds.
+
 - fix(benchmarks): compare the same classic, non-strict Kraken source on JROC,
   Jint, Okojo, YantraJS, and SharpTS, preserving setup-only initialization and
   persistent timed workloads. Keep JROC hosting glue outside the workload and

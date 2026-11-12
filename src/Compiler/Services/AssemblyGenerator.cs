@@ -867,7 +867,11 @@ namespace Jroc.Services
                 moduleIds,
                 entryModuleId,
                 entryModuleAliases.ToArray(),
-                facadeNames);
+                facadeNames)
+            {
+                TargetRuntimeVersion = options.TargetFrameworkReferences
+                    .FirstOrDefault(reference => reference.Name == "System.Runtime")?.Version
+            };
         }
 
         private static JrocFacadeNamePlan CreateFacadeNamePlan(Modules modules, string assemblyName)
