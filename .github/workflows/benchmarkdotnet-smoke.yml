@@ -61,6 +61,16 @@ jobs:
             --timeout-seconds 300 --poll-seconds 15
       - name: Build benchmark host
         run: dotnet build "${{ matrix.project }}" -c Release
+      - name: Verify classic-script preparation and workload-state parity
+        run: |
+          dotnet run --project "${{ matrix.project }}" -c Release --no-build -- \
+            --validate-kracken
+      - name: Exercise every default JROC and Jint Kraken child
+        run: |
+          dotnet run --project "${{ matrix.project }}" -c Release --no-build -- \
+            --kracken --filter '*RunJrocTest*' '*RunJintTest*' \
+            --job Dry --exporters json \
+            --artifacts "$PWD/BenchmarkDotNet.Artifacts/smoke-kracken-parity"
       - name: Exercise every enabled SharpTS Dromaeo child
         run: |
           dotnet run --project "${{ matrix.project }}" -c Release --no-build -- \
@@ -72,7 +82,7 @@ jobs:
             --kracken --scenario json-parse-financial --filter '*SharpTs*' \
             --job Dry --exporters json \
             --artifacts "$PWD/BenchmarkDotNet.Artifacts/smoke-kracken"
-      - name: Verify all eleven child measurements were produced
+      - name: Verify all nineteen child measurements were produced
         run: |
           node <<'JS'
           const assert = require("node:assert/strict");
@@ -87,6 +97,21 @@ jobs:
             assert(rows.every(row => row.Method.includes("SharpTs")
               && row.Statistics?.N > 0 && Number.isFinite(row.Statistics.Mean)
               && row.Statistics.Mean > 0), `${suite}: failed child measurement`);
+          }
+          const parityFile = "BenchmarkDotNet.Artifacts/smoke-kracken-parity/results/Benchmarks.KrackenExecutionBenchmarks-report-full-compressed.json";
+          const { Benchmarks: parityRows } = JSON.parse(fs.readFileSync(parityFile, "utf8"));
+          assert.equal(parityRows.length, 8, "kracken parity: missing child measurements");
+          for (const method of ["RunJrocTest", "RunJintTest"]) {
+            for (const scenario of [
+              "audio-beat-detection", "audio-dft", "audio-oscillator", "json-parse-financial",
+            ]) {
+              const matching = parityRows.filter(row => row.Method === method
+                && row.Parameters === `ScriptName=kracken-${scenario}.js`);
+              assert.equal(matching.length, 1, `${method}/${scenario}: missing or duplicate measurement`);
+              const [row] = matching;
+              assert(row.Statistics?.N > 0 && Number.isFinite(row.Statistics.Mean)
+                && row.Statistics.Mean > 0, `${method}/${scenario}: failed child measurement`);
+            }
           }
           JS
       - name: Upload smoke reports

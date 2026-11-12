@@ -4,6 +4,12 @@ using Benchmarks;
 var programArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
 KrackenBenchmarkSelection.IncludeDisabled = TakeFlag(ref programArgs, "--comprehensive");
 
+if (programArgs.Length > 0 && programArgs[0] == "--validate-kracken")
+{
+    KrackenExecutionBenchmarks.ValidatePreparation();
+    return;
+}
+
 BenchmarkSwitcher switcher;
 var benchmarkArgs = programArgs;
 

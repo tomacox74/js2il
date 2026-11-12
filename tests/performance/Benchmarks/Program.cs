@@ -18,6 +18,10 @@ else if (programArgs.Length > 0 && programArgs[0] == "--validate-sharpts")
 {
     SharpTsValidation.Run();
 }
+else if (programArgs.Length > 0 && programArgs[0] == "--validate-kracken")
+{
+    KrackenExecutionBenchmarks.ValidatePreparation();
+}
 else
 {
     if (programArgs.Length > 0 && programArgs[0] == "--callable-arity-analysis")
@@ -257,6 +261,7 @@ Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
 Console.WriteLine("  dotnet run -c Release -- --validate-sharpts # Validate SharpTS lifecycle and supported workloads");
+Console.WriteLine("  dotnet run -c Release -- --validate-kracken # Verify shared Kraken source and persistent workloads across runtimes");
 
 static void SetExitCodeFromSummaries(IEnumerable<Summary> summaries)
 {
