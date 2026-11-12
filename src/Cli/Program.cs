@@ -337,7 +337,7 @@ class Program
     private static void PrintUsage(Action<string> writeLine)
     {
         writeLine("Usage: jroc <InputFile> [<OutputPath>] [options]");
-        writeLine("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
+        writeLine("   or: jroc --moduleid <ModuleId> [--output <directory>] [options]");
         writeLine("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
         writeLine("");
         writeLine("Option                 Description");
@@ -348,8 +348,9 @@ class Program
         writeLine("-o, --output           The output directory for the generated IL (created if missing)");
         writeLine("-v, --verbose          Enable diagnostics output to console");
         writeLine("--diagnostic-file <path> Write diagnostics output to a text file");
-        writeLine("--analyzeunused        Analyze and report unused properties and methods");
+        writeLine("--analyzeunused        Report unused functions, properties, and variables");
         writeLine("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        writeLine("--assume-unmodified-host-globals  Allow guard-free calls when analysis permits and the host preserves built-in global bindings");
         writeLine("--coverage             Analyze compilation modes without writing assemblies");
         writeLine("--json                 Print coverage analysis as JSON");
         writeLine("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");

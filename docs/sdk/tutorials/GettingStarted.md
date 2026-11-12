@@ -5,7 +5,7 @@ program without creating a C# host project.
 
 ## 1. Install JROC
 
-Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0),
+Install the [.NET 10 or .NET 11 SDK](https://dotnet.microsoft.com/download/dotnet),
 then install the global tool:
 
 ```shell
@@ -38,9 +38,11 @@ Hello from JROC!
 ```
 
 Keep `hello.dll`, `hello.runtimeconfig.json`, and `JavaScriptRuntime.dll`
-together in the output directory. Running the generated program requires the
-.NET 10 runtime. If no output directory is specified, JROC writes next to the
-input file.
+together in the output directory. The generated `hello.runtimeconfig.json`
+targets the runtime version that ran JROC. For example, on a
+machine with only .NET 11 installed, JROC runs on .NET 11 and generates a
+program that targets .NET 11. If no output directory is specified, JROC writes
+next to the input file.
 
 To compile additional JavaScript files into the same assembly, use the
 repeatable `-a` (or `--additional-input`) option:
