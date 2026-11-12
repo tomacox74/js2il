@@ -4,6 +4,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 const {
+    buildRuntimeVersionContext,
     normalizeRuntime,
     parseBenchmarkDotNetResults,
     resolveRuntimeVersion,
@@ -30,12 +31,15 @@ test('keeps existing Jint phase distinctions', () => {
 });
 
 test('records SharpTS execution identity and the pinned hosting package version', () => {
-    const csproj = fs.readFileSync(path.join(__dirname, 'Benchmarks', 'Benchmarks.csproj'), 'utf8');
-    const version = csproj.match(/<PackageReference Include="SharpTS.Hosting" Version="([^"]+)"/)[1];
+    const versions = buildRuntimeVersionContext();
+    assert.equal(versions.jint, '4.16.2');
+    assert.equal(versions.okojo, '0.1.2-preview.1');
+    assert.equal(versions.yantrajs, '1.2.476');
+    assert.equal(versions.clearscript, '7.5.1.1');
     assert.equal(normalizeRuntime('sharpts-execute'), 'sharpts-execute');
     assert.equal(normalizeRuntime('SharpTs_ExecuteOnly'), 'sharpts-execute');
     assert.equal(normalizeRuntime('RunSharpTsTest'), 'sharpts-execute');
-    assert.equal(resolveRuntimeVersion('sharpts-execute', { sharpts: version }), version);
+    assert.equal(resolveRuntimeVersion('sharpts-execute', versions), '1.0.12');
 });
 
 test('keeps previous Jroc results distinct from current Jroc results', () => {
