@@ -53,6 +53,12 @@ public class CompilerOptions
     public IReadOnlyList<string> AdditionalModulePaths { get; set; } = [];
 
     /// <summary>
+    /// Resolved target-framework assembly identities supplied by an MSBuild consumer.
+    /// When empty, emission uses the executing runtime, as for the command-line compiler.
+    /// </summary>
+    public IReadOnlyList<System.Reflection.AssemblyName> TargetFrameworkReferences { get; set; } = [];
+
+    /// <summary>
     /// Host-provided runtime intrinsics that should be visible during compilation.
     /// </summary>
     public JavaScriptRuntime.HostRuntimeIntrinsicDescriptors HostRuntimeIntrinsics { get; set; } =

@@ -15,10 +15,14 @@ namespace Jroc.Utilities.Ecma335
     {
         private readonly MetadataBuilder _metadataBuilder;
         private readonly Dictionary<string, AssemblyReferenceHandle> _cache = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, AssemblyName> _frameworkReferences;
 
-        public AssemblyReferenceRegistry(MetadataBuilder metadataBuilder)
+        public AssemblyReferenceRegistry(MetadataBuilder metadataBuilder, IReadOnlyList<AssemblyName> frameworkReferences)
         {
             _metadataBuilder = metadataBuilder ?? throw new ArgumentNullException(nameof(metadataBuilder));
+            _frameworkReferences = frameworkReferences.ToDictionary(
+                reference => reference.Name ?? throw new ArgumentException("Framework reference has no assembly name."),
+                StringComparer.Ordinal);
         }
 
         /// <summary>
@@ -47,14 +51,26 @@ namespace Jroc.Utilities.Ecma335
                 return cached;
             }
 
-            // Resolve version and public key token from the runtime
-            var version = ResolveAssemblyVersion(assemblyName);
-            var publicKeyToken = ResolvePublicKeyToken(assemblyName);
+            AssemblyName? frameworkReference = null;
+            if (_frameworkReferences.Count != 0 && assemblyName.StartsWith("System.", StringComparison.Ordinal))
+            {
+                if (!_frameworkReferences.TryGetValue(assemblyName, out frameworkReference))
+                {
+                    throw new NotSupportedException($"Assembly '{assemblyName}' is not available in the consuming project's target framework.");
+                }
+            }
+
+            var version = frameworkReference?.Version ?? ResolveAssemblyVersion(assemblyName);
+            var publicKeyToken = frameworkReference != null
+                ? _metadataBuilder.GetOrAddBlob(frameworkReference.GetPublicKeyToken() ?? [])
+                : ResolvePublicKeyToken(assemblyName);
 
             var handle = _metadataBuilder.AddAssemblyReference(
                 name: _metadataBuilder.GetOrAddString(assemblyName),
                 version: version,
-                culture: default,
+                culture: string.IsNullOrEmpty(frameworkReference?.CultureName)
+                    ? default
+                    : _metadataBuilder.GetOrAddString(frameworkReference.CultureName),
                 publicKeyOrToken: publicKeyToken,
                 flags: 0,
                 hashValue: default

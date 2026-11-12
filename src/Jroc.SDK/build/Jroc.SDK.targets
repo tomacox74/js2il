@@ -35,10 +35,15 @@
   </Target>
 
   <Target Name="JrocCompile"
-          DependsOnTargets="_ResolveJrocCompileItems"
+          DependsOnTargets="_ResolveJrocCompileItems;ResolveTargetingPackAssets"
           BeforeTargets="ResolveAssemblyReferences"
           Condition="'$(JrocCompileOnBuild)' == 'true' and '@(JrocCompile)' != ''">
-    <Jroc.SDK.BuildTasks.JrocCompileTask Sources="@(_JrocCompile)">
+    <ItemGroup>
+      <_JrocFrameworkReference Include="@(Reference)"
+                              Condition="'%(Reference.FrameworkReferenceName)' != ''" />
+    </ItemGroup>
+    <Jroc.SDK.BuildTasks.JrocCompileTask Sources="@(_JrocCompile)"
+                                        FrameworkReferences="@(_JrocFrameworkReference)">
       <Output TaskParameter="GeneratedAssemblies" ItemName="_JrocGeneratedAssembly" />
       <Output TaskParameter="GeneratedOutputs" ItemName="_JrocGeneratedOutput" />
     </Jroc.SDK.BuildTasks.JrocCompileTask>

@@ -60,6 +60,15 @@ not inherit publication secrets or identity-token permissions.
   - restores the package from a local feed, builds a consumer project, and runs the generated module
 - `Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns`
   - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Basic`
+  - `.github/workflows/sdk-target-framework-smoke.yml` supplies isolated SDK
+    installations through `JROC_SDK_TEST_DOTNET10` and `JROC_SDK_TEST_DOTNET11`
+    to test SDK 10 / `net10.0`, SDK 11 / `net10.0`, and SDK 11 / `net11.0`
+    against the same local package candidate
+  - verifies generated `System.Runtime` metadata and runtime configuration,
+    rejects MSB3277/CS1705, and executes the built host DLL directly under the
+    matching major-only runtime without rebuilding
+  - records selected SDK versions, host targets, generated framework references,
+    and installed execution runtimes in the retained TRX report
 - `Build_ExtractedTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns`
   - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Typed`
 

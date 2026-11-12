@@ -19,6 +19,14 @@ The matching runtime implementation is a transitive SDK dependency and is
 validated before compilation, then deployed by normal .NET build and publish
 asset resolution.
 
+The SDK resolves the consuming project's targeting-pack references before JavaScript
+compilation. Generated framework assembly identities and runtime configuration
+match the project's `TargetFramework`, not the CLR running MSBuild. For example,
+the .NET 11 SDK can build a `net10.0` host whose generated modules reference
+`System.Runtime` 10 and run on .NET 10. The .NET 10 SDK / `net10.0` and .NET 11
+SDK / `net11.0` paths are also supported. The appropriate targeting pack must be
+available at restore time. This does not change the standalone CLI's runtime selection.
+
 ## Item metadata and default properties
 
 | Metadata | Default property | Default | Purpose |

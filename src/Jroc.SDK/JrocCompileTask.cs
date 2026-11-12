@@ -3,6 +3,7 @@ using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Jroc.Services;
 using System.Text;
+using System.Reflection;
 
 namespace Jroc.SDK.BuildTasks;
 
@@ -13,6 +14,9 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
     [Required]
     public ITaskItem[] Sources { get; set; } = [];
 
+    [Required]
+    public ITaskItem[] FrameworkReferences { get; set; } = [];
+
     [Output]
     public ITaskItem[] GeneratedAssemblies { get; private set; } = [];
 
@@ -21,13 +25,30 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
+        AssemblyName[] frameworkReferences;
+        try
+        {
+            frameworkReferences = FrameworkReferences
+                .Select(reference => AssemblyName.GetAssemblyName(reference.ItemSpec)).ToArray();
+        }
+        catch (Exception ex) when (ex is IOException or BadImageFormatException or ArgumentException)
+        {
+            Log.LogError($"Jroc could not read the consuming project's framework references: {ex.Message}");
+            return false;
+        }
+        if (!frameworkReferences.Any(reference => reference.Name == "System.Runtime"))
+        {
+            Log.LogError("Jroc requires the consuming project's resolved System.Runtime reference assembly. Ensure the .NET targeting pack is restored.");
+            return false;
+        }
+
         var generatedAssemblies = new List<ITaskItem>();
         var generatedOutputs = new List<ITaskItem>();
         var claimedAssemblyNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var source in Sources)
         {
-            if (!TryCompileSource(source, generatedAssemblies, generatedOutputs, claimedAssemblyNames))
+            if (!TryCompileSource(source, frameworkReferences, generatedAssemblies, generatedOutputs, claimedAssemblyNames))
             {
                 continue;
             }
@@ -40,6 +61,7 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
 
     private bool TryCompileSource(
         ITaskItem source,
+        AssemblyName[] frameworkReferences,
         List<ITaskItem> generatedAssemblies,
         List<ITaskItem> generatedOutputs,
         Dictionary<string, string> claimedAssemblyNames)
@@ -130,7 +152,8 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             Verbose = verbose,
             DiagnosticFilePath = string.IsNullOrWhiteSpace(diagnosticFilePath) ? null : diagnosticFilePath,
             AnalyzeUnused = analyzeUnused,
-            EmitPdb = emitPdb
+            EmitPdb = emitPdb,
+            TargetFrameworkReferences = frameworkReferences
         };
 
         var logger = new MsBuildCompilerOutput(Log, sourcePath);
