@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Jroc;
 
-[ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
+[ArgExceptionBehavior(ArgExceptionPolicy.DontHandleExceptions)]
 public class JrocArgs
 {
     [ArgPosition(0)]
@@ -90,7 +90,7 @@ class Program
             var parsed = Args.Parse<JrocArgs>(remainingArgs);
             if (parsed == null)
             {
-                // HelpHook likely handled output; treat as successful exit
+                // PowerArgs hooks can cancel parsing without reporting an error.
                 return;
             }
 
@@ -337,7 +337,7 @@ class Program
     private static void PrintUsage(Action<string> writeLine)
     {
         writeLine("Usage: jroc <InputFile> [<OutputPath>] [options]");
-        writeLine("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
+        writeLine("   or: jroc --moduleid <ModuleId> [--output <OutputPath>] [options]");
         writeLine("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
         writeLine("");
         writeLine("Option                 Description");

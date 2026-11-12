@@ -145,7 +145,21 @@ namespace Jroc.Tests
             Assert.Equal(0, code);
             // Accept either our custom usage or PowerArgs default (which uses the host process name)
             Assert.True(stdout.Contains("Usage: jroc <InputFile>") || stdout.Contains("Usage - "), stdout);
+            Assert.Contains("jroc --moduleid <ModuleId> [--output <OutputPath>]", stdout, StringComparison.Ordinal);
             Assert.True(string.IsNullOrWhiteSpace(stderr));
+        }
+
+        [Theory]
+        [InlineData(new[] { "--moduleid", "example-package", "out" }, "Unexpected argument: out")]
+        [InlineData(new[] { "--unknown-option" }, "Unexpected named argument: -unknown-option")]
+        [InlineData(new[] { "one.js", "out", "extra" }, "Unexpected unnamed argument: extra")]
+        public void InvalidArguments_ShowErrorAndUsage_OnStderr_And_ExitCode1(string[] args, string expectedError)
+        {
+            var (code, stdout, stderr) = RunOutOfProc(args);
+            Assert.Equal(1, code);
+            Assert.Contains(expectedError, stderr, StringComparison.Ordinal);
+            Assert.Contains("Usage:", stderr, StringComparison.Ordinal);
+            Assert.True(string.IsNullOrWhiteSpace(stdout), stdout);
         }
 
         [Fact]
