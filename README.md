@@ -1,6 +1,10 @@
 # JROC
 
-[![NuGet](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Supported .NET runtime: 10](https://img.shields.io/badge/.NET_runtime-10-512BD4?logo=dotnet&logoColor=white)](#compatibility-and-project-status)
+[![Build and tests on master](https://img.shields.io/github/actions/workflow/status/tomacox74/js2il/dotnet.yml?branch=master&event=push&label=build%20%26%20tests)](https://github.com/tomacox74/js2il/actions/workflows/dotnet.yml?query=branch%3Amaster)
+[![NuGet version](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
 JROC is a JavaScript-to-.NET compiler. It compiles JavaScript source directly
 to .NET IL and produces ordinary .NET assemblies that run with the `dotnet`
