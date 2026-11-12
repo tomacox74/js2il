@@ -1,6 +1,7 @@
-# jroc – JavaScript .NET compiler (consumer guide)
+# jroc - JavaScript-to-.NET command-line compiler
 
-jroc is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
+JROC compiles JavaScript ahead of time to .NET IL assemblies. Use the `jroc`
+global tool to compile and run scripts without creating a C# host project.
 
 ## Install
 
@@ -79,6 +80,7 @@ jroc .\hello.js
 
 # Convert to a specific directory with verbose output
 jroc .\hello.js -o .\out -v
+dotnet .\out\hello.dll
 
 # Compile an installed npm package from the current project
 jroc --moduleid turndown --output .\out
@@ -154,7 +156,21 @@ Notes:
 
 - Console output (e.g., `console.log`) is implemented via the bundled `JavaScriptRuntime.dll`.
 - This is a prototype and doesn’t yet support all JavaScript features. See the repo docs for supported syntax and feature coverage.
-- Compiler errors go to stderr, and compilation failures return a nonzero exit code.
+- Errors are written to stderr and known failures return a non-zero exit code.
+
+## .NET compatibility
+
+The tool is packaged for `net10.0` and can execute on .NET 10 or, through
+major roll-forward, .NET 11. By default, its generated framework references
+and `runtimeconfig.json` follow the runtime **executing the compiler**:
+default output compiled on .NET 11 requires .NET 11, not just the tool's
+`net10.0` target. Use `--target-framework` with the matching reference pack
+to select a different output framework, as described above.
+
+For JavaScript compiled during a .NET project build, `Jroc.SDK` automatically
+uses the consuming project's chosen target framework. An SDK 11 build of a
+`net10.0` project generates output for .NET 10 rather than for the compiler's
+.NET 11 process.
 
 ## Limitations
 
@@ -181,7 +197,11 @@ See:
 
 ## Links
 
+- Quick start: https://github.com/tomacox74/js2il/blob/master/docs/sdk/tutorials/GettingStarted.md
 - CLI usage: https://github.com/tomacox74/js2il#command-line-usage
 - SDK (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/sdk/Index.md
-- Source, issues, docs: https://github.com/tomacox74/js2il
+- Migrating from JS2IL: https://github.com/tomacox74/js2il/blob/master/docs/sdk/LegacyPackageMigration.md
+- Release history: https://github.com/tomacox74/js2il/blob/master/CHANGELOG.md
+- Source: https://github.com/tomacox74/js2il
+- Issues: https://github.com/tomacox74/js2il/issues
 - License: Apache-2.0

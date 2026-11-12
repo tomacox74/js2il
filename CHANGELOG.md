@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs(packaging): audit published NuGet metadata, branding, source debugging,
+  legacy migration, and framework compatibility. Correct package README links,
+  add complete examples and migration guidance, clarify compiler versus generated
+  target requirements, and expose package homepage/release-history metadata.
+
 - feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
   resolving installed or explicitly supplied targeting packs with actionable
   validation errors. Preserve the no-option target and verify packaged .NET 11

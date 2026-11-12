@@ -98,13 +98,16 @@ This does not change the option's default or weaken its host contract.
 
 ```csharp
 using Jroc;
+using Jroc.Runtime;
 
 using var module = JrocInMemoryCompiler.CompileAndLoadModule(request);
-Console.WriteLine(module.Exports.Invoke("add", 1d, 2d));
+var exports = (JsDynamicExports)module.Exports;
+Console.WriteLine(exports.Invoke("add", 1d, 2d));
 ```
 
 The non-generic overload returns `JrocInMemoryModule`. Its `Exports` property
-is a `Jroc.Runtime.JsDynamicExports` value. The module owns the execution
+is typed as `object` and contains a `Jroc.Runtime.JsDynamicExports` value;
+cast it as above for explicit operations. The module owns the execution
 runtime and the collectible assembly load context. It also exposes `Assembly`,
 `AssemblyName`, `ModuleIds`, `EntryModuleId`, and `EntryModuleAliases` for
 diagnostics.
@@ -117,9 +120,9 @@ argument to evaluate another published module.
 
 | Operation | Purpose |
 |---|---|
-| `module.Exports.Get("name")` | Read a named export. |
-| `module.Exports.Invoke("name", args)` | Invoke a named exported function. |
-| `module.Exports.Value` | Access the complete `module.exports` value. |
+| `exports.Get("name")` | Read a named export through the `JsDynamicExports` proxy. |
+| `exports.Invoke("name", args)` | Invoke a named exported function. |
+| `exports.Value` | Access the complete `module.exports` value. |
 | `dynamic exports = module.Exports` | Use JavaScript member names via C# dynamic access, invocation, and assignment. |
 
 Returned objects support dynamic member access. Function values are represented
@@ -129,7 +132,7 @@ Promise result to a task. For example:
 ```csharp
 using Jroc.Runtime;
 
-var add = (JsCallable)module.Exports.Get("add")!;
+var add = (JsCallable)exports.Get("add")!;
 Console.WriteLine(add.Call(1d, 2d));
 ```
 
