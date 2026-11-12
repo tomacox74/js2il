@@ -39,10 +39,15 @@ Hello from JROC!
 
 Keep `hello.dll`, `hello.runtimeconfig.json`, and `JavaScriptRuntime.dll`
 together in the output directory. The generated `hello.runtimeconfig.json`
-targets the runtime version that ran JROC. For example, on a
+defaults to the runtime version that ran JROC. For example, on a
 machine with only .NET 11 installed, JROC runs on .NET 11 and generates a
 program that targets .NET 11. If no output directory is specified, JROC writes
 next to the input file.
+
+To choose a deployment target explicitly, pass `--target-framework net10.0` or
+`--target-framework net11.0`. JROC uses the reference pack for that target.
+See [Selecting the output framework](../../NuGet.README.md#selecting-the-output-framework)
+for pack discovery and deployment examples.
 
 To compile additional JavaScript files into the same assembly, use the
 repeatable `-a` (or `--additional-input`) option:

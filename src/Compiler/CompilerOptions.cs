@@ -53,8 +53,8 @@ public class CompilerOptions
     public IReadOnlyList<string> AdditionalModulePaths { get; set; } = [];
 
     /// <summary>
-    /// Resolved target-framework assembly identities supplied by an MSBuild consumer.
-    /// When empty, emission uses the executing runtime, as for the command-line compiler.
+    /// Resolved target-framework assembly identities supplied by an MSBuild or CLI consumer.
+    /// When empty, emission uses the executing runtime.
     /// </summary>
     public IReadOnlyList<System.Reflection.AssemblyName> TargetFrameworkReferences { get; set; } = [];
 

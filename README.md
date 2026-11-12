@@ -20,7 +20,7 @@ JROC supports Windows, Linux, and macOS.
 
 JROC currently targets ECMAScript 2025 and .NET 10. The command-line tool runs
 on .NET 10 and rolls forward to .NET 11 when only .NET 11 is installed. The
-generated `.runtimeconfig.json` targets the runtime version that
+generated `.runtimeconfig.json` defaults to the runtime version that
 runs JROC. The project is under active development; compatibility is broad but
 not yet complete.
 
@@ -100,6 +100,8 @@ jroc coverage <InputFile> [--json] [--coverage-report <file>]
 | `--assemblyname <name>` | Set the generated assembly identity and artifact basename. |
 | `-v`, `--verbose` | Print compiler diagnostics. |
 | `--diagnostic-file <path>` | Write compiler diagnostics to a text file. |
+| `--target-framework <tfm>` | Target `net10.0` or `net11.0` for the standalone output. Defaults to the runtime running JROC. |
+| `--targeting-pack <path>` | Use a specific `Microsoft.NETCore.App.Ref` pack version directory. Requires `--target-framework`. |
 | `--analyzeunused` | Report unused functions, properties, and variables. |
 | `--pdb` | Emit Portable PDB debug symbols. |
 | `--coverage` | Analyze compilation modes in memory without writing or executing an assembly. |
@@ -139,6 +141,11 @@ overrides it. Additional files do not produce separate assemblies.
 
 Use `-o` or `--output` to select the output directory with `--moduleid`.
 JROC resolves the module ID from the current working directory.
+
+To compile on .NET 11 for deployment to .NET 10, use
+`jroc app.js out --target-framework net10.0` with a .NET 10 reference pack
+available. See [Selecting the output framework](docs/NuGet.README.md#selecting-the-output-framework)
+for pack discovery and how to supply a pack explicitly.
 
 Use `jroc coverage app.js` to inspect direct IL, bound runtime intrinsics,
 dynamic/fallback paths, and unsupported sites independently of correctness.

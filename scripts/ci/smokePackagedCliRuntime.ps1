@@ -34,7 +34,7 @@ function Invoke-Captured {
     if ($AllowFailure) {
         $global:LASTEXITCODE = 0
     }
-    $output | Set-Content -Path $LogPath -Encoding utf8
+    [System.IO.File]::WriteAllLines($LogPath, [string[]]$output, [System.Text.UTF8Encoding]::new($false))
     foreach ($line in $output) {
         Write-Host "$line"
     }
@@ -148,6 +148,51 @@ function Assert-HostTraceRuntime {
     }
 }
 
+function Assert-GeneratedTarget {
+    param([string]$AssemblyPath, [int]$Major)
+
+    Add-Type -AssemblyName System.Reflection.Metadata
+    $config = Get-Content ([System.IO.Path]::ChangeExtension($AssemblyPath, '.runtimeconfig.json')) -Raw |
+        ConvertFrom-Json
+    if ($config.runtimeOptions.tfm -ne "net$Major.0" -or
+        $config.runtimeOptions.framework.name -ne 'Microsoft.NETCore.App' -or
+        $config.runtimeOptions.framework.version -ne "$Major.0.0") {
+        throw "Generated runtime configuration does not target net$Major.0."
+    }
+
+    $stream = [System.IO.File]::OpenRead($AssemblyPath)
+    $pe = [System.Reflection.PortableExecutable.PEReader]::new($stream)
+    try {
+        $metadata = [System.Reflection.Metadata.PEReaderExtensions]::GetMetadataReader($pe)
+        $references = @(
+            foreach ($handle in $metadata.AssemblyReferences) {
+                $reference = $metadata.GetAssemblyReference($handle)
+                if ($metadata.GetString($reference.Name) -eq 'System.Runtime') {
+                    $reference
+                }
+            }
+        )
+        if ($references.Count -ne 1 -or $references[0].Version.ToString() -ne "$Major.0.0.0") {
+            throw "Generated System.Runtime reference does not have identity $Major.0.0.0."
+        }
+        Write-Host "Verified net$Major.0 runtime configuration and System.Runtime $Major.0.0.0."
+    } finally {
+        $pe.Dispose()
+        $stream.Dispose()
+    }
+}
+
+function Assert-SimpleOutput {
+    param($Result)
+
+    $lines = @($Result.Output | ForEach-Object { "$_" })
+    foreach ($expectedLine in @('x is 3', 'addNumbers(5, 3) returned 8')) {
+        if ($lines -notcontains $expectedLine) {
+            throw "Expected generated program output to include '$expectedLine'."
+        }
+    }
+}
+
 if (-not (Test-Path $env:RUNNER_TEMP)) {
     throw 'RUNNER_TEMP is not set by the workflow runner.'
 }
@@ -250,6 +295,7 @@ if (-not (Test-Path $runtimeConfig)) {
     throw "The compiler did not produce $runtimeConfig."
 }
 Copy-Item $runtimeConfig $evidenceRoot
+Assert-GeneratedTarget (Join-Path $consumerRoot 'out/simple.dll') $RuntimeMajor
 
 $appTrace = Join-Path $evidenceRoot 'app-host.trace'
 $env:DOTNET_HOST_TRACE = '1'
@@ -259,11 +305,29 @@ $appResult = Invoke-Captured $dotnetPath @('out/simple.dll') (Join-Path $evidenc
 Remove-Item Env:DOTNET_HOST_TRACE, Env:DOTNET_HOST_TRACE_VERBOSITY, Env:DOTNET_HOST_TRACEFILE
 Assert-HostTraceRuntime $appTrace $RuntimeMajor
 
-$appOutput = @($appResult.Output | ForEach-Object { "$_" })
-foreach ($expectedLine in @('x is 3', 'addNumbers(5, 3) returned 8')) {
-    if ($appOutput -notcontains $expectedLine) {
-        throw "Expected generated program output to include '$expectedLine'."
-    }
+Assert-SimpleOutput $appResult
+
+$explicitDirectory = "out-net$RuntimeMajor"
+Invoke-Captured $toolExecutable @(
+    'tests/simple.js', '-o', $explicitDirectory, '--target-framework', "net$RuntimeMajor.0"
+) (Join-Path $evidenceRoot 'explicit-target-compile.log') | Out-Null
+Assert-GeneratedTarget (Join-Path $consumerRoot "$explicitDirectory/simple.dll") $RuntimeMajor
+Copy-Item (Join-Path $consumerRoot "$explicitDirectory/simple.runtimeconfig.json") `
+    (Join-Path $evidenceRoot 'explicit-target.runtimeconfig.json')
+$explicitResult = Invoke-Captured $dotnetPath @("$explicitDirectory/simple.dll") `
+    (Join-Path $evidenceRoot 'explicit-target-run.log')
+Assert-SimpleOutput $explicitResult
+
+$missingPack = Join-Path $consumerRoot 'missing-targeting-pack'
+$missingResult = Invoke-Captured $toolExecutable @(
+    'tests/simple.js', '-o', 'missing-pack-output', '--target-framework', "net$RuntimeMajor.0",
+    '--targeting-pack', $missingPack
+) (Join-Path $evidenceRoot 'missing-targeting-pack.log') -AllowFailure
+if ($missingResult.ExitCode -eq 0 -or ($missingResult.Output -join "`n") -notmatch 'Microsoft.NETCore.App.Ref') {
+    throw 'Missing targeting pack did not produce an actionable nonzero failure.'
+}
+if (Test-Path (Join-Path $consumerRoot 'missing-pack-output/simple.dll')) {
+    throw 'Missing targeting pack unexpectedly produced an assembly.'
 }
 
 if ($RuntimeMajor -eq 11) {
@@ -285,5 +349,79 @@ if ($RuntimeMajor -eq 11) {
     $negativeOutput = $negativeResult.Output -join "`n"
     if ($negativeOutput -notmatch 'Microsoft\.NETCore\.App' -or $negativeOutput -notmatch '10\.0\.0') {
         throw 'Released JROC 0.12.35 failed for a reason other than its missing .NET 10 runtime.'
+    }
+
+    $unavailableResult = Invoke-Captured $toolExecutable @(
+        'tests/simple.js', '-o', 'unavailable-target-output', '--target-framework', 'net10.0'
+    ) (Join-Path $evidenceRoot 'unavailable-targeting-pack.log') -AllowFailure
+    $unavailableOutput = $unavailableResult.Output -join "`n"
+    if ($unavailableResult.ExitCode -eq 0 -or
+        $unavailableOutput -notmatch 'No net10.0 targeting pack' -or
+        $unavailableOutput -notmatch '--targeting-pack') {
+        throw 'The .NET 11-only SDK must report how to supply its missing .NET 10 reference pack.'
+    }
+    if (Test-Path (Join-Path $consumerRoot 'unavailable-target-output/simple.dll')) {
+        throw 'An unavailable targeting pack unexpectedly produced an assembly.'
+    }
+
+    $packSource = Join-Path $artifactRoot 'targeting-packs/Microsoft.NETCore.App.Ref'
+    $packs = @(Get-ChildItem $packSource -Directory)
+    if ($packs.Count -ne 1) {
+        throw 'Expected exactly one packaged .NET 10 targeting pack.'
+    }
+    $packDestination = Join-Path $dotnetRoot "packs/Microsoft.NETCore.App.Ref/$($packs[0].Name)"
+    Copy-Item $packs[0].FullName $packDestination -Recurse
+    Assert-IsolatedRuntime $dotnetPath 11 $evidenceRoot
+
+    Invoke-Captured $toolExecutable @(
+        'tests/simple.js', '-o', 'out-net10', '--target-framework', 'net10.0'
+    ) (Join-Path $evidenceRoot 'cross-target-compile.log') | Out-Null
+    Assert-GeneratedTarget (Join-Path $consumerRoot 'out-net10/simple.dll') 10
+    Copy-Item (Join-Path $consumerRoot 'out-net10/simple.runtimeconfig.json') `
+        (Join-Path $evidenceRoot 'cross-target.runtimeconfig.json')
+
+    $deploymentRoot = Join-Path $env:RUNNER_TEMP 'isolated-deploy-dotnet10'
+    $deploymentConsumer = Join-Path $env:RUNNER_TEMP 'deployed-net10-consumer'
+    if ((Test-Path $deploymentRoot) -or (Test-Path $deploymentConsumer)) {
+        throw 'Deployment runtime and consumer directories must start empty.'
+    }
+    if ($IsWindows) {
+        & $installScript -Channel '10.0' -Runtime 'dotnet' -InstallDir $deploymentRoot -NoPath
+    } else {
+        & bash $installScript --channel 10.0 --runtime dotnet --install-dir $deploymentRoot --no-path
+    }
+    if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
+        throw 'Installing the isolated .NET 10 deployment runtime failed.'
+    }
+    New-Item -ItemType Directory -Path $deploymentConsumer | Out-Null
+    $deployedOutput = Join-Path $deploymentConsumer 'out'
+    Copy-Item (Join-Path $consumerRoot 'out-net10') $deployedOutput -Recurse
+    $deploymentDotnet = Join-Path $deploymentRoot $(if ($IsWindows) { 'dotnet.exe' } else { 'dotnet' })
+    try {
+        $env:DOTNET_ROOT = $deploymentRoot
+        if ($IsWindows) {
+            $env:DOTNET_ROOT_X64 = $deploymentRoot
+        }
+        $deploymentSdks = Invoke-Captured $deploymentDotnet @('--list-sdks') `
+            (Join-Path $evidenceRoot 'deployment-sdks.txt')
+        if (@($deploymentSdks.Output).Count -ne 0) {
+            throw 'The isolated .NET 10 deployment environment must not contain an SDK.'
+        }
+        $deploymentRuntimes = Invoke-Captured $deploymentDotnet @('--list-runtimes') `
+            (Join-Path $evidenceRoot 'deployment-runtimes.txt')
+        $runtimeLines = @($deploymentRuntimes.Output | ForEach-Object { "$_" })
+        if ($runtimeLines.Count -eq 0 -or
+            @($runtimeLines | Where-Object { $_ -notmatch '^Microsoft\.NETCore\.App\s+10\.' }).Count -ne 0) {
+            throw 'Deployment must use only the isolated Microsoft.NETCore.App 10 runtime.'
+        }
+        $deployedResult = Invoke-Captured $deploymentDotnet @(Join-Path $deployedOutput 'simple.dll') `
+            (Join-Path $evidenceRoot 'deployment-run.log')
+        Assert-SimpleOutput $deployedResult
+        Write-Host 'Verified .NET 11-only CLI compilation and complete-output deployment to a .NET 10-only runtime.'
+    } finally {
+        $env:DOTNET_ROOT = $dotnetRoot
+        if ($IsWindows) {
+            $env:DOTNET_ROOT_X64 = $dotnetRoot
+        }
     }
 }
