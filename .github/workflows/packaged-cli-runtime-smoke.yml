@@ -46,7 +46,9 @@ jobs:
             -p:Version="$tool_version" \
             -p:PackageVersion="$tool_version"
 
-          powerargs_package="$HOME/.nuget/packages/powerargs/4.0.3/powerargs.4.0.3.nupkg"
+          powerargs_version="$(dotnet msbuild src/Cli/Jroc.csproj -getItem:PackageVersion \
+            | jq -er '.Items.PackageVersion[] | select(.Identity == "PowerArgs") | .Version')"
+          powerargs_package="$HOME/.nuget/packages/powerargs/$powerargs_version/powerargs.$powerargs_version.nupkg"
           test -f "$powerargs_package"
           cp "$powerargs_package" "$feed/"
           cp tests/simple.js "$artifact_root/simple.js"

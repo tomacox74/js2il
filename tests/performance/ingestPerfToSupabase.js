@@ -230,19 +230,23 @@ function getBaseContext() {
     };
 }
 
-function parsePackageVersionsFromCsproj(csprojPath) {
-    if (!fs.existsSync(csprojPath)) {
-        return {};
-    }
-
-    const xml = fs.readFileSync(csprojPath, 'utf8');
+function readCentralPackageVersions() {
+    const propsPath = path.join(__dirname, '..', '..', 'Directory.Packages.props');
+    const xml = fs.readFileSync(propsPath, 'utf8');
+    const properties = Object.fromEntries(
+        [...xml.matchAll(/<(\w+)>([^<]*)<\/\1>/g)].map(match => [match[1], match[2]]));
     const versions = {};
-    const pattern = /<PackageReference\s+Include="([^"]+)"\s+Version="([^"]+)"/g;
+    const pattern = /<PackageVersion\s+Include="([^"]+)"\s+Version="([^"]+)"/g;
     let match;
 
     while ((match = pattern.exec(xml)) !== null) {
         const packageId = match[1];
-        const version = match[2];
+        const version = match[2].replace(/\$\(([^)]+)\)/g, (_, property) => {
+            if (!Object.hasOwn(properties, property)) {
+                throw new Error(`Unresolved package-version property '${property}' in ${propsPath}`);
+            }
+            return properties[property];
+        });
         if (packageId && version) {
             versions[packageId] = version;
         }
@@ -252,8 +256,7 @@ function parsePackageVersionsFromCsproj(csprojPath) {
 }
 
 function buildRuntimeVersionContext() {
-    const benchmarkCsproj = path.join(__dirname, 'Benchmarks', 'Benchmarks.csproj');
-    const benchmarkPackages = parsePackageVersionsFromCsproj(benchmarkCsproj);
+    const benchmarkPackages = readCentralPackageVersions();
     const nodeVersion = process.env.NODE_VERSION || process.version?.replace(/^v/i, '') || null;
     const jrocVersion = process.env.JROC_PACKAGE_VERSION || process.env.JROC_VERSION || null;
     const jrocPreviousVersion = process.env.JROC_PREVIOUS_PACKAGE_VERSION || null;
@@ -992,6 +995,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+    buildRuntimeVersionContext,
     UPSERT_CONFLICT_KEYS,
     benchmarkDotNetClr,
     readBenchmarkDotNetJobVersions,

@@ -45,6 +45,26 @@ dotnet run --project src/Cli/Jroc.csproj -- input.js out
 dotnet out/input.dll
 ```
 
+## NuGet dependency versions
+
+The repository uses [NuGet Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management).
+Edit `Directory.Packages.props` to update third-party dependencies; project
+files declare versionless `PackageReference` items and retain their existing
+asset metadata. `SharpTSVersion` also controls the benchmark tool download and
+its auxiliary DLL path. Transitive pinning is not enabled, so centralization
+does not add dependencies to the published packages.
+
+The samples have their own `samples/Directory.Packages.props`, which ships in
+`Jroc.SDK` and intentionally does not import the repository file. Copy it
+alongside `samples/Directory.Build.props` when extracting individual samples.
+The existing release-version properties in `Directory.Build.props` continue to
+select the sample SDK version, including command-line release-candidate overrides.
+
+Published-package benchmarks use NuGet's `VersionOverride` for `Jroc.Core` and
+`Jroc.Runtime`, preserving per-run `JrocPackageVersion` selection and the previous
+release environment-variable fallback. This is intentionally separate from
+third-party dependency pins and JROC's own package release versions.
+
 ## Run tests
 
 Run the standard test suite:

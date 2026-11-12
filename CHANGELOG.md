@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- chore(build): adopt NuGet Central Package Management for third-party
+  dependencies without changing versions. Keep packaged samples self-contained
+  and preserve published-benchmark version selection and ingestion metadata.
+
 - fix(sdk): use the consuming project's targeting-pack assembly identities and
   runtime configuration when compiling JavaScript during MSBuild. Support
   .NET 11 SDK builds of `net10.0` hosts that execute on .NET 10-only runtimes,
