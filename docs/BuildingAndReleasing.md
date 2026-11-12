@@ -110,6 +110,33 @@ not a potentially changed tag.
 
 The release branch must be created **before** any version-bump command runs.
 
+### SDK 11 build trial
+
+Run the on-demand **SDK 11 coordinated package validation** workflow
+(`sdk11-package-validation.yml`) against the desired branch. It temporarily
+selects stable SDK 11 in that job's checkout, builds the solution, and packs
+one uniquely versioned `net10.0` set of all four packages. The checked-in
+`global.json` and production publishing workflow continue to select SDK 10.
+
+The candidate artifact includes the exact source SHA, SDK version, package
+version, build/pack logs, package hashes, and a dependency-complete local feed.
+The existing packaged CLI harness consumes that artifact on Linux and Windows
+in isolated .NET 10-only and .NET 11-only installations, without roll-forward
+overrides. The existing packaged Basic-sample harness validates the same feed
+for SDK 10/net10.0, SDK 11/net11.0, and SDK 11/net10.0 executed separately on
+.NET 10. Each sample has a fresh consumer directory and package store;
+resolved candidate package identities, generated framework references, and
+runtime configuration are checked and retained as evidence.
+
+`Jroc.SDK` uses private, compile-only MSBuild reference packages compatible
+with .NET 10. Do not reference the executing SDK's MSBuild binaries: SDK 11's
+binaries require .NET 11 and cannot be compiled into the shipped net10.0 task.
+The consuming MSBuild host supplies these assemblies at execution time.
+
+A passing trial establishes build/pack and consumer compatibility, not release
+authorization. Switching the production SDK remains a follow-up decision;
+the existing release validation gates still apply.
+
 ## Preferred automated release
 
 The release script handles branch creation, version updates, commit and push,

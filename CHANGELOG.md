@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- fix(build): compile the net10.0 MSBuild task against pinned, private MSBuild
+  reference packages instead of the executing SDK's assemblies. Add an
+  SDK 11 coordinated-package trial with isolated .NET 10/11 CLI and Basic SDK
+  consumers, without changing the release SDK.
+
 - feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
   resolving installed or explicitly supplied targeting packs with actionable
   validation errors. Preserve the no-option target and verify packaged .NET 11
