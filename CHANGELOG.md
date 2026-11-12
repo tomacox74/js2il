@@ -6,6 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- feat(cli): add `--target-framework net10.0|net11.0` for standalone output,
+  resolving installed or explicitly supplied targeting packs with actionable
+  validation errors. Preserve the no-option target and verify packaged .NET 11
+  compilation followed by deployment to a separate .NET 10-only runtime.
+
 - chore(build): adopt NuGet Central Package Management for third-party
   dependencies without changing versions. Keep packaged samples self-contained
   and preserve published-benchmark version selection and ingestion metadata.

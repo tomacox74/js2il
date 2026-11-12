@@ -40,6 +40,14 @@ public class JrocArgs
     [ArgShortcut("--diagnostic-file")]
     public string? DiagnosticFile { get; set; }
 
+    [ArgDescription("Target standalone output to net10.0 or net11.0 (default: the runtime running JROC)")]
+    [ArgShortcut("--target-framework")]
+    public string? TargetFramework { get; set; }
+
+    [ArgDescription("Use a Microsoft.NETCore.App.Ref pack version directory (requires --target-framework)")]
+    [ArgShortcut("--targeting-pack")]
+    public string? TargetingPack { get; set; }
+
     [ArgDescription("Analyze and report unused properties and methods")]
     [ArgShortcut("--analyzeunused")]
     public bool AnalyzeUnused { get; set; }
@@ -116,6 +124,10 @@ class Program
             {
                 throw new ArgException("Coverage analysis does not write assemblies; use --coverage-report <file> for its JSON output.");
             }
+            if (coverageOnly && (parsed.TargetFramework is not null || parsed.TargetingPack is not null))
+            {
+                throw new ArgException("--target-framework and --targeting-pack apply to standalone output, not coverage-only analysis.");
+            }
 
             // Version handling (PowerArgs default alias is -Version from property name)
             if (parsed.Version)
@@ -145,7 +157,8 @@ class Program
                 AnalyzeUnused = parsed.AnalyzeUnused,
                 EmitPdb = parsed.EmitPdb,
                 CollectCompilationCoverage = !string.IsNullOrWhiteSpace(parsed.CoverageReport),
-                AssumeUnmodifiedHostGlobals = parsed.AssumeUnmodifiedHostGlobals
+                AssumeUnmodifiedHostGlobals = parsed.AssumeUnmodifiedHostGlobals,
+                TargetFrameworkReferences = ResolveTargetFrameworkReferences(parsed.TargetFramework, parsed.TargetingPack)
             });
             var logger = servicesProvider.GetRequiredService<ICompilerOutput>();
 
@@ -264,6 +277,102 @@ class Program
         }
     }
 
+    private static AssemblyName[] ResolveTargetFrameworkReferences(string? targetFramework, string? targetingPack)
+    {
+        if (targetFramework is null)
+        {
+            if (targetingPack is not null)
+            {
+                throw new ArgException("--targeting-pack requires --target-framework net10.0 or net11.0.");
+            }
+            return [];
+        }
+
+        var major = targetFramework switch
+        {
+            "net10.0" => 10,
+            "net11.0" => 11,
+            _ => throw new ArgException(
+                $"Unsupported target framework '{targetFramework}'. Use --target-framework net10.0 or net11.0.")
+        };
+        var remedy = $"Supply a Microsoft.NETCore.App.Ref pack for {targetFramework} " +
+            $"with --targeting-pack <version-directory> containing ref/{targetFramework}/System.Runtime.dll.";
+
+        try
+        {
+            string? pack = targetingPack is not null ? Path.GetFullPath(targetingPack) : null;
+            if (targetingPack is null)
+            {
+                var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+                var dotnetRoot = Path.GetFullPath(Path.Combine(runtimeDirectory, "..", "..", ".."));
+                var packsDirectory = Path.Combine(dotnetRoot, "packs", "Microsoft.NETCore.App.Ref");
+                if (Directory.Exists(packsDirectory))
+                {
+                    pack = Directory.EnumerateDirectories(packsDirectory)
+                        .Select(path =>
+                        {
+                            Version.TryParse(Path.GetFileName(path).Split('-')[0], out var version);
+                            return (Path: path, Version: version);
+                        })
+                        .Where(candidate => candidate.Version?.Major == major
+                            && Directory.Exists(Path.Combine(candidate.Path, "ref", targetFramework)))
+                        .OrderByDescending(candidate => candidate.Version)
+                        .ThenByDescending(candidate => !Path.GetFileName(candidate.Path).Contains('-'))
+                        .ThenByDescending(candidate => candidate.Path, StringComparer.Ordinal)
+                        .Select(candidate => candidate.Path)
+                        .FirstOrDefault();
+                }
+                if (pack is null)
+                {
+                    throw new ArgException(
+                        $"No {targetFramework} targeting pack was found in '{packsDirectory}'. {remedy}");
+                }
+            }
+
+            var referenceDirectory = Path.Combine(pack!, "ref", targetFramework);
+            if (!Directory.Exists(referenceDirectory))
+            {
+                throw new ArgException(
+                    $"The {targetFramework} targeting pack reference directory '{referenceDirectory}' does not exist. {remedy}");
+            }
+            var references = Directory.EnumerateFiles(referenceDirectory, "*.dll")
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .Select(AssemblyName.GetAssemblyName)
+                .ToArray();
+            var systemRuntime = references.FirstOrDefault(reference => reference.Name == "System.Runtime");
+            var expectedVersion = new Version(major, 0, 0, 0);
+            if (systemRuntime?.Version != expectedVersion)
+            {
+                throw new ArgException(
+                    $"Targeting pack '{pack}' must supply System.Runtime {expectedVersion} for {targetFramework}; " +
+                    $"found {systemRuntime?.Version?.ToString() ?? "no System.Runtime reference"}. {remedy}");
+            }
+            var manifest = System.Xml.Linq.XDocument.Load(Path.Combine(pack!, "data", "FrameworkList.xml"));
+            var framework = manifest.Root;
+            if (framework?.Attribute("TargetFrameworkIdentifier")?.Value != ".NETCoreApp"
+                || framework.Attribute("TargetFrameworkVersion")?.Value != $"{major}.0")
+            {
+                throw new ArgException($"Targeting pack '{pack}' does not describe the {targetFramework} framework. {remedy}");
+            }
+            // Missing framework DLLs would otherwise fall back to the executing CLR's identities.
+            foreach (var file in framework.Elements("File").Where(file => file.Attribute("Type")?.Value == "Managed"))
+            {
+                var relativePath = file.Attribute("Path")?.Value;
+                if (relativePath is null || !File.Exists(Path.Combine(pack!, relativePath)))
+                {
+                    throw new ArgException(
+                        $"Targeting pack '{pack}' is incomplete: missing framework reference '{relativePath}'. {remedy}");
+                }
+            }
+            return references;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+            or ArgumentException or BadImageFormatException or NotSupportedException or System.Xml.XmlException)
+        {
+            throw new ArgException($"Could not read the {targetFramework} targeting pack: {exception.Message} {remedy}");
+        }
+    }
+
     private static bool WriteCoverageReport(string? requestedPath, CompilationCoverageReport report, ICompilerOutput logger)
     {
         if (string.IsNullOrWhiteSpace(requestedPath))
@@ -337,7 +446,7 @@ class Program
     private static void PrintUsage(Action<string> writeLine)
     {
         writeLine("Usage: jroc <InputFile> [<OutputPath>] [options]");
-        writeLine("   or: jroc --moduleid <ModuleId> [--output <OutputPath>] [options]");
+        writeLine("   or: jroc --moduleid <ModuleId> [--output <directory>] [options]");
         writeLine("   or: jroc coverage <InputFile> [--json] [--coverage-report <file>]");
         writeLine("");
         writeLine("Option                 Description");
@@ -348,8 +457,11 @@ class Program
         writeLine("-o, --output           The output directory for the generated IL (created if missing)");
         writeLine("-v, --verbose          Enable diagnostics output to console");
         writeLine("--diagnostic-file <path> Write diagnostics output to a text file");
-        writeLine("--analyzeunused        Analyze and report unused properties and methods");
+        writeLine("--target-framework <tfm> Target net10.0 or net11.0 (default: the runtime running JROC)");
+        writeLine("--targeting-pack <path> Use a Microsoft.NETCore.App.Ref pack version directory (requires --target-framework)");
+        writeLine("--analyzeunused        Report unused functions, properties, and variables");
         writeLine("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        writeLine("--assume-unmodified-host-globals  Allow guard-free calls when analysis permits and the host preserves built-in global bindings");
         writeLine("--coverage             Analyze compilation modes without writing assemblies");
         writeLine("--json                 Print coverage analysis as JSON");
         writeLine("--coverage-report <file> Write compilation-mode JSON during analysis or normal compilation");
