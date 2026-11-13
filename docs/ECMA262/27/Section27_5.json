@@ -110,6 +110,18 @@
   "support": {
     "entries": [
       {
+        "clause": "27.5.3",
+        "feature": "Generator execution-state validation and nested exception regions",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-abstract-operations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/return/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/throw/ExecutionTests.cs"
+        ],
+        "notes": "Reentrant next/return/throw requests throw TypeError before modifying the executing generator's protocol state. Throw at suspended start completes the generator without entering its body. Synchronous nested catch regions inside a suspending try/finally retain valid CLR exception control flow and route escaping exceptions through the generator's outer completion handlers."
+      },
+      {
         "clause": "27.5.1",
         "feature": "Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/catch/finally (including while suspended at yield) on return/throw",
         "status": "Supported",

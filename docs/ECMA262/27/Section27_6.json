@@ -122,6 +122,18 @@
   "support": {
     "entries": [
       {
+        "clause": "27.6.1",
+        "feature": "Async-generator receiver and abrupt return validation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-prototype",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/next/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/return/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/throw/ExecutionTests.cs"
+        ],
+        "notes": "Prototype methods reject invalid receivers through their returned promises rather than throwing synchronously. Synchronous return-value promise-resolution failures at suspended yield resume the body as a throw, allowing catch/finally to execute. The native intrinsic harness also exposes %AsyncGeneratorFunction% for constructor and prototype checks."
+      },
+      {
         "clause": "27.6.3",
         "feature": "Queued async-generator requests and awaited yield values",
         "status": "Supported with Limitations",

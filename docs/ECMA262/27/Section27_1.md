@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-05T20:46:24Z
+> Last generated (UTC): 2026-11-13T23:12:59Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -117,4 +117,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Async iterator disposal awaits return-method completion and resolves to undefined | Supported | [`invokes-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/invokes-return.js)<br>[`is-function.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/is-function.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/prop-desc.js)<br>[`return-val.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/return-val.js)<br>[`throw-rejected-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-rejected-return.js)<br>[`throw-return-getter.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return-getter.js)<br>[`throw-return.js`](../../../tests/Jroc.Test262.Tests/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose/JavaScript/throw-return.js) |  | The built-in Symbol.asyncDispose method calls the receiver's return method with one undefined argument, awaits its completion using intrinsic promise operations, and discards its fulfilled value. Missing or null return methods resolve to undefined; invalid receivers, non-callable return methods, thrown values, and rejected returns reject the returned promise. Its name, length, and property descriptors follow the intrinsic contract. |
+
+### 27.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-async-from-sync-iterator-objects))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Async-from-sync value rejection and iterator closing | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/next/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/return/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/throw/ExecutionTests.cs` |  | Rejected non-final next/throw value wrappers close the synchronous source iterator while preserving the original rejection. Return does not perform the extra close. The same rules cover synchronous promise-resolution failures and synchronous yield* delegates. Iterator.prototype's constructor property remains distinct from the non-writable, non-configurable Iterator constructor prototype property. Native observation helpers verify Iterator.from return-method lookup, receiver validation, and iterator-result identity. |
 

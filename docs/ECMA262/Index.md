@@ -34,9 +34,9 @@ For the current development branch, Test262 provides the following conformance e
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 40,510 | **83.97%** |
+| Verified passing | 40,710 | **84.39%** |
 | Explicitly excluded due to known unsupported behavior | 663 | 1.37% |
-| Not yet verified | 7,068 | 14.65% |
+| Not yet verified | 6,868 | 14.24% |
 | **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.

@@ -187,6 +187,16 @@
   "support": {
     "entries": [
       {
+        "clause": "24.1.5.2.1",
+        "feature": "Permanent exhaustion of mutable Map iterators",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%mapiteratorprototype%.next",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/MapIteratorPrototype/next/JavaScript/iteration-mutable.js"
+        ],
+        "notes": "Map iterators observe additions before exhaustion, then remain completed on every later next call even if new entries are inserted. Completed results retain an undefined value."
+      },
+      {
         "clause": "24.1.1.1",
         "feature": "Cross-realm Map constructor default prototype",
         "status": "Supported",

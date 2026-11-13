@@ -11,9 +11,9 @@ Coverage for the current development branch. Counts and percentages are per stan
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 18,174 | 37 | 5,301 | 23,512 | **77.30%** |
+| Built-in objects and APIs | 18,374 | 37 | 5,101 | 23,512 | **78.15%** |
 | Language syntax and semantics | 22,276 | 626 | 741 | 23,643 | **94.22%** |
-| **Total** | 40,510 | 663 | 7,068 | 48,241 | **83.97%** |
+| **Total** | 40,710 | 663 | 6,868 | 48,241 | **84.39%** |
 
 ## Language Areas
 
@@ -164,12 +164,12 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
 | `Array` | 3,081 | 0 | 0 | 3,081 | **100.00%** |
 | `ArrayBuffer` | 192 | 0 | 4 | 196 | **97.96%** |
-| `ArrayIteratorPrototype` | 21 | 0 | 6 | 27 | **77.78%** |
+| `ArrayIteratorPrototype` | 27 | 0 | 0 | 27 | **100.00%** |
 | `AsyncDisposableStack` | 104 | 0 | 0 | 104 | **100.00%** |
-| `AsyncFromSyncIteratorPrototype` | 1 | 0 | 37 | 38 | **2.63%** |
+| `AsyncFromSyncIteratorPrototype` | 38 | 0 | 0 | 38 | **100.00%** |
 | `AsyncFunction` | 17 | 0 | 1 | 18 | **94.44%** |
-| `AsyncGeneratorFunction` | 14 | 0 | 9 | 23 | **60.87%** |
-| `AsyncGeneratorPrototype` | 7 | 0 | 41 | 48 | **14.58%** |
+| `AsyncGeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
+| `AsyncGeneratorPrototype` | 48 | 0 | 0 | 48 | **100.00%** |
 | `AsyncIteratorPrototype` | 13 | 0 | 0 | 13 | **100.00%** |
 | `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
@@ -184,22 +184,22 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
-| `Function` | 427 | 7 | 75 | 509 | **83.89%** |
+| `Function` | 487 | 7 | 15 | 509 | **95.68%** |
 | `GeneratorFunction` | 22 | 0 | 1 | 23 | **95.65%** |
-| `GeneratorPrototype` | 51 | 0 | 10 | 61 | **83.61%** |
+| `GeneratorPrototype` | 61 | 0 | 0 | 61 | **100.00%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
 | `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
 | `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
 | `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
-| `Iterator` | 503 | 0 | 7 | 510 | **98.63%** |
+| `Iterator` | 510 | 0 | 0 | 510 | **100.00%** |
 | `JSON` | 162 | 0 | 3 | 165 | **98.18%** |
 | `Map` | 197 | 0 | 7 | 204 | **96.57%** |
-| `MapIteratorPrototype` | 6 | 0 | 5 | 11 | **54.55%** |
+| `MapIteratorPrototype` | 7 | 0 | 4 | 11 | **63.64%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
 | `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
 | `NativeErrors` | 94 | 0 | 0 | 94 | **100.00%** |
 | `Number` | 338 | 0 | 0 | 338 | **100.00%** |
-| `Object` | 3,369 | 1 | 41 | 3,411 | **98.77%** |
+| `Object` | 3,400 | 1 | 10 | 3,411 | **99.68%** |
 | `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
 | `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
 | `Promise` | 651 | 0 | 26 | 677 | **96.16%** |
