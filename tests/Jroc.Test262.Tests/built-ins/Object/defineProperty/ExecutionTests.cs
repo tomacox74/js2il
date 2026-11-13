@@ -85,4 +85,16 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "15.2.3.6-4-314-1.js")]
     public Task _15_2_3_6_4_314_1_js()
         => ExecutionTestFromFile("15.2.3.6-4-314-1");
+
+    [Fact(DisplayName = "symbol-data-property-default-strict.js")]
+    public Task Port200_symbol_data_property_default_strict()
+        => ExecutionTestFromFile("symbol-data-property-default-strict");
+
+    [Fact(DisplayName = "symbol-data-property-writable.js")]
+    public Task Port200_symbol_data_property_writable()
+        => ExecutionTestFromFile("symbol-data-property-writable");
+
+    [Fact(DisplayName = "typedarray-backed-by-resizable-buffer.js")]
+    public Task Port200_typedarray_backed_by_resizable_buffer()
+        => ExecutionTestFromFile("typedarray-backed-by-resizable-buffer");
 }

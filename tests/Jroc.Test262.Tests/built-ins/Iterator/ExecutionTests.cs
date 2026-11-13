@@ -9,4 +9,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "proto-from-ctor-realm.js")]
+    public Task Port200_proto_from_ctor_realm()
+        => ExecutionTestFromFile("proto-from-ctor-realm");
 }

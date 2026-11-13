@@ -13,4 +13,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "nan-equivalence-define-own-property-reconfigure")]
     public Task nan_equivalence_define_own_property_reconfigure()
         => ExecutionTestFromFile("nan-equivalence-define-own-property-reconfigure");
+
+    [Fact(DisplayName = "consistent-value-function-arguments.js")]
+    public Task Port200_consistent_value_function_arguments()
+        => ExecutionTestFromFile("consistent-value-function-arguments");
 }

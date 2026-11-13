@@ -19,6 +19,7 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     // Stable singleton used as %GeneratorFunction%.
     private static readonly Func<object[], object?[]?, object?> _generatorFunctionConstructor =
         static (_, args) => CreateDynamicGeneratorFunction(args);
+    internal static bool IsConstructorDelegate(Delegate value) => _generatorFunctionConstructor.Equals(value);
     /// <summary>Realm-owned <c>%GeneratorPrototype%</c> (issue #1824).</summary>
     private static object Prototype
         => RuntimeIntrinsics.Current.GetOrCreate(
@@ -35,6 +36,7 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
 
     private readonly CompiledContinuation _step;
     private readonly object[] _scopes;
+    private bool _executing;
 
     public GeneratorObject(CompiledContinuation step)
     {
@@ -313,6 +315,7 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     /// </summary>
     public object next(object? value = null)
     {
+        ValidateNotExecuting();
         var scope = GetLeafScope();
 
         if (scope.Done)
@@ -369,11 +372,12 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     /// </summary>
     public object @throw(object? error)
     {
+        ValidateNotExecuting();
         var scope = GetLeafScope();
 
-        if (scope.Done)
+        if (scope.Done || !scope.Started)
         {
-            // Spec: throw on completed generator rethrows.
+            scope.Done = true;
             throw new JsThrownValueException(error);
         }
 
@@ -400,6 +404,7 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
     /// </summary>
     public object @return(object? value)
     {
+        ValidateNotExecuting();
         var scope = GetLeafScope();
 
         if (scope.Done)
@@ -431,15 +436,25 @@ public sealed class GeneratorObject : JsObject, IJavaScriptIterator
         }
     }
 
+    private void ValidateNotExecuting()
+    {
+        if (_executing)
+        {
+            throw new TypeError("Generator is already executing");
+        }
+    }
+
     private object InvokeStepWithCapturedThis(GeneratorScope scope)
     {
         var previousThis = RuntimeServices.SetCurrentThis(RuntimeServices.ResolveLexicalThis(scope.ThisValue));
+        _executing = true;
         try
         {
             return _step.Resume()!;
         }
         finally
         {
+            _executing = false;
             RuntimeServices.SetCurrentThis(previousThis);
         }
     }

@@ -78,11 +78,22 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerStatement(tryStmt.TryBlock);
         }
 
+        var protectionStart = _isGenerator && NeedsSynchronousExpressionProtection
+            ? lirInstructions.Count
+            : -1;
+
         if (hasFinally && tryStmt.FinallyBody != null
             && (tryStmt.FinallyBody is HIRDisposeResourcesStatement || ContainsAbruptStatement(tryStmt.FinallyBody)))
         {
-            return TryLowerTryStatementWithExplicitFinally(tryStmt, lowerTryBlock);
+            var loweredExplicitFinally = TryLowerTryStatementWithExplicitFinally(tryStmt, lowerTryBlock);
+            if (loweredExplicitFinally && protectionStart >= 0)
+            {
+                ProtectGeneratorExpression(protectionStart);
+            }
+            return loweredExplicitFinally;
         }
+
+        var loweredSynchronousTry = false;
 
         // Track current control-flow depth so we can decide when break/continue exits the try.
         _protectedControlFlowDepthStack.Push(_controlFlowStack.Count);
@@ -222,11 +233,16 @@ public sealed partial class HIRToLIRLowerer
                     HandlerEndLabelId: finallyEnd));
             }
 
+            loweredSynchronousTry = true;
             return true;
         }
         finally
         {
             _protectedControlFlowDepthStack.Pop();
+            if (loweredSynchronousTry && protectionStart >= 0)
+            {
+                ProtectGeneratorExpression(protectionStart);
+            }
         }
     }
 

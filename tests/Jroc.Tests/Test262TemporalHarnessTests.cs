@@ -2,6 +2,53 @@ namespace Jroc.Tests;
 
 public sealed class Test262TemporalHarnessTests
 {
+    [Fact]
+    public void ObserveMethodPreservesReceiverArgumentsAndAbruptCompletion()
+    {
+        const string source = """
+            /*---
+            includes: [temporalHelpers.js, compareArray.js]
+            ---*/
+            assert.sameValue(TemporalHelpers.observeMethod.length, 3);
+            const calls = [], expected = {}, target = {
+              run(first, second) {
+                assert.sameValue(this, target);
+                assert.sameValue(arguments.length, 2);
+                assert.sameValue(first, 1);
+                assert.sameValue(second, 2);
+                return expected;
+              }
+            };
+            const original = target.run;
+            TemporalHelpers.observeMethod(calls, target, "run", "target");
+            assert.notSameValue(target.run, original);
+            assert.sameValue(target.run.length, 0);
+            assert.sameValue(target.run.call({}, 1, 2), expected);
+            assert.sameValue(new target.run(1, 2), expected);
+            assert.compareArray(calls, ["call target.run", "call target.run"]);
+            const absent = {};
+            TemporalHelpers.observeMethod(calls, absent, "missing");
+            assert.throws(TypeError, () => absent.missing());
+            assert.sameValue(calls[2], "call missing");
+            const reason = {}, throwing = { run() { throw reason; } };
+            TemporalHelpers.observeMethod(calls, throwing, "run");
+            let caught;
+            try { throwing.run(); } catch (error) { caught = error; }
+            assert.sameValue(caught, reason);
+            assert.sameValue(calls[3], "call run");
+            let invoked = false;
+            const blocked = { run() { invoked = true; } };
+            TemporalHelpers.observeMethod({ push() { throw new RangeError(); } }, blocked, "run");
+            assert.throws(RangeError, () => blocked.run());
+            assert.sameValue(invoked, false);
+            """;
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            "observe_method", "Test262TemporalHarness",
+            _ => (source, Path.Combine(Directory.GetCurrentDirectory(), "observe_method.js")));
+        Assert.Null(result.UnhandledException);
+        Assert.Empty(result.Output);
+    }
+
     [Theory]
     [InlineData("""
         assert.sameValue(TemporalHelpers.observeProperty.length, 4);

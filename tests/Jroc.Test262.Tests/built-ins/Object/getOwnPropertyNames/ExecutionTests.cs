@@ -39,4 +39,8 @@ public partial class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "15.2.3.4-4-47.js")]
     public Task _15_2_3_4_4_47_js()
         => ExecutionTestFromFile("15.2.3.4-4-47");
+
+    [Fact(DisplayName = "15.2.3.4-4-1.js")]
+    public Task Port200_15_2_3_4_4_1()
+        => ExecutionTestFromFile("15.2.3.4-4-1");
 }

@@ -32,7 +32,7 @@ public static class AsyncGeneratorDelegation
     public static object? Next(object iterator, object? value)
     {
         var record = (IteratorRecord)iterator;
-        return Invoke(record, record.NextMethod, value);
+        return Invoke(record, record.NextMethod, value, closeOnRejection: true);
     }
 
     public static object? Return(object iterator, object? value)
@@ -42,7 +42,7 @@ public static class AsyncGeneratorDelegation
         return method is null or JsNull
             ? ((Promise)Promise.resolve(value)!).then(
                 (BuiltinFunction1)((_, resolved) => IteratorResult.Create(resolved, done: true)))
-            : Invoke(record, method, value);
+            : Invoke(record, method, value, closeOnRejection: false);
     }
 
     public static object? Throw(object iterator, object? value)
@@ -51,7 +51,7 @@ public static class AsyncGeneratorDelegation
         var method = ObjectRuntime.GetProperty(record.Iterator, "throw");
         if (method is not null and not JsNull)
         {
-            return Invoke(record, method, value);
+            return Invoke(record, method, value, closeOnRejection: true);
         }
 
         var returnMethod = ObjectRuntime.GetProperty(record.Iterator, "return");
@@ -75,7 +75,7 @@ public static class AsyncGeneratorDelegation
         }));
     }
 
-    private static object? Invoke(IteratorRecord record, object? method, object? value)
+    private static object? Invoke(IteratorRecord record, object? method, object? value, bool closeOnRejection)
     {
         var result = CallableOperations.Call1(method, record.Iterator, value);
         if (!record.IsSync)
@@ -86,7 +86,29 @@ public static class AsyncGeneratorDelegation
         ValidateResult(result);
         var done = ObjectRuntime.IteratorResultDone(result!);
         var yielded = ObjectRuntime.IteratorResultValue(result!);
-        return ((Promise)Promise.resolve(yielded)!).then(
-            (BuiltinFunction1)((_, resolved) => IteratorResult.Create(resolved, done)));
+        Promise promise;
+        try
+        {
+            promise = (Promise)Promise.resolve(yielded)!;
+        }
+        catch (Exception exception) when (exception is not ScriptProcessExitException)
+        {
+            if (closeOnRejection && !done)
+            {
+                ObjectRuntime.IteratorCloseForThrowCompletion(record.Iterator);
+            }
+            throw;
+        }
+        BuiltinFunction1? rejected = null;
+        if (closeOnRejection && !done)
+        {
+            rejected = (_, reason) =>
+            {
+                ObjectRuntime.IteratorCloseForThrowCompletion(record.Iterator);
+                throw new JsThrownValueException(reason);
+            };
+        }
+        return promise.then(
+            (BuiltinFunction1)((_, resolved) => IteratorResult.Create(resolved, done)), rejected);
     }
 }

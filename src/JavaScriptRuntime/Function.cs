@@ -82,6 +82,7 @@ public static class Function
             Writable = false,
             Value = 0d
         });
+        DefineMetadataProperty(prototype, "name", string.Empty);
         DefinePrototypeMethod(prototype, "apply", (BuiltinFunction2)PrototypeApply, 2);
         DefinePrototypeMethod(prototype, "call", (BuiltinFunctionVariadic)PrototypeCall, 1);
         DefinePrototypeMethod(prototype, "bind", (BuiltinFunctionVariadic)PrototypeBind, 1);
@@ -904,12 +905,14 @@ public static class Function
                 throw new TypeError("Value is not a constructor");
             }
 
-            var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
-            var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
             var prototypeSource = newTarget is null or JsNull
                 ? constructor
                 : newTarget;
             var prototype = ObjectRuntime.GetItem(prototypeSource, "prototype");
+            var constructorRealm = TypeUtilities.IsConstructorReturnOverride(prototype)
+                ? RuntimeIntrinsics.Current
+                : RuntimeIntrinsics.GetFunctionRealm(prototypeSource);
+            var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
             if (TypeUtilities.IsConstructorReturnOverride(prototype))
             {
                 PrototypeChain.SetPrototype(instance, prototype);
@@ -1039,19 +1042,16 @@ public static class Function
                 throw new TypeError("Value is not a constructor");
             }
 
-            PrototypeChain.SetPrototype(
-                receiver,
-                GlobalThis.ObjectPrototypeValue);
             var prototypeSource = newTarget is null or JsNull
                 ? constructor
                 : newTarget;
             var prototype = ObjectRuntime.GetItem(
                 prototypeSource,
                 "prototype");
-            if (TypeUtilities.IsConstructorReturnOverride(prototype))
-            {
-                PrototypeChain.SetPrototype(receiver, prototype);
-            }
+            PrototypeChain.SetPrototype(receiver,
+                TypeUtilities.IsConstructorReturnOverride(prototype)
+                    ? prototype
+                    : RuntimeIntrinsics.GetFunctionRealm(prototypeSource).ObjectPrototype);
 
             var previousThis = RuntimeServices.SetCurrentThis(receiver);
             (_generatedConstructionReceivers ??= new()).Push(receiver);

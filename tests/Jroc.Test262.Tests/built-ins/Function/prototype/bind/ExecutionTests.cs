@@ -81,4 +81,20 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "instance-length-tointeger")]
     public Task instance_length_tointeger()
         => ExecutionTestFromFile("instance-length-tointeger");
+
+    [Fact(DisplayName = "15.3.4.5-2-9.js")]
+    public Task Port200_15_3_4_5_2_9()
+        => ExecutionTestFromFile("15.3.4.5-2-9");
+
+    [Fact(DisplayName = "get-fn-realm-recursive.js")]
+    public Task Port200_get_fn_realm_recursive()
+        => ExecutionTestFromFile("get-fn-realm-recursive");
+
+    [Fact(DisplayName = "get-fn-realm.js")]
+    public Task Port200_get_fn_realm()
+        => ExecutionTestFromFile("get-fn-realm");
+
+    [Fact(DisplayName = "proto-from-ctor-realm.js")]
+    public Task Port200_proto_from_ctor_realm()
+        => ExecutionTestFromFile("proto-from-ctor-realm");
 }

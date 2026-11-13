@@ -1234,7 +1234,7 @@ partial class HIRMethodBuilder
         var arguments = siteNode is CallExpression callSite
             ? callSite.Arguments.Cast<Node>()
             : ((NewExpression)siteNode).Arguments.Cast<Node>();
-        if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(callee, ResolveInitializer, out _)
+        if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(callee, ResolveInitializer, out var generator, out var async)
             || !DynamicFunctionSupport.TryGetStaticStringArguments(
                 DynamicFunctionSupport.GetSourceArguments(callee, arguments),
                 ResolveInitializer,
@@ -1260,8 +1260,12 @@ partial class HIRMethodBuilder
                     _parser,
                     GetCurrentDocumentId(),
                     sources,
+                    siteNode.Location.Start.Line,
+                    siteNode.Location.Start.Column,
                     out _,
-                    out syntaxError)
+                    out syntaxError,
+                    generator: generator,
+                    async: async)
                 || string.IsNullOrEmpty(syntaxError))
         {
             return false;
@@ -1292,7 +1296,7 @@ partial class HIRMethodBuilder
             {
                 if (scope.Bindings.TryGetValue(name, out var binding))
                 {
-                    return binding.DeclarationNode is VariableDeclarator variable ? variable.Init : binding.DeclarationNode;
+                    return binding.DeclarationNode is VariableDeclarator variable ? variable.Init ?? (Node)variable : binding.DeclarationNode;
                 }
             }
             return null;

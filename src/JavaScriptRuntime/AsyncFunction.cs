@@ -6,6 +6,7 @@ public static class AsyncFunction
 {
     private static readonly Func<object[], object?[], object?> ConstructorValue = static (_, args) =>
         CreateDynamicAsyncFunction(args);
+    internal static bool IsConstructorDelegate(Delegate value) => ConstructorValue.Equals(value);
 
     /// <summary>Realm-owned <c>%AsyncFunction.prototype%</c> (issue #1824).</summary>
     internal static object Prototype

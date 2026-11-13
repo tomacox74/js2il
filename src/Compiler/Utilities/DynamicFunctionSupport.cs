@@ -44,33 +44,35 @@ internal static class DynamicFunctionSupport
             ? arguments.Skip(1)
             : arguments;
 
-    internal static bool TryGetFunctionConstructorKind(Node callee, Func<string, Node?> resolve, out bool generator)
+    internal static bool TryGetFunctionConstructorKind(Node callee, Func<string, Node?> resolve, out bool generator, out bool async)
     {
         var visited = new HashSet<string>(StringComparer.Ordinal);
-        return Resolve(callee, out generator);
+        return Resolve(callee, out generator, out async);
 
-        bool Resolve(Node node, out bool isGenerator)
+        bool Resolve(Node node, out bool isGenerator, out bool isAsync)
         {
             isGenerator = false;
+            isAsync = false;
             if (IsFunctionConstructorCandidate(node)) return true;
             switch (node)
             {
                 case MemberExpression { Computed: false, Property: Identifier { Name: "call" } } call:
-                    return Resolve(call.Object, out isGenerator);
+                    return Resolve(call.Object, out isGenerator, out isAsync);
                 case Identifier identifier when visited.Add(identifier.Name) && resolve(identifier.Name) is { } declaration:
-                    return Resolve(declaration, out isGenerator);
+                    return Resolve(declaration, out isGenerator, out isAsync);
                 case ClassDeclaration { SuperClass: { } heritage }:
-                    return Resolve(heritage, out isGenerator);
+                    return Resolve(heritage, out isGenerator, out isAsync);
                 case ClassExpression { SuperClass: { } heritage }:
-                    return Resolve(heritage, out isGenerator);
+                    return Resolve(heritage, out isGenerator, out isAsync);
                 case MemberExpression { Computed: false, Property: Identifier { Name: "constructor" },
                     Object: CallExpression { Callee: MemberExpression { Object: Identifier { Name: "Object" },
                         Property: Identifier { Name: "getPrototypeOf" } } } call }
-                    when call.Arguments.Count == 1 && call.Arguments[0] is FunctionExpression { Generator: true }:
-                    isGenerator = true;
+                    when call.Arguments.Count == 1 && call.Arguments[0] is FunctionExpression function:
+                    isGenerator = function.Generator;
+                    isAsync = function.Async;
                     return true;
                 case ParenthesizedExpression parenthesized:
-                    return Resolve(parenthesized.Expression, out isGenerator);
+                    return Resolve(parenthesized.Expression, out isGenerator, out isAsync);
             }
             return false;
         }
@@ -100,6 +102,15 @@ internal static class DynamicFunctionSupport
                 case Literal { Value: string value }:
                     source = value;
                     return true;
+                case Literal { Value: null or bool or double or int } literal:
+                    source = JavaScriptRuntime.DotNet2JSConversions.ToString(
+                        literal.Value is null ? JavaScriptRuntime.JsNull.Null : literal.Value);
+                    return true;
+                case Identifier { Name: "undefined" } when resolveInitializer("undefined") is null:
+                case UnaryExpression { Operator: Acornima.Operator.Void }:
+                case VariableDeclarator { Init: null }:
+                    source = "undefined";
+                    return true;
                 case TemplateLiteral { Expressions.Count: 0 } template
                     when template.Quasis.Count == 1 && template.Quasis[0].Value.Cooked is string cooked:
                     source = cooked;
@@ -108,6 +119,21 @@ internal static class DynamicFunctionSupport
                     if (resolveInitializer(identifier.Name) is { } initializer)
                     {
                         return TryGetString(initializer, visited, out source);
+                    }
+                    break;
+                case CallExpression { Callee: Identifier { Name: "Object" or "String" }, Arguments.Count: 1 } call:
+                    return TryGetString(call.Arguments[0], visited, out source);
+                case NewExpression { Callee: Identifier { Name: "Object" or "String" }, Arguments.Count: 1 } construction:
+                    return TryGetString(construction.Arguments[0], visited, out source);
+                case ObjectExpression obj:
+                    var conversion = obj.Properties.OfType<Property>().LastOrDefault(property =>
+                        !property.Computed && property.Key is Identifier { Name: "toString" } or StringLiteral { Value: "toString" });
+                    if (conversion?.Value is FunctionExpression
+                        {
+                            Body: BlockStatement { Body.Count: 1 } body
+                        } && body.Body[0] is ReturnStatement { Argument: { } returned })
+                    {
+                        return TryGetString(returned, visited, out source);
                     }
                     break;
             }
@@ -125,12 +151,13 @@ internal static class DynamicFunctionSupport
         out FunctionExpression? functionExpression,
         out string? errorMessage,
         bool createFactory = false,
-        bool generator = false)
+        bool generator = false,
+        bool async = false)
     {
         functionExpression = null;
         errorMessage = null;
 
-        var syntheticSource = BuildSyntheticFunctionExpressionSource(literalArgs, startLine, startColumn, createFactory, generator);
+        var syntheticSource = BuildSyntheticFunctionExpressionSource(literalArgs, startLine, startColumn, createFactory, generator, async);
         try
         {
             var program = parser.ParseJavaScriptScript(syntheticSource, sourceFile);
@@ -173,7 +200,8 @@ internal static class DynamicFunctionSupport
         int startLine,
         int startColumn,
         bool createFactory,
-        bool generator)
+        bool generator,
+        bool async)
     {
         var parameterSource = literalArgs.Count > 1
             ? string.Join(",", literalArgs.Take(literalArgs.Count - 1))
@@ -183,7 +211,7 @@ internal static class DynamicFunctionSupport
         var linePrefix = startLine > 1 ? new string('\n', startLine - 1) : string.Empty;
         var columnPrefix = startColumn > 0 ? new string(' ', startColumn) : string.Empty;
 
-        var functionSource = $"function{(generator ? "*" : "")}({parameterSource}) {{\n{bodySource}\n}}";
+        var functionSource = $"{(async ? "async " : "")}function{(generator ? "*" : "")}({parameterSource}\n) {{\n{bodySource}\n}}";
         // The outer thunk allows the runtime to allocate the function in its constructor's realm.
         return createFactory
             ? $"{linePrefix}{columnPrefix}(function() {{ return {functionSource}; }})"

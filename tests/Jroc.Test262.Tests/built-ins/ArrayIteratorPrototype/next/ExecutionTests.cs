@@ -37,4 +37,28 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "property-descriptor")]
     public Task property_descriptor()
         => ExecutionTestFromFile("property-descriptor");
+
+    [Fact(DisplayName = "args-mapped-expansion-before-exhaustion.js")]
+    public Task Port200_args_mapped_expansion_before_exhaustion()
+        => ExecutionTestFromFile("args-mapped-expansion-before-exhaustion");
+
+    [Fact(DisplayName = "args-mapped-truncation-before-exhaustion.js")]
+    public Task Port200_args_mapped_truncation_before_exhaustion()
+        => ExecutionTestFromFile("args-mapped-truncation-before-exhaustion");
+
+    [Fact(DisplayName = "args-unmapped-expansion-after-exhaustion.js")]
+    public Task Port200_args_unmapped_expansion_after_exhaustion()
+        => ExecutionTestFromFile("args-unmapped-expansion-after-exhaustion");
+
+    [Fact(DisplayName = "args-unmapped-expansion-before-exhaustion.js")]
+    public Task Port200_args_unmapped_expansion_before_exhaustion()
+        => ExecutionTestFromFile("args-unmapped-expansion-before-exhaustion");
+
+    [Fact(DisplayName = "args-unmapped-truncation-before-exhaustion.js")]
+    public Task Port200_args_unmapped_truncation_before_exhaustion()
+        => ExecutionTestFromFile("args-unmapped-truncation-before-exhaustion");
+
+    [Fact(DisplayName = "detach-typedarray-in-progress.js")]
+    public Task Port200_detach_typedarray_in_progress()
+        => ExecutionTestFromFile("detach-typedarray-in-progress");
 }

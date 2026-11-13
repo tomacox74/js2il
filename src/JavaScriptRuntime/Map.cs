@@ -586,6 +586,7 @@ namespace JavaScriptRuntime
 
                 if (_index >= _map._entries.Count)
                 {
+                    _isClosed = true;
                     return new IteratorResultObject(null, done: true);
                 }
 

@@ -20,4 +20,32 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task null_prototype() => ExecutionTestFromFile("null-prototype");
     [Fact(DisplayName = "toPropertyKey")]
     public Task toPropertyKey() => ExecutionTestFromFile("toPropertyKey");
+
+    [Fact(DisplayName = "callback-throws.js")]
+    public Task Port200_callback_throws()
+        => ExecutionTestFromFile("callback-throws");
+
+    [Fact(DisplayName = "evenOdd.js")]
+    public Task Port200_evenOdd()
+        => ExecutionTestFromFile("evenOdd");
+
+    [Fact(DisplayName = "groupLength.js")]
+    public Task Port200_groupLength()
+        => ExecutionTestFromFile("groupLength");
+
+    [Fact(DisplayName = "invalid-iterable.js")]
+    public Task Port200_invalid_iterable()
+        => ExecutionTestFromFile("invalid-iterable");
+
+    [Fact(DisplayName = "length.js")]
+    public Task Port200_length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name.js")]
+    public Task Port200_name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "string.js")]
+    public Task Port200_string()
+        => ExecutionTestFromFile("string");
 }
