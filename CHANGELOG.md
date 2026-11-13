@@ -6,11 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.38 - 2026-11-13
+
 - chore(release): build coordinated packages with stable SDK 11 while retaining
   net10.0 targets and the .NET 10 minimum. Gate publication on isolated CLI
   and SDK consumer checks, then publish the exact validated artifacts without
   rebuilding or repacking.
-
 - fix(build): compile the net10.0 MSBuild task against pinned, private MSBuild
   reference packages instead of the executing SDK's assemblies. Add an
   SDK 11 coordinated-package trial with isolated .NET 10/11 CLI and Basic SDK
