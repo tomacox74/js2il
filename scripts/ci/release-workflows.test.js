@@ -16,7 +16,7 @@ const validation = workflow('release-validation.yml');
 const publication = workflow('publish-tool.yml');
 const checkout = job => job.steps.find(step => step.uses?.startsWith('actions/checkout@'));
 
-test('SDK 11 trial passes one coordinated candidate to existing isolated consumers without changing publication', () => {
+test('SDK 11 trial preserves the producer candidate across consumer reruns without changing publication', () => {
   const trial = workflow('sdk11-package-validation.yml');
   assert(trial.on.workflow_dispatch !== undefined);
   assert.deepEqual(trial.permissions, { contents: 'read' });
@@ -30,11 +30,15 @@ test('SDK 11 trial passes one coordinated candidate to existing isolated consume
   assert.match(build, /dotnet build jroc\.sln/);
   assert.match(build, /--no-build --no-restore/);
   assert.match(build, /git rev-parse HEAD/);
-  const artifact = pack.steps.find(step => step.uses?.startsWith('actions/upload-artifact@')).with.name;
+  const artifact = pack.steps.find(step => step.uses?.startsWith('actions/upload-artifact@'));
+  assert.equal(artifact.id, 'candidate');
+  assert.equal(pack.outputs.artifact_id, '${{ steps.candidate.outputs.artifact-id }}');
   for (const name of ['cli', 'sdk']) {
     const consumer = trial.jobs[name];
     assert.equal(consumer.needs, 'package');
-    assert.equal(consumer.steps.find(step => step.uses?.startsWith('actions/download-artifact@')).with.name, artifact);
+    const download = consumer.steps.find(step => step.uses?.startsWith('actions/download-artifact@'));
+    assert.equal(download.with['artifact-ids'], '${{ needs.package.outputs.artifact_id }}');
+    assert.equal(download.with.name, undefined);
     assert.equal(consumer['continue-on-error'], undefined);
   }
   assert.deepEqual(trial.jobs.cli.strategy.matrix, {

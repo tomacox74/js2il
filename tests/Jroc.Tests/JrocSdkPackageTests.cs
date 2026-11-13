@@ -660,6 +660,16 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 scenarios.Add((dotnet11, dotnet11, "net11.0"));
             }
 
+            var inheritedFallbackDir = Path.Combine(tempRoot, "inherited-fallback");
+            Directory.CreateDirectory(inheritedFallbackDir);
+            new XDocument(
+                new XElement("configuration",
+                    new XElement("fallbackPackageFolders",
+                        new XElement("add",
+                            new XAttribute("key", "inherited-test-folder"),
+                            new XAttribute("value", inheritedFallbackDir)))))
+                .Save(Path.Combine(tempRoot, "NuGet.Config"));
+
             for (var scenarioIndex = 0; scenarioIndex < scenarios.Count; scenarioIndex++)
             {
                 var (buildDotnet, runtimeDotnet, targetFramework) = scenarios[scenarioIndex];
@@ -1188,6 +1198,9 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 <add key="local" value="{{feedDir}}" />
                 <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
               </packageSources>
+              <fallbackPackageFolders>
+                <clear />
+              </fallbackPackageFolders>
             </configuration>
             """);
     }
