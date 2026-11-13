@@ -52,6 +52,7 @@ jobs:
     uses: ./.github/workflows/release-validation.yml
     with:
       ref: ${{ needs.resolve-release.outputs.commit }}
+      package_version: ${{ needs.resolve-release.outputs.version }}
 
   build-and-publish:
     needs: [resolve-release, validate-release]
@@ -62,6 +63,7 @@ jobs:
     env:
       NUGET_SERVER: https://api.nuget.org/v3/index.json
       VERSION: ${{ needs.resolve-release.outputs.version }}
+      RELEASE_SOURCE_SHA: ${{ needs.resolve-release.outputs.commit }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -71,7 +73,12 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '11.0.x'
+          dotnet-quality: ga
+
+      - name: Select the release SDK explicitly
+        shell: bash
+        run: bash scripts/ci/selectReleaseSdk.sh
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -79,38 +86,14 @@ jobs:
           node-version: '24'
           check-latest: true
 
-      - name: Install npm dependencies
-        run: npm ci
+      - name: Download the validated coordinated candidate
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.validate-release.outputs.artifact_id }}
+          path: candidate
 
-      - name: Restore .NET tools
-        run: dotnet tool restore
-
-      - name: Restore
-        run: dotnet restore jroc.sln
-
-      - name: Build
-        run: dotnet build jroc.sln -c Release --no-restore
-
-      - name: Validate coordinated release package set
-        run: npm run release:validate
-
-      - name: Pack coordinated packages
-        shell: pwsh
-        run: |
-          if (Test-Path out) {
-            Remove-Item out -Recurse -Force
-          }
-
-          $projects = @(
-            'src/JavaScriptRuntime/JavaScriptRuntime.csproj',
-            'src/Cli/Jroc.csproj',
-            'src/Jroc.Core/Jroc.Core.csproj',
-            'src/Jroc.SDK/Jroc.SDK.csproj'
-          )
-
-          foreach ($project in $projects) {
-            dotnet pack $project -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
-          }
+      - name: Verify the validated candidate before publication
+        run: node scripts/ci/verifyReleaseCandidate.js candidate
 
       - name: NuGet login (trusted publishing)
         id: nuget-login
@@ -129,7 +112,7 @@ jobs:
           )
 
           foreach ($packageName in $packageNames) {
-            $pkgPath = Join-Path 'out' $packageName
+            $pkgPath = Join-Path 'candidate/feed' $packageName
             if (-not (Test-Path $pkgPath)) {
               Write-Error "Expected package not found: $pkgPath"
               exit 1
