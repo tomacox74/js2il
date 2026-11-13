@@ -94,8 +94,14 @@ JROC releases these coordinated NuGet packages at the same version:
 - `Jroc.Core`
 - `Jroc.SDK`
 
-`.github/workflows/publish-tool.yml` builds, tests, packs, and publishes this
-package set when a release tag is created. The legacy
+`.github/workflows/publish-tool.yml` validates and publishes this package set
+when a release tag is created. **Release builds and packs use stable .NET 11
+SDKs; the packages still target `net10.0` and require only .NET 10 or later.**
+The checked-in `global.json` remains on SDK 10 for contributor builds.
+Release jobs explicitly select an installed stable SDK 11 using
+`scripts/ci/selectReleaseSdk.sh`, pinning it in that job's checkout with
+roll-forward disabled; the repository pin cannot silently select SDK 10.
+The legacy
 `.github/workflows/release.yml` workflow also produces a published artifact
 bundle.
 
@@ -108,15 +114,28 @@ the existing Linux package gate. A failed, cancelled or skipped required
 validation job prevents publication. Publishing checks out the frozen commit,
 not a potentially changed tag.
 
+Release validation also calls `sdk11-package-validation.yml` with the frozen
+source commit and coordinated release version. It builds and packs the four
+packages once, then tests that exact artifact on isolated .NET 10/11 CLI
+installations and all three Basic SDK consumer scenarios. The publisher
+downloads the validated artifact by its producer ID, verifies the source SHA,
+version, stable SDK 11 provenance and package hashes before NuGet login, and
+pushes those same four files. It does not rebuild or repack after validation.
+The CLI's existing `Major` runtime roll-forward and cross-targeting behavior
+are unchanged. Full CI shards remain shared rather than duplicated for each
+consumer runtime.
+
 The release branch must be created **before** any version-bump command runs.
 
-### SDK 11 build trial
+### Pre-publication SDK 11 validation
 
 Run the on-demand **SDK 11 coordinated package validation** workflow
 (`sdk11-package-validation.yml`) against the desired branch. It temporarily
 selects stable SDK 11 in that job's checkout, builds the solution, and packs
-one uniquely versioned `net10.0` set of all four packages. The checked-in
-`global.json` and production publishing workflow continue to select SDK 10.
+one uniquely versioned `net10.0` set of all four packages by default. Its
+optional `package_version` input selects an exact coordinated candidate
+version. The production release gate reuses this same workflow with the
+release tag's version and frozen source commit.
 
 The candidate artifact includes the exact source SHA, SDK version, package
 version, build/pack logs, package hashes, and a dependency-complete local feed.
@@ -133,9 +152,13 @@ with .NET 10. Do not reference the executing SDK's MSBuild binaries: SDK 11's
 binaries require .NET 11 and cannot be compiled into the shipped net10.0 task.
 The consuming MSBuild host supplies these assemblies at execution time.
 
-A passing trial establishes build/pack and consumer compatibility, not release
-authorization. Switching the production SDK remains a follow-up decision;
-the existing release validation gates still apply.
+A passing compatibility run alone is not release authorization. All existing
+release validation gates must also pass; use the normal release process below
+for publication. To validate a versioned candidate without publishing:
+
+```shell
+gh workflow run release-validation.yml --ref release/0.x.y -f package_version=0.x.y
+```
 
 ## Preferred automated release
 

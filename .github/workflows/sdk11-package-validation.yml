@@ -1,8 +1,33 @@
 name: SDK 11 coordinated package validation
-run-name: SDK 11 package trial - ${{ github.ref_name }}
+run-name: SDK 11 package candidate - ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
+    inputs:
+      package_version:
+        description: 'Candidate version (empty creates a unique trial version)'
+        type: string
+        required: false
+        default: ''
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Exact source commit to build and validate'
+        type: string
+        required: false
+        default: ''
+      package_version:
+        description: 'Coordinated release version (empty creates a unique trial version)'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      artifact_id:
+        description: 'Validated coordinated candidate artifact'
+        value: ${{ jobs.package.outputs.artifact_id }}
+      package_version:
+        description: 'Validated coordinated package version'
+        value: ${{ jobs.package.outputs.package_version }}
   pull_request:
     branches: [master]
     paths:
@@ -26,26 +51,27 @@ jobs:
     outputs:
       package_version: ${{ steps.package.outputs.package_version }}
       artifact_id: ${{ steps.candidate.outputs.artifact-id }}
+      source_sha: ${{ steps.package.outputs.source_sha }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 11.0.x
           dotnet-quality: ga
-      - name: Select SDK 11 for this trial checkout only
+      - name: Select the release SDK explicitly
         shell: bash
         run: |
           set -euo pipefail
-          sdk_version="$(cd "$RUNNER_TEMP" && dotnet --version)"
-          [[ "$sdk_version" =~ ^11\.0\.[0-9]+$ ]]
           cp global.json "$RUNNER_TEMP/release-global.json"
-          printf '{"sdk":{"version":"%s","rollForward":"disable","allowPrerelease":false}}\n' "$sdk_version" > global.json
-          dotnet --version
+          bash scripts/ci/selectReleaseSdk.sh
       - name: Build and pack the coordinated candidate
         id: package
         shell: bash
         env:
           NUGET_PACKAGES: ${{ runner.temp }}/sdk11-build-packages
+          REQUESTED_PACKAGE_VERSION: ${{ inputs.package_version }}
         run: |
           set -euo pipefail
           artifact_root="$RUNNER_TEMP/sdk11-candidate"
@@ -55,7 +81,11 @@ jobs:
           [[ "$sdk_version" =~ ^11\.0\.[0-9]+$ ]]
           source_sha="$(git rev-parse HEAD)"
           base_version="$(dotnet msbuild src/Cli/Jroc.csproj -getProperty:Version)"
-          package_version="${base_version}-sdk11.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}"
+          package_version="${REQUESTED_PACKAGE_VERSION:-${base_version}-sdk11.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}}"
+          [[ "$package_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]] || {
+            echo "Invalid coordinated package version: $package_version" >&2
+            exit 1
+          }
           printf '%s\n' "$source_sha" > "$artifact_root/source-sha.txt"
           printf '%s\n' "$sdk_version" > "$artifact_root/build-sdk.txt"
           printf '%s\n' "$package_version" > "$artifact_root/package-version.txt"
@@ -89,12 +119,13 @@ jobs:
           cp tests/simple.js "$artifact_root/simple.js"
           (cd "$feed" && sha256sum *.nupkg) > "$artifact_root/packages.sha256"
           echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
           {
             echo "## SDK 11 candidate"
             echo "- Source: \`$source_sha\`"
             echo "- Build SDK: \`$sdk_version\`"
             echo "- All four packages: \`$package_version\`, targeting \`net10.0\`"
-            echo "- Production SDK selection remains unchanged; release rollout requires a separate decision."
+            echo "- This exact candidate is validated on isolated .NET 10 and .NET 11 consumers."
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Restore the release SDK selection
         if: always()
@@ -121,6 +152,8 @@ jobs:
         major: [10, 11]
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/download-artifact@v8
         with:
           artifact-ids: ${{ needs.package.outputs.artifact_id }}
@@ -148,6 +181,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
@@ -169,7 +204,7 @@ jobs:
           JROC_SDK_TEST_DOTNET11: ${{ runner.temp }}/jroc-sdk11/dotnet
           JROC_SDK_TEST_FEED: ${{ runner.temp }}/sdk11-candidate/feed
           JROC_SDK_TEST_PACKAGE_VERSION: ${{ needs.package.outputs.package_version }}
-          JROC_SDK_TEST_SOURCE_SHA: ${{ github.sha }}
+          JROC_SDK_TEST_SOURCE_SHA: ${{ needs.package.outputs.source_sha }}
           JROC_SDK_TEST_EVIDENCE: ${{ runner.temp }}/sdk11-sdk-evidence
         run: |
           set -euo pipefail

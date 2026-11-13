@@ -3,6 +3,12 @@ run-name: ${{ github.workflow }} - ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
+    inputs:
+      package_version:
+        description: "Coordinated candidate version (empty creates a unique trial version)"
+        type: string
+        required: false
+        default: ""
   workflow_call:
     inputs:
       ref:
@@ -10,6 +16,18 @@ on:
         type: string
         required: false
         default: ""
+      package_version:
+        description: "Coordinated release version to validate"
+        type: string
+        required: false
+        default: ""
+    outputs:
+      artifact_id:
+        description: "Exact SDK 11-built candidate that passed compatibility validation"
+        value: ${{ jobs.candidate.outputs.artifact_id }}
+      package_version:
+        description: "Validated coordinated candidate version"
+        value: ${{ jobs.candidate.outputs.package_version }}
   pull_request:
     branches: [ "master" ]
     paths:
@@ -22,6 +40,13 @@ permissions:
   contents: read
 
 jobs:
+  candidate:
+    name: SDK 11 release candidate compatibility
+    uses: ./.github/workflows/sdk11-package-validation.yml
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      package_version: ${{ inputs.package_version || '' }}
+
   tests:
     name: Cross-platform CI suite
     uses: ./.github/workflows/dotnet.yml
@@ -46,7 +71,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            10.0.x
+            11.0.x
+
+      - name: Select the release SDK explicitly
+        shell: bash
+        run: bash scripts/ci/selectReleaseSdk.sh
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
