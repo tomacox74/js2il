@@ -36,6 +36,8 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
             Assert.Contains("tasks/net10.0/Jroc.SDK.dll", entryNames);
             Assert.Contains("tasks/net10.0/Jroc.Compiler.dll", entryNames);
             Assert.Contains("tasks/net10.0/JavaScriptRuntime.dll", entryNames);
+            Assert.DoesNotContain(entryNames, name => name.StartsWith("tasks/", StringComparison.Ordinal) &&
+                Path.GetFileName(name).StartsWith("Microsoft.Build.", StringComparison.Ordinal));
             Assert.Contains("README.md", entryNames);
             Assert.Contains("icon.jpg", entryNames);
             Assert.Contains("samples/Directory.Build.props", entryNames);
@@ -85,6 +87,7 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
             Assert.Contains("Jroc.Runtime", dependencyIds, StringComparer.Ordinal);
             Assert.DoesNotContain("Jroc.Core", dependencyIds, StringComparer.Ordinal);
             Assert.DoesNotContain("jroc", dependencyIds, StringComparer.OrdinalIgnoreCase);
+            Assert.DoesNotContain(dependencyIds, id => id.StartsWith("Microsoft.Build.", StringComparison.Ordinal));
             Assert.DoesNotContain("<PackageReference Include=\"Jroc.Runtime\"", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("restores and deploys the compatible runtime automatically", package.ReadmeText, StringComparison.Ordinal);
 
@@ -624,11 +627,24 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
         try
         {
             var repoRoot = FindRepoRoot();
-            var feedDir = Path.Combine(tempRoot, "feed");
+            var candidateFeed = Environment.GetEnvironmentVariable("JROC_SDK_TEST_FEED");
+            var candidateVersion = Environment.GetEnvironmentVariable("JROC_SDK_TEST_PACKAGE_VERSION");
+            Assert.True((candidateFeed == null) == (candidateVersion == null),
+                "JROC_SDK_TEST_FEED and JROC_SDK_TEST_PACKAGE_VERSION must be provided together.");
+            var feedDir = candidateFeed ?? Path.Combine(tempRoot, "feed");
             var extractDir = Path.Combine(tempRoot, "sdk-package");
-            Directory.CreateDirectory(feedDir);
+            Assert.True(candidateFeed == null || Directory.Exists(candidateFeed), $"Candidate feed is missing: {candidateFeed}");
+            if (candidateFeed == null)
+            {
+                Directory.CreateDirectory(feedDir);
+            }
 
-            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var packageVersion = candidateVersion ?? PackLocalFeed(repoRoot, feedDir);
+            if (candidateFeed != null)
+            {
+                AssertCoordinatedPackageFeed(feedDir, packageVersion);
+            }
+            outputHelper.WriteLine($"Candidate feed: {feedDir}; package version: {packageVersion}");
             var sdkPackagePath = Path.Combine(feedDir, $"Jroc.SDK.{packageVersion}.nupkg");
             Assert.True(File.Exists(sdkPackagePath), $"Expected package was not produced: {sdkPackagePath}");
 
@@ -643,6 +659,16 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 scenarios.Add((dotnet11, dotnet10, "net10.0"));
                 scenarios.Add((dotnet11, dotnet11, "net11.0"));
             }
+
+            var inheritedFallbackDir = Path.Combine(tempRoot, "inherited-fallback");
+            Directory.CreateDirectory(inheritedFallbackDir);
+            new XDocument(
+                new XElement("configuration",
+                    new XElement("fallbackPackageFolders",
+                        new XElement("add",
+                            new XAttribute("key", "inherited-test-folder"),
+                            new XAttribute("value", inheritedFallbackDir)))))
+                .Save(Path.Combine(tempRoot, "NuGet.Config"));
 
             for (var scenarioIndex = 0; scenarioIndex < scenarios.Count; scenarioIndex++)
             {
@@ -660,6 +686,27 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 var scenarioDir = Path.Combine(extractDir, $"scenario-{scenarioIndex}");
                 ZipFile.ExtractToDirectory(sdkPackagePath, scenarioDir);
                 WriteNuGetConfig(scenarioDir, feedDir);
+                if (candidateFeed != null)
+                {
+                    var configPath = Path.Combine(scenarioDir, "NuGet.Config");
+                    var config = XDocument.Load(configPath);
+                    config.Descendants("add").Where(element => (string?)element.Attribute("key") == "nuget.org").Remove();
+                    config.Save(configPath);
+                }
+                var packagesDir = Path.Combine(scenarioDir, "packages");
+                consumerEnvironment["NUGET_PACKAGES"] = packagesDir;
+                consumerEnvironment["DOTNET_CLI_HOME"] = Path.Combine(scenarioDir, "cli-home");
+                consumerEnvironment["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+                foreach (var name in Environment.GetEnvironmentVariables().Keys.Cast<string>()
+                    .Where(name => name.StartsWith("DOTNET_ROLL_FORWARD", StringComparison.Ordinal)))
+                {
+                    consumerEnvironment[name] = null;
+                }
+                if (Path.IsPathRooted(buildDotnet))
+                {
+                    consumerEnvironment["DOTNET_ROOT"] = Path.GetDirectoryName(buildDotnet);
+                    consumerEnvironment["DOTNET_ROOT_X64"] = Path.GetDirectoryName(buildDotnet);
+                }
                 var hostDir = Path.Combine(scenarioDir, "samples", "Basic", "host");
                 var projectPath = Path.Combine(hostDir, "Basic.csproj");
                 var project = XDocument.Load(projectPath);
@@ -671,19 +718,31 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                     "net11.0" => 11,
                     _ => throw new InvalidOperationException($"Unsupported test target framework '{targetFramework}'.")
                 };
-                var sdkVersion = RunProcess(buildDotnet, "--version", hostDir, 30);
-                var runtimeVersions = RunProcess(runtimeDotnet, "--list-runtimes", hostDir, 30);
+                var sdkVersion = RunProcess(buildDotnet, "--version", hostDir, 30, consumerEnvironment);
+                var sdkVersions = RunProcess(buildDotnet, "--list-sdks", hostDir, 30, consumerEnvironment);
+                var buildRuntimes = RunProcess(buildDotnet, "--list-runtimes", hostDir, 30, consumerEnvironment);
+                var runtimeVersions = RunProcess(runtimeDotnet, "--list-runtimes", hostDir, 30, consumerEnvironment);
                 Assert.Equal(0, sdkVersion.ExitCode);
+                Assert.Equal(0, sdkVersions.ExitCode);
+                Assert.Equal(0, buildRuntimes.ExitCode);
                 Assert.Equal(0, runtimeVersions.ExitCode);
                 var resolvedSdk = RunProcess(buildDotnet,
                     "msbuild Basic.csproj --nologo -getProperty:NETCoreSdkVersion",
                     hostDir, 30, consumerEnvironment);
                 Assert.Equal(0, resolvedSdk.ExitCode);
                 Assert.Equal(sdkVersion.StdOut.Trim(), resolvedSdk.StdOut.Trim());
-                var evidence = $"Build SDK: {sdkVersion.StdOut.Trim()}; host target: {targetFramework}; execution runtimes:{Environment.NewLine}{runtimeVersions.StdOut}";
+                var evidence = $"Package version: {packageVersion}; build SDK: {sdkVersion.StdOut.Trim()}; host target: {targetFramework}; build SDKs:{Environment.NewLine}{sdkVersions.StdOut}build runtimes:{Environment.NewLine}{buildRuntimes.StdOut}execution runtimes:{Environment.NewLine}{runtimeVersions.StdOut}";
                 outputHelper.WriteLine(evidence);
                 if (dotnet11 != null)
                 {
+                    var buildMajor = buildDotnet == dotnet11 ? 11 : 10;
+                    Assert.Matches($"^{buildMajor}\\.\\d+\\.\\d+$", sdkVersion.StdOut.Trim());
+                    Assert.All(sdkVersions.StdOut.Split('\n', StringSplitOptions.RemoveEmptyEntries),
+                        line => Assert.StartsWith($"{buildMajor}.", line));
+                    var buildCoreRuntimes = buildRuntimes.StdOut.Split('\n')
+                        .Where(line => line.StartsWith("Microsoft.NETCore.App ", StringComparison.Ordinal)).ToArray();
+                    Assert.NotEmpty(buildCoreRuntimes);
+                    Assert.All(buildCoreRuntimes, line => Assert.StartsWith($"Microsoft.NETCore.App {buildMajor}.", line));
                     var coreRuntimes = runtimeVersions.StdOut.Split('\n')
                         .Where(line => line.StartsWith("Microsoft.NETCore.App ", StringComparison.Ordinal)).ToArray();
                     Assert.NotEmpty(coreRuntimes);
@@ -692,7 +751,7 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
 
                 var build = RunProcess(
                     fileName: buildDotnet,
-                    arguments: $"build Basic.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
+                    arguments: $"build Basic.csproj -c Release --nologo -p:JrocPackageVersion={packageVersion}",
                     workingDirectory: hostDir,
                     timeoutSeconds: 180,
                     environmentVariables: consumerEnvironment);
@@ -702,6 +761,19 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                     $"{evidence}{Environment.NewLine}dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
                 Assert.DoesNotContain("MSB3277", build.StdOut + build.StdErr, StringComparison.Ordinal);
                 Assert.DoesNotContain("CS1705", build.StdOut + build.StdErr, StringComparison.Ordinal);
+                var assetsPath = Path.Combine(hostDir, "obj", "project.assets.json");
+                using (var assets = JsonDocument.Parse(File.ReadAllText(assetsPath)))
+                {
+                    foreach (var id in new[] { "Jroc.SDK", "Jroc.Runtime" })
+                    {
+                        Assert.True(assets.RootElement.GetProperty("libraries").TryGetProperty($"{id}/{packageVersion}", out _),
+                            $"Consumer did not resolve candidate {id}/{packageVersion}.");
+                        Assert.True(File.Exists(Path.Combine(packagesDir, id.ToLowerInvariant(), packageVersion, ".nupkg.metadata")),
+                            $"Consumer did not restore {id}/{packageVersion} into its fresh package store.");
+                    }
+                    Assert.Equal(Path.GetFullPath(packagesDir),
+                        Path.GetFullPath(Assert.Single(assets.RootElement.GetProperty("packageFolders").EnumerateObject()).Name));
+                }
 
                 var generatedDir = Path.Combine(hostDir, "obj", "Release", targetFramework, "jroc", "HostedMathModule");
                 Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
@@ -725,7 +797,12 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                     fileName: runtimeDotnet,
                     arguments: $"\"{Path.Combine(hostDir, "bin", "Release", targetFramework, "Basic.dll")}\"",
                     workingDirectory: hostDir,
-                    timeoutSeconds: 180);
+                    timeoutSeconds: 180,
+                    environmentVariables: new Dictionary<string, string?>(consumerEnvironment)
+                    {
+                        ["DOTNET_ROOT"] = Path.IsPathRooted(runtimeDotnet) ? Path.GetDirectoryName(runtimeDotnet) : null,
+                        ["DOTNET_ROOT_X64"] = Path.IsPathRooted(runtimeDotnet) ? Path.GetDirectoryName(runtimeDotnet) : null
+                    });
 
                 Assert.True(
                     run.ExitCode == 0,
@@ -734,6 +811,19 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
                 Assert.Contains("version=1.0.0\n", output, StringComparison.Ordinal);
                 Assert.Contains("1+2=3\n", output, StringComparison.Ordinal);
+                var evidenceRoot = Environment.GetEnvironmentVariable("JROC_SDK_TEST_EVIDENCE");
+                if (evidenceRoot != null)
+                {
+                    var evidenceDir = Path.Combine(evidenceRoot, $"scenario-{scenarioIndex}");
+                    Directory.CreateDirectory(evidenceDir);
+                    File.WriteAllText(Path.Combine(evidenceDir, "environment.txt"), evidence);
+                    File.WriteAllText(Path.Combine(evidenceDir, "build.log"), build.StdOut + build.StdErr);
+                    File.WriteAllText(Path.Combine(evidenceDir, "run.log"), run.StdOut + run.StdErr);
+                    File.Copy(assetsPath, Path.Combine(evidenceDir, "project.assets.json"));
+                    File.Copy(Path.Combine(generatedDir, "HostedMathModule.runtimeconfig.json"),
+                        Path.Combine(evidenceDir, "HostedMathModule.runtimeconfig.json"));
+                    File.Copy(Path.Combine(generatedDir, "HostedMathModule.dll"), Path.Combine(evidenceDir, "HostedMathModule.dll"));
+                }
             }
         }
         finally
@@ -1108,6 +1198,9 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
                 <add key="local" value="{{feedDir}}" />
                 <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
               </packageSources>
+              <fallbackPackageFolders>
+                <clear />
+              </fallbackPackageFolders>
             </configuration>
             """);
     }
@@ -1127,6 +1220,40 @@ public class JrocSdkPackageTests(Xunit.Abstractions.ITestOutputHelper outputHelp
         }
 
         return packageVersion;
+    }
+
+    private static void AssertCoordinatedPackageFeed(string feedDir, string packageVersion)
+    {
+        foreach (var id in new[] { "jroc", "Jroc.Core", "Jroc.Runtime", "Jroc.SDK" })
+        {
+            var package = ReadPackedPackage(Path.Combine(feedDir, $"{id}.{packageVersion}.nupkg"));
+            Assert.Equal(id, GetMetadataValue(package.Nuspec, "id"));
+            Assert.Equal(packageVersion, GetMetadataValue(package.Nuspec, "version"));
+            XNamespace ns = package.Nuspec.Root!.Name.Namespace;
+            var sourceSha = Environment.GetEnvironmentVariable("JROC_SDK_TEST_SOURCE_SHA");
+            if (sourceSha != null)
+            {
+                Assert.Equal(sourceSha, (string?)Assert.Single(package.Nuspec.Descendants(ns + "repository")).Attribute("commit"));
+            }
+            foreach (var dependency in package.Nuspec.Descendants(ns + "dependency")
+                .Where(dependency => ((string?)dependency.Attribute("id"))?.StartsWith("Jroc.", StringComparison.OrdinalIgnoreCase) == true))
+            {
+                Assert.Contains((string?)dependency.Attribute("version"),
+                    new[] { packageVersion, $"[{packageVersion}, )", $"[{packageVersion}]" });
+            }
+            if (id is "Jroc.Core" or "Jroc.SDK")
+            {
+                Assert.Contains("Jroc.Runtime", GetDependencyIds(package.Nuspec), StringComparer.Ordinal);
+            }
+            var assemblyEntry = id switch
+            {
+                "jroc" => "tools/net10.0/any/Jroc.dll",
+                "Jroc.Core" => "lib/net10.0/Jroc.Compiler.dll",
+                "Jroc.Runtime" => "lib/net10.0/JavaScriptRuntime.dll",
+                _ => "tasks/net10.0/Jroc.SDK.dll"
+            };
+            Assert.Contains(assemblyEntry, package.EntryNames);
+        }
     }
 
     private static void PackProject(string repoRoot, string relativeProjectPath, string feedDir, string packageVersion)

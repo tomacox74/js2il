@@ -16,6 +16,45 @@ const validation = workflow('release-validation.yml');
 const publication = workflow('publish-tool.yml');
 const checkout = job => job.steps.find(step => step.uses?.startsWith('actions/checkout@'));
 
+test('SDK 11 trial preserves the producer candidate across consumer reruns without changing publication', () => {
+  const trial = workflow('sdk11-package-validation.yml');
+  assert(trial.on.workflow_dispatch !== undefined);
+  assert.deepEqual(trial.permissions, { contents: 'read' });
+  const pack = trial.jobs.package;
+  assert.equal(pack.steps.find(step => step.uses?.startsWith('actions/setup-dotnet@')).with['dotnet-version'], '11.0.x');
+  const build = pack.steps.find(step => step.id === 'package').run;
+  for (const project of ['src/Cli/Jroc.csproj', 'src/Jroc.Core/Jroc.Core.csproj',
+    'src/JavaScriptRuntime/JavaScriptRuntime.csproj', 'src/Jroc.SDK/Jroc.SDK.csproj']) {
+    assert(build.includes(project));
+  }
+  assert.match(build, /dotnet build jroc\.sln/);
+  assert.match(build, /--no-build --no-restore/);
+  assert.match(build, /git rev-parse HEAD/);
+  const artifact = pack.steps.find(step => step.uses?.startsWith('actions/upload-artifact@'));
+  assert.equal(artifact.id, 'candidate');
+  assert.equal(pack.outputs.artifact_id, '${{ steps.candidate.outputs.artifact-id }}');
+  for (const name of ['cli', 'sdk']) {
+    const consumer = trial.jobs[name];
+    assert.equal(consumer.needs, 'package');
+    const download = consumer.steps.find(step => step.uses?.startsWith('actions/download-artifact@'));
+    assert.equal(download.with['artifact-ids'], '${{ needs.package.outputs.artifact_id }}');
+    assert.equal(download.with.name, undefined);
+    assert.equal(consumer['continue-on-error'], undefined);
+  }
+  assert.deepEqual(trial.jobs.cli.strategy.matrix, {
+    runner: ['ubuntu-latest', 'windows-latest'], major: [10, 11],
+  });
+  const cli = trial.jobs.cli.steps.find(step => step.run?.includes('smokePackagedCliRuntime.ps1')).run;
+  assert(cli.includes('${{ needs.package.outputs.package_version }}'));
+  const sdk = trial.jobs.sdk.steps.find(step => step.env?.JROC_SDK_TEST_FEED);
+  assert.equal(sdk.env.JROC_SDK_TEST_PACKAGE_VERSION, '${{ needs.package.outputs.package_version }}');
+  assert.equal(sdk.env.JROC_SDK_TEST_SOURCE_SHA, '${{ github.sha }}');
+  assert.match(sdk.run, /FullyQualifiedName=Jroc.Tests.JrocSdkPackageTests.Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns/);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, 'global.json'), 'utf8')).sdk.version, '10.0.100');
+  assert.equal(publication.jobs['build-and-publish'].steps.find(step =>
+    step.uses?.startsWith('actions/setup-dotnet@')).with['dotnet-version'], '10.0.x');
+});
+
 test('release validation reuses all CI shards on both operating systems', () => {
   const runners = ['windows-2025', 'macos-15'];
   assert(ci.on.workflow_call);

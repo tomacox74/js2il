@@ -1,0 +1,186 @@
+name: SDK 11 coordinated package validation
+run-name: SDK 11 package trial - ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/sdk11-package-validation.yml'
+      - 'src/Jroc.SDK/Jroc.SDK.csproj'
+      - 'tests/Jroc.Tests/JrocSdkPackageTests.cs'
+      - 'Directory.Packages.props'
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_CLI_USE_MSBUILD_SERVER: '0'
+  MSBUILDDISABLENODEREUSE: '1'
+
+jobs:
+  package:
+    name: Build and pack net10.0 packages with stable SDK 11
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      package_version: ${{ steps.package.outputs.package_version }}
+      artifact_id: ${{ steps.candidate.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 11.0.x
+          dotnet-quality: ga
+      - name: Select SDK 11 for this trial checkout only
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk_version="$(cd "$RUNNER_TEMP" && dotnet --version)"
+          [[ "$sdk_version" =~ ^11\.0\.[0-9]+$ ]]
+          cp global.json "$RUNNER_TEMP/release-global.json"
+          printf '{"sdk":{"version":"%s","rollForward":"disable","allowPrerelease":false}}\n' "$sdk_version" > global.json
+          dotnet --version
+      - name: Build and pack the coordinated candidate
+        id: package
+        shell: bash
+        env:
+          NUGET_PACKAGES: ${{ runner.temp }}/sdk11-build-packages
+        run: |
+          set -euo pipefail
+          artifact_root="$RUNNER_TEMP/sdk11-candidate"
+          feed="$artifact_root/feed"
+          mkdir -p "$feed"
+          sdk_version="$(dotnet --version)"
+          [[ "$sdk_version" =~ ^11\.0\.[0-9]+$ ]]
+          source_sha="$(git rev-parse HEAD)"
+          base_version="$(dotnet msbuild src/Cli/Jroc.csproj -getProperty:Version)"
+          package_version="${base_version}-sdk11.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}"
+          printf '%s\n' "$source_sha" > "$artifact_root/source-sha.txt"
+          printf '%s\n' "$sdk_version" > "$artifact_root/build-sdk.txt"
+          printf '%s\n' "$package_version" > "$artifact_root/package-version.txt"
+          dotnet --info | tee "$artifact_root/build-environment.txt"
+          dotnet build jroc.sln -c Release --nologo \
+            -p:Version="$package_version" -p:ContinuousIntegrationBuild=true \
+            -p:SourceRevisionId="$source_sha" -p:UseSharedCompilation=false \
+            | tee "$artifact_root/build.log"
+          for project in src/JavaScriptRuntime/JavaScriptRuntime.csproj src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj; do
+            # Solution configuration mappings can differ from project configurations.
+            dotnet build "$project" -c Release --no-restore --nologo \
+              -p:Version="$package_version" -p:ContinuousIntegrationBuild=true \
+              -p:SourceRevisionId="$source_sha" -p:UseSharedCompilation=false \
+              | tee -a "$artifact_root/build.log"
+            dotnet pack "$project" -c Release --no-build --no-restore -o "$feed" --nologo \
+              -p:Version="$package_version" -p:PackageVersion="$package_version" \
+              -p:ContinuousIntegrationBuild=true -p:SourceRevisionId="$source_sha" \
+              | tee -a "$artifact_root/pack.log"
+          done
+          # Mirror restored dependencies so consumers need only the candidate's local feed.
+          find "$NUGET_PACKAGES" -name '*.nupkg' -exec cp '{}' "$feed/" \;
+          dotnet_root="$(dirname "$(readlink -f "$(command -v dotnet)")")"
+          pack="$(for root in "$NUGET_PACKAGES/microsoft.netcore.app.ref" "$dotnet_root/packs/Microsoft.NETCore.App.Ref"; do
+            if [[ -d "$root" ]]; then
+              find "$root" -mindepth 1 -maxdepth 1 -type d -name '10.*'
+            fi
+          done | sort -V | tail -n 1)"
+          test -f "$pack/ref/net10.0/System.Runtime.dll"
+          mkdir -p "$artifact_root/targeting-packs/Microsoft.NETCore.App.Ref"
+          cp -r "$pack" "$artifact_root/targeting-packs/Microsoft.NETCore.App.Ref/"
+          cp tests/simple.js "$artifact_root/simple.js"
+          (cd "$feed" && sha256sum *.nupkg) > "$artifact_root/packages.sha256"
+          echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
+          {
+            echo "## SDK 11 candidate"
+            echo "- Source: \`$source_sha\`"
+            echo "- Build SDK: \`$sdk_version\`"
+            echo "- All four packages: \`$package_version\`, targeting \`net10.0\`"
+            echo "- Production SDK selection remains unchanged; release rollout requires a separate decision."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Restore the release SDK selection
+        if: always()
+        shell: bash
+        run: cp "$RUNNER_TEMP/release-global.json" global.json
+      - uses: actions/upload-artifact@v7
+        id: candidate
+        if: always()
+        with:
+          name: sdk11-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sdk11-candidate
+          if-no-files-found: error
+          retention-days: 30
+
+  cli:
+    name: SDK 11-built CLI - ${{ matrix.runner }} .NET ${{ matrix.major }} only
+    needs: package
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, windows-latest]
+        major: [10, 11]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.package.outputs.artifact_id }}
+          path: ${{ runner.temp }}/sdk11-candidate
+      - name: Run existing isolated packaged CLI checks
+        shell: pwsh
+        run: |
+          ./scripts/ci/smokePackagedCliRuntime.ps1 `
+            -RuntimeMajor ${{ matrix.major }} `
+            -ToolVersion "${{ needs.package.outputs.package_version }}" `
+            -ArtifactRoot (Join-Path $env:RUNNER_TEMP 'sdk11-candidate') `
+            -EvidenceRoot (Join-Path $env:RUNNER_TEMP 'sdk11-cli-evidence')
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sdk11-cli-${{ matrix.runner }}-${{ matrix.major }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sdk11-cli-evidence
+          if-no-files-found: warn
+          retention-days: 30
+
+  sdk:
+    name: SDK 11-built SDK - Basic consumer matrix
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.package.outputs.artifact_id }}
+          path: ${{ runner.temp }}/sdk11-candidate
+      - name: Install isolated stable consumer SDKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$RUNNER_TEMP/dotnet-install.sh"
+          bash "$RUNNER_TEMP/dotnet-install.sh" --channel 10.0 --install-dir "$RUNNER_TEMP/jroc-sdk10" --no-path
+          bash "$RUNNER_TEMP/dotnet-install.sh" --channel 11.0 --install-dir "$RUNNER_TEMP/jroc-sdk11" --no-path
+      - name: Validate the exact candidate with the existing Basic sample harness
+        shell: bash
+        env:
+          JROC_SDK_TEST_DOTNET10: ${{ runner.temp }}/jroc-sdk10/dotnet
+          JROC_SDK_TEST_DOTNET11: ${{ runner.temp }}/jroc-sdk11/dotnet
+          JROC_SDK_TEST_FEED: ${{ runner.temp }}/sdk11-candidate/feed
+          JROC_SDK_TEST_PACKAGE_VERSION: ${{ needs.package.outputs.package_version }}
+          JROC_SDK_TEST_SOURCE_SHA: ${{ github.sha }}
+          JROC_SDK_TEST_EVIDENCE: ${{ runner.temp }}/sdk11-sdk-evidence
+        run: |
+          set -euo pipefail
+          dotnet test tests/Jroc.Tests/Jroc.Tests.csproj -c Release --nologo --verbosity minimal \
+            --filter 'FullyQualifiedName=Jroc.Tests.JrocSdkPackageTests.Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns' \
+            --logger 'console;verbosity=detailed' \
+            --logger trx --results-directory "$RUNNER_TEMP/sdk11-sdk-evidence"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sdk11-sdk-matrix-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sdk11-sdk-evidence
+          if-no-files-found: warn
+          retention-days: 30

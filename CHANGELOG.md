@@ -6,7 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- fix(build): compile the net10.0 MSBuild task against pinned, private MSBuild
+  reference packages instead of the executing SDK's assemblies. Add an
+  SDK 11 coordinated-package trial with isolated .NET 10/11 CLI and Basic SDK
+  consumers, without changing the release SDK.
 
 ## v0.12.37 - 2026-11-12
 
