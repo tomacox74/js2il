@@ -10,6 +10,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   reference packages instead of the executing SDK's assemblies. Add an
   SDK 11 coordinated-package trial with isolated .NET 10/11 CLI and Basic SDK
   consumers, without changing the release SDK.
+
 ## v0.12.37 - 2026-11-12
 
 - docs(packaging): audit published NuGet metadata, branding, source debugging,
