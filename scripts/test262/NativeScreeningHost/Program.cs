@@ -143,6 +143,7 @@ try
             var allowedEnvironment = new[] { "PATH", "HOME", "TMPDIR", "TEMP", "TMP", "LANG",
                 "LC_ALL", "DOTNET_ROOT", "DOTNET_NOLOGO", "DOTNET_SKIP_FIRST_TIME_EXPERIENCE",
                 "DOTNET_CLI_TELEMETRY_OPTOUT", "DOTNET_Thread_DefaultStackSize",
+                "DOTNET_CLI_USE_MSBUILD_SERVER", "MSBUILDDISABLENODEREUSE",
                 "DOTNET_CLI_HOME", "NUGET_PACKAGES" };
             process.StartInfo.Environment.Clear();
             foreach (var name in allowedEnvironment)

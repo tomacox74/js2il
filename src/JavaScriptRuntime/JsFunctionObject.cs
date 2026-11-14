@@ -120,5 +120,5 @@ public abstract class JsFunctionObject : JsObject
         object receiver,
         in JsCallArguments arguments,
         object? newTarget)
-        => throw new TypeError("Value is not a constructor");
+        => ConstructCore(arguments, newTarget);
 }

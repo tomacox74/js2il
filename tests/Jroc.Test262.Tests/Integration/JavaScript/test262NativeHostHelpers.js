@@ -399,6 +399,239 @@ assert.compareArray(temporalCalls, [
     "call items.length.valueOf"
 ]);
 
+// The selected PlainTime ports require every field assertion and every option
+// callback, not a presence-only TemporalHelpers shim.
+[
+    ["assertPlainTime", 7],
+    ["assertPlainTimesEqual", 2],
+    ["checkStringOptionWrongType", 4],
+    ["checkRoundingIncrementOptionWrongType", 3],
+    ["checkPluralUnitsAccepted", 2]
+].forEach(function(entry) {
+    assert.sameValue(TemporalHelpers[entry[0]].name, entry[0]);
+    assert.sameValue(TemporalHelpers[entry[0]].length, entry[1]);
+});
+assert.sameValue(TemporalHelpers.ISO.plainTimeStringsAmbiguous.name, "plainTimeStringsAmbiguous");
+assert.sameValue(TemporalHelpers.ISO.plainTimeStringsAmbiguous.length, 0);
+assert.sameValue(TemporalHelpers.ISO.plainTimeStringsUnambiguous.name, "plainTimeStringsUnambiguous");
+assert.sameValue(TemporalHelpers.ISO.plainTimeStringsUnambiguous.length, 0);
+
+var nativeTemporalTime = new Temporal.PlainTime(12, 34, 56, 123, 456, 789);
+var nativeTemporalFields = [12, 34, 56, 123, 456, 789];
+TemporalHelpers.assertPlainTime(nativeTemporalTime, ...nativeTemporalFields);
+var nativeTemporalLookalike = {
+    hour: 12, minute: 34, second: 56, millisecond: 123, microsecond: 456, nanosecond: 789
+};
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTime(nativeTemporalLookalike, ...nativeTemporalFields);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTime({}, ...nativeTemporalFields);
+});
+for (var temporalFieldIndex = 0; temporalFieldIndex < 6; temporalFieldIndex++) {
+    var wrongTemporalFields = nativeTemporalFields.slice();
+    wrongTemporalFields[temporalFieldIndex]++;
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.assertPlainTime(nativeTemporalTime, ...wrongTemporalFields);
+    });
+}
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTime(new Temporal.PlainTime(), -0, 0, 0, 0, 0, 0);
+});
+var temporalFieldReadOrder = [];
+var temporalObservedTime = new Temporal.PlainTime(...nativeTemporalFields);
+["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"].forEach(function(field, index) {
+    Object.defineProperty(temporalObservedTime, field, {
+        get: function() {
+            temporalFieldReadOrder.push(field);
+            return nativeTemporalFields[index];
+        }
+    });
+});
+TemporalHelpers.assertPlainTime(temporalObservedTime, ...nativeTemporalFields);
+assert.compareArray(temporalFieldReadOrder, [
+    "hour", "minute", "second", "millisecond", "microsecond", "nanosecond"
+]);
+TemporalHelpers.assertPlainTimesEqual(nativeTemporalTime, new Temporal.PlainTime(...nativeTemporalFields));
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTimesEqual(nativeTemporalTime, nativeTemporalLookalike);
+});
+var nativeTemporalEqualsLookalike = {
+    equals: function() { return true; }
+};
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTimesEqual(nativeTemporalEqualsLookalike, nativeTemporalTime);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTimesEqual(nativeTemporalTime, new Temporal.PlainTime(12, 34, 56, 123, 456, 788));
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTimesEqual({}, nativeTemporalTime);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainTimesEqual(nativeTemporalTime, {});
+});
+
+var expectedAmbiguousTimes = [
+    "2021-12", "2021-12[-12:00]", "1214", "0229", "1130", "12-14",
+    "12-14[-14:00]", "202112", "202112[UTC]",
+    "2021-12[u-ca=iso8601]", "2021-12[-12:00][u-ca=iso8601]",
+    "1214[u-ca=iso8601]", "0229[u-ca=iso8601]", "1130[u-ca=iso8601]",
+    "12-14[u-ca=iso8601]", "12-14[-14:00][u-ca=iso8601]",
+    "202112[u-ca=iso8601]", "202112[UTC][u-ca=iso8601]"
+];
+var expectedUnambiguousTimes = [
+    "2021-13", "202113", "2021-13[-13:00]", "202113[-13:00]",
+    "0000-00", "000000", "0000-00[UTC]", "000000[UTC]",
+    "1314", "13-14", "1232", "0230", "0631", "0000", "00-00"
+];
+assert.compareArray(TemporalHelpers.ISO.plainTimeStringsAmbiguous(), expectedAmbiguousTimes);
+assert.compareArray(TemporalHelpers.ISO.plainTimeStringsUnambiguous(), expectedUnambiguousTimes);
+var mutableAmbiguousTimes = TemporalHelpers.ISO.plainTimeStringsAmbiguous();
+var mutableUnambiguousTimes = TemporalHelpers.ISO.plainTimeStringsUnambiguous();
+mutableAmbiguousTimes[0] = "mutated";
+mutableUnambiguousTimes[0] = "mutated";
+assert.compareArray(TemporalHelpers.ISO.plainTimeStringsAmbiguous(), expectedAmbiguousTimes);
+assert.compareArray(TemporalHelpers.ISO.plainTimeStringsUnambiguous(), expectedUnambiguousTimes);
+
+function temporalOptionInputLabel(value) {
+    if (value === null) return "null";
+    if (value === true) return "true";
+    if (value === false) return "false";
+    if (typeof value === "symbol") return "symbol";
+    if (typeof value === "number") return "number";
+    if (typeof value === "bigint") return "bigint";
+    return Object.prototype.hasOwnProperty.call(value, "valueOf") ? "observer" : "plain object";
+}
+var temporalStringOptionCalls = [];
+function temporalCheckOverflow(value) {
+    temporalStringOptionCalls.push(temporalOptionInputLabel(value));
+    return Temporal.PlainTime.from({ hour: 24, minute: 35 }, { overflow: value });
+}
+TemporalHelpers.checkStringOptionWrongType("overflow", "constrain", temporalCheckOverflow, function(result, description) {
+    temporalStringOptionCalls.push("assertion");
+    assert.sameValue(description, "object with toString");
+    TemporalHelpers.assertPlainTime(result, 23, 35, 0, 0, 0, 0);
+});
+assert.compareArray(temporalStringOptionCalls, [
+    "null", "true", "false", "symbol", "number", "bigint", "plain object", "observer", "assertion"
+]);
+// Every invalid partition must actually assert the exception, and wrong exception
+// classes must not be treated as expected errors.
+for (var missingStringError = 0; missingStringError < 7; missingStringError++) {
+    var stringErrorIndex = 0;
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.checkStringOptionWrongType("overflow", "constrain", function(value) {
+            if (stringErrorIndex++ === missingStringError) return nativeTemporalTime;
+            return temporalCheckOverflow(value);
+        }, function() { throw new Test262Error("unexpected success callback"); });
+    });
+}
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkStringOptionWrongType("overflow", "constrain", function() {
+        throw new TypeError("wrong error for null");
+    }, function() {});
+});
+assert.throws(Test262Error, function() {
+    TemporalHelpers.checkStringOptionWrongType("overflow", "constrain", temporalCheckOverflow, function() {
+        throw new Test262Error("assertion callback failure");
+    });
+});
+
+var temporalIncrementCalls = [];
+var temporalIncrementTime = new Temporal.PlainTime(13, 46, 22, 600);
+function temporalCheckIncrement(value) {
+    temporalIncrementCalls.push(temporalOptionInputLabel(value));
+    return temporalIncrementTime.round({ smallestUnit: "second", roundingIncrement: value });
+}
+TemporalHelpers.checkRoundingIncrementOptionWrongType(temporalCheckIncrement, function(result, description) {
+    temporalIncrementCalls.push("true assertion");
+    assert.sameValue(description, "true");
+    TemporalHelpers.assertPlainTime(result, 13, 46, 23, 0, 0, 0);
+}, function(result, description) {
+    temporalIncrementCalls.push("object assertion");
+    assert.sameValue(description, "object with valueOf");
+    TemporalHelpers.assertPlainTime(result, 13, 46, 22, 0, 0, 0);
+});
+assert.compareArray(temporalIncrementCalls, [
+    "null", "true", "true assertion", "false", "symbol", "bigint", "plain object", "observer", "object assertion"
+]);
+// The pinned halfEven examples exercise an odd microsecond tie. Pin the even
+// tie too, with all six native-helper fields and an independently exact string.
+var temporalEvenTie = new Temporal.PlainTime(13, 46, 23, 123, 986, 500);
+TemporalHelpers.assertPlainTime(
+    temporalEvenTie.round({ smallestUnit: "microsecond", roundingMode: "halfEven" }),
+    13, 46, 23, 123, 986, 0);
+TemporalHelpers.assertPlainTime(
+    temporalEvenTie.round({ smallestUnit: "microsecond", roundingMode: "halfExpand" }),
+    13, 46, 23, 123, 987, 0);
+assert.sameValue(
+    temporalEvenTie.toString({ smallestUnit: "microsecond", roundingMode: "halfEven" }),
+    "13:46:23.123986");
+var incrementInvalidLabels = ["null", "false", "symbol", "bigint", "plain object"];
+incrementInvalidLabels.forEach(function(missingLabel) {
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.checkRoundingIncrementOptionWrongType(function(value) {
+            if (temporalOptionInputLabel(value) === missingLabel) return nativeTemporalTime;
+            return temporalCheckIncrement(value);
+        }, function() {}, function() {});
+    });
+});
+assert.throws(Test262Error, function() {
+    TemporalHelpers.checkRoundingIncrementOptionWrongType(temporalCheckIncrement, function() {
+        throw new Test262Error("true assertion failure");
+    }, function() {});
+});
+assert.throws(Test262Error, function() {
+    TemporalHelpers.checkRoundingIncrementOptionWrongType(temporalCheckIncrement, function() {}, function() {
+        throw new Test262Error("object assertion failure");
+    });
+});
+// Bypassing the primitive observer must fail trace validation even when the
+// result and external assertion callback otherwise succeed.
+var originalTemporalPrimitiveObserver = TemporalHelpers.toPrimitiveObserver;
+try {
+    TemporalHelpers.toPrimitiveObserver = function(calls, value) { return value; };
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.checkStringOptionWrongType("overflow", "constrain", temporalCheckOverflow, function() {});
+    });
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.checkRoundingIncrementOptionWrongType(temporalCheckIncrement, function() {}, function() {});
+    });
+} finally {
+    TemporalHelpers.toPrimitiveObserver = originalTemporalPrimitiveObserver;
+}
+
+var temporalPluralCalls = [];
+TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+    temporalPluralCalls.push(unit);
+    return temporalIncrementTime.round({ smallestUnit: unit });
+}, ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"]);
+assert.compareArray(temporalPluralCalls, [
+    "hour", "hours", "minute", "minutes", "second", "seconds",
+    "millisecond", "milliseconds", "microsecond", "microseconds", "nanosecond", "nanoseconds"
+]);
+var temporalPluralStringCalls = [];
+TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+    temporalPluralStringCalls.push(unit);
+    return temporalIncrementTime.toString({ smallestUnit: unit });
+}, ["minute", "second", "millisecond", "microsecond", "nanosecond"]);
+assert.compareArray(temporalPluralStringCalls, [
+    "minute", "minutes", "second", "seconds", "millisecond", "milliseconds",
+    "microsecond", "microseconds", "nanosecond", "nanoseconds"
+]);
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+        return new Temporal.PlainTime(unit === "hour" ? 1 : 2);
+    }, ["hour"]);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkPluralUnitsAccepted(function(unit) { return unit; }, ["second"]);
+});
+assert.throws(TypeError, function() {
+    TemporalHelpers.checkPluralUnitsAccepted(function() { return {}; }, ["second"]);
+});
+
 assert.sameValue(date_1899_end, -2208988800001);
 assert.sameValue(date_1900_start, -2208988800000);
 assert.sameValue(date_1969_end, -1);

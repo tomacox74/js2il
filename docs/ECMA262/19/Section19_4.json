@@ -37,6 +37,55 @@
   "support": {
     "entries": [
       {
+        "clause": "19.4",
+        "feature": "Temporal namespace: PlainTime construction and conversion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-plaintime-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/from/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/compare/NativePortBatch_Port1000.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/PlainTime/argument-convert.js",
+          "test/built-ins/Temporal/PlainTime/subclass.js",
+          "test/built-ins/Temporal/PlainTime/compare/use-internal-slots.js",
+          "test/built-ins/Temporal/PlainTime/compare/argument-string-minus-sign.js"
+        ],
+        "notes": "The pinned Test262 Temporal extension is exposed through globalThis.Temporal. PlainTime supports six time fields, constructor coercion and range checks, branded accessors, newTarget prototype selection, from and compare. Conversion preserves observable field and option access order, validates ISO time strings and resolves date-like string ambiguity. PlainDateTime and ZonedDateTime interoperation remain unsupported; this does not imply full Temporal support."
+      },
+      {
+        "clause": "19.4",
+        "feature": "Temporal.PlainTime value operations, rounding and formatting",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-properties-of-the-temporal-plaintime-prototype-object",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/round/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/toString/NativePortBatch_Port1000.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/PlainTime/prototype/add/argument-object.js",
+          "test/built-ins/Temporal/PlainTime/prototype/add/order-of-operations.js"
+        ],
+        "notes": "Supports with, equals, add, subtract, round, toString and toJSON, with immutable results and exact nanosecond arithmetic. Time arithmetic validates all duration fields before ignoring date units, wraps at midnight and ignores the optional second arithmetic argument. Rounding supports nine modes, six time units, increment validation and ordered option coercion. toLocaleString uses the base ECMA-262 ISO representation because Intl.DateTimeFormat is not implemented; locale-aware formatting is not claimed. since, until and broader Temporal date/calendar operations remain unsupported."
+      },
+      {
+        "clause": "19.4",
+        "feature": "Temporal.Duration core inputs for PlainTime arithmetic",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-duration-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js"
+        ],
+        "notes": "Supports the ten-field Duration constructor, from, branded field accessors, sign and blank. Duration-like property bags are read and converted in alphabetical order; ISO duration strings preserve fractional time units exactly. Mixed signs, nonintegral fields, calendar-field limits and the normalized 2^53-second bound are validated before time arithmetic. General Duration arithmetic, calendar-relative conversion and formatting remain unsupported."
+      },
+      {
         "clause": "19.4.1",
         "feature": "Atomics global object",
         "status": "Supported with Limitations",

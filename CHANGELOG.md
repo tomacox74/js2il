@@ -6,6 +6,17 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 300 additional pinned Temporal.PlainTime cases with unchanged
+  upstream assertions and no skips. Add core time construction, conversion,
+  branded accessors, comparison, immutable updates, exact duration arithmetic,
+  rounding and ISO formatting, plus the supporting Duration constructor/from
+  surface. Preserve coercion and option access order, constructor realms and
+  subclass prototypes. Fix superclass construction of runtime function objects
+  and captured/shadowing array-destructured parameters; reject invalid ISO signs
+  and annotation syntax. Extend the native Temporal
+  assertion and option-observer helpers. Full Temporal date/calendar APIs,
+  general Duration operations and Intl-aware formatting remain unsupported.
+
 - test262: port 300 additional pinned module-goal cases without skips or
   upstream source changes: 130 expected SyntaxError cases and 170 top-level
   await syntax-acceptance cases. Verify restricted bindings, declaration

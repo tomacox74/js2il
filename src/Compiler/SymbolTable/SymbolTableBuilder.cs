@@ -2105,9 +2105,11 @@ namespace Jroc.SymbolTables
                             arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, arrowScope, apId);
                             arrowScope.Parameters.Add(apId.Name);
                         }
-                        else if (param is ObjectPattern op)
+                        else if (param is ObjectPattern or ArrayPattern
+                            || param is AssignmentPattern { Left: ObjectPattern or ArrayPattern })
                         {
-                            foreach (var bindId in EnumerateBindingIdentifiers(op))
+                            var pattern = param is AssignmentPattern assignment ? assignment.Left : param;
+                            foreach (var bindId in EnumerateBindingIdentifiers(pattern))
                             {
                                 if (!arrowScope.Bindings.ContainsKey(bindId.Name))
                                 {
@@ -3296,7 +3298,7 @@ namespace Jroc.SymbolTables
         }
 
         /// <summary>
-        /// Helper to bind identifier parameters and object pattern property identifiers uniformly.
+        /// Helper to bind identifier parameters and destructuring patterns uniformly.
         /// </summary>
         private static void BindObjectPatternParameters(IEnumerable<Node> parameters, Scope scope)
         {
@@ -3347,7 +3349,7 @@ namespace Jroc.SymbolTables
                         // They are initialized from the ambient arguments array at runtime
                     }
                 }
-                else if (p is ObjectPattern)
+                else if (p is ObjectPattern or ArrayPattern)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(p))
                     {
@@ -3365,7 +3367,7 @@ namespace Jroc.SymbolTables
                         }
                     }
                 }
-                else if (p is AssignmentPattern { Left: ObjectPattern } patternWithDefault)
+                else if (p is AssignmentPattern { Left: ObjectPattern or ArrayPattern } patternWithDefault)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(patternWithDefault.Left))
                     {

@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace JavaScriptRuntime;
 
-public static class Temporal
+public static partial class Temporal
 {
     internal static JsObject GetNamespace(RuntimeIntrinsics intrinsics)
         => intrinsics.GetOrCreate(
@@ -16,6 +16,8 @@ public static class Temporal
         PrototypeChain.SetPrototype(value, intrinsics.ObjectPrototype);
         GlobalThis.DefineIntrinsicToStringTagProperty(value, "Temporal");
         GlobalThis.DefineIntrinsicDataProperty(value, "Instant", GetInstantConstructor(intrinsics));
+        GlobalThis.DefineIntrinsicDataProperty(value, "PlainTime", GetPlainTimeConstructor(intrinsics));
+        GlobalThis.DefineIntrinsicDataProperty(value, "Duration", GetDurationConstructor(intrinsics));
     }
 
     private static InstantConstructor GetInstantConstructor(RuntimeIntrinsics intrinsics)
