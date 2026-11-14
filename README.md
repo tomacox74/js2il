@@ -9,10 +9,10 @@
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#compatibility-and-project-status)
 [![NuGet version](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
-JROC compiles JavaScript ahead of time to .NET IL, producing assemblies you
-can run with `dotnet`. It includes a JavaScript runtime with support for a
-growing set of Node.js APIs. You can also compile JavaScript as part of a .NET
-build with [`Jroc.SDK`](#use-jroc-from-net-projects).
+JROC is a JavaScript compiler for .NET. It produces assemblies you can run with
+`dotnet` and includes a JavaScript runtime with support for a growing set of
+Node.js APIs. You can also compile JavaScript as part of a .NET build with
+[`Jroc.SDK`](#use-jroc-from-net-projects).
 
 ## Install JROC
 
