@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-07T21:14:57Z
+> Last generated (UTC): 2026-11-14T05:29:09Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -113,7 +113,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| %TypedArray% constructor prototype metadata | Supported with Limitations | [`IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js) | `test/built-ins/TypedArray/prototype.js` | Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Per-constructor prototype objects and the remaining constructor metadata surface are incomplete. |
+| %TypedArray% constructor prototype metadata | Supported with Limitations | [`IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js) | `test/built-ins/TypedArray/prototype.js` | Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with standard name TypedArray and length 0, plus a non-writable, non-enumerable, non-configurable prototype property. All eleven concrete numeric and BigInt constructors enforce new, preserve custom and cross-realm default prototypes, truncate negative fractional lengths to zero, and reject Symbol lengths with TypeError. Array-like allocation lengths are validated without silently clamping to the host limit. Iterable construction treats a null @@iterator as absent and observes overridden iterator methods, including Array iterator prototypes across realms. |
 
 ### 23.2.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-get-%typedarray%-%symbol.species%))
 

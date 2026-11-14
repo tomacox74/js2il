@@ -228,7 +228,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Constructor DataView requires 'new'");
             }
 
-            return new JavaScriptRuntime.DataView(buffer, byteOffset, byteLength);
+            return JavaScriptRuntime.DataView.Construct(newTarget, buffer, byteOffset, byteLength);
         };
 
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
@@ -345,16 +345,14 @@ namespace JavaScriptRuntime
         private readonly BuiltinFunction1 _symbolFunctionValue = SymbolCall;
 
         // Typed array constructor values - supported and unsupported
-        private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Float64Array(), static a => new Float64Array(a), static (a, b) => new Float64Array(a, b), static (a, b, c) => new Float64Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Float32Array(), static a => new Float32Array(a), static (a, b) => new Float32Array(a, b), static (a, b, c) => new Float32Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Int32Array(), static a => new Int32Array(a), static (a, b) => new Int32Array(a, b), static (a, b, c) => new Int32Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _arrayBufferConstructorValue =
-            static (_, args) => args != null && args.Length > 1
-                ? new ArrayBuffer(args[0], args[1])
-                : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly JsFuncNoScopes3 _float64ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Float64Array());
+        private static readonly JsFuncNoScopes3 _float32ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Float32Array());
+        private static readonly JsFuncNoScopes3 _int32ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Int32Array());
+        private static readonly JsFuncNoScopes2 _arrayBufferConstructorValue =
+            static (newTarget, length, options) => JavaScriptRuntime.ArrayBuffer.Construct(newTarget, length, options);
         private static readonly JsFuncNoScopes2 _sharedArrayBufferConstructorValue =
             static (newTarget, length, options) =>
             {
@@ -363,24 +361,24 @@ namespace JavaScriptRuntime
                     throw new TypeError("Constructor SharedArrayBuffer requires 'new'");
                 }
 
-                return new SharedArrayBuffer(length, options);
+                return JavaScriptRuntime.ArrayBuffer.Construct(newTarget, length, options, shared: true);
             };
-        private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Int16Array(), static a => new Int16Array(a), static (a, b) => new Int16Array(a, b), static (a, b, c) => new Int16Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Int8Array(), static a => new Int8Array(a), static (a, b) => new Int8Array(a, b), static (a, b, c) => new Int8Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Uint32Array(), static a => new Uint32Array(a), static (a, b) => new Uint32Array(a, b), static (a, b, c) => new Uint32Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Uint16Array(), static a => new Uint16Array(a), static (a, b) => new Uint16Array(a, b), static (a, b, c) => new Uint16Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Uint8Array(), static a => new Uint8Array(a), static (a, b) => new Uint8Array(a, b), static (a, b, c) => new Uint8Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new Uint8ClampedArray(), static a => new Uint8ClampedArray(a), static (a, b) => new Uint8ClampedArray(a, b), static (a, b, c) => new Uint8ClampedArray(a, b, c));
-        private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new BigInt64Array(), static a => new BigInt64Array(a), static (a, b) => new BigInt64Array(a, b), static (a, b, c) => new BigInt64Array(a, b, c));
-        private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue =
-            static (_, args) => ConstructTypedArray(args, static () => new BigUint64Array(), static a => new BigUint64Array(a), static (a, b) => new BigUint64Array(a, b), static (a, b, c) => new BigUint64Array(a, b, c));
+        private static readonly JsFuncNoScopes3 _int16ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Int16Array());
+        private static readonly JsFuncNoScopes3 _int8ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Int8Array());
+        private static readonly JsFuncNoScopes3 _uint32ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Uint32Array());
+        private static readonly JsFuncNoScopes3 _uint16ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Uint16Array());
+        private static readonly JsFuncNoScopes3 _uint8ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Uint8Array());
+        private static readonly JsFuncNoScopes3 _uint8ClampedArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new Uint8ClampedArray());
+        private static readonly JsFuncNoScopes3 _bigInt64ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new BigInt64Array());
+        private static readonly JsFuncNoScopes3 _bigUint64ArrayConstructorValue =
+            static (newTarget, a, b, c) => TypedArrayBase.Construct(newTarget, a, b, c, static () => new BigUint64Array());
 
         private void InitializeIntrinsics()
         {
@@ -466,19 +464,21 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
 
-        private static object ConstructTypedArray(
-            object?[]? args,
-            Func<object> constructEmpty,
-            Func<object?, object> constructOne,
-            Func<object?, object?, object> constructTwo,
-            Func<object?, object?, object?, object> constructThree)
-            => args?.Length switch
-            {
-                null or 0 => constructEmpty(),
-                1 => constructOne(args[0]),
-                2 => constructTwo(args[0], args[1]),
-                _ => constructThree(args[0], args[1], args[2])
-            };
+        internal static bool IsBinaryMemoryConstructorTarget(Delegate target)
+            => ReferenceEquals(target, _arrayBufferConstructorValue)
+                || ReferenceEquals(target, _sharedArrayBufferConstructorValue)
+                || ReferenceEquals(target, _dataViewConstructorValue)
+                || ReferenceEquals(target, _float64ArrayConstructorValue)
+                || ReferenceEquals(target, _float32ArrayConstructorValue)
+                || ReferenceEquals(target, _int32ArrayConstructorValue)
+                || ReferenceEquals(target, _int16ArrayConstructorValue)
+                || ReferenceEquals(target, _int8ArrayConstructorValue)
+                || ReferenceEquals(target, _uint32ArrayConstructorValue)
+                || ReferenceEquals(target, _uint16ArrayConstructorValue)
+                || ReferenceEquals(target, _uint8ArrayConstructorValue)
+                || ReferenceEquals(target, _uint8ClampedArrayConstructorValue)
+                || ReferenceEquals(target, _bigInt64ArrayConstructorValue)
+                || ReferenceEquals(target, _bigUint64ArrayConstructorValue);
 
         internal static ServiceContainer? ServiceProvider
         {

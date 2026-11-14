@@ -317,7 +317,7 @@
           "test/built-ins/DataView/toindex-bytelength.js",
           "test/built-ins/DataView/toindex-bytelength-sab.js"
         ],
-        "notes": "Supports DataView construction over ArrayBuffer and SharedArrayBuffer, including byteOffset/byteLength ToIndex coercion (explicit null is zero), resizable views, and rejection of detached buffers after observable argument coercions. Custom newTarget prototype side effects remain limited."
+        "notes": "Supports DataView construction over ArrayBuffer and SharedArrayBuffer, including byteOffset/byteLength ToIndex coercion (explicit null is zero), resizable views, and rejection of detached buffers after observable argument coercions. After reading newTarget.prototype, construction rechecks detachment and bounds, preserving valid length-tracking views when the getter resizes the buffer. Prototype getters are not read twice."
       },
       {
         "clause": "25.3.3",

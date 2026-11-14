@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-11-06T02:29:50Z
+> Last generated (UTC): 2026-11-14T05:29:09Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -25,9 +25,9 @@
 | 19.2.6 | URI Handling Functions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-uri-handling-functions) |
 | 19.2.6.1 | decodeURI ( encodedURI ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri) |
 | 19.2.6.2 | decodeURIComponent ( encodedURIComponent ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent) |
-| 19.2.6.3 | encodeURI ( uri ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-encodeuri-uri) |
-| 19.2.6.4 | encodeURIComponent ( uriComponent ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent) |
-| 19.2.6.5 | Encode ( string , extraUnescaped ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-encode) |
+| 19.2.6.3 | encodeURI ( uri ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeuri-uri) |
+| 19.2.6.4 | encodeURIComponent ( uriComponent ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent) |
+| 19.2.6.5 | Encode ( string , extraUnescaped ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-encode) |
 | 19.2.6.6 | Decode ( string , preserveEscapeSet ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-decode) |
 | 19.2.6.7 | ParseHexOctet ( string , position ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsehexoctet) |
 
@@ -75,5 +75,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| encodeURI(uri) | Supported with Limitations | [`S15.1.3.3_A1.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T1.js)<br>[`S15.1.3.3_A1.1_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T2.js)<br>[`S15.1.3.3_A1.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T1.js)<br>[`S15.1.3.3_A1.2_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T2.js)<br>[`S15.1.3.3_A1.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.3_T1.js)<br>[`S15.1.3.3_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.1_T1.js)<br>[`S15.1.3.3_A2.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.2_T1.js)<br>[`S15.1.3.3_A2.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.3_T1.js)<br>[`S15.1.3.3_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T1.js)<br>[`S15.1.3.3_A2.4_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T2.js) | `test/built-ins/encodeURI/S15.1.3.3_A1.1_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.1_T2.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.2_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.2_T2.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.3_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.1_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.2_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.3_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.4_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.4_T2.js` | Implements the covered ECMAScript UTF-8 percent-encoding behavior, preserves encodeURI reserved and unescaped characters, and throws URIError for malformed UTF-16 surrogate sequences. Broader coercion and metadata coverage remains to be added. |
+| encodeURI(uri) | Supported | [`S15.1.3.3_A1.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T1.js)<br>[`S15.1.3.3_A1.1_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.1_T2.js)<br>[`S15.1.3.3_A1.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T1.js)<br>[`S15.1.3.3_A1.2_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.2_T2.js)<br>[`S15.1.3.3_A1.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A1.3_T1.js)<br>[`S15.1.3.3_A2.1_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.1_T1.js)<br>[`S15.1.3.3_A2.2_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.2_T1.js)<br>[`S15.1.3.3_A2.3_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.3_T1.js)<br>[`S15.1.3.3_A2.4_T1.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T1.js)<br>[`S15.1.3.3_A2.4_T2.js`](../../../tests/Jroc.Test262.Tests/built-ins/encodeURI/JavaScript/S15.1.3.3_A2.4_T2.js) | `test/built-ins/encodeURI/S15.1.3.3_A1.1_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.1_T2.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.2_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.2_T2.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A1.3_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.1_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.2_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.3_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.4_T1.js`<br>`test/built-ins/encodeURI/S15.1.3.3_A2.4_T2.js` | Implements ECMAScript UTF-8 percent encoding, preserves reserved and unescaped characters, and throws URIError for malformed UTF-16 surrogate sequences. Native validation verifies all 31 pinned encodeURI cases, including 21 additional tests for coercion, reserved characters, surrogate handling, function metadata, global descriptors, and nonconstructibility. |
+
+### 19.2.6.4 ([tc39.es](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| encodeURIComponent(uriComponent) | Supported | `tests/Jroc.Test262.Tests/built-ins/encodeURIComponent/ExecutionTests.cs` |  | Native validation verifies all 31 pinned cases using the existing shared UTF-8 encoder. Component encoding escapes reserved URI delimiters, preserves the specified unescaped characters, converts its argument to a string, and rejects unpaired UTF-16 surrogates with URIError. Coverage includes function name/length, global descriptors, and nonconstructibility. |
 

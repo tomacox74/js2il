@@ -79,4 +79,56 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "S15.1.2.2_A9.6")]
     public Task S15_1_2_2_A9_6()
         => ExecutionTestFromFile("S15.1.2.2_A9.6");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T2.js")]
+    public Task Port400_S15_1_2_2_A6_1_T2()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T2");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T3.js")]
+    public Task Port400_S15_1_2_2_A6_1_T3()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T3");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T4.js")]
+    public Task Port400_S15_1_2_2_A6_1_T4()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T4");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T5.js")]
+    public Task Port400_S15_1_2_2_A6_1_T5()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T5");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T6.js")]
+    public Task Port400_S15_1_2_2_A6_1_T6()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T6");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.1_T1.js")]
+    public Task Port400_S15_1_2_2_A7_1_T1()
+        => ExecutionTestFromFile("S15.1.2.2_A7.1_T1");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.1_T2.js")]
+    public Task Port400_S15_1_2_2_A7_1_T2()
+        => ExecutionTestFromFile("S15.1.2.2_A7.1_T2");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.2_T2.js")]
+    public Task Port400_S15_1_2_2_A7_2_T2()
+        => ExecutionTestFromFile("S15.1.2.2_A7.2_T2");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.2_T3.js")]
+    public Task Port400_S15_1_2_2_A7_2_T3()
+        => ExecutionTestFromFile("S15.1.2.2_A7.2_T3");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.3_T1.js")]
+    public Task Port400_S15_1_2_2_A7_3_T1()
+        => ExecutionTestFromFile("S15.1.2.2_A7.3_T1");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.3_T2.js")]
+    public Task Port400_S15_1_2_2_A7_3_T2()
+        => ExecutionTestFromFile("S15.1.2.2_A7.3_T2");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.3_T3.js")]
+    public Task Port400_S15_1_2_2_A7_3_T3()
+        => ExecutionTestFromFile("S15.1.2.2_A7.3_T3");
+
+    [Fact(DisplayName = "S15.1.2.2_A9.5.js")]
+    public Task Port400_S15_1_2_2_A9_5()
+        => ExecutionTestFromFile("S15.1.2.2_A9.5");
 }

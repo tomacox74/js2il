@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 200 additional pinned primitive-conversion and binary-memory
+  cases with unchanged upstream assertions and no skips. Fix TypedArray and
+  ArrayBuffer call-versus-construction checks, TypedArray ToIndex and
+  array-like length validation, observable iterator methods, buffer allocation
+  and prototype ordering, DataView detachment checks, and Atomics.notify
+  detached-buffer validation. Preserve custom TypedArray prototypes and
+  cross-realm Array iterator prototypes.
+
 - test262: port 200 additional pinned object, callable, and iterator protocol
   cases without changing upstream assertions or adding skips. Fix generator
   reentrancy and nested exception unwinding, async-generator receiver and

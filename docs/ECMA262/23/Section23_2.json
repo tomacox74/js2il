@@ -510,7 +510,7 @@
         "test262Paths": [
           "test/built-ins/TypedArray/prototype.js"
         ],
-        "notes": "Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Per-constructor prototype objects and the remaining constructor metadata surface are incomplete."
+        "notes": "Supported typed-array constructor values share a %TypedArray% intrinsic constructor object with standard name TypedArray and length 0, plus a non-writable, non-enumerable, non-configurable prototype property. All eleven concrete numeric and BigInt constructors enforce new, preserve custom and cross-realm default prototypes, truncate negative fractional lengths to zero, and reject Symbol lengths with TypeError. Array-like allocation lengths are validated without silently clamping to the host limit. Iterable construction treats a null @@iterator as absent and observes overridden iterator methods, including Array iterator prototypes across realms."
       },
       {
         "clause": "23.2.5.1",

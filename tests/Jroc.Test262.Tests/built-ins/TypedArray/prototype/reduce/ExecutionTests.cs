@@ -15,4 +15,12 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "resizable-buffer.js")]
     public Task resizable_buffer() => ExecutionTestFromFile("resizable-buffer");
 
+
+    [Fact(DisplayName = "callbackfn-detachbuffer.js")]
+    public Task Port400_callbackfn_detachbuffer()
+        => ExecutionTestFromFile("callbackfn-detachbuffer");
+
+    [Fact(DisplayName = "not-a-constructor.js")]
+    public Task Port400_not_a_constructor()
+        => ExecutionTestFromFile("not-a-constructor");
 }

@@ -68,4 +68,28 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task toprimitive_get_abrupt()
         => ExecutionTestFromFile("toprimitive-get-abrupt");
 
+
+    [Fact(DisplayName = "prop-desc.js")]
+    public Task Port400_prop_desc()
+        => ExecutionTestFromFile("prop-desc");
+
+    [Fact(DisplayName = "return-abrupt-from-tonumber-number-symbol.js")]
+    public Task Port400_return_abrupt_from_tonumber_number_symbol()
+        => ExecutionTestFromFile("return-abrupt-from-tonumber-number-symbol");
+
+    [Fact(DisplayName = "S15.1.2.5_A2.7.js")]
+    public Task Port400_S15_1_2_5_A2_7()
+        => ExecutionTestFromFile("S15.1.2.5_A2.7");
+
+    [Fact(DisplayName = "toprimitive-not-callable-throws.js")]
+    public Task Port400_toprimitive_not_callable_throws()
+        => ExecutionTestFromFile("toprimitive-not-callable-throws");
+
+    [Fact(DisplayName = "toprimitive-result-is-object-throws.js")]
+    public Task Port400_toprimitive_result_is_object_throws()
+        => ExecutionTestFromFile("toprimitive-result-is-object-throws");
+
+    [Fact(DisplayName = "toprimitive-result-is-symbol-throws.js")]
+    public Task Port400_toprimitive_result_is_symbol_throws()
+        => ExecutionTestFromFile("toprimitive-result-is-symbol-throws");
 }

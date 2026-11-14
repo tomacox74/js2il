@@ -107,6 +107,11 @@ namespace JavaScriptRuntime
         {
         }
 
+        internal SharedArrayBuffer(int byteLength, int? maxByteLength)
+            : this(CreateBackingStore(byteLength, maxByteLength))
+        {
+        }
+
         private SharedArrayBuffer(RuntimeSharedArrayBufferBackingStore backingStore)
             : base(backingStore)
         {
@@ -216,6 +221,11 @@ namespace JavaScriptRuntime
                 throw new RangeError("Invalid SharedArrayBuffer maxByteLength");
             }
 
+            return CreateBackingStore(byteLength, maxByteLength);
+        }
+
+        private static RuntimeSharedArrayBufferBackingStore CreateBackingStore(int byteLength, int? maxByteLength)
+        {
             var context = RuntimeExecutionContext.CurrentOrOverride;
             if (context != null)
             {
