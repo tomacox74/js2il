@@ -6,6 +6,16 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 300 additional pinned Temporal.Duration cases with unchanged
+  upstream assertions. Add abs, negated, with, day/time add and subtract,
+  numeric compare, fixed-unit total and ISO-fallback toLocaleString.
+  Preserve exact nanosecond arithmetic, correctly rounded numeric results,
+  observable conversion order and intrinsic result prototypes. Fix boxed
+  BigInt arithmetic lowering and explicit Number(BigInt) conversion; extend
+  native Duration assertions and subclass checks. Calendar-relative operations,
+  Duration.round and Intl-aware formatting remain unsupported. No selected
+  cases require eval, so this batch adds no skips.
+
 - test262: port 300 additional pinned Temporal.PlainTime cases with unchanged
   upstream assertions and no skips. Add core time construction, conversion,
   branded accessors, comparison, immutable updates, exact duration arithmetic,
