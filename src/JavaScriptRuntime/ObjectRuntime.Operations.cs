@@ -2619,7 +2619,10 @@ namespace JavaScriptRuntime
             if (constructor is JsFunctionObject functionObject)
             {
                 var result = CallableOperations.Construct(functionObject, callArgs, newTarget);
-                ApplyConstructedPrototype(result, functionObject, newTarget);
+                if (functionObject is not BuiltinDelegateFunctionAdapter)
+                {
+                    ApplyConstructedPrototype(result, functionObject, newTarget);
+                }
                 return result;
             }
 
@@ -5118,9 +5121,12 @@ namespace JavaScriptRuntime
         /// itself, without consulting <c>Symbol.iterator</c> on it.
         /// </summary>
         public static IJavaScriptIterator GetIteratorFromMethod(object obj, object method)
+            => GetIteratorFromMethod(obj, method, useNativeFastPath: true);
+
+        internal static IJavaScriptIterator GetIteratorFromMethod(object obj, object method, bool useNativeFastPath)
         {
             var iterator = JavaScriptRuntime.Function.Apply(method, obj, System.Array.Empty<object?>());
-            if (iterator is IJavaScriptIterator nativeIterator)
+            if (useNativeFastPath && iterator is IJavaScriptIterator nativeIterator)
             {
                 return nativeIterator;
             }

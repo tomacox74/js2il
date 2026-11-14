@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-05T23:23:10Z
+> Last generated (UTC): 2026-11-14T05:29:09Z
 
 JROC supports fixed-length and growable SharedArrayBuffers, typed-array views, live length accessors, grow(), and species-aware slicing. Shared storage and waiter coordination are implemented within a runtime instance; full cross-agent memory-model guarantees remain unverified.
 
@@ -54,5 +54,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Cross-realm SharedArrayBuffer constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/SharedArrayBuffer/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the SharedArrayBuffer.prototype intrinsic from the new target's realm. |
+| Cross-realm SharedArrayBuffer constructor default prototype | Supported | [`proto-from-ctor-realm.js`](../../../tests/Jroc.Test262.Tests/built-ins/SharedArrayBuffer/JavaScript/proto-from-ctor-realm.js) | `test/built-ins/SharedArrayBuffer/proto-from-ctor-realm.js` | When the new target's prototype is not an object, construction uses the SharedArrayBuffer.prototype intrinsic from the new target's realm. Length and maxByteLength are coerced and compared before prototype access; host allocation limits are enforced afterward, so a throwing prototype getter precedes allocation failure. |
 

@@ -54,7 +54,7 @@ public sealed class IntrinsicSurfaceOwnershipTests
         var source = File.ReadAllText(Path.Combine(FindRepositoryRoot(), "src", "JavaScriptRuntime", "GlobalThis.cs"));
         var start = source.IndexOf("private void InitializeIntrinsicsCore()", StringComparison.Ordinal);
         Assert.True(start >= 0);
-        var end = source.IndexOf("private static object ConstructTypedArray(", start, StringComparison.Ordinal);
+        var end = source.IndexOf("internal static bool IsBinaryMemoryConstructorTarget(", start, StringComparison.Ordinal);
         Assert.True(end > start);
         return source[start..end];
     }

@@ -41,6 +41,7 @@ namespace JavaScriptRuntime
         internal static void ConfigureIntrinsicSurface(RuntimeIntrinsics intrinsics)
         {
             GlobalThis.ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_typedArrayConstructorValue, 0d, "TypedArray");
             JavaScriptRuntime.Function.MarkConstructible(_typedArrayConstructorValue);
             // Resolve prototypes from the bootstrapping realm, never from static storage.
             var prototype = intrinsics.TypedArrayPrototype;

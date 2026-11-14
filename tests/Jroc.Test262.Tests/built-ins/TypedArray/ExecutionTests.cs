@@ -12,4 +12,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "resizable-buffer-length-tracking-2.js")]
     public Task resizable_buffer_length_tracking_2() => ExecutionTestFromFile("resizable-buffer-length-tracking-2");
 
+
+    [Fact(DisplayName = "name.js")]
+    public Task Port400_name()
+        => ExecutionTestFromFile("name");
 }

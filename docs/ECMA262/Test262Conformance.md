@@ -11,9 +11,9 @@ Coverage for the current development branch. Counts and percentages are per stan
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 18,374 | 37 | 5,101 | 23,512 | **78.15%** |
+| Built-in objects and APIs | 18,573 | 37 | 4,902 | 23,512 | **78.99%** |
 | Language syntax and semantics | 22,276 | 626 | 741 | 23,643 | **94.22%** |
-| **Total** | 40,710 | 663 | 6,868 | 48,241 | **84.39%** |
+| **Total** | 40,909 | 663 | 6,669 | 48,241 | **84.80%** |
 
 ## Language Areas
 
@@ -163,7 +163,7 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `AbstractModuleSource` | 0 | 0 | 8 | 8 | **0.00%** |
 | `AggregateError` | 25 | 0 | 0 | 25 | **100.00%** |
 | `Array` | 3,081 | 0 | 0 | 3,081 | **100.00%** |
-| `ArrayBuffer` | 192 | 0 | 4 | 196 | **97.96%** |
+| `ArrayBuffer` | 195 | 0 | 1 | 196 | **99.49%** |
 | `ArrayIteratorPrototype` | 27 | 0 | 0 | 27 | **100.00%** |
 | `AsyncDisposableStack` | 104 | 0 | 0 | 104 | **100.00%** |
 | `AsyncFromSyncIteratorPrototype` | 38 | 0 | 0 | 38 | **100.00%** |
@@ -171,16 +171,16 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `AsyncGeneratorFunction` | 21 | 0 | 2 | 23 | **91.30%** |
 | `AsyncGeneratorPrototype` | 48 | 0 | 0 | 48 | **100.00%** |
 | `AsyncIteratorPrototype` | 13 | 0 | 0 | 13 | **100.00%** |
-| `Atomics` | 346 | 0 | 36 | 382 | **90.58%** |
+| `Atomics` | 363 | 0 | 19 | 382 | **95.03%** |
 | `BigInt` | 76 | 0 | 1 | 77 | **98.70%** |
 | `Boolean` | 50 | 0 | 1 | 51 | **98.04%** |
-| `DataView` | 552 | 0 | 9 | 561 | **98.40%** |
+| `DataView` | 559 | 0 | 2 | 561 | **99.64%** |
 | `Date` | 594 | 0 | 0 | 594 | **100.00%** |
 | `decodeURI` | 55 | 0 | 0 | 55 | **100.00%** |
 | `decodeURIComponent` | 55 | 0 | 1 | 56 | **98.21%** |
 | `DisposableStack` | 93 | 0 | 0 | 93 | **100.00%** |
-| `encodeURI` | 10 | 0 | 21 | 31 | **32.26%** |
-| `encodeURIComponent` | 0 | 0 | 31 | 31 | **0.00%** |
+| `encodeURI` | 31 | 0 | 0 | 31 | **100.00%** |
+| `encodeURIComponent` | 31 | 0 | 0 | 31 | **100.00%** |
 | `Error` | 57 | 0 | 1 | 58 | **98.28%** |
 | `eval` | 0 | 0 | 10 | 10 | **0.00%** |
 | `FinalizationRegistry` | 47 | 0 | 0 | 47 | **100.00%** |
@@ -188,20 +188,20 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `GeneratorFunction` | 22 | 0 | 1 | 23 | **95.65%** |
 | `GeneratorPrototype` | 61 | 0 | 0 | 61 | **100.00%** |
 | `global` | 19 | 10 | 0 | 29 | **65.52%** |
-| `Infinity` | 5 | 0 | 1 | 6 | **83.33%** |
-| `isFinite` | 9 | 0 | 6 | 15 | **60.00%** |
-| `isNaN` | 9 | 0 | 6 | 15 | **60.00%** |
+| `Infinity` | 6 | 0 | 0 | 6 | **100.00%** |
+| `isFinite` | 15 | 0 | 0 | 15 | **100.00%** |
+| `isNaN` | 15 | 0 | 0 | 15 | **100.00%** |
 | `Iterator` | 510 | 0 | 0 | 510 | **100.00%** |
 | `JSON` | 162 | 0 | 3 | 165 | **98.18%** |
 | `Map` | 197 | 0 | 7 | 204 | **96.57%** |
 | `MapIteratorPrototype` | 7 | 0 | 4 | 11 | **63.64%** |
 | `Math` | 327 | 0 | 0 | 327 | **100.00%** |
-| `NaN` | 3 | 0 | 3 | 6 | **50.00%** |
+| `NaN` | 6 | 0 | 0 | 6 | **100.00%** |
 | `NativeErrors` | 94 | 0 | 0 | 94 | **100.00%** |
 | `Number` | 338 | 0 | 0 | 338 | **100.00%** |
 | `Object` | 3,400 | 1 | 10 | 3,411 | **99.68%** |
-| `parseFloat` | 32 | 0 | 22 | 54 | **59.26%** |
-| `parseInt` | 42 | 0 | 13 | 55 | **76.36%** |
+| `parseFloat` | 54 | 0 | 0 | 54 | **100.00%** |
+| `parseInt` | 55 | 0 | 0 | 55 | **100.00%** |
 | `Promise` | 651 | 0 | 26 | 677 | **96.16%** |
 | `Proxy` | 267 | 0 | 44 | 311 | **85.85%** |
 | `Reflect` | 152 | 0 | 1 | 153 | **99.35%** |
@@ -210,17 +210,17 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `Set` | 383 | 0 | 0 | 383 | **100.00%** |
 | `SetIteratorPrototype` | 1 | 0 | 10 | 11 | **9.09%** |
 | `ShadowRealm` | 0 | 0 | 64 | 64 | **0.00%** |
-| `SharedArrayBuffer` | 95 | 0 | 9 | 104 | **91.35%** |
+| `SharedArrayBuffer` | 103 | 0 | 1 | 104 | **99.04%** |
 | `String` | 1,211 | 12 | 0 | 1,223 | **99.02%** |
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
 | `Temporal` | 1 | 0 | 4,583 | 4,584 | **0.02%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
-| `TypedArray` | 1,377 | 0 | 61 | 1,438 | **95.76%** |
-| `TypedArrayConstructors` | 703 | 0 | 33 | 736 | **95.52%** |
-| `Uint8Array` | 64 | 0 | 4 | 68 | **94.12%** |
-| `undefined` | 0 | 0 | 8 | 8 | **0.00%** |
+| `TypedArray` | 1,397 | 0 | 41 | 1,438 | **97.15%** |
+| `TypedArrayConstructors` | 733 | 0 | 3 | 736 | **99.59%** |
+| `Uint8Array` | 68 | 0 | 0 | 68 | **100.00%** |
+| `undefined` | 7 | 0 | 1 | 8 | **87.50%** |
 | `WeakMap` | 141 | 0 | 0 | 141 | **100.00%** |
 | `WeakRef` | 29 | 0 | 0 | 29 | **100.00%** |
 | `WeakSet` | 85 | 0 | 0 | 85 | **100.00%** |

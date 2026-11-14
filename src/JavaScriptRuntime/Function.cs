@@ -1158,6 +1158,17 @@ public static class Function
                 return wrapper;
             }
 
+            if (GlobalThis.IsBinaryMemoryConstructorTarget(constructor.Target))
+            {
+                return Closure.InvokeBuiltinDelegate(
+                    constructor.Target,
+                    constructor.InvokeMetadata,
+                    constructor.Scopes,
+                    null,
+                    arguments,
+                    newTarget ?? constructor);
+            }
+
             var constructorRealm = RuntimeIntrinsics.GetFunctionRealm(newTarget ?? constructor);
             var instance = ObjectRuntime.CreateOrdinaryObject(constructorRealm);
 

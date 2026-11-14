@@ -120,6 +120,53 @@ namespace JavaScriptRuntime
         private bool _isDetached;
         private bool _isImmutable;
 
+        internal static ArrayBuffer Construct(object? newTarget, object? length, object? options, bool shared = false)
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("ArrayBuffer constructor requires 'new'");
+            }
+            var byteLength = CoerceByteLengthIndex(length);
+            var maxValue = TypeUtilities.IsPrimitive(options) ? null : ObjectRuntime.GetItem(options!, "maxByteLength");
+            double? maximum = maxValue is null ? null : CoerceByteLengthIndex(maxValue);
+            if (maximum < byteLength)
+            {
+                throw new RangeError("Invalid ArrayBuffer maxByteLength");
+            }
+            var prototype = ObjectRuntime.GetItem(newTarget, "prototype");
+            if (!TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
+                prototype = shared ? intrinsics.SharedArrayBufferPrototype : intrinsics.ArrayBufferPrototype;
+            }
+            if (byteLength > int.MaxValue || maximum > int.MaxValue)
+            {
+                throw new RangeError("Invalid ArrayBuffer length");
+            }
+            var maxByteLength = maximum.HasValue ? (int?)maximum.Value : null;
+            ArrayBuffer result;
+            try
+            {
+                result = shared
+                    ? new SharedArrayBuffer((int)byteLength, maxByteLength)
+                    : new ArrayBuffer((int)byteLength, maxByteLength);
+            }
+            catch (OutOfMemoryException)
+            {
+                throw new RangeError("ArrayBuffer allocation failed");
+            }
+            PrototypeChain.SetPrototype(result, prototype);
+            return result;
+        }
+
+        private ArrayBuffer(int byteLength, int? maxByteLength)
+        {
+            _storage = new RuntimeArrayBufferStorage(byteLength == 0 ? System.Array.Empty<byte>() : new byte[byteLength]);
+            _maxByteLength = maxByteLength ?? byteLength;
+            _isResizable = maxByteLength.HasValue;
+            InitializeIntrinsicSurface();
+        }
+
         public ArrayBuffer()
         {
             _storage = new RuntimeArrayBufferStorage(System.Array.Empty<byte>());
@@ -431,6 +478,16 @@ namespace JavaScriptRuntime
 
         internal static int CoerceByteLength(object? value)
         {
+            var length = CoerceByteLengthIndex(value);
+            if (length > int.MaxValue)
+            {
+                throw new RangeError("Invalid ArrayBuffer length");
+            }
+            return (int)length;
+        }
+
+        private static double CoerceByteLengthIndex(object? value)
+        {
             if (value is null || value is JsNull)
             {
                 return 0;
@@ -448,12 +505,12 @@ namespace JavaScriptRuntime
             }
 
             var truncated = System.Math.Truncate(number);
-            if (truncated < 0 || truncated > int.MaxValue)
+            if (truncated < 0 || truncated > 9007199254740991d)
             {
                 throw new RangeError("Invalid ArrayBuffer length");
             }
 
-            return (int)truncated;
+            return truncated;
         }
 
         protected static bool TryGetMaxByteLength(object? options, out int maxByteLength)

@@ -2387,7 +2387,7 @@ namespace JavaScriptRuntime
             Entries
         }
 
-        private sealed class ArrayIterator : IJavaScriptIterator
+        private sealed class ArrayIterator : JsObject, IJavaScriptIterator
         {
             private readonly object _receiver;
             private readonly Func<double> _getLength;

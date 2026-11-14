@@ -692,7 +692,7 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            if (IsConstructorLengthArgument(arg))
+            if (TypeUtilities.IsPrimitive(arg))
             {
                 InitializeFromLength(ToConstructorLength(TypeUtilities.ToNumber(arg), $"Invalid {TypedArrayName} length"));
                 return;
@@ -700,6 +700,40 @@ namespace JavaScriptRuntime
 
             var values = CaptureSourceItems(arg);
             InitializeFromValues(values);
+        }
+
+        internal static TypedArrayBase Construct(object? newTarget, object? argument,
+            object? byteOffset, object? length, Func<TypedArrayBase> create)
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("TypedArray constructor requires 'new'");
+            }
+
+            var primitive = TypeUtilities.IsPrimitive(argument);
+            var elementLength = primitive
+                ? ToConstructorLength(TypeUtilities.ToNumber(argument), "Invalid TypedArray length")
+                : 0;
+            var result = create();
+            var prototype = ObjectRuntime.GetItem(newTarget, "prototype");
+            if (!TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                prototype = RuntimeIntrinsics.GetFunctionRealm(newTarget).GetConstructorPrototype(result.GetType());
+            }
+            if (primitive)
+            {
+                result.InitializeFromLength(elementLength);
+            }
+            else if (argument is ArrayBuffer buffer)
+            {
+                result.InitializeFromBuffer(buffer, byteOffset, length);
+            }
+            else
+            {
+                result.InitializeFromArgument(argument);
+            }
+            PrototypeChain.SetPrototype(result, prototype);
+            return result;
         }
 
         protected TypedArrayBase SliceCore(object? start, object? end)
@@ -1067,12 +1101,12 @@ namespace JavaScriptRuntime
                 return 0;
             }
 
-            if (double.IsInfinity(value) || value < 0)
+            var truncated = global::System.Math.Truncate(value);
+            if (double.IsInfinity(value) || truncated < 0)
             {
                 throw new RangeError(errorMessage);
             }
 
-            var truncated = global::System.Math.Truncate(value);
             if (truncated > int.MaxValue)
             {
                 throw new RangeError(errorMessage);
@@ -1682,17 +1716,6 @@ namespace JavaScriptRuntime
                         return values;
                     }
 
-                case Array jsArray:
-                    {
-                        var values = new List<object?>(jsArray.Count);
-                        for (int i = 0; i < jsArray.Count; i++)
-                        {
-                            values.Add(jsArray[i]);
-                        }
-
-                        return values;
-                    }
-
                 case System.Array array:
                     {
                         var values = new List<object?>(array.Length);
@@ -1721,10 +1744,14 @@ namespace JavaScriptRuntime
 
             }
 
-            if (source is not null && source is not JsNull
-                && ObjectRuntime.GetItem(source, Symbol.iterator) is not null)
+            var iteratorMethod = source is null or JsNull ? null : ObjectRuntime.GetItem(source, Symbol.iterator);
+            if (iteratorMethod is not null and not JsNull)
             {
-                var iterator = ObjectRuntime.GetIterator(source);
+                if (!CallableOperations.IsCallable(iteratorMethod))
+                {
+                    throw new TypeError("Symbol.iterator is not a function");
+                }
+                var iterator = ObjectRuntime.GetIteratorFromMethod(source!, iteratorMethod, useNativeFastPath: false);
                 var values = new List<object?>();
                 while (true)
                 {
@@ -1777,7 +1804,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            length = ToLength(TypeUtilities.ToNumber(lengthValue));
+            length = ToConstructorLength(ToArrayLikeLength(lengthValue), "Invalid TypedArray length");
             return true;
         }
     }

@@ -23,4 +23,20 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "toindex-byteoffset.js")]
     public Task toindex_byteoffset() => ExecutionTestFromFile("toindex-byteoffset");
+
+    [Fact(DisplayName = "invoked-with-undefined-newtarget-sab.js")]
+    public Task Port400_invoked_with_undefined_newtarget_sab()
+        => ExecutionTestFromFile("invoked-with-undefined-newtarget-sab");
+
+    [Fact(DisplayName = "invoked-with-undefined-newtarget.js")]
+    public Task Port400_invoked_with_undefined_newtarget()
+        => ExecutionTestFromFile("invoked-with-undefined-newtarget");
+
+    [Fact(DisplayName = "toindex-bytelength-sab.js")]
+    public Task Port400_toindex_bytelength_sab()
+        => ExecutionTestFromFile("toindex-bytelength-sab");
+
+    [Fact(DisplayName = "toindex-byteoffset-sab.js")]
+    public Task Port400_toindex_byteoffset_sab()
+        => ExecutionTestFromFile("toindex-byteoffset-sab");
 }

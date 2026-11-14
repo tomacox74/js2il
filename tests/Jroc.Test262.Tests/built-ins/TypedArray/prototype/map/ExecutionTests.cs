@@ -28,4 +28,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     public Task speciesctor_resizable_buffer_grow() => ExecutionTestFromFile("speciesctor-resizable-buffer-grow");
     [Fact(DisplayName = "speciesctor-resizable-buffer-shrink.js")]
     public Task speciesctor_resizable_buffer_shrink() => ExecutionTestFromFile("speciesctor-resizable-buffer-shrink");
+
+    [Fact(DisplayName = "callbackfn-detachbuffer.js")]
+    public Task Port400_callbackfn_detachbuffer()
+        => ExecutionTestFromFile("callbackfn-detachbuffer");
 }

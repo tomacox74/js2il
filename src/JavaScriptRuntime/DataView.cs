@@ -213,6 +213,24 @@ namespace JavaScriptRuntime
         private readonly int _byteLength;
         private readonly bool _isLengthTracking;
 
+        internal static DataView Construct(object newTarget, object? buffer, object? byteOffset, object? byteLength)
+        {
+            var view = new DataView(buffer, byteOffset, byteLength);
+            var prototype = ObjectRuntime.GetItem(newTarget, "prototype");
+            if (!TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                prototype = GetPrototype(RuntimeIntrinsics.GetFunctionRealm(newTarget));
+            }
+            view._buffer.EnsureAttached();
+            if ((view._isLengthTracking ? view._byteOffset : view._byteOffset + (long)view._byteLength)
+                > view._buffer.ByteLengthInt)
+            {
+                throw new RangeError("Invalid DataView byteLength");
+            }
+            PrototypeChain.SetPrototype(view, prototype);
+            return view;
+        }
+
         public DataView(object? buffer)
             : this(buffer, null, null)
         {

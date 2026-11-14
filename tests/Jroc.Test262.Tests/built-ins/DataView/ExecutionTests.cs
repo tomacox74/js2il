@@ -23,4 +23,8 @@ public class ExecutionTests : InMemoryExecutionTestsBase
 
     [Fact(DisplayName = "proto.js")]
     public Task proto() => ExecutionTestFromFile("proto");
+
+    [Fact(DisplayName = "custom-proto-access-detaches-buffer.js")]
+    public Task Port400_custom_proto_access_detaches_buffer()
+        => ExecutionTestFromFile("custom-proto-access-detaches-buffer");
 }

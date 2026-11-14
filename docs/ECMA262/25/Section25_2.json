@@ -150,7 +150,7 @@
         "test262Paths": [
           "test/built-ins/SharedArrayBuffer/proto-from-ctor-realm.js"
         ],
-        "notes": "When the new target's prototype is not an object, construction uses the SharedArrayBuffer.prototype intrinsic from the new target's realm."
+        "notes": "When the new target's prototype is not an object, construction uses the SharedArrayBuffer.prototype intrinsic from the new target's realm. Length and maxByteLength are coerced and compared before prototype access; host allocation limits are enforced afterward, so a throwing prototype getter precedes allocation failure."
       },
       {
         "clause": "25.2",

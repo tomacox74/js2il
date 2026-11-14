@@ -309,7 +309,8 @@ namespace JavaScriptRuntime
 
         public static double notify(object? typedArray, object? index, object? count)
         {
-            if (typedArray is not (Int32Array or BigInt64Array) || typedArray is not TypedArrayBase view)
+            if (typedArray is not (Int32Array or BigInt64Array) || typedArray is not TypedArrayBase view
+                || view.buffer.IsDetached)
             {
                 throw new TypeError("Atomics.notify requires an Int32Array or BigInt64Array");
             }
