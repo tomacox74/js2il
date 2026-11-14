@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Numerics;
-using System.Text.RegularExpressions;
 
 namespace JavaScriptRuntime;
 
@@ -10,20 +9,7 @@ public static partial class Temporal
         ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"];
     private static readonly int[] TimeFieldReadOrder = [0, 4, 3, 1, 5, 2];
     private static readonly int[] TimeFieldMaximums = [23, 59, 59, 999, 999, 999];
-    private static readonly long[] TimeUnitNanoseconds =
-        [3_600_000_000_000L, 60_000_000_000L, 1_000_000_000L, 1_000_000L, 1_000L, 1L];
     internal const long NanosecondsPerDay = 86_400_000_000_000L;
-    private const RegexOptions TemporalRegexOptions =
-        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking;
-    private static readonly Regex TimeStringPattern = new(
-        @"\A(?:(?<date>(?:[+-][0-9]{6}|[0-9]{4})(?:-[0-9]{2}-[0-9]{2}|[0-9]{4}))[Tt ]|(?<prefix>[Tt]))?(?<clock>[0-9]{2}(?::[0-9]{2}(?::[0-9]{2})?|[0-9]{2}(?:[0-9]{2})?)?)(?<fraction>[.,][0-9]{1,9})?(?<offset>[Zz]|[+-][0-9]{2}(?::[0-9]{2}(?::[0-9]{2}(?:[.,][0-9]{1,9})?)?|[0-9]{2}(?:[0-9]{2}(?:[.,][0-9]{1,9})?)?)?)?\z",
-        TemporalRegexOptions);
-    private static readonly Regex DateStringPattern = new(
-        @"\A(?<year>[+-][0-9]{6}|[0-9]{4})(?:-(?<month>[0-9]{2})-(?<day>[0-9]{2})|(?<month>[0-9]{2})(?<day>[0-9]{2}))\z",
-        TemporalRegexOptions);
-    private static readonly Regex AnnotationPattern = new(
-        @"\A(?:[a-z_][a-z0-9_-]*=[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*|[a-zA-Z._][a-zA-Z0-9._+-]*(?:/[a-zA-Z0-9._+-]+)*|[+-][0-9]{2}(?::?[0-9]{2})?)\z",
-        TemporalRegexOptions);
 
     private static PlainTimeConstructor GetPlainTimeConstructor(RuntimeIntrinsics intrinsics)
         => intrinsics.GetOrCreate(
@@ -109,17 +95,6 @@ public static partial class Temporal
         => value as TemporalPlainTime
             ?? throw new TypeError("Temporal.PlainTime method called on incompatible receiver");
 
-    internal static double ToTemporalInteger(object? value, bool integral = false)
-    {
-        var number = TypeUtilities.ToNumber(value);
-        if (!double.IsFinite(number) || (integral && System.Math.Truncate(number) != number))
-        {
-            throw new RangeError("Temporal fields must be finite integers");
-        }
-        var result = System.Math.Truncate(number);
-        return result == 0 ? 0d : result;
-    }
-
     private static object? GetTemporalOptions(object? options)
     {
         if (options is null)
@@ -167,7 +142,7 @@ public static partial class Temporal
             var value = ObjectRuntime.GetItem(item, TimeFieldNames[index]);
             if (value is not null)
             {
-                fields[index] = ToTemporalInteger(value);
+                fields[index] = ToIntegerWithTruncation(value);
                 any = true;
             }
         }
@@ -188,7 +163,7 @@ public static partial class Temporal
             {
                 throw new RangeError("Temporal.PlainTime field is outside its valid range");
             }
-            result += (long)System.Math.Clamp(field, 0, TimeFieldMaximums[i]) * TimeUnitNanoseconds[i];
+            result += (long)System.Math.Clamp(field, 0, TimeFieldMaximums[i]) * TimeUnitLength((TimeUnit)i);
         }
         return result;
     }
@@ -246,44 +221,6 @@ public static partial class Temporal
         return new TemporalPlainTime((long)result);
     }
 
-    private static int GetTimeUnit(object? value, bool required)
-    {
-        if (value is null)
-        {
-            if (required)
-            {
-                throw new RangeError("Temporal rounding requires smallestUnit");
-            }
-            return -1;
-        }
-        return DotNet2JSConversions.ToStringRejectingSymbols(value) switch
-        {
-            "hour" or "hours" => 0,
-            "minute" or "minutes" => 1,
-            "second" or "seconds" => 2,
-            "millisecond" or "milliseconds" => 3,
-            "microsecond" or "microseconds" => 4,
-            "nanosecond" or "nanoseconds" => 5,
-            _ => throw new RangeError("Invalid Temporal time unit")
-        };
-    }
-
-    private static string GetTemporalRoundingMode(object? options, string fallback)
-    {
-        var value = GetTemporalOption(options, "roundingMode");
-        if (value is null)
-        {
-            return fallback;
-        }
-        var mode = DotNet2JSConversions.ToStringRejectingSymbols(value);
-        return mode switch
-        {
-            "ceil" or "floor" or "expand" or "trunc" or "halfCeil" or "halfFloor"
-                or "halfExpand" or "halfTrunc" or "halfEven" => mode,
-            _ => throw new RangeError("Invalid Temporal rounding mode")
-        };
-    }
-
     private static TemporalPlainTime RoundPlainTime(object? receiver, object? roundTo)
     {
         var time = RequirePlainTime(receiver);
@@ -308,32 +245,32 @@ public static partial class Temporal
         {
             throw new RangeError("Invalid Temporal rounding increment");
         }
-        var mode = GetTemporalRoundingMode(options, "halfExpand");
+        var mode = GetTemporalRoundingMode(options, TemporalRoundingMode.HalfExpand);
         var unit = GetTimeUnit(GetTemporalOption(options, "smallestUnit"), true);
         var maximum = unit switch
         {
-            0 => 24,
-            1 or 2 => 60,
+            TimeUnit.Hour => 24,
+            TimeUnit.Minute or TimeUnit.Second => 60,
             _ => 1000
         };
         if (increment >= maximum || maximum % increment != 0)
         {
             throw new RangeError("Temporal rounding increment must divide its unit");
         }
-        return new TemporalPlainTime(RoundTime(time.Nanoseconds, (long)increment * TimeUnitNanoseconds[unit], mode));
+        return new TemporalPlainTime(RoundTime(time.Nanoseconds, (long)increment * TimeUnitLength(unit), mode));
     }
 
-    private static long RoundTime(long nanoseconds, long increment, string mode)
+    private static long RoundTime(long nanoseconds, long increment, TemporalRoundingMode mode)
     {
         var quotient = nanoseconds / increment;
         var remainder = nanoseconds % increment;
         var increase = mode switch
         {
-            "ceil" or "expand" => remainder != 0,
-            "floor" or "trunc" => false,
-            "halfCeil" or "halfExpand" => remainder * 2 >= increment,
-            "halfFloor" or "halfTrunc" => remainder * 2 > increment,
-            "halfEven" => remainder * 2 > increment || (remainder * 2 == increment && quotient % 2 != 0),
+            TemporalRoundingMode.Ceil or TemporalRoundingMode.Expand => remainder != 0,
+            TemporalRoundingMode.Floor or TemporalRoundingMode.Trunc => false,
+            TemporalRoundingMode.HalfCeil or TemporalRoundingMode.HalfExpand => remainder * 2 >= increment,
+            TemporalRoundingMode.HalfFloor or TemporalRoundingMode.HalfTrunc => remainder * 2 > increment,
+            TemporalRoundingMode.HalfEven => remainder * 2 > increment || (remainder * 2 == increment && quotient % 2 != 0),
             _ => throw new RangeError("Invalid Temporal rounding mode")
         };
         return ((quotient + (increase ? 1 : 0)) * increment) % NanosecondsPerDay;
@@ -342,79 +279,36 @@ public static partial class Temporal
     private static string FormatPlainTime(TemporalPlainTime time, object? suppliedOptions)
     {
         var options = GetTemporalOptions(suppliedOptions);
-        var rawDigits = GetTemporalOption(options, "fractionalSecondDigits");
-        var digits = -1;
-        if (rawDigits is double or float or int or long or short or byte)
-        {
-            var value = System.Math.Floor(TypeUtilities.ToNumber(rawDigits));
-            if (!double.IsFinite(value) || value < 0 || value > 9)
-            {
-                throw new RangeError("Invalid fractionalSecondDigits option");
-            }
-            digits = (int)value;
-        }
-        else if (rawDigits is not null && DotNet2JSConversions.ToStringRejectingSymbols(rawDigits) != "auto")
-        {
-            throw new RangeError("Invalid fractionalSecondDigits option");
-        }
-        var mode = GetTemporalRoundingMode(options, "trunc");
+        var digits = GetTemporalFractionalSecondDigitsOption(options);
+        var mode = GetTemporalRoundingMode(options, TemporalRoundingMode.Trunc);
         var unit = GetTimeUnit(GetTemporalOption(options, "smallestUnit"), false);
-        if (unit == 0)
+        if (unit == TimeUnit.Hour)
         {
             throw new RangeError("Temporal.PlainTime.toString does not support hour precision");
         }
-        if (unit >= 2)
-        {
-            digits = (unit - 2) * 3;
-        }
-        long increment = unit == 1 ? TimeUnitNanoseconds[1] : 1;
-        if (unit != 1 && digits >= 0)
-        {
-            for (var i = digits; i < 9; i++)
-            {
-                increment *= 10;
-            }
-        }
-        var rounded = RoundTime(time.Nanoseconds, increment, mode);
-        var hour = rounded / TimeUnitNanoseconds[0];
-        var minute = rounded / TimeUnitNanoseconds[1] % 60;
+        var precision = ToSecondsStringPrecisionRecord(unit, digits);
+        digits = precision.Digits;
+        var rounded = RoundTime(time.Nanoseconds, precision.NanosecondIncrement, mode);
+        var hour = rounded / TimeUnitLength(TimeUnit.Hour);
+        var minute = rounded / TimeUnitLength(TimeUnit.Minute) % 60;
         var result = hour.ToString("D2", CultureInfo.InvariantCulture) + ":"
             + minute.ToString("D2", CultureInfo.InvariantCulture);
-        if (unit == 1)
+        if (unit == TimeUnit.Minute)
         {
             return result;
         }
-        result += ":" + (rounded / TimeUnitNanoseconds[2] % 60).ToString("D2", CultureInfo.InvariantCulture);
-        var fraction = (rounded % TimeUnitNanoseconds[2]).ToString("D9", CultureInfo.InvariantCulture);
+        result += ":" + (rounded / TimeUnitLength(TimeUnit.Second) % 60).ToString("D2", CultureInfo.InvariantCulture);
+        var fraction = (rounded % TimeUnitLength(TimeUnit.Second)).ToString("D9", CultureInfo.InvariantCulture);
         fraction = digits >= 0 ? fraction[..digits] : fraction.TrimEnd('0');
         return fraction.Length == 0 ? result : result + "." + fraction;
     }
 
     private static long ParseTimeString(string text)
     {
-        var annotationStart = text.IndexOf('[');
-        var core = annotationStart < 0 ? text : text[..annotationStart];
-        if (annotationStart >= 0)
-        {
-            ValidateTimeAnnotations(text[annotationStart..]);
-        }
-        var match = TimeStringPattern.Match(core);
-        if (!match.Success)
-        {
-            throw new RangeError("Invalid Temporal time string");
-        }
-        var date = match.Groups["date"].Value;
-        if (date.Length != 0)
-        {
-            ValidateTimeDate(date);
-        }
-        var clock = match.Groups["clock"].Value.Replace(":", "", StringComparison.Ordinal);
-        var fraction = match.Groups["fraction"].Value;
-        if (fraction.Length != 0 && clock.Length != 6)
-        {
-            throw new RangeError("Temporal time fractions require seconds");
-        }
-        var offset = match.Groups["offset"].Value;
+        var parsed = ParseISODateTime(text);
+        var clock = parsed.Clock;
+        var fraction = parsed.Fraction;
+        var offset = parsed.Offset;
         if (offset is "Z" or "z")
         {
             throw new RangeError("Temporal.PlainTime does not accept a UTC designator");
@@ -423,9 +317,9 @@ public static partial class Temporal
         {
             ValidateTimeOffset(offset);
         }
-        if (date.Length == 0 && match.Groups["prefix"].Length == 0)
+        if (parsed.Date is null && !parsed.HasTimePrefix)
         {
-            ValidateUnambiguousTime(core, clock, offset);
+            ValidateUnambiguousTime(parsed.Core, clock, offset);
         }
         var hour = int.Parse(clock[..2], CultureInfo.InvariantCulture);
         var minute = clock.Length >= 4 ? int.Parse(clock.Substring(2, 2), CultureInfo.InvariantCulture) : 0;
@@ -435,8 +329,8 @@ public static partial class Temporal
             throw new RangeError("Invalid Temporal time string field");
         }
         var nanos = fraction.Length == 0 ? 0 : int.Parse(fraction[1..].PadRight(9, '0'), CultureInfo.InvariantCulture);
-        return hour * TimeUnitNanoseconds[0] + minute * TimeUnitNanoseconds[1]
-            + System.Math.Min(second, 59) * TimeUnitNanoseconds[2] + nanos;
+        return hour * TimeUnitLength(TimeUnit.Hour) + minute * TimeUnitLength(TimeUnit.Minute)
+            + System.Math.Min(second, 59) * TimeUnitLength(TimeUnit.Second) + nanos;
     }
 
     private static void ValidateUnambiguousTime(string core, string clock, string offset)
@@ -476,117 +370,10 @@ public static partial class Temporal
         }
     }
 
-    private static void ValidateTimeDate(string date)
-    {
-        var match = DateStringPattern.Match(date);
-        if (!match.Success || match.Groups["year"].Value == "-000000")
-        {
-            throw new RangeError("Invalid date in Temporal time string");
-        }
-        var year = int.Parse(match.Groups["year"].Value, CultureInfo.InvariantCulture);
-        var month = int.Parse(match.Groups["month"].Value, CultureInfo.InvariantCulture);
-        var day = int.Parse(match.Groups["day"].Value, CultureInfo.InvariantCulture);
-        if (!IsValidMonthDay(year, month, day))
-        {
-            throw new RangeError("Invalid date in Temporal time string");
-        }
-    }
-
-    private static bool IsValidMonthDay(int year, int month, int day)
-    {
-        var maximum = month switch
-        {
-            2 => year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 29 : 28,
-            4 or 6 or 9 or 11 => 30,
-            >= 1 and <= 12 => 31,
-            _ => 0
-        };
-        return day >= 1 && day <= maximum;
-    }
-
-    private static void ValidateTimeOffset(string offset)
-    {
-        var digits = offset[1..].Replace(":", "", StringComparison.Ordinal);
-        var fraction = digits.IndexOfAny(['.', ',']);
-        if (fraction >= 0)
-        {
-            digits = digits[..fraction];
-        }
-        if (int.Parse(digits[..2], CultureInfo.InvariantCulture) > 23
-            || (digits.Length >= 4 && int.Parse(digits.Substring(2, 2), CultureInfo.InvariantCulture) > 59)
-            || (digits.Length >= 6 && int.Parse(digits.Substring(4, 2), CultureInfo.InvariantCulture) > 59))
-        {
-            throw new RangeError("Invalid Temporal time offset");
-        }
-    }
-
-    private static void ValidateTimeAnnotations(string annotations)
-    {
-        var position = 0;
-        var calendarSeen = false;
-        var calendarCritical = false;
-        var zoneSeen = false;
-        var keyValueSeen = false;
-        while (position < annotations.Length)
-        {
-            if (annotations[position] != '[')
-            {
-                throw new RangeError("Invalid Temporal time annotation");
-            }
-            var end = annotations.IndexOf(']', position + 1);
-            if (end < 0)
-            {
-                throw new RangeError("Invalid Temporal time annotation");
-            }
-            var annotation = annotations[(position + 1)..end];
-            var critical = annotation.StartsWith('!');
-            if (critical)
-            {
-                annotation = annotation[1..];
-            }
-            if (!AnnotationPattern.IsMatch(annotation))
-            {
-                throw new RangeError("Invalid Temporal time annotation");
-            }
-            if (annotation.Contains('='))
-            {
-                keyValueSeen = true;
-            }
-            if (annotation.StartsWith("u-ca=", StringComparison.Ordinal))
-            {
-                if (calendarSeen && (critical || calendarCritical))
-                {
-                    throw new RangeError("Duplicate critical Temporal calendar annotation");
-                }
-                calendarSeen = true;
-                calendarCritical |= critical;
-            }
-            else if (annotation.Contains('='))
-            {
-                if (critical)
-                {
-                    throw new RangeError("Unknown critical Temporal time annotation");
-                }
-            }
-            else
-            {
-                if (zoneSeen || keyValueSeen)
-                {
-                    throw new RangeError("Invalid Temporal time zone annotation order");
-                }
-                if (annotation.StartsWith('+') || annotation.StartsWith('-'))
-                {
-                    ValidateTimeOffset(annotation);
-                }
-                zoneSeen = true;
-            }
-            position = end + 1;
-        }
-    }
-
     private sealed class PlainTimeConstructor : JsFunctionObject
     {
         public override bool IsConstructor => true;
+        internal override bool SelectsConstructedPrototype => true;
 
         protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => throw new TypeError("Temporal.PlainTime requires 'new'");
@@ -597,7 +384,7 @@ public static partial class Temporal
             for (var i = 0; i < fields.Length; i++)
             {
                 var argument = arguments.GetArgument(i);
-                fields[i] = argument is null ? 0d : ToTemporalInteger(argument);
+                fields[i] = argument is null ? 0d : ToIntegerWithTruncation(argument);
             }
             var nanoseconds = RegulateTime(fields, true);
             var prototype = ObjectRuntime.GetItem(newTarget!, "prototype");

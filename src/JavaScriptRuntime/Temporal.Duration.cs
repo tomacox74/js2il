@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Numerics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JavaScriptRuntime;
@@ -9,9 +10,10 @@ public static partial class Temporal
     private static readonly string[] DurationFieldNames =
         ["years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds"];
     private static readonly int[] DurationFieldReadOrder = [3, 4, 8, 7, 5, 1, 9, 6, 2, 0];
-    private static readonly Regex DurationStringPattern = new(
+    [GeneratedRegex(
         @"\A(?<sign>[+-])?[Pp](?:(?<years>[0-9]+)[Yy])?(?:(?<months>[0-9]+)[Mm])?(?:(?<weeks>[0-9]+)[Ww])?(?:(?<days>[0-9]+)[Dd])?(?:[Tt](?:(?<hours>[0-9]+)(?:[.,](?<hourFraction>[0-9]{1,9}))?[Hh])?(?:(?<minutes>[0-9]+)(?:[.,](?<minuteFraction>[0-9]{1,9}))?[Mm])?(?:(?<seconds>[0-9]+)(?:[.,](?<secondFraction>[0-9]{1,9}))?[Ss])?)?\z",
-        TemporalRegexOptions);
+        TemporalRegexOptions)]
+    private static partial Regex DurationStringPattern();
 
     private static DurationConstructor GetDurationConstructor(RuntimeIntrinsics intrinsics)
         => intrinsics.GetOrCreate(
@@ -55,11 +57,109 @@ public static partial class Temporal
                 }
                 DefineTemporalGetter(prototype, "sign", receiver => (double)RequireDuration(receiver).Sign);
                 DefineTemporalGetter(prototype, "blank", receiver => RequireDuration(receiver).Sign == 0);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "valueOf",
+                    (BuiltinFunction0)(static _ => throw new TypeError("Cannot convert Temporal.Duration to a primitive value")), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString",
+                    (BuiltinFunction1)(static (receiver, options) => FormatDuration(RequireDuration(receiver), options)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toJSON",
+                    (BuiltinFunction0)(static receiver => TemporalDurationToString(RequireDuration(receiver), -1)), 0d);
             });
 
     private static TemporalDuration RequireDuration(object? receiver)
         => receiver as TemporalDuration
             ?? throw new TypeError("Temporal.Duration getter called on incompatible receiver");
+
+    private static string FormatDuration(TemporalDuration duration, object? suppliedOptions)
+    {
+        var options = GetTemporalOptions(suppliedOptions);
+        var digits = GetTemporalFractionalSecondDigitsOption(options);
+        var roundingMode = GetTemporalRoundingMode(options, TemporalRoundingMode.Trunc);
+        var smallestUnit = GetTimeUnit(GetTemporalOption(options, "smallestUnit"), false);
+        if (smallestUnit is TimeUnit.Hour or TimeUnit.Minute)
+        {
+            throw new RangeError("Temporal.Duration.toString requires second or finer precision");
+        }
+        var precision = ToSecondsStringPrecisionRecord(smallestUnit, digits);
+        if (precision.Unit == TimeUnit.Nanosecond && precision.Increment == 1)
+        {
+            return TemporalDurationToString(duration, precision.Digits);
+        }
+
+        var roundedTime = RoundTimeDuration(duration.TimeNanoseconds, precision.NanosecondIncrement, roundingMode);
+        var fields = (double[])duration.Fields.Clone();
+        var hasDate = fields[0] != 0 || fields[1] != 0 || fields[2] != 0 || fields[3] != 0;
+        var largestTimeUnit = hasDate || fields[4] != 0
+            ? TimeUnit.Hour
+            : fields[5] != 0 ? TimeUnit.Minute : TimeUnit.Second;
+        var remainder = BigInteger.Abs(roundedTime);
+        if (hasDate)
+        {
+            fields[3] += (double)(remainder / NanosecondsPerDay) * roundedTime.Sign;
+            remainder %= NanosecondsPerDay;
+        }
+        for (var unit = TimeUnit.Hour; unit <= TimeUnit.Nanosecond; unit++)
+        {
+            var index = 4 + (int)unit;
+            fields[index] = 0;
+            if (unit >= largestTimeUnit)
+            {
+                var length = TimeUnitLength(unit);
+                fields[index] = (double)(remainder / length) * roundedTime.Sign;
+                remainder %= length;
+            }
+        }
+        return TemporalDurationToString(new TemporalDuration(fields), precision.Digits);
+    }
+
+    private static string TemporalDurationToString(TemporalDuration duration, int digits)
+    {
+        var fields = duration.Fields;
+        var result = new StringBuilder(duration.Sign < 0 ? "-P" : "P");
+        const string dateSuffixes = "YMWD";
+        for (var i = 0; i < dateSuffixes.Length; i++)
+        {
+            if (fields[i] != 0)
+            {
+                result.Append(BigInteger.Abs(new BigInteger(fields[i])).ToString(CultureInfo.InvariantCulture));
+                result.Append(dateSuffixes[i]);
+            }
+        }
+        var secondsDuration = new BigInteger(fields[6]) * TimeUnitLength(TimeUnit.Second)
+            + new BigInteger(fields[7]) * TimeUnitLength(TimeUnit.Millisecond)
+            + new BigInteger(fields[8]) * TimeUnitLength(TimeUnit.Microsecond)
+            + new BigInteger(fields[9]);
+        var zeroMinutesAndHigher = fields[0] == 0 && fields[1] == 0 && fields[2] == 0
+            && fields[3] == 0 && fields[4] == 0 && fields[5] == 0;
+        var includeSeconds = !secondsDuration.IsZero || zeroMinutesAndHigher || digits >= 0;
+        if (fields[4] != 0 || fields[5] != 0 || includeSeconds)
+        {
+            result.Append('T');
+            if (fields[4] != 0)
+            {
+                result.Append(BigInteger.Abs(new BigInteger(fields[4])).ToString(CultureInfo.InvariantCulture));
+                result.Append('H');
+            }
+            if (fields[5] != 0)
+            {
+                result.Append(BigInteger.Abs(new BigInteger(fields[5])).ToString(CultureInfo.InvariantCulture));
+                result.Append('M');
+            }
+            if (includeSeconds)
+            {
+                var seconds = BigInteger.DivRem(BigInteger.Abs(secondsDuration), TimeUnitLength(TimeUnit.Second), out var nanoseconds);
+                result.Append(seconds.ToString(CultureInfo.InvariantCulture));
+                var fraction = nanoseconds.ToString("D9", CultureInfo.InvariantCulture);
+                fraction = digits < 0 ? fraction.TrimEnd('0') : fraction[..digits];
+                if (fraction.Length != 0)
+                {
+                    result.Append('.');
+                    result.Append(fraction);
+                }
+                result.Append('S');
+            }
+        }
+        return result.ToString();
+    }
 
     private static TemporalDuration ToTemporalDuration(object? item)
     {
@@ -82,7 +182,7 @@ public static partial class Temporal
             var value = ObjectRuntime.GetItem(item!, DurationFieldNames[index]);
             if (value is not null)
             {
-                fields[index] = ToTemporalInteger(value, integral: true);
+                fields[index] = ToIntegerIfIntegral(value);
                 any = true;
             }
         }
@@ -95,7 +195,7 @@ public static partial class Temporal
 
     private static TemporalDuration ParseDurationString(string text)
     {
-        var match = DurationStringPattern.Match(text);
+        var match = DurationStringPattern().Match(text);
         if (!match.Success)
         {
             throw new RangeError("Invalid Temporal duration string");
@@ -125,12 +225,12 @@ public static partial class Temporal
         {
             throw new RangeError("Only the smallest duration unit may have a fraction");
         }
-        var fractionalNanoseconds = FractionalDurationNanoseconds(hourFraction, TimeUnitNanoseconds[0])
-            + FractionalDurationNanoseconds(minuteFraction, TimeUnitNanoseconds[1])
-            + FractionalDurationNanoseconds(secondFraction, TimeUnitNanoseconds[2]);
+        var fractionalNanoseconds = FractionalDurationNanoseconds(hourFraction, TimeUnitLength(TimeUnit.Hour))
+            + FractionalDurationNanoseconds(minuteFraction, TimeUnitLength(TimeUnit.Minute))
+            + FractionalDurationNanoseconds(secondFraction, TimeUnitLength(TimeUnit.Second));
         for (var i = 5; i < fields.Length; i++)
         {
-            var unit = TimeUnitNanoseconds[i - 4];
+            var unit = TimeUnitLength((TimeUnit)(i - 4));
             fields[i] += (double)(fractionalNanoseconds / unit);
             fractionalNanoseconds %= unit;
         }
@@ -152,6 +252,7 @@ public static partial class Temporal
     private sealed class DurationConstructor : JsFunctionObject
     {
         public override bool IsConstructor => true;
+        internal override bool SelectsConstructedPrototype => true;
 
         protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => throw new TypeError("Temporal.Duration requires 'new'");
@@ -162,7 +263,7 @@ public static partial class Temporal
             for (var i = 0; i < fields.Length; i++)
             {
                 var argument = arguments.GetArgument(i);
-                fields[i] = argument is null ? 0d : ToTemporalInteger(argument, integral: true);
+                fields[i] = argument is null ? 0d : ToIntegerIfIntegral(argument);
             }
             var duration = new TemporalDuration(fields);
             var prototype = ObjectRuntime.GetItem(newTarget!, "prototype");
