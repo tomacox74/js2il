@@ -357,5 +357,94 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Function_ConstructorShape_PrototypeSetSemantics() { var testName = nameof(Function_ConstructorShape_PrototypeSetSemantics); return ExecutionTest(testName); }
+
+        [Fact]
+        public void Function_DuplicateSameArityArrayPatternDeclarationsPreserveLastCallableNameAndClosures()
+        {
+            AssertParameterCapture(nameof(Function_DuplicateSameArityArrayPatternDeclarationsPreserveLastCallableNameAndClosures), """
+                const beforeDeclarations = fn4([[1, 2, 3, 4]]);
+                function fn4([overwritten]) { return () => -100; }
+                const chosen = fn4;
+                function fn4([[x, y, ...z]]) { return () => ++x + y + z.length; }
+                assert.sameValue(fn4.name, "fn4");
+                assert.sameValue(chosen.name, "fn4");
+                assert.sameValue(fn4.length, 1);
+                assert.sameValue(chosen, fn4);
+                const other = chosen([[10, 20, 30]]);
+                assert.sameValue(beforeDeclarations(), 6);
+                assert.sameValue(other(), 32);
+                assert.sameValue(beforeDeclarations(), 7);
+                assert.sameValue(other(), 33);
+                assert.sameValue(fn4([[4, 5]])(), 10);
+                assert.sameValue(fn4.name, "fn4");
+                """);
+        }
+
+        [Fact]
+        public void Function_RestArrayPatternParametersRemainCapturedAfterReturn()
+        {
+            AssertParameterCapture(nameof(Function_RestArrayPatternParametersRemainCapturedAfterReturn), """
+                function f(...[a, b]) { return () => a + b; }
+                const first = f(1, 2), second = f(10, 20);
+                assert.sameValue(first(), 3);
+                assert.sameValue(second(), 30);
+                assert.sameValue(first(), 3);
+                function defaults(...[a = 4, b = 5]) {
+                  return () => { a++; return a + b; };
+                }
+                const omitted = defaults();
+                assert.sameValue(omitted(), 10);
+                assert.sameValue(omitted(), 11);
+                assert.sameValue(defaults(0, 2)(), 3);
+                assert.sameValue(f.length, 0);
+                """);
+        }
+
+        [Fact]
+        public void Function_RestObjectPatternParametersRemainCapturedAfterReturn()
+        {
+            AssertParameterCapture(nameof(Function_RestObjectPatternParametersRemainCapturedAfterReturn), """
+                function f(...{ 0: first, 1: second = 8, length: count }) {
+                  return () => first + second + count;
+                }
+                const one = f(3), two = f(5, 7, 99);
+                assert.sameValue(one(), 12);
+                assert.sameValue(two(), 15);
+                assert.sameValue(one(), 12);
+                assert.sameValue(f.length, 0);
+                """);
+        }
+
+        [Fact]
+        public void Function_ArrowRestArrayAndObjectPatternParametersRemainCapturedAfterReturn()
+        {
+            AssertParameterCapture(nameof(Function_ArrowRestArrayAndObjectPatternParametersRemainCapturedAfterReturn), """
+                const g = (...[x]) => () => x;
+                const first = g(7), second = g(11);
+                assert.sameValue(first(), 7);
+                assert.sameValue(second(), 11);
+                assert.sameValue(first(), 7);
+                const defaults = (...[x = 9]) => () => ++x;
+                const omitted = defaults();
+                assert.sameValue(omitted(), 10);
+                assert.sameValue(omitted(), 11);
+                const object = (...{ 0: x = 4, length: count }) => () => x + count;
+                const empty = object(), populated = object(7, 8);
+                assert.sameValue(empty(), 4);
+                assert.sameValue(populated(), 9);
+                assert.sameValue(empty(), 4);
+                assert.sameValue(g.length, 0);
+                assert.sameValue(object.length, 0);
+                """);
+        }
+
+        private static void AssertParameterCapture(string name, string source)
+        {
+            var result = Test262SharedAssertHarness.CompileAndExecute(
+                name, "FunctionParameterCapture",
+                _ => (source, System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), name + ".js")));
+            Assert.Null(result.UnhandledException);
+            Assert.Empty(result.Output);
+        }
     }
 }
