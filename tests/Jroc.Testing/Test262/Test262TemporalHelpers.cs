@@ -64,7 +64,7 @@ internal static class Test262TemporalHelpers
         object? millisecond, object? microsecond, object? nanosecond, object? description)
     {
         var prefix = DescriptionPrefix(description);
-        Assert.ok(IsPlainTime(time), prefix + "instanceof");
+        Assert.strictEqual(IsPlainTime(time), true, prefix + "instanceof");
         var fields = new[] { "hour", "minute", "second", "millisecond", "microsecond", "nanosecond" };
         object?[] expected = [hour, minute, second, millisecond, microsecond, nanosecond];
         for (var i = 0; i < fields.Length; i++)
@@ -77,9 +77,9 @@ internal static class Test262TemporalHelpers
     private static void AssertPlainTimesEqual(object? actual, object? expected, object? description)
     {
         var prefix = DescriptionPrefix(description);
-        Assert.ok(IsPlainTime(expected), prefix + "expected value should be a Temporal.PlainTime");
-        Assert.ok(IsPlainTime(actual), prefix + "instanceof");
-        Assert.ok(ObjectRuntime.CallMember(actual!, "equals", [expected!]), prefix + "equals method");
+        Assert.strictEqual(IsPlainTime(expected), true, prefix + "expected value should be a Temporal.PlainTime");
+        Assert.strictEqual(IsPlainTime(actual), true, prefix + "instanceof");
+        Assert.strictEqual(ObjectRuntime.CallMember(actual!, "equals", [expected!]), true, prefix + "equals method");
     }
 
     private static object PlainTimeStringsAmbiguous()
