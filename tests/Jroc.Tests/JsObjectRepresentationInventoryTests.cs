@@ -23,7 +23,6 @@ public sealed class JsObjectRepresentationInventoryTests
         new Dictionary<string, string>
         {
             ["JavaScriptRuntime.AggregateError"] = ErrorReason,
-            ["JavaScriptRuntime.Array+ArrayIterator"] = IteratorReason,
             ["JavaScriptRuntime.ArrayBuffer"] = BufferViewReason,
             ["JavaScriptRuntime.DataView"] = BufferViewReason,
             ["JavaScriptRuntime.Error"] = ErrorReason,
