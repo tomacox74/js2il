@@ -9,28 +9,18 @@
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#compatibility-and-project-status)
 [![NuGet version](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
-JROC is a JavaScript-to-.NET compiler. It compiles JavaScript source directly
-to .NET IL and produces ordinary .NET assemblies that run with the `dotnet`
-host.
-
-Unlike an embedded JavaScript interpreter, JROC performs ahead-of-time
-compilation: JavaScript is parsed, analyzed, lowered, and emitted as a .NET
-assembly before the program runs. JROC includes a JavaScript runtime and
-support for a growing set of Node.js APIs, making it possible to bring
-JavaScript applications and libraries into the .NET ecosystem.
-
-JROC supports Windows, Linux, and macOS.
-
-JROC currently targets ECMAScript 2025 and .NET 10. The command-line tool runs
-on .NET 10 and rolls forward to .NET 11 when only .NET 11 is installed. The
-generated `.runtimeconfig.json` defaults to the runtime version that
-runs JROC. The project is under active development; compatibility is broad but
-not yet complete.
+JROC compiles JavaScript ahead of time to .NET IL, producing assemblies you
+can run with `dotnet`. It includes a JavaScript runtime with support for a
+growing set of Node.js APIs. You can also compile JavaScript as part of a .NET
+build with [`Jroc.SDK`](#use-jroc-from-net-projects).
 
 ## Install JROC
 
-Install the [.NET 10 SDK or later](https://dotnet.microsoft.com/download/dotnet),
-then install JROC from NuGet as a global .NET tool:
+Install the [.NET 10 or .NET 11 SDK](https://dotnet.microsoft.com/download/dotnet).
+The CLI targets .NET 10 and rolls forward to .NET 11 when only the .NET 11
+runtime is installed.
+
+Install JROC from NuGet as a global .NET tool:
 
 ```shell
 dotnet tool install --global jroc
@@ -78,7 +68,9 @@ Hello from JROC!
 JROC writes these files to the output directory:
 
 - `hello.dll` — the compiled .NET assembly.
-- `hello.runtimeconfig.json` — configuration used by the `dotnet` host.
+- `hello.runtimeconfig.json` — tells the `dotnet` host which runtime the
+  generated program targets. By default, this matches the .NET runtime running
+  JROC.
 - `JavaScriptRuntime.dll` — the runtime support required by the generated
   assembly.
 
@@ -173,6 +165,8 @@ APIs, and in-memory compilation. Keep JROC package versions aligned
 when using more than one package in the same application.
 
 ## Compatibility and project status
+
+JROC supports Windows, Linux, and macOS. It targets ECMAScript 2025.
 
 JROC is experimental and does not yet support every JavaScript or Node.js
 feature. In particular, `eval` is not currently supported.
