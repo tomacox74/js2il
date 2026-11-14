@@ -159,7 +159,7 @@ namespace JavaScriptRuntime
                 ? ConvertBigIntegerToDouble(bigInteger)
                 : TypeUtilities.ToNumber(value);
 
-        private static double ConvertBigIntegerToDouble(System.Numerics.BigInteger value)
+        internal static double ConvertBigIntegerToDouble(System.Numerics.BigInteger value)
         {
             if (value.IsZero)
             {

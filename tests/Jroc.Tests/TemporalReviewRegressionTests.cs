@@ -175,6 +175,51 @@ public sealed class TemporalReviewRegressionTests
             """);
     }
 
+    // CLR BigInteger casts truncate, and rounding the integer quotient before
+    // adding a fraction can round twice. These are numeric-runtime regressions,
+    // not additional standalone upstream ports.
+    [Theory]
+    [InlineData("fraction-above-even-tie", "{ microseconds: 9007199254740992, nanoseconds: 1999 }", "microseconds", "9007199254740994")]
+    [InlineData("negative-fraction-above-even-tie", "{ microseconds: -9007199254740992, nanoseconds: -1999 }", "microseconds", "-9007199254740994")]
+    [InlineData("even-tie-down", "{ microseconds: 9007199254740992, nanoseconds: 1000 }", "microseconds", "9007199254740992")]
+    [InlineData("even-tie-up", "{ microseconds: 9007199254740992, nanoseconds: 3000 }", "microseconds", "9007199254740996")]
+    [InlineData("fractional-day", "{ nanoseconds: 1 }", "days", "1 / 86400000000000")]
+    [InlineData("zero", "{ nanoseconds: 0 }", "seconds", "0")]
+    public void DurationNumericTotalRoundsExactRatioOnce(string name, string fields, string unit, string expected)
+    {
+        Run("duration_total_" + name, $$"""
+            const duration = Temporal.Duration.from({{fields}});
+            assert.sameValue(duration.total("{{unit}}"), {{expected}});
+            assert.sameValue(duration.total({ unit: "{{unit}}" }), {{expected}});
+            """);
+    }
+
+    [Fact]
+    public void DurationNumericTotalSupportsFixedUnitsAndValidatesOptions()
+    {
+        Run("duration_total_options", """
+            const duration = new Temporal.Duration(0, 0, 0, 1, 2, 3, 4, 5, 6, 7);
+            // Independent exact integer count for 1d 2h 3m 4.005006007s.
+            const nanoseconds = 93784005006007;
+            for (const [unit, divisor] of [
+              ["day", 86400000000000], ["hour", 3600000000000], ["minute", 60000000000],
+              ["second", 1000000000], ["millisecond", 1000000], ["microsecond", 1000], ["nanosecond", 1]
+            ]) {
+              assert.sameValue(duration.total(unit), nanoseconds / divisor);
+              assert.sameValue(duration.total({ unit: unit + "s" }), nanoseconds / divisor);
+            }
+            assert.throws(TypeError, () => duration.total());
+            for (const options of [null, true, 1, 1n, Symbol()]) {
+              assert.throws(TypeError, () => duration.total(options));
+            }
+            for (const options of [{}, "", "year", "month", "week", "invalid"]) {
+              assert.throws(RangeError, () => duration.total(options));
+            }
+            assert.throws(TypeError, () => Temporal.Duration.prototype.total.call({}, "seconds"));
+            assert.throws(RangeError, () => new Temporal.Duration(1).total("days"));
+            """);
+    }
+
     [Theory]
     [InlineData("Europe/+bad")]
     [InlineData("Europe/..")]

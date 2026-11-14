@@ -332,7 +332,7 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -367,12 +367,11 @@
 			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(float64, object)
 			IL_0041: stloc.2
 			IL_0042: ldloc.1
-			IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0048: ldloc.2
-			IL_0049: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_004e: sub
-			IL_004f: box [System.Runtime]System.Double
-			IL_0054: ret
+			IL_0043: ldloc.2
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+			IL_0049: stloc.2
+			IL_004a: ldloc.2
+			IL_004b: ret
 		} // end of method K::calc
 
 	} // end of class K

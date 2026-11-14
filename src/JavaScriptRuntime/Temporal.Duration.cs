@@ -37,6 +37,8 @@ public static partial class Temporal
                         var duration = ToTemporalDuration(item);
                         return new TemporalDuration((double[])duration.Fields.Clone());
                     }), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(constructor, "compare",
+                    (BuiltinFunction3)(static (_, one, two, options) => CompareDurations(one, two, options)), 2d);
             });
 
     internal static JsObject GetDurationPrototype(RuntimeIntrinsics intrinsics)
@@ -57,17 +59,188 @@ public static partial class Temporal
                 }
                 DefineTemporalGetter(prototype, "sign", receiver => (double)RequireDuration(receiver).Sign);
                 DefineTemporalGetter(prototype, "blank", receiver => RequireDuration(receiver).Sign == 0);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "abs",
+                    (BuiltinFunction0)(static receiver => TransformDuration(receiver, false)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "negated",
+                    (BuiltinFunction0)(static receiver => TransformDuration(receiver, true)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "with",
+                    (BuiltinFunction1)(static (receiver, fields) => WithDuration(receiver, fields)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "add",
+                    (BuiltinFunction1)(static (receiver, other) => AddDurations(receiver, other, false)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "subtract",
+                    (BuiltinFunction1)(static (receiver, other) => AddDurations(receiver, other, true)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "total",
+                    (BuiltinFunction1)(static (receiver, options) => TotalDuration(receiver, options)), 1d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "valueOf",
                     (BuiltinFunction0)(static _ => throw new TypeError("Cannot convert Temporal.Duration to a primitive value")), 0d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString",
                     (BuiltinFunction1)(static (receiver, options) => FormatDuration(RequireDuration(receiver), options)), 0d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "toJSON",
                     (BuiltinFunction0)(static receiver => TemporalDurationToString(RequireDuration(receiver), -1)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toLocaleString",
+                    (BuiltinFunction0)(static receiver => TemporalDurationToString(RequireDuration(receiver), -1)), 0d);
             });
 
     private static TemporalDuration RequireDuration(object? receiver)
         => receiver as TemporalDuration
             ?? throw new TypeError("Temporal.Duration getter called on incompatible receiver");
+
+    private static TemporalDuration TransformDuration(object? receiver, bool negate)
+    {
+        var duration = RequireDuration(receiver);
+        var fields = new double[10];
+        for (var i = 0; i < fields.Length; i++)
+        {
+            var value = duration.Fields[i];
+            fields[i] = value == 0 ? 0d : negate ? -value : System.Math.Abs(value);
+        }
+        return new TemporalDuration(fields);
+    }
+
+    private static TemporalDuration WithDuration(object? receiver, object? item)
+    {
+        var duration = RequireDuration(receiver);
+        if (TypeUtilities.IsPrimitive(item))
+        {
+            throw new TypeError("Temporal.Duration.with requires an object");
+        }
+        var fields = (double[])duration.Fields.Clone();
+        var any = false;
+        foreach (var index in DurationFieldReadOrder)
+        {
+            var value = ObjectRuntime.GetItem(item!, DurationFieldNames[index]);
+            if (value is not null)
+            {
+                fields[index] = ToIntegerIfIntegral(value);
+                any = true;
+            }
+        }
+        if (!any)
+        {
+            throw new TypeError("Temporal duration-like object must contain a duration field");
+        }
+        return new TemporalDuration(fields);
+    }
+
+    private static bool HasCalendarDuration(TemporalDuration duration)
+        => duration.Fields[0] != 0 || duration.Fields[1] != 0 || duration.Fields[2] != 0;
+
+    private static BigInteger DurationNanoseconds(TemporalDuration duration)
+        => new BigInteger(duration.Fields[3]) * NanosecondsPerDay + duration.TimeNanoseconds;
+
+    private static int LargestDurationField(TemporalDuration duration)
+    {
+        for (var i = 0; i < duration.Fields.Length; i++)
+        {
+            if (duration.Fields[i] != 0)
+            {
+                return i;
+            }
+        }
+        return 9;
+    }
+
+    private static TemporalDuration AddDurations(object? receiver, object? other, bool subtract)
+    {
+        var first = RequireDuration(receiver);
+        var second = ToTemporalDuration(other);
+        if (HasCalendarDuration(first) || HasCalendarDuration(second))
+        {
+            throw new RangeError("Calendar units cannot be added or subtracted without a relative date");
+        }
+        var largest = System.Math.Min(LargestDurationField(first), LargestDurationField(second));
+        var result = DurationNanoseconds(first) + (subtract ? -DurationNanoseconds(second) : DurationNanoseconds(second));
+        // Balance exact mathematical integers before storing float64 slots. The
+        // slot conversions themselves can cross the normalized duration limit.
+        var fields = new double[10];
+        var remainder = BigInteger.Abs(result);
+        for (var i = largest; i < fields.Length; i++)
+        {
+            var length = i == 3 ? NanosecondsPerDay : TimeUnitLength((TimeUnit)(i - 4));
+            var value = remainder / length;
+            fields[i] = value.IsZero ? 0d : Number.ConvertBigIntegerToDouble(value) * result.Sign;
+            remainder %= length;
+        }
+        return new TemporalDuration(fields);
+    }
+
+    private static double CompareDurations(object? one, object? two, object? suppliedOptions)
+    {
+        var first = ToTemporalDuration(one);
+        var second = ToTemporalDuration(two);
+        var options = GetTemporalOptions(suppliedOptions);
+        if (GetTemporalOption(options, "relativeTo") is not null)
+        {
+            throw new RangeError("Calendar-relative duration comparison is not supported");
+        }
+        if (first.Fields.AsSpan().SequenceEqual(second.Fields))
+        {
+            return 0d;
+        }
+        if (HasCalendarDuration(first) || HasCalendarDuration(second))
+        {
+            throw new RangeError("Comparing calendar units requires a relative date");
+        }
+        return DurationNanoseconds(first).CompareTo(DurationNanoseconds(second));
+    }
+
+    private static double TotalDuration(object? receiver, object? suppliedOptions)
+    {
+        var duration = RequireDuration(receiver);
+        object? unitValue;
+        if (suppliedOptions is string)
+        {
+            unitValue = suppliedOptions;
+        }
+        else
+        {
+            if (suppliedOptions is null)
+            {
+                throw new TypeError("Temporal.Duration.total requires options");
+            }
+            var options = GetTemporalOptions(suppliedOptions);
+            if (GetTemporalOption(options, "relativeTo") is not null)
+            {
+                throw new RangeError("Calendar-relative duration totals are not supported");
+            }
+            unitValue = GetTemporalOption(options, "unit");
+        }
+        var unit = unitValue is null ? throw new RangeError("A total unit is required")
+            : DotNet2JSConversions.ToStringRejectingSymbols(unitValue);
+        var length = unit is "day" or "days" ? NanosecondsPerDay : TimeUnitLength(GetTimeUnit(unit, true));
+        if (HasCalendarDuration(duration))
+        {
+            throw new RangeError("Totaling calendar units requires a relative date");
+        }
+        var nanoseconds = DurationNanoseconds(duration);
+        if (nanoseconds.IsZero)
+        {
+            return 0d;
+        }
+        // Round the exact rational to binary64 once. Converting the integer
+        // quotient and then adding its fraction loses bits near an even tie.
+        // Duration limits and unit lengths keep these ratios normal and finite.
+        var numerator = BigInteger.Abs(nanoseconds);
+        var denominator = new BigInteger(length);
+        var exponent = checked((int)(numerator.GetBitLength() - denominator.GetBitLength()));
+        var belowPower = exponent >= 0
+            ? numerator < (denominator << exponent)
+            : (numerator << -exponent) < denominator;
+        if (belowPower)
+        {
+            exponent--;
+        }
+        var shift = 52 - exponent;
+        var dividend = shift >= 0 ? numerator << shift : numerator;
+        var divisor = shift >= 0 ? denominator : denominator << -shift;
+        var significand = BigInteger.DivRem(dividend, divisor, out var remainder);
+        var comparison = (remainder * 2).CompareTo(divisor);
+        if (comparison > 0 || comparison == 0 && !significand.IsEven)
+        {
+            significand++;
+        }
+        return System.Math.ScaleB((double)significand, exponent - 52) * nanoseconds.Sign;
+    }
 
     private static string FormatDuration(TemporalDuration duration, object? suppliedOptions)
     {

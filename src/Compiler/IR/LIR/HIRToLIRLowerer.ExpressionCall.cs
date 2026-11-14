@@ -624,7 +624,13 @@ public sealed partial class HIRToLIRLowerer
                     }
 
                     var source = EnsureObject(args[0]);
-                    _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
+                    // Number(bigint) is allowed, unlike the abstract ToNumber
+                    // operation used by unary plus and numeric coercions.
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.NumberCall),
+                        Arguments: [source],
+                        Result: resultTempVar,
+                        ParameterTypes: [typeof(object)]));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                     return true;
                 }
