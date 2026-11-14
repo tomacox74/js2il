@@ -6,6 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf(compiler): reuse lexical capture facts and index scope roots during
+  symbol-table analysis instead of rebuilding ancestor sets and searching
+  child scopes for every binding and AST node. Index identifier writes to
+  avoid rescanning large modules for unchanged captured bindings and numeric
+  provenance, and reject incompatible array-element candidates before their
+  write walks. Preserve shadowing, hoisted closure TDZ checks and fixed-point
+  type inference.
+
 - test262: port 300 additional pinned Temporal.PlainTime cases with unchanged
   upstream assertions and no skips. Add core time construction, conversion,
   branded accessors, comparison, immutable updates, exact duration arithmetic,

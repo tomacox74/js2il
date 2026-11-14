@@ -25,6 +25,35 @@ closed-world object-literal proof.
 | 5 | #1433 | Validation, benchmarks, documentation (this document). |
 | 6 | #1434 | Interprocedural propagation: a literal passed into a closed-world callable lets the receiving parameter reuse the generated specialized type, so member reads on the parameter early-bind through the inferred-member path. Uses a monotone, capless fixed point (cascading invalidation) so multi-hop chains and mutual recursion converge; structurally identical literals canonicalize onto one shared CLR type and can join at a parameter. |
 
+## Symbol-table analysis cost
+
+After scope construction and native ESM binding setup, `SymbolTableBuilder`
+reuses lexical facts for the duration of one module build:
+
+- Parent-reference sets are keyed by both the child and target scope;
+  ancestor-name sets are shared by queries with the same target scope.
+- AST scope roots and immediate child scopes are indexed by node identity,
+  retaining the first depth-first match when multiple scopes share a node.
+- Identifier assignment/update targets are indexed by resolved binding.
+  Bindings with no such writes can skip captured-write compatibility scans.
+  Bindings with writes still use the existing scope-aware type analysis.
+- A conservative index of potentially forwarding initializers and assignments
+  avoids numeric-provenance scans when no write has a relevant expression form.
+  The existing numeric analyzer still decides whether a dependency is unsafe.
+
+These caches contain no inferred types or fixed-point conclusions. They are
+created only after lexical structure is complete and released on both success
+and failure, so building another module with the same builder cannot retain
+the previous module's analysis. TDZ source-order rejection precedes reference
+collection, while retaining the hoisted function-declaration exception for
+bindings initialized with closures.
+
+Array-element inference currently proves only string elements. Nonempty array
+literals that already fail that proof are rejected before the full write walk;
+empty literals and string candidates still undergo the alias/write checks.
+Numeric definite-assignment analysis likewise rejects already-known nonnumeric
+types before walking the body.
+
 ## Generated type shape
 
 For `const eligible = { text: "hello", n: 42 };` the compiler emits:

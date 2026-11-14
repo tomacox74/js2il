@@ -115,23 +115,19 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (!DoesScopeSubtreeReferenceBinding(candidateScope, scopeContext, targetBinding))
+        // Function declarations are instantiated when their containing scope/block is entered,
+        // so a declaration written after the lexical initializer can still be called before it.
+        var isHoistedClosureReader = candidateScope.AstNode is FunctionDeclaration
+            && targetBinding.DeclarationNode is VariableDeclarator
+            {
+                Init: ArrowFunctionExpression or FunctionExpression
+            };
+        if (!isHoistedClosureReader && candidateScope.AstNode.Start >= initializationBoundary)
         {
             return false;
         }
 
-        // Function declarations are instantiated when their containing scope/block is entered,
-        // so a declaration written after the lexical initializer can still be called before it.
-        if (candidateScope.AstNode is FunctionDeclaration
-            && targetBinding.DeclarationNode is VariableDeclarator
-            {
-                Init: ArrowFunctionExpression or FunctionExpression
-            })
-        {
-            return true;
-        }
-
-        return candidateScope.AstNode.Start < initializationBoundary;
+        return DoesScopeSubtreeReferenceBinding(candidateScope, scopeContext, targetBinding);
     }
 
     private bool DoesScopeSubtreeReferenceBinding(Scope candidateScope, Scope scopeContext, BindingInfo targetBinding)

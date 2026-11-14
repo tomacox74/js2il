@@ -979,6 +979,11 @@ public partial class SymbolTableBuilder
 
     private Dictionary<Node, Scope> BuildNodeScopeMap(Scope root)
     {
+        var scopeRoots = new Dictionary<Node, Scope>(ReferenceEqualityComparer.Instance);
+        foreach (var scope in EnumerateScopes(root))
+        {
+            scopeRoots.TryAdd(scope.AstNode, scope);
+        }
         var scopeMap = new Dictionary<Node, Scope>(ReferenceEqualityComparer.Instance);
         var scopeStack = new Stack<Scope>();
         var pushedScopes = new Stack<Scope?>();
@@ -992,7 +997,7 @@ public partial class SymbolTableBuilder
                 Scope? pushed = null;
                 if (!ReferenceEquals(node, root.AstNode))
                 {
-                    var nodeScope = FindScopeByAstNode(root, node);
+                    scopeRoots.TryGetValue(node, out var nodeScope);
                     if (nodeScope != null && !ReferenceEquals(nodeScope, scopeStack.Peek()))
                     {
                         scopeStack.Push(nodeScope);
@@ -1550,10 +1555,9 @@ public partial class SymbolTableBuilder
             }
         }
 
-        Scope GetScopeForNode(Scope currentScope, INode node)
+        Scope GetScopeForNode(Scope currentScope, Node node)
         {
-            return currentScope.Children.FirstOrDefault(childScope => ReferenceEquals(childScope.AstNode, node))
-                ?? currentScope;
+            return FindChildScopeByAstNode(currentScope, node) ?? currentScope;
         }
 
         bool ResolvesToCurrentScopeBinding(Scope currentScope, string name)
@@ -1562,7 +1566,7 @@ public partial class SymbolTableBuilder
                 && ReferenceEquals(TryResolveBinding(currentScope, name), targetBinding);
         }
 
-        bool AnalyzeAssignmentLikeNode(INode node, Scope currentScope)
+        bool AnalyzeAssignmentLikeNode(Node node, Scope currentScope)
         {
             bool changed = false;
             currentScope = GetScopeForNode(currentScope, node);
@@ -1764,6 +1768,11 @@ public partial class SymbolTableBuilder
         BindingInfo targetBinding,
         Dictionary<string, Type> proposedClrTypes)
     {
+        if (!HasIdentifierWrites(scope, targetBinding))
+        {
+            return null;
+        }
+
         Type? inferred = null;
         bool sawWrite = false;
         bool isCompatible = true;
@@ -1782,17 +1791,7 @@ public partial class SymbolTableBuilder
             }
 
             bool IsChildScopeRoot(Node node)
-            {
-                foreach (var childScope in currentScope.Children)
-                {
-                    if (ReferenceEquals(childScope.AstNode, node))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+                => FindChildScopeByAstNode(currentScope, node) != null;
 
             void WalkNode(Node? node)
             {
@@ -1869,6 +1868,11 @@ public partial class SymbolTableBuilder
         Type expectedType,
         Dictionary<string, Type> proposedClrTypes)
     {
+        if (!HasIdentifierWrites(scope, targetBinding))
+        {
+            return true;
+        }
+
         bool isCompatible = true;
 
         void WalkScope(Scope currentScope)
@@ -1886,17 +1890,7 @@ public partial class SymbolTableBuilder
             }
 
             bool IsChildScopeRoot(Node node)
-            {
-                foreach (var childScope in currentScope.Children)
-                {
-                    if (ReferenceEquals(childScope.AstNode, node))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+                => FindChildScopeByAstNode(currentScope, node) != null;
 
             void WalkNode(Node? node)
             {
@@ -2099,6 +2093,14 @@ public partial class SymbolTableBuilder
         BindingInfo targetBinding,
         Dictionary<string, Type> proposedClrTypes)
     {
+        // The write walk can only prove string elements. A nonempty literal that already
+        // fails that proof cannot be repaired by later writes, regardless of aliases.
+        if (targetBinding.DeclarationNode is VariableDeclarator { Init: ArrayExpression { Elements.Count: > 0 } literal }
+            && InferExpressionArrayElementClrType(literal, scope, proposedClrTypes) != typeof(string))
+        {
+            return null;
+        }
+
         Type? inferred = null;
         bool sawEvidence = false;
         bool isCompatible = true;
@@ -2216,17 +2218,7 @@ public partial class SymbolTableBuilder
             }
 
             bool IsChildScopeRoot(Node node)
-            {
-                foreach (var childScope in currentScope.Children)
-                {
-                    if (ReferenceEquals(childScope.AstNode, node))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+                => FindChildScopeByAstNode(currentScope, node) != null;
 
             void WalkNode(Node? node)
             {
