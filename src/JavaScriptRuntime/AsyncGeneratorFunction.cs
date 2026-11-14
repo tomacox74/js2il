@@ -5,6 +5,7 @@ namespace JavaScriptRuntime;
 public static class AsyncGeneratorFunction
 {
     private static readonly Func<object[], object?[]?, object?> _constructor = AsyncGeneratorFunctionConstructor;
+    internal static bool IsConstructorDelegate(Delegate value) => _constructor.Equals(value);
     /// <summary>Realm-owned <c>%AsyncGeneratorFunction.prototype%</c> (issue #1824).</summary>
     internal static JsObject Prototype
         => RuntimeIntrinsics.Current.GetOrCreate(
@@ -74,6 +75,8 @@ public static class AsyncGeneratorFunction
     private static object? AsyncGeneratorFunctionConstructor(object[] scopes, object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
+        if (RuntimeServices.TryCreatePreparedDynamicFunction(callArgs, out var prepared))
+            return prepared;
         var length = JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs, "async function*").ParameterNames.Length;
         var functionIdentity = new object();
 

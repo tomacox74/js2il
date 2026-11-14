@@ -29,4 +29,16 @@ public class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "argarray-not-object-realm.js")]
+    public Task Port200_argarray_not_object_realm()
+        => ExecutionTestFromFile("argarray-not-object-realm");
+
+    [Fact(DisplayName = "resizable-buffer.js")]
+    public Task Port200_resizable_buffer()
+        => ExecutionTestFromFile("resizable-buffer");
+
+    [Fact(DisplayName = "this-not-callable-realm.js")]
+    public Task Port200_this_not_callable_realm()
+        => ExecutionTestFromFile("this-not-callable-realm");
 }

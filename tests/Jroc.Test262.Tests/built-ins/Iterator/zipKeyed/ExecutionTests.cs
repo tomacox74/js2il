@@ -120,4 +120,12 @@ public sealed class ExecutionTests : InMemoryExecutionTestsBase
     [Fact(DisplayName = "suspended-start-iterator-close-calls-return.js")]
     public Task Ported_suspended_start_iterator_close_calls_return() => ExecutionTestFromFile("suspended-start-iterator-close-calls-return");
 
+
+    [Fact(DisplayName = "suspended-yield-iterator-close-calls-next.js")]
+    public Task Port200_suspended_yield_iterator_close_calls_next()
+        => ExecutionTestFromFile("suspended-yield-iterator-close-calls-next");
+
+    [Fact(DisplayName = "suspended-yield-iterator-close-calls-return.js")]
+    public Task Port200_suspended_yield_iterator_close_calls_return()
+        => ExecutionTestFromFile("suspended-yield-iterator-close-calls-return");
 }

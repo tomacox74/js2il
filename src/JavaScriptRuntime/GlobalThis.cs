@@ -134,14 +134,14 @@ namespace JavaScriptRuntime
             var callArgs = args ?? System.Array.Empty<object?>();
             if (RuntimeServices.TryCreatePreparedDynamicFunction(callArgs, out var prepared))
                 return prepared!;
-            JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs);
-            if (callArgs.Length == 0 || callArgs[0] is null)
+            var (parameterNames, body) = JavaScriptRuntime.Function.PrepareDynamicFunctionSource(callArgs);
+            if (body.Length == 0)
             {
                 var bodyObject = new EmptyDynamicFunctionBody();
                 BuiltinFunctionVariadic function = bodyObject.Invoke;
                 JavaScriptRuntime.Function.InitializeFunctionInstance(
                     function,
-                    0d,
+                    parameterNames.Length,
                     "anonymous",
                     requiresInvocationContext: false);
                 JavaScriptRuntime.Function.MarkConstructible(function);
@@ -997,6 +997,14 @@ namespace JavaScriptRuntime
             Delegate target,
             RuntimeIntrinsics intrinsics)
         {
+            if (target.Equals(_objectConstructorValue))
+            {
+                return intrinsics.ObjectPrototype;
+            }
+            if (target.Equals(_functionConstructorValue))
+            {
+                return JavaScriptRuntime.Function.GetPrototype(intrinsics);
+            }
             var type = ReferenceEquals(target, _arrayConstructorValue) ? typeof(JavaScriptRuntime.Array)
                 : ReferenceEquals(target, _promiseConstructorValue) ? typeof(JavaScriptRuntime.Promise)
                 : ReferenceEquals(target, _aggregateErrorConstructorValue) ? typeof(JavaScriptRuntime.AggregateError)

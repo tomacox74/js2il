@@ -115,6 +115,28 @@
   "support": {
     "entries": [
       {
+        "clause": "20.2.1.1.1",
+        "feature": "Guarded primitive, boxed, and constant-conversion constructor sources",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createdynamicfunction",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Function/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs"
+        ],
+        "notes": "Ahead-of-time source discovery now covers primitive source values, hoisted uninitialized variables, statically known Object/String wrappers, and constant-returning toString methods. Actual arguments and conversions still execute at runtime and must match the prepared sources. Parameter line comments retain their terminating newline. Prepared factories preserve ordinary, generator, async, and async-generator kinds. Stateful runtime-generated parameter strings and Function construction through arbitrary reflective calls remain unsupported; no eval classification is applied to these limitations."
+      },
+      {
+        "clause": "20.2.4.3",
+        "feature": "Constructor prototype fallback and proxy revocation order",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-instances-prototype",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Function/internals/Construct/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Function/ExecutionTests.cs"
+        ],
+        "notes": "Ordinary construction reads newTarget.prototype before resolving its realm for a non-object fallback, including recursively bound constructors and proxies revoked by the prototype getter. Function and Object intrinsic prototype fallbacks use the resolved realm. Function.prototype owns an empty name after length. Native-style Function.prototype.toString remains the documented fallback; complete user-function source reconstruction is not implemented."
+      },
+      {
         "clause": "20.2",
         "feature": "Function object and prototype conformance coverage",
         "status": "Supported with Limitations",

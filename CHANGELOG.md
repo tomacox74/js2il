@@ -6,7 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: port 200 additional pinned object, callable, and iterator protocol
+  cases without changing upstream assertions or adding skips. Fix generator
+  reentrancy and nested exception unwinding, async-generator receiver and
+  return rejection handling, async-from-sync iterator closing, constructor
+  realm/prototype selection, Date calls through bound functions, and permanent
+  Map iterator exhaustion. Extend guarded ahead-of-time Function source
+  discovery and the native observation harness; general runtime code generation
+  and full function source reconstruction remain unsupported.
 
 ## v0.12.38 - 2026-11-13
 

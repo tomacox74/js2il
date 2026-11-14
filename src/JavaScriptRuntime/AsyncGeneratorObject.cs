@@ -93,31 +93,31 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
             });
     }
 
-    private static AsyncGeneratorObject GetReceiver(object? thisValue, string methodName)
+    private static object InvokePrototype(object? thisValue, object? value, RequestKind kind)
     {
         if (thisValue is AsyncGeneratorObject generator)
         {
-            return generator;
+            return generator.Enqueue(kind, value);
         }
 
-        throw new TypeError(
-            $"AsyncGenerator.prototype.{methodName} called on incompatible receiver");
+        return Promise.reject(new TypeError(
+            $"AsyncGenerator.prototype.{kind.ToString().ToLowerInvariant()} called on incompatible receiver"))!;
     }
 
     private static object? PrototypeNext(
         object? thisArgument,
         object? valueArgument)
-        => GetReceiver(thisArgument, "next").next(valueArgument);
+        => InvokePrototype(thisArgument, valueArgument, RequestKind.Next);
 
     private static object? PrototypeReturn(
         object? thisArgument,
         object? valueArgument)
-        => GetReceiver(thisArgument, "return").@return(valueArgument);
+        => InvokePrototype(thisArgument, valueArgument, RequestKind.Return);
 
     private static object? PrototypeThrow(
         object? thisArgument,
         object? valueArgument)
-        => GetReceiver(thisArgument, "throw").@throw(valueArgument);
+        => InvokePrototype(thisArgument, valueArgument, RequestKind.Throw);
 
     private AsyncGeneratorScope GetLeafScope()
     {
@@ -239,7 +239,18 @@ public sealed class AsyncGeneratorObject : JsObject, IJavaScriptAsyncIterator
 
             if (request.Kind == RequestKind.Return && scope.Started)
             {
-                ((Promise)Promise.resolve(request.Value)!).then(
+                Promise returnPromise;
+                try
+                {
+                    returnPromise = (Promise)Promise.resolve(request.Value)!;
+                }
+                catch (Exception exception) when (exception is not ScriptProcessExitException)
+                {
+                    ResumeRequest(request, RequestKind.Throw,
+                        exception is JsThrownValueException thrown ? thrown.Value : exception);
+                    return;
+                }
+                returnPromise.then(
                     (BuiltinFunction1)((_, value) =>
                     {
                         ResumeRequest(request, RequestKind.Return, value);

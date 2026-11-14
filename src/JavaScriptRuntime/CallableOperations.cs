@@ -256,6 +256,7 @@ public static class CallableOperations
                 proxy,
                 thisArgument,
                 arguments),
+            Type type when type == typeof(Date) => new Date().toString(),
             Type => throw new TypeError("Class constructor cannot be invoked without 'new'"),
             _ => throw new TypeError("Value is not callable")
         };

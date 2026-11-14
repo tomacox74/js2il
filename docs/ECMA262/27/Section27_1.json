@@ -319,6 +319,18 @@
   "support": {
     "entries": [
       {
+        "clause": "27.1.5",
+        "feature": "Async-from-sync value rejection and iterator closing",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-from-sync-iterator-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/next/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/return/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncFromSyncIteratorPrototype/throw/ExecutionTests.cs"
+        ],
+        "notes": "Rejected non-final next/throw value wrappers close the synchronous source iterator while preserving the original rejection. Return does not perform the extra close. The same rules cover synchronous promise-resolution failures and synchronous yield* delegates. Iterator.prototype's constructor property remains distinct from the non-writable, non-configurable Iterator constructor prototype property. Native observation helpers verify Iterator.from return-method lookup, receiver validation, and iterator-result identity."
+      },
+      {
         "clause": "27.1.3.2",
         "feature": "Iterator sequencing and joint iteration",
         "status": "Supported with Limitations",

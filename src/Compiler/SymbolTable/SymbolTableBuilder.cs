@@ -79,6 +79,7 @@ namespace Jroc.SymbolTables
         private string _currentModulePath = string.Empty;
         private int _activeWithDepth;
         private Dictionary<Node, Node>? _globalBindingParentMap;
+        private readonly List<(Scope Scope, Node Site, Node Callee, IEnumerable<Node> Arguments)> _dynamicFunctionSites = new();
 
         private static BindingInfo? TryResolveBinding(Scope scope, string name)
         {
@@ -343,6 +344,7 @@ namespace Jroc.SymbolTables
         public void Build(ModuleDefinition module)
         {
             _globalBindingParentMap = null;
+            _dynamicFunctionSites.Clear();
             _currentModulePath = module.Path;
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
             {
@@ -369,6 +371,11 @@ namespace Jroc.SymbolTables
             }
 
             BuildScopeRecursive(globalScope, module.Ast, globalScope);
+            for (var i = 0; i < _dynamicFunctionSites.Count; i++)
+            {
+                var site = _dynamicFunctionSites[i];
+                TryCreateDynamicFunctionScope(globalScope, site.Scope, site.Site, site.Callee, site.Arguments);
+            }
             _globalBindingParentMap = null;
             if (module.UsesNativeStaticEsm)
             {
@@ -720,9 +727,9 @@ namespace Jroc.SymbolTables
             Node? ResolveDynamicSource(string name)
             {
                 var declaration = TryResolveBinding(currentScope, name)?.DeclarationNode;
-                return declaration is VariableDeclarator variable ? variable.Init : declaration;
+                return declaration is VariableDeclarator variable ? variable.Init ?? (Node)variable : declaration;
             }
-            if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(calleeId, ResolveDynamicSource, out var generator))
+            if (!DynamicFunctionSupport.TryGetFunctionConstructorKind(calleeId, ResolveDynamicSource, out var generator, out var async))
             {
                 return;
             }
@@ -734,7 +741,7 @@ namespace Jroc.SymbolTables
 
             if (!DynamicFunctionSupport.TryGetStaticStringArguments(
                     DynamicFunctionSupport.GetSourceArguments(calleeId, arguments),
-                    name => (TryResolveBinding(currentScope, name)?.DeclarationNode as VariableDeclarator)?.Init,
+                    ResolveDynamicSource,
                     out var literalArgs))
             {
                 return;
@@ -750,7 +757,8 @@ namespace Jroc.SymbolTables
                     out var parsedFunctionExpr,
                     out _,
                     createFactory: true,
-                    generator: generator)
+                    generator: generator,
+                    async: async)
                 || parsedFunctionExpr == null)
             {
                 return;
@@ -2271,6 +2279,7 @@ namespace Jroc.SymbolTables
                     MarkStabilityTrackedGlobalObjectsExposedByCall(currentScope, callExpr);
 
                     TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callExpr.Callee, callExpr.Arguments.Cast<Node>());
+                    _dynamicFunctionSites.Add((currentScope, callExpr, callExpr.Callee, callExpr.Arguments.Cast<Node>()));
 
                     // Process callee and arguments but don't create scopes for call expressions themselves
                     BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
@@ -2294,6 +2303,7 @@ namespace Jroc.SymbolTables
                     }
 
                     TryCreateDynamicFunctionScope(globalScope, currentScope, newExpr, newExpr.Callee, newExpr.Arguments.Cast<Node>());
+                    _dynamicFunctionSites.Add((currentScope, newExpr, newExpr.Callee, newExpr.Arguments.Cast<Node>()));
 
                     BuildScopeRecursive(globalScope, newExpr.Callee, currentScope);
                     foreach (var arg in newExpr.Arguments)

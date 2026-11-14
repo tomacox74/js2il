@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-16T19:43:15Z
+> Last generated (UTC): 2026-11-13T23:12:59Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -54,4 +54,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | %GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns "[object Generator]" | Supported | [`Generator_Prototype_ToStringTag.js`](../../../tests/Jroc.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js)<br>[`Symbol.toStringTag.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/JavaScript/Symbol.toStringTag.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/JavaScript/name.js)<br>[`property-descriptor.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/JavaScript/property-descriptor.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/return/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/throw/JavaScript/name.js) |  |  |
+
+### 27.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-generator-abstract-operations))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generator execution-state validation and nested exception regions | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/next/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/return/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/GeneratorPrototype/throw/ExecutionTests.cs` |  | Reentrant next/return/throw requests throw TypeError before modifying the executing generator's protocol state. Throw at suspended start completes the generator without entering its body. Synchronous nested catch regions inside a suspending try/finally retain valid CLR exception control flow and route escaping exceptions through the generator's outer completion handlers. |
 

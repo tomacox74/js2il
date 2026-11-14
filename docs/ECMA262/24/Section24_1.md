@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-05T23:23:10Z
+> Last generated (UTC): 2026-11-13T23:12:59Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -121,6 +121,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Map iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Map instances expose Symbol.iterator and the keys/values/entries methods return native iterator objects with a dedicated %MapIteratorPrototype%. |
+
+### 24.1.5.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%.next))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Permanent exhaustion of mutable Map iterators | Supported with Limitations | [`iteration-mutable.js`](../../../tests/Jroc.Test262.Tests/built-ins/MapIteratorPrototype/next/JavaScript/iteration-mutable.js) |  | Map iterators observe additions before exhaustion, then remain completed on every later next call even if new entries are inserted. Completed results retain an undefined value. |
 
 ### 24.1.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%))
 

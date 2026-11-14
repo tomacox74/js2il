@@ -74,7 +74,10 @@ public partial class RuntimeServices
             }
         }
         if (constructor is not BuiltinDelegateFunctionAdapter adapter
-            || !adapter.Target.Equals(GlobalThis.Function))
+            || !(adapter.Target.Equals(GlobalThis.Function)
+                || GeneratorObject.IsConstructorDelegate(adapter.Target)
+                || AsyncFunction.IsConstructorDelegate(adapter.Target)
+                || AsyncGeneratorFunction.IsConstructorDelegate(adapter.Target)))
         {
             return construct
                 ? CallableOperations.Construct(constructor, arguments, constructor)

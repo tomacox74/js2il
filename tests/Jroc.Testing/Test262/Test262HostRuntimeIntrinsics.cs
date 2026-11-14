@@ -335,6 +335,9 @@ public static class Test262HostRuntimeIntrinsics
             "%GeneratorFunction%" => EnsureRealmIntrinsic(
                 GeneratorObject.GeneratorFunctionPrototypeObject,
                 GetStaticFieldValue(typeof(GeneratorObject), "_generatorFunctionConstructor")),
+            "%AsyncGeneratorFunction%" => EnsureRealmIntrinsic(
+                AsyncGeneratorFunction.Prototype,
+                GetStaticFieldValue(typeof(AsyncGeneratorFunction), "_constructor")),
             "%IteratorHelperPrototype%" => Iterator.HelperPrototype,
             var unsupported => throw CreateTest262Error($"Unsupported intrinsic {unsupported}")
         };

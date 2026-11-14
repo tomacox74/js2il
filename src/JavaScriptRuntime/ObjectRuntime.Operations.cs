@@ -5651,7 +5651,7 @@ namespace JavaScriptRuntime
                     var result = _sync is DynamicIterator dynamicIterator
                         ? dynamicIterator.NextRaw()
                         : _sync.Next();
-                    return Continue(result);
+                    return Continue(result, closeOnRejection: true);
                 }
                 catch (Exception exception) when (exception is not ScriptProcessExitException)
                 {
@@ -5670,7 +5670,7 @@ namespace JavaScriptRuntime
                         {
                             return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
                         }
-                        return Continue(dynamicIterator.ReturnForAsync());
+                        return Continue(dynamicIterator.ReturnForAsync(), closeOnRejection: false);
                     }
                     _sync.Return();
                     return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
@@ -5682,13 +5682,34 @@ namespace JavaScriptRuntime
                 }
             }
 
-            private static object? Continue(object result)
+            private object? Continue(object result, bool closeOnRejection)
             {
                 var done = IteratorResultDone(result);
                 var value = IteratorResultValue(result);
-                var promise = (JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(value)!;
+                JavaScriptRuntime.Promise promise;
+                try
+                {
+                    promise = (JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(value)!;
+                }
+                catch (Exception exception) when (exception is not ScriptProcessExitException)
+                {
+                    if (closeOnRejection && !done)
+                    {
+                        IteratorCloseForThrowCompletion(_sync);
+                    }
+                    throw;
+                }
                 BuiltinFunction1 fulfilled = (_, unwrapped) => IteratorResult.Create(unwrapped, done);
-                return promise.then(fulfilled);
+                BuiltinFunction1? rejected = null;
+                if (closeOnRejection && !done)
+                {
+                    rejected = (_, reason) =>
+                    {
+                        IteratorCloseForThrowCompletion(_sync);
+                        throw new JsThrownValueException(reason);
+                    };
+                }
+                return promise.then(fulfilled, rejected);
             }
         }
 

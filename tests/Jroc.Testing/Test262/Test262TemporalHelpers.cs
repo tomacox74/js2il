@@ -15,12 +15,26 @@ internal static class Test262TemporalHelpers
         var helpers = new JsObject();
         ObjectRuntime.SetItem(helpers, "observeProperty", CreateFunction(
             (Action<object?, object?, object?, object?, object?>)ObserveProperty, "observeProperty", 4));
+        ObjectRuntime.SetItem(helpers, "observeMethod", CreateFunction(
+            (Action<object?, object?, object?, object?>)ObserveMethod, "observeMethod", 3));
         ObjectRuntime.SetItem(helpers, "toPrimitiveObserver", CreateFunction(
             (Func<object?, object?, object?, object>)ToPrimitiveObserver, "toPrimitiveObserver", 3));
         ObjectRuntime.SetItem(helpers, "propertyBagObserver", CreateFunction(
             (Func<object?, object?, object?, object?, object>)((calls, bag, name, skip) =>
                 PropertyBagObserver(helpers, calls, bag, name, skip)), "propertyBagObserver", 4));
         return helpers;
+    }
+
+    private static void ObserveMethod(object? calls, object? target, object? key, object? name)
+    {
+        var method = ObjectRuntime.GetItem(target!, key!);
+        var observed = CreateFunction((BuiltinFunctionVariadic)((object? _, in JsCallArguments arguments) =>
+        {
+            Log(calls, "call " + FormatPropertyName(key, name));
+            return CallableOperations.Call(method, target, arguments);
+        }), "", 0);
+        Function.MarkConstructible(observed);
+        ObjectRuntime.SetItem(target!, key!, observed);
     }
 
     private static void ObserveProperty(object? calls, object? target, object? key, object? value, object? name)

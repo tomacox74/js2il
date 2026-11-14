@@ -64,7 +64,14 @@ public static partial class Iterator
 
         Function.InitializeFunctionInstance(iteratorConstructorValue, 0d, "Iterator");
         Function.MarkConstructible(iteratorConstructorValue);
-        DefineDataProperty(iteratorConstructorValue, "prototype", iteratorPrototype);
+        PropertyDescriptorStore.DefineOrUpdate(iteratorConstructorValue, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = iteratorPrototype
+        });
         PrototypeChain.SetPrototype(iteratorPrototype, GlobalThis.ObjectPrototypeValue);
         DefineFunctionProperty(iteratorConstructorValue, "concat", (BuiltinFunctionVariadic)ConstructorConcat, 0d);
         DefineFunctionProperty(

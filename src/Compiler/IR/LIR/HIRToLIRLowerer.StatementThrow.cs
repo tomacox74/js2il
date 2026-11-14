@@ -54,7 +54,8 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Generator try/finally-with-yield routing: capture pending exception and branch to finally.
-        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryCatchFinallyStack.Count > 0)
+        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryCatchFinallyStack.Count > 0
+            && !HasActiveSynchronousExceptionHandler)
         {
             var ctx = _generatorTryCatchFinallyStack.Peek();
             var scopeName = _methodBodyIR.LeafScopeId.Name;

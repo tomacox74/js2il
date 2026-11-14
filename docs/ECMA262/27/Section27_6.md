@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-10-14T20:53:23Z
+> Last generated (UTC): 2026-11-13T23:12:59Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -38,6 +38,12 @@ _Lists clause numbers/titles/links only (no spec text)._
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 27.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-prototype))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Async-generator receiver and abrupt return validation | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/next/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/return/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorPrototype/throw/ExecutionTests.cs` |  | Prototype methods reject invalid receivers through their returned promises rather than throwing synchronously. Synchronous return-value promise-resolution failures at suspended yield resume the body as a throw, allowing catch/finally to execute. The native intrinsic harness also exposes %AsyncGeneratorFunction% for constructor and prototype checks. |
 
 ### 27.6.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next))
 
