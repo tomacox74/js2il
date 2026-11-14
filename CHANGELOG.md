@@ -6,6 +6,12 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 300 additional pinned module-goal cases without skips or
+  upstream source changes: 130 expected SyntaxError cases and 170 top-level
+  await syntax-acceptance cases. Verify restricted bindings, declaration
+  placement, private names and await operands across module statement contexts.
+  Syntax acceptance does not imply coverage of awaited values or scheduling.
+
 - test262: port 200 additional pinned primitive-conversion and binary-memory
   cases with unchanged upstream assertions and no skips. Fix TypedArray and
   ArrayBuffer call-versus-construction checks, TypedArray ToIndex and
