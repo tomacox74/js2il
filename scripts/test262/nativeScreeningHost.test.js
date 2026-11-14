@@ -53,6 +53,57 @@ test('screening host publishes its capability matrix', () => {
   assert.equal(capabilities.negative.resolution, 'SyntaxError');
 });
 
+test('worker environment preserves build isolation flags and excludes credential sentinels', () => {
+  const cwd = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'native-host-env-')));
+  try {
+    const directory = path.join(cwd, 'test', area);
+    fs.mkdirSync(directory, { recursive: true });
+    const fixturePath = `test/${area}/worker-environment.js`;
+    const source = `/*---
+description: worker environment allowlist preserves build isolation without credentials
+---*/
+assert.sameValue(process.env.DOTNET_CLI_USE_MSBUILD_SERVER, "0");
+assert.sameValue(process.env.MSBUILDDISABLENODEREUSE, "1");
+assert.sameValue(process.env.TEST262_AGENTRO_DATABASE_URL, undefined);
+assert.sameValue(process.env.SUPABASE_URL, undefined);
+assert.sameValue(process.env.GITHUB_TOKEN, undefined);
+`;
+    const sha256 = crypto.createHash('sha256').update(source).digest('hex');
+    fs.writeFileSync(path.join(cwd, fixturePath), source);
+    const plan = path.join(cwd, 'plan.json');
+    fs.writeFileSync(plan, JSON.stringify({
+      upstream_root: cwd,
+      timeout_ms: 10000,
+      variant_limit: 2,
+      time_limit_seconds: 30,
+      candidates: [{ path: fixturePath, sha256, variants: ['non-strict', 'strict'] }],
+    }));
+    // Build the supervisor environment explicitly: never inherit real credentials.
+    const environment = {
+      PATH: process.env.PATH,
+      HOME: process.env.HOME || os.homedir(),
+      DOTNET_CLI_USE_MSBUILD_SERVER: '0',
+      MSBUILDDISABLENODEREUSE: '1',
+      TEST262_AGENTRO_DATABASE_URL: 'synthetic-non-secret-database-sentinel',
+      SUPABASE_URL: 'synthetic-non-secret-supabase-sentinel',
+      GITHUB_TOKEN: 'synthetic-non-secret-github-sentinel',
+    };
+    const results = execFileSync('dotnet', [host, '--plan', plan], {
+      cwd: repository, encoding: 'utf8', env: environment,
+    }).trim().split('\n').map(JSON.parse);
+    assert.deepEqual(
+      results.map((result) => [result.path, result.variant, result.outcome]),
+      [
+        [fixturePath, 'non-strict', 'pass'],
+        [fixturePath, 'strict', 'pass'],
+      ],
+    );
+    assert.ok(results.every((result) => result.fixture_sha256 === sha256));
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test('resolution negatives require a valid entry and a verified syntax or linking failure', () => {
   const cwd = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'native-resolution-')));
   try {
