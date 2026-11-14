@@ -2619,10 +2619,7 @@ namespace JavaScriptRuntime
             if (constructor is JsFunctionObject functionObject)
             {
                 var result = CallableOperations.Construct(functionObject, callArgs, newTarget);
-                if (functionObject is not BuiltinDelegateFunctionAdapter)
-                {
-                    ApplyConstructedPrototype(result, functionObject, newTarget);
-                }
+                ApplyConstructedPrototype(result, functionObject, newTarget);
                 return result;
             }
 
@@ -2777,35 +2774,6 @@ namespace JavaScriptRuntime
                 }
             }
 
-            static void ApplyConstructedPrototype(
-                object? result,
-                JsFunctionObject constructor,
-                object? newTarget)
-            {
-                if (result is null or JsNull || newTarget is null or JsNull)
-                {
-                    return;
-                }
-
-                var prototype = GetProperty(newTarget, "prototype");
-                if (TypeUtilities.IsConstructorReturnOverride(prototype))
-                {
-                    PrototypeChain.SetPrototype(result, prototype);
-                    return;
-                }
-
-                var intrinsics = RuntimeIntrinsics.GetFunctionRealm(newTarget);
-                var defaultPrototype = constructor is BuiltinDelegateFunctionAdapter adapter
-                    ? GlobalThis.GetIntrinsicConstructorPrototype(adapter.Target, intrinsics)
-                    : null;
-                if (defaultPrototype is null)
-                {
-                    return;
-                }
-
-                PrototypeChain.SetPrototype(result, defaultPrototype);
-            }
-
             if (constructor is JsObject
                 && ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
                 && CallableOperations.IsCallable(constructValue))
@@ -2856,6 +2824,24 @@ namespace JavaScriptRuntime
             }
 
             throw new TypeError($"Value is not constructible: {constructor.GetType().FullName}");
+        }
+
+        internal static void ApplyConstructedPrototype(
+            object? result,
+            JsFunctionObject constructor,
+            object? newTarget)
+        {
+            if (constructor is BuiltinDelegateFunctionAdapter || constructor.SelectsConstructedPrototype
+                || result is null or JsNull || newTarget is null or JsNull)
+            {
+                return;
+            }
+
+            var prototype = GetProperty(newTarget, "prototype");
+            if (TypeUtilities.IsConstructorReturnOverride(prototype))
+            {
+                PrototypeChain.SetPrototype(result, prototype);
+            }
         }
 
         /// <summary>

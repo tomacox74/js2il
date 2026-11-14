@@ -66,6 +66,7 @@ public static partial class Temporal
     private sealed class InstantConstructor : JsFunctionObject
     {
         public override bool IsConstructor => true;
+        internal override bool SelectsConstructedPrototype => true;
 
         protected override object? CallCore(object? thisArgument, in JsCallArguments arguments)
             => throw new TypeError("Temporal.Instant requires 'new'");

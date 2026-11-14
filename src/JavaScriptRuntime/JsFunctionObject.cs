@@ -30,6 +30,8 @@ public abstract class JsFunctionObject : JsObject
     /// </summary>
     public virtual bool IsConstructor => false;
 
+    internal virtual bool SelectsConstructedPrototype => false;
+
     /// <summary>
     /// Gets whether invocation must populate ambient runtime call state.
     /// </summary>
@@ -120,5 +122,9 @@ public abstract class JsFunctionObject : JsObject
         object receiver,
         in JsCallArguments arguments,
         object? newTarget)
-        => ConstructCore(arguments, newTarget);
+    {
+        var result = ConstructCore(arguments, newTarget);
+        ObjectRuntime.ApplyConstructedPrototype(result, this, newTarget);
+        return result;
+    }
 }
