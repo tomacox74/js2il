@@ -80,6 +80,7 @@ public sealed class CallableDiscovery
                 Kind = CallableKind.FunctionDeclaration,
                 DeclaringScopeName = parentScopeName,
                 Name = funcName,
+                Location = functionScope.Name == funcName ? default : SourceLocation.FromNode(funcDecl),
                 JsParamCount = paramCount,
                 NeedsArgumentsObject = HasImplicitArgumentsBinding(functionScope),
                 HasRestParameters = functionScope.HasRestParameters,
@@ -98,7 +99,7 @@ public sealed class CallableDiscovery
             functionScope.Callable = callableId;
             
             // Recurse into nested functions
-            var functionScopeName = $"{parentScopeName}/{funcName}";
+            var functionScopeName = $"{parentScopeName}/{functionScope.Name}";
             DiscoverFromScope(functionScope, functionScopeName);
         }
         else if (astNode is FunctionExpression funcExpr)

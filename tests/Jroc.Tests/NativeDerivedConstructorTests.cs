@@ -2,6 +2,65 @@ namespace Jroc.Tests;
 
 public sealed class NativeDerivedConstructorTests
 {
+    [Fact]
+    public void AssertionErrorSubclassPreservesPrivateMethodsFieldsAndReplacementReceiver()
+    {
+        const string source = """
+            const assert = require("node:assert");
+            class DerivedError extends assert.AssertionError {
+              publicValue = 7;
+              #value = 9;
+              #read(extra = 0) { return this.#value + this.publicValue + extra; }
+              read() { return this.#read(); }
+              write(value) { this.#value = value; }
+              self() { return this; }
+              method() { return this.#read; }
+              static branded(value) { return #value in value; }
+              static read(value) { return value.#read(); }
+              static tracedRead(receiverFactory, argumentFactory) {
+                return receiverFactory().#read(argumentFactory());
+              }
+            }
+            const error = new DerivedError("native message");
+            const other = new DerivedError("other message");
+            assert.strictEqual(error.name, "AssertionError");
+            assert.strictEqual(error.message, "native message");
+            assert.strictEqual(error.operator, "fail");
+            assert.strictEqual(Object.getPrototypeOf(error), DerivedError.prototype);
+            assert.strictEqual(error instanceof DerivedError, true);
+            assert.strictEqual(error instanceof assert.AssertionError, true);
+            assert.strictEqual(error.publicValue, 7);
+            assert.strictEqual(error.read(), 16);
+            assert.strictEqual(error.self(), error);
+            assert.strictEqual(DerivedError.branded(error), true);
+            assert.strictEqual(DerivedError.read(error), 16);
+            const method = error.method();
+            assert.strictEqual(method.call(error), 16);
+            error.write(20);
+            error.publicValue = 3;
+            assert.strictEqual(method.call(error), 23);
+            assert.strictEqual(DerivedError.read(error), 23);
+            assert.strictEqual(other.read(), 16);
+            const calls = [];
+            const traced = DerivedError.tracedRead(
+              () => { calls.push("receiver"); return error; },
+              () => { calls.push("argument"); return 5; });
+            assert.strictEqual(traced, 28);
+            assert.strictEqual(calls.length, 2);
+            assert.strictEqual(calls[0], "receiver");
+            assert.strictEqual(calls[1], "argument");
+            const base = new assert.AssertionError("unbranded");
+            assert.strictEqual(DerivedError.branded(base), false);
+            assert.throws(() => DerivedError.read(base), TypeError);
+            assert.throws(() => method.call(base), TypeError);
+            """;
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            nameof(AssertionErrorSubclassPreservesPrivateMethodsFieldsAndReplacementReceiver),
+            "NativeDerivedConstructor", _ => (source, null));
+        Assert.Null(result.UnhandledException);
+        Assert.Empty(result.Output);
+    }
+
     public static TheoryData<string, string> Scenarios => new()
     {
         {

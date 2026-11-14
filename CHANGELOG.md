@@ -6,6 +6,26 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: port 300 additional pinned Temporal.PlainTime cases with unchanged
+  upstream assertions and no skips. Add core time construction, conversion,
+  branded accessors, comparison, immutable updates, exact duration arithmetic,
+  rounding and ISO formatting, plus the supporting Duration constructor/from,
+  ISO string/JSON formatting and numeric-coercion rejection surface.
+  Preserve coercion and option access order, constructor realms and
+  subclass prototypes. Fix superclass construction of runtime function objects
+  and captured/shadowing array-destructured parameters; reject invalid ISO signs
+  and annotation syntax. Extend the native Temporal
+  assertion and option-observer helpers. Full Temporal date/calendar APIs,
+  general Duration operations and Intl-aware formatting remain unsupported.
+
+- fix: keep duplicate-named function declaration scopes distinct and bind
+  captured array/object rest patterns. Preserve native superclass replacement
+  prototypes, public/private fields and private-method receivers, evaluating
+  receivers once before arguments. Read Temporal newTarget prototypes exactly
+  once after validation, reject invalid IANA annotation components and enforce
+  exact boolean assertions in the native Temporal helpers. Generate lazy ISO
+  regexes and share Temporal parsing, unit and rounding helpers.
+
 - test262: port 300 additional pinned module-goal cases without skips or
   upstream source changes: 130 expected SyntaxError cases and 170 top-level
   await syntax-acceptance cases. Verify restricted bindings, declaration

@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-09-25T18:55:07Z
+> Last generated (UTC): 2026-11-14T08:02:51Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,6 +22,14 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 19.4 ([tc39.es](https://tc39.es/ecma262/#sec-other-properties-of-the-global-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Temporal namespace: PlainTime construction and conversion | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/from/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/compare/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Tests/TemporalReviewRegressionTests.cs` | `test/built-ins/Temporal/PlainTime/argument-convert.js`<br>`test/built-ins/Temporal/PlainTime/subclass.js`<br>`test/built-ins/Temporal/PlainTime/compare/use-internal-slots.js`<br>`test/built-ins/Temporal/PlainTime/compare/argument-string-minus-sign.js` | The pinned Test262 Temporal extension is exposed through globalThis.Temporal. PlainTime supports six time fields, constructor coercion and range checks, branded accessors, newTarget prototype selection with exactly one observable prototype read after argument validation, from and compare. Conversion preserves observable field and option access order, validates ISO time strings and IANA annotation components and resolves date-like string ambiguity. ISO date/time and annotation parsing is shared internally for future Temporal types. PlainDateTime and ZonedDateTime interoperation remain unsupported; this does not imply full Temporal support. |
+| Temporal.Duration core inputs for PlainTime arithmetic | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Tests/TemporalReviewRegressionTests.cs` | `test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js` | Supports the ten-field Duration constructor, from, branded field accessors, sign and blank. Duration-like property bags are read and converted in alphabetical order; ISO duration strings preserve fractional time units exactly. Mixed signs, nonintegral fields, calendar-field limits and the normalized 2^53-second bound are validated before time arithmetic. toString and toJSON produce ISO duration strings; toString supports fractional-second precision, second-or-finer smallestUnit and nine signed rounding modes. valueOf rejects numeric coercion with TypeError. General Duration arithmetic and calendar-relative conversion remain unsupported. |
+| Temporal.PlainTime value operations, rounding and formatting | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/round/NativePortBatch_Port1000.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/toString/NativePortBatch_Port1000.cs` | `test/built-ins/Temporal/PlainTime/prototype/add/argument-object.js`<br>`test/built-ins/Temporal/PlainTime/prototype/add/order-of-operations.js` | Supports with, equals, add, subtract, round, toString and toJSON, with immutable results and exact nanosecond arithmetic. Time arithmetic validates all duration fields before ignoring date units, wraps at midnight and ignores the optional second arithmetic argument. Rounding supports nine modes, six time units, increment validation and ordered option coercion. toLocaleString uses the base ECMA-262 ISO representation because Intl.DateTimeFormat is not implemented; locale-aware formatting is not claimed. since, until and broader Temporal date/calendar operations remain unsupported. |
 
 ### 19.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-atomics))
 

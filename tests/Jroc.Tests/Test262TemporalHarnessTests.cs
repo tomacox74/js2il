@@ -2,6 +2,72 @@ namespace Jroc.Tests;
 
 public sealed class Test262TemporalHarnessTests
 {
+    [Theory]
+    [InlineData("number", "1")]
+    [InlineData("string", "'true'")]
+    [InlineData("object", "({})")]
+    [InlineData("boxed-boolean", "new Boolean(true)")]
+    [InlineData("false", "false")]
+    public void PlainTimesEqualRejectsNonTrueEqualsResults(string name, string expression)
+    {
+        var source = $$"""
+            const actual = new Temporal.PlainTime(1, 2, 3);
+            const expected = new Temporal.PlainTime(1, 2, 3);
+            let calls = 0;
+            actual.equals = function(value) {
+              assert.sameValue(this, actual);
+              assert.sameValue(value, expected);
+              calls++;
+              return {{expression}};
+            };
+            let caught;
+            try { TemporalHelpers.assertPlainTimesEqual(actual, expected); }
+            catch (error) { caught = error; }
+            assert.sameValue(caught.name, "AssertionError");
+            assert.sameValue(caught.operator, "strictEqual");
+            assert.sameValue(caught.expected, true);
+            assert.sameValue(calls, 1);
+            actual.equals = () => true;
+            TemporalHelpers.assertPlainTimesEqual(actual, expected);
+            """;
+        AssertHelperScript(name, source);
+    }
+
+    [Fact]
+    public void PlainTimeAssertionsRejectNonInstancesBeforeReadingFieldsOrEquals()
+    {
+        AssertHelperScript("noninstances", """
+            let calls = 0;
+            const fake = {
+              get hour() { calls++; return 1; },
+              equals() { calls++; return true; }
+            };
+            const valid = new Temporal.PlainTime(1, 2, 3, 4, 5, 6);
+            function reject(callback) {
+              let caught;
+              try { callback(); } catch (error) { caught = error; }
+              assert.sameValue(caught.name, "AssertionError");
+              assert.sameValue(caught.operator, "strictEqual");
+            }
+            reject(() => TemporalHelpers.assertPlainTime(fake, 1, 2, 3, 4, 5, 6));
+            reject(() => TemporalHelpers.assertPlainTimesEqual(fake, valid));
+            reject(() => TemporalHelpers.assertPlainTimesEqual(valid, fake));
+            assert.sameValue(calls, 0);
+            TemporalHelpers.assertPlainTime(valid, 1, 2, 3, 4, 5, 6);
+            TemporalHelpers.assertPlainTimesEqual(valid, new Temporal.PlainTime(1, 2, 3, 4, 5, 6));
+            """);
+    }
+
+    private static void AssertHelperScript(string name, string source)
+    {
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            "strict_temporal_" + name, "Test262TemporalHarness",
+            _ => ("/*---\nincludes: [temporalHelpers.js]\n---*/\n" + source,
+                Path.Combine(Directory.GetCurrentDirectory(), "strict_temporal_" + name + ".js")));
+        Assert.Null(result.UnhandledException);
+        Assert.Empty(result.Output);
+    }
+
     [Fact]
     public void ObserveMethodPreservesReceiverArgumentsAndAbruptCompletion()
     {

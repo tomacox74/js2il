@@ -131,6 +131,11 @@ public sealed class RuntimeStaticStateAuditTests
         new("JavaScriptRuntime.Symbol._toPrimitive", "ECMA-262 well-known symbol"),
         new("JavaScriptRuntime.Symbol._toStringTag", "ECMA-262 well-known symbol"),
         new("JavaScriptRuntime.Symbol._unscopables", "ECMA-262 well-known symbol"),
+        new("JavaScriptRuntime.Temporal.DurationFieldNames", "immutable primitive lookup"),
+        new("JavaScriptRuntime.Temporal.DurationFieldReadOrder", "immutable primitive lookup"),
+        new("JavaScriptRuntime.Temporal.TimeFieldMaximums", "immutable primitive lookup"),
+        new("JavaScriptRuntime.Temporal.TimeFieldNames", "immutable primitive lookup"),
+        new("JavaScriptRuntime.Temporal.TimeFieldReadOrder", "immutable primitive lookup"),
         new("JavaScriptRuntime.WeakSet._dummyValue", "immutable ABI sentinel"),
         new("Jroc.Runtime.JsReturnConverter.ResultConversions", "weak-keyed CLR metadata"),
     ];

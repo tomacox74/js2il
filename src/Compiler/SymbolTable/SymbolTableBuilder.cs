@@ -1671,7 +1671,16 @@ namespace Jroc.SymbolTables
                     break;
                 case FunctionDeclaration funcDecl:
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
-                    var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
+                    var scopeName = funcName;
+                    if (currentScope.Children.Any(child => child.Kind == ScopeKind.Function && child.Name == funcName))
+                    {
+                        scopeName = $"{funcName}_L{funcDecl.Location.Start.Line}C{funcDecl.Location.Start.Column + 1}";
+                    }
+                    var funcScope = new Scope(scopeName, ScopeKind.Function, currentScope, funcDecl);
+                    if (scopeName != funcName)
+                    {
+                        funcScope.DotNetTypeName = $"Scope_L{funcDecl.Location.Start.Line}C{funcDecl.Location.Start.Column + 1}";
+                    }
                     funcScope.IsAsync = funcDecl.Async;
                     if (funcDecl.Async)
                     {
@@ -2105,9 +2114,11 @@ namespace Jroc.SymbolTables
                             arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, arrowScope, apId);
                             arrowScope.Parameters.Add(apId.Name);
                         }
-                        else if (param is ObjectPattern op)
+                        else if (param is ObjectPattern or ArrayPattern
+                            || param is AssignmentPattern { Left: ObjectPattern or ArrayPattern })
                         {
-                            foreach (var bindId in EnumerateBindingIdentifiers(op))
+                            var pattern = param is AssignmentPattern assignment ? assignment.Left : param;
+                            foreach (var bindId in EnumerateBindingIdentifiers(pattern))
                             {
                                 if (!arrowScope.Bindings.ContainsKey(bindId.Name))
                                 {
@@ -2135,6 +2146,15 @@ namespace Jroc.SymbolTables
                                 }
                                 // Note: Rest parameters are NOT added to arrowScope.Parameters because they don't become IL parameters
                                 // They are initialized from the ambient arguments array at runtime
+                            }
+                            else if (rest.Argument is ObjectPattern or ArrayPattern)
+                            {
+                                foreach (var bindId in EnumerateBindingIdentifiers(rest.Argument))
+                                {
+                                    arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, arrowScope, bindId);
+                                    arrowScope.Parameters.Add(bindId.Name);
+                                    arrowScope.DestructuredParameters.Add(bindId.Name);
+                                }
                             }
                         }
                         else
@@ -3296,7 +3316,7 @@ namespace Jroc.SymbolTables
         }
 
         /// <summary>
-        /// Helper to bind identifier parameters and object pattern property identifiers uniformly.
+        /// Helper to bind identifier parameters and destructuring patterns uniformly.
         /// </summary>
         private static void BindObjectPatternParameters(IEnumerable<Node> parameters, Scope scope)
         {
@@ -3346,8 +3366,17 @@ namespace Jroc.SymbolTables
                         // Note: Rest parameters are NOT added to scope.Parameters because they don't become IL parameters
                         // They are initialized from the ambient arguments array at runtime
                     }
+                    else if (rest.Argument is ObjectPattern or ArrayPattern)
+                    {
+                        foreach (var bindId in EnumerateBindingIdentifiers(rest.Argument))
+                        {
+                            scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
+                            scope.Parameters.Add(bindId.Name);
+                            scope.DestructuredParameters.Add(bindId.Name);
+                        }
+                    }
                 }
-                else if (p is ObjectPattern)
+                else if (p is ObjectPattern or ArrayPattern)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(p))
                     {
@@ -3365,7 +3394,7 @@ namespace Jroc.SymbolTables
                         }
                     }
                 }
-                else if (p is AssignmentPattern { Left: ObjectPattern } patternWithDefault)
+                else if (p is AssignmentPattern { Left: ObjectPattern or ArrayPattern } patternWithDefault)
                 {
                     foreach (var bindId in EnumerateBindingIdentifiers(patternWithDefault.Left))
                     {

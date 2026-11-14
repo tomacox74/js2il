@@ -926,11 +926,10 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        if (callExpr.Callee is HIRLoadPrivateReceiverFieldExpression
-            { Receiver: HIRThisExpression } privateThisCall)
+        if (callExpr.Callee is HIRLoadPrivateReceiverFieldExpression privateCall)
         {
-            if (!TryLowerExpression(privateThisCall, out var privateCallee)
-                || !TryLowerExpression(new HIRThisExpression(), out var privateReceiver)
+            if (!TryLowerExpression(privateCall.Receiver, out var privateReceiver)
+                || !TryLowerPrivateReceiverField(privateCall, privateReceiver, out var privateCallee)
                 || !TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var privateArguments))
             {
                 return false;

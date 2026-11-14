@@ -1648,6 +1648,7 @@ partial class HIRMethodBuilder
                     Kind = CallableKind.FunctionDeclaration,
                     DeclaringScopeName = declaringScopeName,
                     Name = id.Name,
+                    Location = functionScope.Name == id.Name ? default : SourceLocation.FromNode(fd),
                     JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                     HasRestParameters = functionScope.HasRestParameters,

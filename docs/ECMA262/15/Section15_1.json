@@ -102,6 +102,23 @@
       },
       {
         "clause": "15.1",
+        "feature": "array-destructured parameter capture and shadowing",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-parameter-lists",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/compare/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/round/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Tests/Function/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/PlainTime/compare/argument-string-calendar-annotation-invalid-key.js",
+          "test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-divides.js",
+          "test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfEven.js"
+        ],
+        "notes": "Array-destructured callback parameters are bound in their own function scope, can be captured by nested arrows and correctly shadow outer lexical declarations. Parameter registration handles array and object patterns, including defaulted and rest-argument patterns, consistently across callable kinds. Duplicate-named function declarations use distinct compiler scopes while preserving the JavaScript binding, function name and last-declaration hoisting behavior. The Temporal fixtures exercise nested captures and same-name shadowing without rewriting upstream assertions; focused regressions verify rest captures after return and duplicate-declaration closure independence."
+      },
+      {
+        "clause": "15.1",
         "feature": "rest parameters (...args)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-parameter-lists",
