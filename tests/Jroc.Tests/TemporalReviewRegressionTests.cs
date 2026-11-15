@@ -262,6 +262,162 @@ public sealed class TemporalReviewRegressionTests
             """);
     }
 
+    [Fact]
+    public void InstantDifferencesNormalizeZeroFields()
+    {
+        Run("instant_difference_zero_fields", """
+            const early = new Temporal.Instant(0n), late = new Temporal.Instant(5n);
+            for (const largestUnit of ["hours", "seconds", "nanoseconds"]) {
+              for (const duration of [
+                early.since(late, { largestUnit }), late.until(early, { largestUnit })
+              ]) {
+                for (const field of ["years", "months", "weeks", "days", "hours", "minutes",
+                                     "seconds", "milliseconds", "microseconds"]) {
+                  assert.sameValue(duration[field], 0, field);
+                }
+                assert.sameValue(duration.nanoseconds, -5);
+              }
+            }
+            assert.sameValue(early.since(early).nanoseconds, 0);
+            """);
+    }
+
+    [Fact]
+    public void InstantDifferenceOptionsValidateNamesBeforeReadingLaterOptions()
+    {
+        Run("instant_difference_option_order", """
+            const instant = new Temporal.Instant(0n);
+            for (const method of ["since", "until"]) {
+              for (const largestUnit of ["bogus", "day", "days", "auto"]) {
+                const calls = [];
+                const options = {
+                  largestUnit,
+                  get roundingIncrement() { calls.push("increment"); return 1; },
+                  get roundingMode() { calls.push("mode"); return "trunc"; },
+                  get smallestUnit() { calls.push("smallest"); return "nanoseconds"; }
+                };
+                if (largestUnit === "auto") instant[method](instant, options);
+                else assert.throws(RangeError, () => instant[method](instant, options));
+                assert.compareArray(calls, largestUnit === "bogus" ? [] : ["increment", "mode", "smallest"]);
+              }
+              assert.throws(RangeError, () => instant[method](instant, {
+                largestUnit: "day", smallestUnit: "auto"
+              }));
+            }
+            """);
+    }
+
+    [Fact]
+    public void InstantStringOptionsReadTimeZoneBeforeUnitGroupValidation()
+    {
+        Run("instant_string_option_order", """
+            const instant = new Temporal.Instant(0n);
+            for (const smallestUnit of ["bogus", "day", "days", "auto", "hour"]) {
+              const calls = [];
+              assert.throws(RangeError, () => instant.toString({
+                smallestUnit,
+                get timeZone() { calls.push("zone"); return undefined; }
+              }));
+              assert.compareArray(calls, smallestUnit === "bogus" ? [] : ["zone"]);
+            }
+            const reason = {};
+            let caught;
+            try {
+              instant.toString({ smallestUnit: "day", get timeZone() { throw reason; } });
+            } catch (error) { caught = error; }
+            assert.sameValue(caught, reason);
+            """);
+    }
+
+    [Fact]
+    public void InstantConversionsRequireStringPrimitives()
+    {
+        Run("instant_conversion_string_primitive", """
+            const instant = new Temporal.Instant(0n);
+            for (const value of [42, true, null, undefined, 1n, Symbol()]) {
+              const object = { toString() { return value; } };
+              for (const convert of [
+                () => Temporal.Instant.from(object), () => Temporal.Instant.compare(object, instant),
+                () => instant.equals(object), () => instant.since(object), () => instant.until(object)
+              ]) assert.throws(TypeError, convert);
+            }
+            const calls = [];
+            const object = {
+              toString() { calls.push("string"); return {}; },
+              valueOf() { calls.push("value"); return "1970-01-01T00:00Z"; }
+            };
+            assert.sameValue(Temporal.Instant.from(object).epochNanoseconds, 0n);
+            assert.compareArray(calls, ["string", "value"]);
+            const exotic = { [Symbol.toPrimitive](hint) {
+              assert.sameValue(hint, "string"); return "1970-01-01T00:00Z";
+            } };
+            assert.sameValue(Temporal.Instant.from(exotic).epochNanoseconds, 0n);
+            const reason = {};
+            let caught;
+            try { Temporal.Instant.from({ toString() { throw reason; } }); }
+            catch (error) { caught = error; }
+            assert.sameValue(caught, reason);
+            """);
+    }
+
+    [Fact]
+    public void InstantStringFormatsUtcAndFixedOffsets()
+    {
+        Run("instant_string_offsets", """
+            const instant = new Temporal.Instant(0n);
+            for (const [zone, expected] of [
+              ["UTC", "1970-01-01T00:00:00+00:00"],
+              ["utc", "1970-01-01T00:00:00+00:00"],
+              ["+01:30", "1970-01-01T01:30:00+01:30"],
+              ["-0130", "1969-12-31T22:30:00-01:30"],
+              ["+23", "1970-01-01T23:00:00+23:00"],
+              ["-00:00", "1970-01-01T00:00:00+00:00"],
+              ["1970-01-01T00:00Z", "1970-01-01T00:00:00+00:00"],
+              ["1970-01-01T00:00+02:30", "1970-01-01T02:30:00+02:30"],
+              ["1970-01-01T00:00Z[-01:00]", "1969-12-31T23:00:00-01:00"]
+            ]) assert.sameValue(instant.toString({ timeZone: zone }), expected, zone);
+            assert.sameValue(instant.toString(), "1970-01-01T00:00:00Z");
+            assert.sameValue(new Temporal.Instant(-1n).toString({
+              timeZone: "+01:30", fractionalSecondDigits: 6
+            }), "1970-01-01T01:29:59.999999+01:30");
+            assert.sameValue(new Temporal.Instant(59999999999n).toString({
+              timeZone: "-01:00", smallestUnit: "minute", roundingMode: "ceil"
+            }), "1969-12-31T23:01-01:00");
+            assert.sameValue(new Temporal.Instant(8640000000000000000000n).toString({
+              timeZone: "+23:59"
+            }), "+275760-09-13T23:59:00+23:59");
+            assert.sameValue(new Temporal.Instant(-8640000000000000000000n).toString({
+              timeZone: "-23:59"
+            }), "-271821-04-19T00:01:00-23:59");
+            """);
+    }
+
+    [Fact]
+    public void InstantStringRejectsInvalidTimeZonesWithoutCoercion()
+    {
+        Run("instant_string_invalid_zones", """
+            const instant = new Temporal.Instant(0n);
+            for (const timeZone of [null, true, 1, 1n, Symbol(), {},
+              { toString() { throw new Test262Error("must not coerce"); } }
+            ]) assert.throws(TypeError, () => instant.toString({ timeZone }));
+            for (const timeZone of ["+24:00", "+01:60", "+01:00:00", "+010000",
+              "+01:00.1", "+1", "+01:", "+aa:bb", "Z", "", "Unsupported/Zone"
+            ]) assert.throws(RangeError, () => instant.toString({ timeZone }));
+            """);
+    }
+
+    [Fact]
+    public void InstantCompareReturnsNormalizedOrder()
+    {
+        Run("instant_compare_order", """
+            const early = new Temporal.Instant(-8640000000000000000000n);
+            const late = new Temporal.Instant(8640000000000000000000n);
+            assert.sameValue(Temporal.Instant.compare(early, late), -1);
+            assert.sameValue(Temporal.Instant.compare(late, early), 1);
+            assert.sameValue(Temporal.Instant.compare(early, early), 0);
+            """);
+    }
+
     private static void Run(string name, string source)
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(

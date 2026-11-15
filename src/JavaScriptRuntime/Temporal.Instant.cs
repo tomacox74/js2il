@@ -21,11 +21,16 @@ public static partial class Temporal
         {
             return instant;
         }
-        if (TypeUtilities.IsPrimitive(value) && value is not string)
+        if (!TypeUtilities.IsPrimitive(value)
+            && !TypeUtilities.TryCoerceObjectToPrimitive(value!, "string", out value))
+        {
+            throw new TypeError("Cannot convert object to primitive value");
+        }
+        if (value is not string text)
         {
             throw new TypeError("Temporal.Instant requires an instant or an ISO string");
         }
-        var parsed = ParseISODateTime(DotNet2JSConversions.ToStringRejectingSymbols(value));
+        var parsed = ParseISODateTime(text);
         if (parsed.Date is not ISODate date || parsed.Offset.Length == 0)
         {
             throw new RangeError("Temporal.Instant requires a date, time and UTC offset");
@@ -127,7 +132,19 @@ public static partial class Temporal
     private static string? GetInstantUnitOption(object? options, string name)
     {
         var value = GetTemporalOption(options, name);
-        return value is null ? null : DotNet2JSConversions.ToStringRejectingSymbols(value);
+        if (value is null)
+        {
+            return null;
+        }
+        var unit = DotNet2JSConversions.ToStringRejectingSymbols(value);
+        return unit switch
+        {
+            "year" or "years" or "month" or "months" or "week" or "weeks" or "day" or "days"
+                or "hour" or "hours" or "minute" or "minutes" or "second" or "seconds"
+                or "millisecond" or "milliseconds" or "microsecond" or "microseconds"
+                or "nanosecond" or "nanoseconds" or "auto" => unit,
+            _ => throw new RangeError("Invalid Temporal unit")
+        };
     }
 
     private static void ValidateInstantIncrement(double increment, TimeUnit unit, bool wholeDay)
@@ -195,10 +212,13 @@ public static partial class Temporal
         var increment = GetInstantRoundingIncrement(options);
         var mode = GetTemporalRoundingMode(options, TemporalRoundingMode.Trunc);
         var smallestName = GetInstantUnitOption(options, "smallestUnit");
-        var smallest = smallestName is null ? TimeUnit.Nanosecond : GetTimeUnit(smallestName, true);
-        var largest = largestName is null or "auto"
-            ? (TimeUnit)System.Math.Min((int)TimeUnit.Second, (int)smallest)
+        var largest = largestName is null or "auto" ? TimeUnit.Unset
             : GetTimeUnit(largestName, true);
+        var smallest = smallestName is null ? TimeUnit.Nanosecond : GetTimeUnit(smallestName, true);
+        if (largest == TimeUnit.Unset)
+        {
+            largest = (TimeUnit)System.Math.Min((int)TimeUnit.Second, (int)smallest);
+        }
         if (largest > smallest)
         {
             throw new RangeError("largestUnit must not be smaller than smallestUnit");
@@ -215,7 +235,8 @@ public static partial class Temporal
         for (var i = (int)largest; i <= (int)TimeUnit.Nanosecond; i++)
         {
             var length = TimeUnitLength((TimeUnit)i);
-            fields[i + 4] = remainder.IsZero ? 0d : Number.ConvertBigIntegerToDouble(remainder / length) * rounded.Sign;
+            var quotient = remainder / length;
+            fields[i + 4] = quotient.IsZero ? 0d : Number.ConvertBigIntegerToDouble(quotient) * rounded.Sign;
             remainder %= length;
         }
         return new TemporalDuration(fields);
@@ -226,21 +247,20 @@ public static partial class Temporal
         var options = GetTemporalOptions(suppliedOptions);
         var digits = GetTemporalFractionalSecondDigitsOption(options);
         var mode = GetTemporalRoundingMode(options, TemporalRoundingMode.Trunc);
-        var unit = GetTimeUnit(GetInstantUnitOption(options, "smallestUnit"), false);
+        var unitName = GetInstantUnitOption(options, "smallestUnit");
+        var zone = GetTemporalOption(options, "timeZone");
+        var unit = GetTimeUnit(unitName, false);
         if (unit == TimeUnit.Hour)
         {
             throw new RangeError("Temporal.Instant.toString does not support hour precision");
         }
-        var zone = GetTemporalOption(options, "timeZone");
-        if (zone is not null)
-        {
-            throw new RangeError("Temporal.Instant time zone formatting is not supported");
-        }
+        var offsetMinutes = zone is null ? 0 : GetInstantTimeZoneOffsetMinutes(zone);
         var precision = ToSecondsStringPrecisionRecord(unit, digits);
         var rounded = RoundInstantNanoseconds(instant.EpochNanoseconds, precision.NanosecondIncrement, mode);
         _ = new TemporalInstant(rounded);
-        var days = FloorDivide(rounded, NanosecondsPerDay);
-        var time = (long)(rounded - days * NanosecondsPerDay);
+        var local = rounded + offsetMinutes * TimeUnitLength(TimeUnit.Minute);
+        var days = FloorDivide(local, NanosecondsPerDay);
+        var time = (long)(local - days * NanosecondsPerDay);
         var date = ISODateFromEpochDays((long)days);
         var year = date.Year is >= 0 and <= 9999
             ? date.Year.ToString("D4", CultureInfo.InvariantCulture)
@@ -259,6 +279,80 @@ public static partial class Temporal
                 result += "." + fraction;
             }
         }
-        return result + "Z";
+        if (zone is null)
+        {
+            return result + "Z";
+        }
+        var magnitude = System.Math.Abs(offsetMinutes);
+        return result + (offsetMinutes < 0 ? "-" : "+")
+            + (magnitude / 60).ToString("D2", CultureInfo.InvariantCulture)
+            + ":" + (magnitude % 60).ToString("D2", CultureInfo.InvariantCulture);
+    }
+
+    private static int GetInstantTimeZoneOffsetMinutes(object value)
+    {
+        if (value is not string identifier)
+        {
+            throw new TypeError("Temporal time zone must be a string");
+        }
+        if (identifier.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+        if (identifier.Length != 0 && identifier[0] is '+' or '-'
+            && identifier.Length <= 6)
+        {
+            return ParseInstantTimeZoneOffsetMinutes(identifier);
+        }
+        // ISO strings can select a zone via an annotation, Z, or a numeric offset.
+        var parsed = ParseISODateTime(identifier, allowDateOnly: true);
+        if (parsed.Clock.Length != 0)
+        {
+            _ = ParseInstantClock(parsed);
+        }
+        var zone = parsed.Annotations.TimeZone ?? parsed.Offset;
+        if (zone.Equals("UTC", StringComparison.OrdinalIgnoreCase)
+            || parsed.Annotations.TimeZone is null && zone is "Z" or "z")
+        {
+            return 0;
+        }
+        return ParseInstantTimeZoneOffsetMinutes(zone);
+    }
+
+    private static int ParseInstantTimeZoneOffsetMinutes(string identifier)
+    {
+        var digits = identifier.AsSpan();
+        if (digits.Length is not (3 or 5 or 6) || digits[0] is not ('+' or '-')
+            || digits.Length == 6 && digits[3] != ':')
+        {
+            throw new RangeError("Temporal.Instant supports UTC and minute-precision offset time zones only");
+        }
+        var hour = 0;
+        var minute = 0;
+        for (var i = 1; i < digits.Length; i++)
+        {
+            if (digits.Length == 6 && i == 3)
+            {
+                continue;
+            }
+            if (digits[i] is < '0' or > '9')
+            {
+                throw new RangeError("Invalid Temporal time zone offset");
+            }
+            if (i <= 2)
+            {
+                hour = hour * 10 + digits[i] - '0';
+            }
+            else
+            {
+                minute = minute * 10 + digits[i] - '0';
+            }
+        }
+        if (hour > 23 || minute > 59)
+        {
+            throw new RangeError("Invalid Temporal time zone offset");
+        }
+        var offset = hour * 60 + minute;
+        return digits[0] == '-' ? -offset : offset;
     }
 }

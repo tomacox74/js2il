@@ -12,8 +12,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   timeline-directed rounding and UTC ISO/JSON formatting. Preserve conversion
   and option access order, range checks, extended Gregorian years, immutable
   intrinsic result prototypes and correctly rounded binary64 Duration slots.
+  Normalize zero difference fields, reject non-string primitive conversions,
+  and preserve unit-name versus unit-group validation order. Support UTC and
+  minute-precision fixed-offset time zones in toString, including date rollover.
   Extend native Instant equality assertions and plural-unit checks. Broader
-  date/calendar interoperation, time-zone formatting and Intl-aware formatting
+  date/calendar interoperation, other named time zones and Intl-aware formatting
   remain unsupported. No selected cases require eval; this batch adds no skips.
 
 - perf(compiler): reuse lexical capture facts and index scope roots during

@@ -53,6 +53,7 @@
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/round/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/since/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/toJSON/ExecutionTests.cs",
+          "tests/Jroc.Tests/TemporalReviewRegressionTests.cs",
           "tests/Jroc.Test262.Tests/Integration/ExecutionTests.cs"
         ],
         "test262Paths": [
@@ -64,7 +65,7 @@
           "test/built-ins/Temporal/Instant/prototype/since/order-of-operations.js",
           "test/built-ins/Temporal/Instant/prototype/since/float64-representable-integer.js"
         ],
-        "notes": "Three hundred additional pinned Instant cases are verified on the development branch. Supports the ToBigInt constructor, exact epoch factories, branded epoch getters with floor-based milliseconds, ISO date-time parsing with explicit offsets, extended Gregorian years, leap seconds and annotation validation, from, compare and equals. add/subtract accept time units and reject nonzero day/calendar fields; results preserve exact BigInt arithmetic and the Instant range. since/until create intrinsic Duration values, preserving conversion and option access order, increment validation, signed rounding, exact balancing and binary64 slot conversion. round supports six time units and nine timeline-directed modes, including pre-epoch instants and whole-day-dividing increments. toJSON and toString provide UTC ISO formatting; toLocaleString uses the base ISO representation without Intl.DateTimeFormat. Date/calendar type interoperation, toZonedDateTimeISO and time-zone formatting remain unsupported. These results do not claim full Temporal conformance."
+        "notes": "Three hundred additional pinned Instant cases are verified on the development branch. Supports the ToBigInt constructor, exact epoch factories, branded epoch getters with floor-based milliseconds, ISO date-time parsing with explicit offsets, extended Gregorian years, leap seconds and annotation validation, from, compare and equals. Instant-like objects must convert to string primitives. add/subtract accept time units and reject nonzero day/calendar fields; results preserve exact BigInt arithmetic and the Instant range. since/until create intrinsic Duration values, preserving conversion and option access order, increment validation, signed rounding, exact balancing, positive-zero fields and binary64 slot conversion. Unit names are validated on read; unit-group validation follows the remaining option reads. round supports six time units and nine timeline-directed modes, including pre-epoch instants and whole-day-dividing increments. toJSON and toString provide UTC ISO formatting; toString also supports UTC and minute-precision fixed-offset time zones, including ISO date/time strings identifying those zones and offset date rollover at the Instant boundaries. Time-zone values must be strings, not coercible objects. toLocaleString uses the base ISO representation without Intl.DateTimeFormat. Date/calendar type interoperation, toZonedDateTimeISO, other named time zones and Intl-aware formatting remain unsupported. These results do not claim full Temporal conformance."
       },
       {
         "clause": "19.4",

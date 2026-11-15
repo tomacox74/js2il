@@ -48,7 +48,7 @@ public static partial class Temporal
                     {
                         var first = ToTemporalInstant(left);
                         var second = ToTemporalInstant(right);
-                        return (double)first.EpochNanoseconds.CompareTo(second.EpochNanoseconds);
+                        return (double)System.Math.Sign(first.EpochNanoseconds.CompareTo(second.EpochNanoseconds));
                     }), 2d);
             });
 
