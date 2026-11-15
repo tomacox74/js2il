@@ -74,18 +74,36 @@
       },
       {
         "clause": "19.4",
-        "feature": "Temporal.Duration core inputs for PlainTime arithmetic",
+        "feature": "Temporal.Duration construction, immutable values and numeric arithmetic",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-duration-objects",
         "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/from/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/compare/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/abs/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/negated/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/with/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/add/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/subtract/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/toString/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/toJSON/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Duration/prototype/toLocaleString/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs",
           "tests/Jroc.Tests/TemporalReviewRegressionTests.cs"
         ],
         "test262Paths": [
-          "test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js"
+          "test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js",
+          "test/built-ins/Temporal/Duration/max.js",
+          "test/built-ins/Temporal/Duration/from/order-of-operations.js",
+          "test/built-ins/Temporal/Duration/compare/compare-no-precision-loss.js",
+          "test/built-ins/Temporal/Duration/prototype/with/sign-conflict-throws-rangeerror.js",
+          "test/built-ins/Temporal/Duration/prototype/add/precision-no-floating-point-loss.js",
+          "test/built-ins/Temporal/Duration/prototype/subtract/subclassing-ignored.js",
+          "test/built-ins/Temporal/Duration/prototype/toString/throws-when-rounded-duration-is-invalid.js"
         ],
-        "notes": "Supports the ten-field Duration constructor, from, branded field accessors, sign and blank. Duration-like property bags are read and converted in alphabetical order; ISO duration strings preserve fractional time units exactly. Mixed signs, nonintegral fields, calendar-field limits and the normalized 2^53-second bound are validated before time arithmetic. toString and toJSON produce ISO duration strings; toString supports fractional-second precision, second-or-finer smallestUnit and nine signed rounding modes. valueOf rejects numeric coercion with TypeError. General Duration arithmetic and calendar-relative conversion remain unsupported."
+        "notes": "Supports the ten-field Duration constructor, from, branded field accessors, sign, blank, abs, negated and with. Duration-like property bags are read and converted in alphabetical order; ISO duration strings preserve fractional time units exactly. Mixed signs, nonintegral fields, calendar-field limits and the normalized 2^53-second bound are validated. Immutable result operations create base Duration values without consulting constructor or species overrides. add and subtract support day/time units, with exact integer nanosecond arithmetic, balancing to the largest input unit, correctly rounded binary64 fields and result-range validation; years, months and weeks are rejected. Numeric compare preserves nanosecond precision and short-circuits identical slots. total supports fixed units from day through nanosecond with one correctly rounded conversion of the exact ratio. Calendar-relative comparison and totals, supplied relativeTo values, time zones and Duration.round remain unsupported. toString and toJSON produce ISO duration strings; toString supports fractional-second precision, second-or-finer smallestUnit and nine signed rounding modes. toLocaleString uses the base ISO representation, not Intl.DurationFormat. valueOf rejects numeric coercion with TypeError. This development-branch coverage does not imply full Temporal support."
       },
       {
         "clause": "19.4.1",

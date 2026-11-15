@@ -162,7 +162,7 @@
 		) cil managed 
 	{
 		// Header size: 12
-		// Code size: 350 (0x15e)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PerfHooks_PerformanceNow_Basic/Scope,
@@ -175,7 +175,7 @@
 			[7] class [System.Runtime]System.Exception,
 			[8] object,
 			[9] object,
-			[10] float64,
+			[10] object,
 			[11] object,
 			[12] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksModule,
 			[13] float64,
@@ -286,42 +286,40 @@
 		} // end handler
 
 		IL_00f6: ldloc.s 5
-		IL_00f8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00fd: ldloc.2
-		IL_00fe: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0103: sub
-		IL_0104: stloc.s 10
-		IL_0106: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_010b: stloc.s 14
-		IL_010d: ldloc.s 6
-		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_0114: stloc.s 15
-		IL_0116: ldloc.s 14
-		IL_0118: ldstr "hasNow="
-		IL_011d: ldloc.s 15
-		IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0124: pop
-		IL_0125: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012a: stloc.s 14
-		IL_012c: ldloc.s 10
-		IL_012e: ldc.r8 0.0
-		IL_0137: clt
-		IL_0139: stloc.s 16
-		IL_013b: ldloc.s 16
-		IL_013d: ldc.i4.0
-		IL_013e: ceq
-		IL_0140: stloc.s 16
-		IL_0142: ldloc.s 16
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
-		IL_0149: stloc.s 15
-		IL_014b: ldloc.s 14
-		IL_014d: ldstr "elapsedMsNonNegative="
-		IL_0152: ldloc.s 15
-		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0159: pop
-		IL_015a: ldnull
-		IL_015b: stloc.s 11
-		IL_015d: ret
+		IL_00f8: ldloc.2
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+		IL_00fe: stloc.s 10
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0105: stloc.s 14
+		IL_0107: ldloc.s 6
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_010e: stloc.s 15
+		IL_0110: ldloc.s 14
+		IL_0112: ldstr "hasNow="
+		IL_0117: ldloc.s 15
+		IL_0119: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_011e: pop
+		IL_011f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0124: stloc.s 14
+		IL_0126: ldloc.s 10
+		IL_0128: ldc.r8 0.0
+		IL_0131: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, float64)
+		IL_0136: stloc.s 16
+		IL_0138: ldloc.s 16
+		IL_013a: ldc.i4.0
+		IL_013b: ceq
+		IL_013d: stloc.s 16
+		IL_013f: ldloc.s 16
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.BoxedPrimitive::Box(bool)
+		IL_0146: stloc.s 15
+		IL_0148: ldloc.s 14
+		IL_014a: ldstr "elapsedMsNonNegative="
+		IL_014f: ldloc.s 15
+		IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0156: pop
+		IL_0157: ldnull
+		IL_0158: stloc.s 11
+		IL_015a: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::__js_module_init__
 
 } // end of class Modules.PerfHooks_PerformanceNow_Basic

@@ -632,6 +632,188 @@ assert.throws(TypeError, function() {
     TemporalHelpers.checkPluralUnitsAccepted(function() { return {}; }, ["second"]);
 });
 
+// Duration helpers must check all ten fields, preserve SameValue (including
+// signed zero), and use observable getters rather than native slot shortcuts.
+[
+    ["assertDuration", 11], ["assertDurationsEqual", 2],
+    ["checkSubclassingIgnored", 0], ["checkSubclassingIgnoredStatic", 0],
+    ["checkSubclassConstructorNotObject", 5], ["checkSubclassConstructorUndefined", 5],
+    ["checkSubclassConstructorThrows", 5], ["checkSubclassConstructorNotCalled", 5],
+    ["checkSubclassSpeciesInvalidResult", 5], ["checkSubclassSpeciesNotAConstructor", 5],
+    ["checkSubclassSpeciesNull", 5], ["checkSubclassSpeciesUndefined", 5],
+    ["checkSubclassSpeciesThrows", 5],
+    ["checkStaticInvalidReceiver", 4], ["checkStaticReceiverNotCalled", 4],
+    ["checkThisValueNotCalled", 4]
+].forEach(function(entry) {
+    assert.sameValue(TemporalHelpers[entry[0]].name, entry[0]);
+    assert.sameValue(TemporalHelpers[entry[0]].length, entry[1]);
+});
+var nativeDurationFields = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+var nativeDurationNames = [
+    "years", "months", "weeks", "days", "hours", "minutes",
+    "seconds", "milliseconds", "microseconds", "nanoseconds"
+];
+var nativeDuration = new Temporal.Duration(...nativeDurationFields);
+TemporalHelpers.assertDuration(nativeDuration, ...nativeDurationFields);
+for (let durationFieldIndex = 0; durationFieldIndex < 10; durationFieldIndex++) {
+    var wrongDurationFields = nativeDurationFields.slice();
+    wrongDurationFields[durationFieldIndex]++;
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.assertDuration(nativeDuration, ...wrongDurationFields);
+    });
+}
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertDuration({}, ...nativeDurationFields);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertDuration(new Temporal.Duration(), -0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+});
+var durationFieldGets = [];
+var observedDuration = new Temporal.Duration();
+nativeDurationNames.forEach(function(name, index) {
+    Object.defineProperty(observedDuration, name, {
+        get: function() {
+            durationFieldGets.push(name);
+            return nativeDurationFields[index];
+        }
+    });
+});
+TemporalHelpers.assertDuration(observedDuration, ...nativeDurationFields);
+assert.compareArray(durationFieldGets, nativeDurationNames);
+TemporalHelpers.assertDurationsEqual(nativeDuration, new Temporal.Duration(...nativeDurationFields));
+for (let equalityFieldIndex = 0; equalityFieldIndex < 10; equalityFieldIndex++) {
+    var wrongEqualityFields = nativeDurationFields.slice();
+    wrongEqualityFields[equalityFieldIndex]++;
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.assertDurationsEqual(nativeDuration, new Temporal.Duration(...wrongEqualityFields));
+    });
+}
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertDurationsEqual({}, nativeDuration);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertDurationsEqual(nativeDuration, {});
+});
+var durationPluralCalls = [];
+TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+    durationPluralCalls.push(unit);
+    return new Temporal.Duration(0, 0, 0, 0, 2);
+}, ["hour"]);
+assert.compareArray(durationPluralCalls, ["hour", "hours"]);
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+        return new Temporal.Duration(0, 0, 0, 0, unit === "hour" ? 1 : 2);
+    }, ["hour"]);
+});
+
+// Upstream runs nine instance matrices (26 method calls, with resultAssertions
+// deliberately omitted for the species getter case), and three static matrices.
+var durationSubclassAssertions = 0;
+TemporalHelpers.checkSubclassingIgnored(Temporal.Duration, [0, 0, 0, 0, 1], "add", [{ hours: 2 }],
+    function(result) {
+        durationSubclassAssertions++;
+        TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0);
+    });
+assert.sameValue(durationSubclassAssertions, 25);
+var durationStaticAssertions = 0;
+TemporalHelpers.checkSubclassingIgnoredStatic(Temporal.Duration, "from", ["PT3H"], function(result) {
+    durationStaticAssertions++;
+    TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0);
+});
+assert.sameValue(durationStaticAssertions, 17);
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkSubclassingIgnored(Temporal.Duration, [], "abs", [], function() {
+        assert.sameValue(1, 2, "result callback must not be dropped");
+    });
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkSubclassingIgnoredStatic(Temporal.Duration, "from", ["PT3H"], function() {
+        assert.sameValue(1, 2, "static result callback must not be dropped");
+    });
+});
+var durationConstructorTypes = [];
+Temporal.Duration.prototype.nativeSubclassProbe = function() {
+    durationConstructorTypes.push(this.constructor === null ? "null" : typeof this.constructor);
+    return new Temporal.Duration();
+};
+try {
+    TemporalHelpers.checkSubclassConstructorNotObject(Temporal.Duration, [], "nativeSubclassProbe", [], function() {});
+    assert.compareArray(durationConstructorTypes, ["null", "boolean", "string", "symbol", "number", "bigint"]);
+    var durationSpeciesTypes = [];
+    Temporal.Duration.prototype.nativeSubclassProbe = function() {
+        durationSpeciesTypes.push(typeof this.constructor[Symbol.species]);
+        return new Temporal.Duration();
+    };
+    TemporalHelpers.checkSubclassSpeciesNotAConstructor(Temporal.Duration, [], "nativeSubclassProbe", [], function() {});
+    assert.compareArray(durationSpeciesTypes, ["boolean", "string", "symbol", "number", "bigint", "object"]);
+} finally {
+    delete Temporal.Duration.prototype.nativeSubclassProbe;
+}
+var durationSubclassOrder = [];
+Object.defineProperty(Temporal.Duration.prototype, "nativeSubclassProbe", {
+    configurable: true,
+    get: function() {
+        durationSubclassOrder.push("get method");
+        return function() {
+            durationSubclassOrder.push("call method");
+            var prototype = Object.getPrototypeOf(this);
+            assert.sameValue(Object.getPrototypeOf(prototype), Temporal.Duration.prototype);
+            assert.sameValue(Object.getPrototypeOf(prototype.constructor), Temporal.Duration);
+            assert.sameValue(Object.getOwnPropertyDescriptor(prototype, "constructor").enumerable, false);
+            assert.sameValue(Object.getOwnPropertyDescriptor(prototype.constructor, "prototype").writable, false);
+            return new Temporal.Duration();
+        };
+    }
+});
+var durationMethodArgs = {
+    [Symbol.iterator]: function() {
+        durationSubclassOrder.push("iterate arguments");
+        return [][Symbol.iterator]();
+    }
+};
+try {
+    TemporalHelpers.checkSubclassConstructorNotCalled(Temporal.Duration, [], "nativeSubclassProbe", durationMethodArgs,
+        function(result) { TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); });
+    assert.compareArray(durationSubclassOrder, ["get method", "iterate arguments", "call method"]);
+} finally {
+    delete Temporal.Duration.prototype.nativeSubclassProbe;
+}
+Temporal.Duration.nativeStaticProbe = function() {
+    assert.sameValue(isConstructor(this), true, "ordinary receiver functions must be constructible");
+    return new Temporal.Duration();
+};
+var nativeStaticProbeCalls = 0;
+try {
+    TemporalHelpers.checkStaticReceiverNotCalled(Temporal.Duration, "nativeStaticProbe", [], function() {
+        nativeStaticProbeCalls++;
+    });
+    assert.sameValue(nativeStaticProbeCalls, 8);
+} finally {
+    delete Temporal.Duration.nativeStaticProbe;
+}
+[
+    ["checkSubclassingIgnored", [
+        "checkSubclassConstructorNotObject", "checkSubclassConstructorUndefined",
+        "checkSubclassConstructorThrows", "checkSubclassConstructorNotCalled",
+        "checkSubclassSpeciesInvalidResult", "checkSubclassSpeciesNotAConstructor",
+        "checkSubclassSpeciesNull", "checkSubclassSpeciesUndefined", "checkSubclassSpeciesThrows"
+    ]],
+    ["checkSubclassingIgnoredStatic", [
+        "checkStaticInvalidReceiver", "checkStaticReceiverNotCalled", "checkThisValueNotCalled"
+    ]]
+].forEach(function(entry) {
+    var helperReceiver = {}, dispatchOrder = [];
+    entry[1].forEach(function(name) {
+        helperReceiver[name] = function() {
+            assert.sameValue(this, helperReceiver);
+            assert.compareArray(Array.from(arguments), ["first", "second", "third"]);
+            dispatchOrder.push(name);
+        };
+    });
+    TemporalHelpers[entry[0]].call(helperReceiver, "first", "second", "third");
+    assert.compareArray(dispatchOrder, entry[1]);
+});
+
 assert.sameValue(date_1899_end, -2208988800001);
 assert.sameValue(date_1900_start, -2208988800000);
 assert.sameValue(date_1969_end, -1);

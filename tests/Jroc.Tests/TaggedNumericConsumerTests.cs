@@ -125,24 +125,49 @@ public sealed class TaggedNumericConsumerTests
     }
 
     [Fact]
-    public void CompiledMultiply_UsesTaggedReadsAndDeferredConversion()
+    public void CompiledMultiply_PreservesDynamicNumericTypes()
     {
         var artifact = Compile("""
             function multiply(obj) { return obj.left * obj.right; }
+            console.log(multiply({ left: 6, right: 7 }));
+            console.log(multiply({ left: "3", right: "4" }));
+            const bigint = multiply({ left: 6n, right: 7n });
+            console.log(typeof bigint, bigint === 42n);
+            const converted = multiply({
+                left: { valueOf() { return 6n; } },
+                right: { valueOf() { return 7n; } }
+            });
+            console.log(typeof converted, converted === 42n);
+            for (const pair of [[6n, 7], [6, 7n]]) {
+                try { multiply({ left: pair[0], right: pair[1] }); }
+                catch (error) { console.log(error instanceof TypeError); }
+            }
+            """);
+        var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
+        Assert.Contains("Operators::Multiply(object, object)", il);
+        AssertOutput(artifact, "42\n12\nbigint true\nbigint true\ntrue\ntrue");
+    }
+
+    [Fact]
+    public void CompiledNumericMultiply_UsesTaggedReadAndDeferredConversion()
+    {
+        var artifact = Compile("""
+            function multiply(obj) { return obj.left * +obj.right; }
             console.log(multiply({ left: 6, right: 7 }));
             console.log(multiply({ left: "3", right: "4" }));
             """);
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
         var instructions = il.Split('\n').Where(line => line.Contains("IL_", StringComparison.Ordinal)).ToArray();
         var reads = instructions.Select((line, index) => (line, index))
-            .Where(item => item.line.Contains("ObjectRuntime::GetItemValue(object, string)", StringComparison.Ordinal))
+            .Where(item => item.line.Contains("ObjectRuntime::GetItemValue(object, string)", StringComparison.Ordinal)
+                || item.line.Contains("ObjectRuntime::GetItemAsNumber(object, string)", StringComparison.Ordinal))
             .Select(item => item.index).ToArray();
         var conversions = instructions.Select((line, index) => (line, index))
             .Where(item => item.line.Contains("JsValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.JsValue)", StringComparison.Ordinal))
             .Select(item => item.index).ToArray();
         Assert.Equal(2, reads.Length);
-        Assert.Equal(2, conversions.Length);
-        Assert.True(reads[1] < conversions[0], "Both property values must be read before the first coercion.");
+        Assert.Single(conversions);
+        Assert.True(reads[1] < conversions[0], "The left property coercion must follow the right operand evaluation.");
         Assert.DoesNotContain("box [JavaScriptRuntime]JavaScriptRuntime.JsValue", il);
         AssertOutput(artifact, "42\n12");
     }
