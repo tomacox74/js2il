@@ -16,9 +16,10 @@ in C# without rewriting them.
 - **Run a JavaScript script from the terminal.** Compile a `.js` file and run
   the generated `.dll` with `dotnet`. Try the [Hello World example](#compile-and-run-javascript).
 - **Compile an npm package into a .NET assembly.** Use `jroc --moduleid` to
-  compile a package by name. The [Picocolors sample](samples/Picocolors/)
-  shows how to compile a package during `dotnet build` with `Jroc.SDK` and
-  call its exports from C# through a strongly typed API.
+  compile a package by name. See [command-line usage](#command-line-usage).
+- **Reuse a JavaScript library from C#.** Use `Jroc.SDK` to compile your own
+  JavaScript or an npm package during `dotnet build` and call its exports
+  through a strongly typed API. See the [Picocolors sample](samples/Picocolors/).
 - **Compile JavaScript supplied at runtime.** Pass source text from your .NET
   app to `Jroc.Core` to compile and load it in memory without writing an
   assembly to disk. See the
