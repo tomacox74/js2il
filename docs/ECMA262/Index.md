@@ -34,14 +34,14 @@ For the current development branch, Test262 provides the following conformance e
 
 | Conformance status | Tests | Percentage of applicable Test262 tests |
 |---|---:|---:|
-| Verified passing | 41,809 | **86.67%** |
-| Explicitly excluded due to known unsupported behavior | 663 | 1.37% |
-| Not yet verified | 5,769 | 11.96% |
+| Verified passing | 42,109 | **87.29%** |
+| Known unsupported | 663 | 1.37% |
+| No published result | 5,469 | 11.34% |
 | **Total applicable ECMA-262 tests** | **48,241** | **100.00%** |
 
 See the [detailed Test262 conformance breakdown](Test262Conformance.md) for results by language area, expression and statement feature, built-in API, and Annex B feature.
 
-`Verified passing` means the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse, resolution, or runtime phase. `Not yet verified` means no conformance result is currently published for that test; it does not imply either support or failure. The explicitly excluded tests exercise known unsupported behavior, primarily `eval`.
+`Verified passing` means the native harness verifies the corresponding Test262 outcome: positive tests execute successfully, while negative tests are rejected at their declared parse, resolution, or runtime phase. `No published result` does not imply either support or failure. `Known unsupported` tests exercise explicitly excluded behavior, primarily `eval`.
 
 The applicable corpus is taken from the [pinned Test262 revision](https://github.com/tc39/test262/tree/2b2ecead6e828dd9af13a9ec72065e645724a50f/test) and includes the ECMA-262 `annexB`, `built-ins`, and `language` test areas. ECMA-402 internationalization tests, staging proposals, Test262 harness self-tests, and `_FIXTURE.js` support files are outside this ECMA-262 conformance measure. Percentages are file-based; strict and non-strict execution variants are not counted separately.
 

@@ -614,7 +614,7 @@
           "test/built-ins/Date/prototype/toTemporalInstant/not-a-constructor.js",
           "test/built-ins/Date/prototype/toTemporalInstant/prop-desc.js"
         ],
-        "notes": "All eight pinned Date-to-Temporal fixtures pass. The non-constructible length-zero method requires the Date internal slot, rejects invalid dates with RangeError, and returns a branded Temporal.Instant containing exact BigInt nanoseconds across the complete Date range. Temporal, Instant's constructor, and its prototype are realm-owned. new Temporal.Instant accepts ToBigInt inputs with nanosecond range checks; epochNanoseconds is a branded prototype getter. This is only an interop foundation: Instant arithmetic, parsing, formatting, other methods, and the remaining Temporal types are not implemented, and no complete Temporal conformance is claimed."
+        "notes": "All eight pinned Date-to-Temporal fixtures pass. The non-constructible length-zero method requires the Date internal slot, rejects invalid dates with RangeError, and returns a branded Temporal.Instant containing exact BigInt nanoseconds across the complete Date range. Temporal, Instant's constructor, and its prototype are realm-owned. new Temporal.Instant accepts ToBigInt inputs with nanosecond range checks; epochNanoseconds and floor-based epochMilliseconds are branded prototype getters. The development branch also supports Instant ISO parsing, epoch factories, comparison, equality, time-unit arithmetic, differences, rounding and UTC ISO/JSON formatting, as detailed in Section19_4. Broader date/calendar interoperation and time-zone formatting remain unsupported; no complete Temporal conformance is claimed."
       },
       {
         "clause": "21.4.1",

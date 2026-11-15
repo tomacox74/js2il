@@ -36,6 +36,20 @@ public static partial class Temporal
                     Enumerable = false,
                     Configurable = false
                 });
+                GlobalThis.DefineBuiltinFunctionProperty(constructor, "from",
+                    (BuiltinFunction1)(static (_, value) => new TemporalInstant(ToTemporalInstant(value).EpochNanoseconds)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(constructor, "fromEpochNanoseconds",
+                    (BuiltinFunction1)(static (_, value) => new TemporalInstant(BigInt.ToBigInt(value))), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(constructor, "fromEpochMilliseconds",
+                    (BuiltinFunction1)(static (_, value) =>
+                        new TemporalInstant(new BigInteger(ToIntegerIfIntegral(value)) * 1_000_000)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(constructor, "compare",
+                    (BuiltinFunction2)(static (_, left, right) =>
+                    {
+                        var first = ToTemporalInstant(left);
+                        var second = ToTemporalInstant(right);
+                        return (double)first.EpochNanoseconds.CompareTo(second.EpochNanoseconds);
+                    }), 2d);
             });
 
     internal static JsObject GetInstantPrototype(RuntimeIntrinsics intrinsics)
@@ -61,6 +75,29 @@ public static partial class Temporal
                     Enumerable = false,
                     Configurable = true
                 });
+                DefineTemporalGetter(prototype, "epochMilliseconds",
+                    receiver => (double)FloorDivide(RequireInstant(receiver).EpochNanoseconds, 1_000_000));
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "equals",
+                    (BuiltinFunction1)(static (receiver, other) =>
+                        RequireInstant(receiver).EpochNanoseconds == ToTemporalInstant(other).EpochNanoseconds), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "add",
+                    (BuiltinFunction1)(static (receiver, duration) => AddInstant(receiver, duration, false)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "subtract",
+                    (BuiltinFunction1)(static (receiver, duration) => AddInstant(receiver, duration, true)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "since",
+                    (BuiltinFunction2)(static (receiver, other, options) => DifferenceInstant(receiver, other, options, true)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "until",
+                    (BuiltinFunction2)(static (receiver, other, options) => DifferenceInstant(receiver, other, options, false)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "round",
+                    (BuiltinFunction1)(static (receiver, options) => RoundInstant(receiver, options)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString",
+                    (BuiltinFunction1)(static (receiver, options) => FormatInstant(RequireInstant(receiver), options)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toJSON",
+                    (BuiltinFunction0)(static receiver => FormatInstant(RequireInstant(receiver), null)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "toLocaleString",
+                    (BuiltinFunction0)(static receiver => FormatInstant(RequireInstant(receiver), null)), 0d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "valueOf",
+                    (BuiltinFunction0)(static _ => throw new TypeError("Cannot convert Temporal.Instant to a primitive value")), 0d);
             });
 
     private sealed class InstantConstructor : JsFunctionObject
