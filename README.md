@@ -182,8 +182,8 @@ when using more than one package in the same application.
 
 JROC supports Windows, Linux, and macOS. It targets ECMAScript 2025.
 
-JROC is experimental and does not yet support every JavaScript or Node.js
-feature. In particular, `eval` is not currently supported.
+Most remaining compatibility gaps are in Node.js APIs. JROC also lacks support
+for some ECMAScript features, including `eval`.
 
 - [ECMAScript support and Test262 conformance](docs/ECMA262/Index.md)
 - [Node.js API support](docs/nodejs/Index.md)
