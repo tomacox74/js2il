@@ -185,7 +185,8 @@ JROC supports Windows, Linux, and macOS. It targets ECMAScript 2025.
 Most remaining compatibility gaps are in Node.js APIs. JROC also lacks support
 for some ECMAScript features, including `eval`.
 
-- [ECMAScript support and Test262 conformance](docs/ECMA262/Index.md)
+- [ECMAScript support](docs/ECMA262/Index.md)
+- [Test262 conformance results by area](docs/ECMA262/Test262Conformance.md)
 - [Node.js API support](docs/nodejs/Index.md)
 - [Compiler architecture](docs/compiler/Index.md)
 - [Runtime architecture](docs/runtime/Index.md)
