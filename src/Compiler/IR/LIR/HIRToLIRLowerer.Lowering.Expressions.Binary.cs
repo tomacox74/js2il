@@ -172,8 +172,16 @@ public sealed partial class HIRToLIRLowerer
         var rightStorage = GetTempStorage(rightTempVar);
         var leftType = leftStorage.ClrType;
         var rightType = rightStorage.ClrType;
-        var canUseLegacyNumericFallback = leftType != typeof(System.Numerics.BigInteger)
-            && rightType != typeof(System.Numerics.BigInteger);
+        // A boxed object result can still contain a BigInt (notably a nested
+        // arithmetic expression). Absence of a statically known BigInteger is
+        // not proof that ToNumber is legal. If either operand is a proven
+        // Number-convertible primitive, a BigInt on the other side must throw
+        // anyway, so that numeric fast path is still safe. Otherwise objects
+        // may also produce BigInt from primitive conversion: use ToNumeric.
+        static bool IsKnownNonBigIntPrimitive(Type? type)
+            => type == typeof(double) || type == typeof(bool) || type == typeof(string);
+        var canUseLegacyNumericFallback = IsKnownNonBigIntPrimitive(leftType)
+            || IsKnownNonBigIntPrimitive(rightType);
 
         // Handle 'instanceof'
         if (binaryExpr.Operator == Acornima.Operator.InstanceOf)

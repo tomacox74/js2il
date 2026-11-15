@@ -526,11 +526,11 @@
 					01 00 02 00 00 00 00 00
 				)
 				// Header size: 12
-				// Code size: 53 (0x35)
+				// Code size: 48 (0x30)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] float64
+					[1] object
 				)
 
 				IL_0000: ldarg.0
@@ -540,20 +540,19 @@
 				IL_0008: ldfld object Modules.ObjectLiteral_GeneratedMethodFunctionObjects/makeObject/Scope::offset
 				IL_000d: stloc.0
 				IL_000e: ldarg.3
-				IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0014: ldloc.0
-				IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001a: sub
-				IL_001b: stloc.1
-				IL_001c: ldarg.2
-				IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
-				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-				IL_0027: ldstr "value"
-				IL_002c: ldloc.1
-				IL_002d: ldc.i4.1
-				IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetPropertyNumber(object, string, float64, bool)
-				IL_0033: ldnull
-				IL_0034: ret
+				IL_000f: ldloc.0
+				IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+				IL_0015: stloc.1
+				IL_0016: ldarg.2
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext::GetThis(valuetype [JavaScriptRuntime]JavaScriptRuntime.GeneratedInvocationContext)
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+				IL_0021: ldstr "value"
+				IL_0026: ldloc.1
+				IL_0027: ldc.i4.1
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_002d: pop
+				IL_002e: ldnull
+				IL_002f: ret
 			} // end of method FunctionExpression_L15C19::__js_call__
 
 		} // end of class FunctionExpression_L15C19

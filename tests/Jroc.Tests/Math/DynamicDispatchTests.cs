@@ -43,11 +43,11 @@ public sealed class DynamicDispatchTests
         {
             Assert.Contains("GetGlobalBindingValue(string)", il);
             Assert.Contains("CallableOperations::Call1", il);
-            Assert.DoesNotContain("Math::round(float64)", il);
+            Assert.DoesNotContain("Math::round(", il);
         }
         else
         {
-            Assert.Contains("Math::round(float64)", il);
+            Assert.Contains("Math::round(object)", il);
         }
         Assert.Contains("2", Execute(artifact).Output);
     }
@@ -71,7 +71,7 @@ public sealed class DynamicDispatchTests
             """;
         var artifact = Compile(source, assumeUnmodifiedHostGlobals);
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
-        Assert.Equal(assumeUnmodifiedHostGlobals, il.Contains("Math::round(float64)", StringComparison.Ordinal));
+        Assert.Equal(assumeUnmodifiedHostGlobals, il.Contains("Math::round(object)", StringComparison.Ordinal));
         Assert.Equal("2\n1", Execute(artifact).Output.Replace("\r\n", "\n").Trim());
     }
 
@@ -129,7 +129,7 @@ public sealed class DynamicDispatchTests
             """,
             assumeUnmodifiedHostGlobals: true);
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
-        Assert.DoesNotContain("Math::round(float64)", il);
+        Assert.DoesNotContain("Math::round(", il);
         Assert.Contains("CallableOperations::Call1", il);
         Assert.Equal("17", Execute(artifact).Output.Trim());
     }
@@ -161,7 +161,7 @@ public sealed class DynamicDispatchTests
             """,
             assumeUnmodifiedHostGlobals: true);
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
-        Assert.DoesNotContain("Math::round(float64)", il);
+        Assert.DoesNotContain("Math::round(", il);
         Assert.Equal("2", Execute(artifact).Output.Trim());
     }
 
@@ -267,7 +267,7 @@ public sealed class DynamicDispatchTests
         });
         var il = AssemblyToText.ConvertToText(artifact.PeBytes, artifact.AssemblyName);
         Assert.Contains("CallableOperations::Call1", il);
-        Assert.DoesNotContain("Math::round(float64)", il);
+        Assert.DoesNotContain("Math::round(", il);
         var result = InMemoryTestCompiler.ExecuteArtifact(artifact, main, "DynamicMathModules");
         Assert.Contains(mutatesMath ? "17" : "2", result.Output);
     }

@@ -7,7 +7,7 @@ using static Jroc.Tests.Test262HostRuntimeIntrinsics;
 namespace Jroc.Tests;
 
 // The observation helpers from the pinned temporalHelpers.js are also used by Array.fromAsync.
-internal static class Test262TemporalHelpers
+internal static partial class Test262TemporalHelpers
 {
     private static readonly AssertModule Assert = new();
 
@@ -31,6 +31,12 @@ internal static class Test262TemporalHelpers
             "assertPlainTime", 7));
         ObjectRuntime.SetItem(helpers, "assertPlainTimesEqual", CreateFunction(
             (Action<object?, object?, object?>)AssertPlainTimesEqual, "assertPlainTimesEqual", 2));
+        ObjectRuntime.SetItem(helpers, "assertDuration", CreateFunction(
+            (BuiltinFunctionVariadic)AssertDuration, "assertDuration", 11));
+        ObjectRuntime.SetItem(helpers, "assertDurationsEqual", CreateFunction(
+            (Action<object?, object?, object?>)((actual, expected, description) =>
+                AssertDurationsEqual(helpers, actual, expected, description)), "assertDurationsEqual", 2));
+        RegisterSubclassHelpers(helpers);
         ObjectRuntime.SetItem(helpers, "checkStringOptionWrongType", CreateFunction(
             (Action<object?, object?, object?, object?>)((name, value, check, assertion) =>
                 CheckStringOptionWrongType(helpers, name, value, check, assertion)),
@@ -59,6 +65,43 @@ internal static class Test262TemporalHelpers
 
     private static string DescriptionPrefix(object? description)
         => TypeUtilities.ToBoolean(description) ? StringValue(description) + ": " : "";
+
+    private static bool IsDuration(object? value)
+    {
+        var temporal = ObjectRuntime.GetItem(GlobalThis.globalThis, "Temporal");
+        return Operators.InstanceOf(value, ObjectRuntime.GetItem(temporal!, "Duration"));
+    }
+
+    private static object? AssertDuration(object? _, in JsCallArguments arguments)
+    {
+        var duration = arguments.GetArgument(0);
+        var prefix = DescriptionPrefix(arguments.GetArgument(11));
+        Assert.strictEqual(IsDuration(duration), true, prefix + "instanceof");
+        string[] fields = ["years", "months", "weeks", "days", "hours", "minutes",
+            "seconds", "milliseconds", "microseconds", "nanoseconds"];
+        for (var i = 0; i < fields.Length; i++)
+        {
+            Assert.strictEqual(ObjectRuntime.GetItem(duration!, fields[i]), arguments.GetArgument(i + 1),
+                prefix + fields[i] + (i == 9 ? " result" : " result:"));
+        }
+        return null;
+    }
+
+    private static void AssertDurationsEqual(object helpers, object? actual, object? expected, object? description)
+    {
+        var prefix = DescriptionPrefix(description);
+        Assert.strictEqual(IsDuration(expected), true, prefix + "expected value should be a Temporal.Duration");
+        string[] fields = ["years", "months", "weeks", "days", "hours", "minutes",
+            "seconds", "milliseconds", "microseconds", "nanoseconds"];
+        var arguments = new object?[12];
+        arguments[0] = actual;
+        for (var i = 0; i < fields.Length; i++)
+        {
+            arguments[i + 1] = ObjectRuntime.GetItem(expected!, fields[i]);
+        }
+        arguments[11] = description;
+        ObjectRuntime.CallMember(helpers, "assertDuration", arguments!);
+    }
 
     private static void AssertPlainTime(object? time, object? hour, object? minute, object? second,
         object? millisecond, object? microsecond, object? nanosecond, object? description)
@@ -178,6 +221,10 @@ internal static class Test262TemporalHelpers
             if (IsPlainTime(singularValue))
             {
                 ObjectRuntime.CallMember(helpers, "assertPlainTimesEqual", [pluralValue!, singularValue!, description]);
+            }
+            else if (IsDuration(singularValue))
+            {
+                ObjectRuntime.CallMember(helpers, "assertDurationsEqual", [pluralValue!, singularValue!, description]);
             }
             else if (TypeUtilities.IsPrimitive(singularValue))
             {

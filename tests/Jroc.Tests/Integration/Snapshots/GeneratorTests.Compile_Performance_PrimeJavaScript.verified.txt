@@ -464,7 +464,7 @@
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
 			// Header size: 12
-			// Code size: 603 (0x25b)
+			// Code size: 606 (0x25e)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -483,8 +483,9 @@
 				[13] bool,
 				[14] class [JavaScriptRuntime]Jroc.Runtime.Node.Contracts.IPerfHooksPerformance,
 				[15] object,
-				[16] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[17] string
+				[16] object,
+				[17] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[18] string
 			)
 
 			IL_0000: ldarg.2
@@ -653,46 +654,47 @@
 			IL_01c8: box [System.Runtime]System.Double
 			IL_01cd: stloc.s 7
 			IL_01cf: ldloc.s 7
-			IL_01d1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_01d6: ldloc.s 5
-			IL_01d8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_01dd: sub
-			IL_01de: ldc.r8 1000
-			IL_01e7: div
-			IL_01e8: stloc.s 8
-			IL_01ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01ef: stloc.s 16
-			IL_01f1: ldloc.3
-			IL_01f2: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_01f7: stloc.s 17
-			IL_01f9: ldstr "\nrogiervandam-"
-			IL_01fe: ldloc.s 17
-			IL_0200: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0205: ldstr ";"
-			IL_020a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_020f: ldloc.s 6
-			IL_0211: box [System.Runtime]System.Double
-			IL_0216: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_021b: stloc.s 17
-			IL_021d: ldloc.s 17
-			IL_021f: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0224: ldstr ";"
-			IL_0229: call string [System.Runtime]System.String::Concat(string, string)
-			IL_022e: ldloc.s 8
-			IL_0230: box [System.Runtime]System.Double
-			IL_0235: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_023a: stloc.s 17
-			IL_023c: ldloc.s 17
-			IL_023e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0243: ldstr ";1;algorithm=base,faithful=yes,bits=1"
-			IL_0248: call string [System.Runtime]System.String::Concat(string, string)
-			IL_024d: stloc.s 17
-			IL_024f: ldloc.s 16
-			IL_0251: ldloc.s 17
-			IL_0253: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0258: pop
-			IL_0259: ldnull
-			IL_025a: ret
+			IL_01d1: ldloc.s 5
+			IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+			IL_01d8: stloc.s 16
+			IL_01da: ldloc.s 16
+			IL_01dc: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_01e1: ldc.r8 1000
+			IL_01ea: div
+			IL_01eb: stloc.s 8
+			IL_01ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01f2: stloc.s 17
+			IL_01f4: ldloc.3
+			IL_01f5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_01fa: stloc.s 18
+			IL_01fc: ldstr "\nrogiervandam-"
+			IL_0201: ldloc.s 18
+			IL_0203: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0208: ldstr ";"
+			IL_020d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0212: ldloc.s 6
+			IL_0214: box [System.Runtime]System.Double
+			IL_0219: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_021e: stloc.s 18
+			IL_0220: ldloc.s 18
+			IL_0222: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0227: ldstr ";"
+			IL_022c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0231: ldloc.s 8
+			IL_0233: box [System.Runtime]System.Double
+			IL_0238: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_023d: stloc.s 18
+			IL_023f: ldloc.s 18
+			IL_0241: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0246: ldstr ";1;algorithm=base,faithful=yes,bits=1"
+			IL_024b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0250: stloc.s 18
+			IL_0252: ldloc.s 17
+			IL_0254: ldloc.s 18
+			IL_0256: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_025b: pop
+			IL_025c: ldnull
+			IL_025d: ret
 		} // end of method ArrowFunction_L229C14::__js_call__
 
 	} // end of class ArrowFunction_L229C14
