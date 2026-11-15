@@ -720,6 +720,33 @@ TemporalHelpers.checkSubclassingIgnoredStatic(Temporal.Duration, "from", ["PT3H"
     durationStaticAssertions++;
     TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0);
 });
+
+assert.sameValue(TemporalHelpers.assertInstantsEqual.name, "assertInstantsEqual");
+assert.sameValue(TemporalHelpers.assertInstantsEqual.length, 2);
+const nativeInstant = new Temporal.Instant(-1500000000n);
+TemporalHelpers.assertInstantsEqual(nativeInstant, Temporal.Instant.from("1969-12-31T23:59:58.5Z"));
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertInstantsEqual(nativeInstant, new Temporal.Instant(0n));
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertInstantsEqual(nativeInstant, {});
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertInstantsEqual({}, nativeInstant);
+});
+TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+    return nativeInstant.round(unit);
+}, ["second", "millisecond"]);
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.checkPluralUnitsAccepted(function(unit) {
+        return new Temporal.Instant(unit === "second" ? 0n : 1n);
+    }, ["second"]);
+});
+TemporalHelpers.checkSubclassingIgnored(Temporal.Instant, [0n], "add", [{seconds: 2}],
+    function(result) {
+        assert.sameValue(Object.getPrototypeOf(result), Temporal.Instant.prototype);
+        TemporalHelpers.assertInstantsEqual(result, new Temporal.Instant(2000000000n));
+    });
 assert.sameValue(durationStaticAssertions, 17);
 assert.throws(assert.AssertionError, function() {
     TemporalHelpers.checkSubclassingIgnored(Temporal.Duration, [], "abs", [], function() {

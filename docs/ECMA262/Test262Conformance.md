@@ -11,9 +11,9 @@ Coverage for the current development branch. Counts and percentages are per stan
 | Area | Verified passing | Known unsupported | No published result | Applicable tests | Verified |
 |---|---:|---:|---:|---:|---:|
 | Annex B | 60 | 0 | 1,026 | 1,086 | **5.52%** |
-| Built-in objects and APIs | 19,173 | 37 | 4,302 | 23,512 | **81.55%** |
+| Built-in objects and APIs | 19,473 | 37 | 4,002 | 23,512 | **82.82%** |
 | Language syntax and semantics | 22,576 | 626 | 441 | 23,643 | **95.49%** |
-| **Total** | 41,809 | 663 | 5,769 | 48,241 | **86.67%** |
+| **Total** | 42,109 | 663 | 5,469 | 48,241 | **87.29%** |
 
 ## Language Areas
 
@@ -215,7 +215,7 @@ Coverage for the current development branch. Counts and percentages are per stan
 | `StringIteratorPrototype` | 6 | 0 | 1 | 7 | **85.71%** |
 | `SuppressedError` | 20 | 0 | 2 | 22 | **90.91%** |
 | `Symbol` | 76 | 0 | 22 | 98 | **77.55%** |
-| `Temporal` | 601 | 0 | 3,983 | 4,584 | **13.11%** |
+| `Temporal` | 901 | 0 | 3,683 | 4,584 | **19.66%** |
 | `ThrowTypeError` | 0 | 0 | 14 | 14 | **0.00%** |
 | `TypedArray` | 1,397 | 0 | 41 | 1,438 | **97.15%** |
 | `TypedArrayConstructors` | 733 | 0 | 3 | 736 | **99.59%** |

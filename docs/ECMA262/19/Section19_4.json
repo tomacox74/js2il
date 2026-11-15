@@ -38,6 +38,37 @@
     "entries": [
       {
         "clause": "19.4",
+        "feature": "Temporal.Instant conversion, arithmetic, differences and rounding",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-instant-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/from/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/fromEpochMilliseconds/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/fromEpochNanoseconds/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/compare/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/add/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/subtract/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/equals/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/round/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/since/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/toJSON/ExecutionTests.cs",
+          "tests/Jroc.Tests/TemporalReviewRegressionTests.cs",
+          "tests/Jroc.Test262.Tests/Integration/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/Instant/from/argument-string-limits.js",
+          "test/built-ins/Temporal/Instant/from/argument-object-tostring.js",
+          "test/built-ins/Temporal/Instant/prototype/epochMilliseconds/basic.js",
+          "test/built-ins/Temporal/Instant/prototype/add/order-of-operations.js",
+          "test/built-ins/Temporal/Instant/prototype/round/negative-instant.js",
+          "test/built-ins/Temporal/Instant/prototype/since/order-of-operations.js",
+          "test/built-ins/Temporal/Instant/prototype/since/float64-representable-integer.js"
+        ],
+        "notes": "Three hundred additional pinned Instant cases are verified on the development branch. Supports the ToBigInt constructor, exact epoch factories, branded epoch getters with floor-based milliseconds, ISO date-time parsing with explicit offsets, extended Gregorian years, leap seconds and annotation validation, from, compare and equals. Instant-like objects must convert to string primitives. add/subtract accept time units and reject nonzero day/calendar fields; results preserve exact BigInt arithmetic and the Instant range. since/until create intrinsic Duration values, preserving conversion and option access order, increment validation, signed rounding, exact balancing, positive-zero fields and binary64 slot conversion. Unit names are validated on read; unit-group validation follows the remaining option reads. round supports six time units and nine timeline-directed modes, including pre-epoch instants and whole-day-dividing increments. toJSON and toString provide UTC ISO formatting; toString also supports UTC and minute-precision fixed-offset time zones, including ISO date/time strings identifying those zones and offset date rollover at the Instant boundaries. Time-zone values must be strings, not coercible objects. toLocaleString uses the base ISO representation without Intl.DateTimeFormat. Date/calendar type interoperation, toZonedDateTimeISO, other named time zones and Intl-aware formatting remain unsupported. These results do not claim full Temporal conformance."
+      },
+      {
+        "clause": "19.4",
         "feature": "Temporal namespace: PlainTime construction and conversion",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-plaintime-objects",

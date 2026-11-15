@@ -31,6 +31,8 @@ internal static partial class Test262TemporalHelpers
             "assertPlainTime", 7));
         ObjectRuntime.SetItem(helpers, "assertPlainTimesEqual", CreateFunction(
             (Action<object?, object?, object?>)AssertPlainTimesEqual, "assertPlainTimesEqual", 2));
+        ObjectRuntime.SetItem(helpers, "assertInstantsEqual", CreateFunction(
+            (Action<object?, object?, object?>)AssertInstantsEqual, "assertInstantsEqual", 2));
         ObjectRuntime.SetItem(helpers, "assertDuration", CreateFunction(
             (BuiltinFunctionVariadic)AssertDuration, "assertDuration", 11));
         ObjectRuntime.SetItem(helpers, "assertDurationsEqual", CreateFunction(
@@ -70,6 +72,20 @@ internal static partial class Test262TemporalHelpers
     {
         var temporal = ObjectRuntime.GetItem(GlobalThis.globalThis, "Temporal");
         return Operators.InstanceOf(value, ObjectRuntime.GetItem(temporal!, "Duration"));
+    }
+
+    private static bool IsInstant(object? value)
+    {
+        var temporal = ObjectRuntime.GetItem(GlobalThis.globalThis, "Temporal");
+        return Operators.InstanceOf(value, ObjectRuntime.GetItem(temporal!, "Instant"));
+    }
+
+    private static void AssertInstantsEqual(object? actual, object? expected, object? description)
+    {
+        var prefix = DescriptionPrefix(description);
+        Assert.strictEqual(IsInstant(expected), true, prefix + "expected value should be a Temporal.Instant");
+        Assert.strictEqual(IsInstant(actual), true, prefix + "instanceof");
+        Assert.strictEqual(ObjectRuntime.CallMember(actual!, "equals", [expected!]), true, prefix + "equals method");
     }
 
     private static object? AssertDuration(object? _, in JsCallArguments arguments)
@@ -226,14 +242,17 @@ internal static partial class Test262TemporalHelpers
             {
                 ObjectRuntime.CallMember(helpers, "assertDurationsEqual", [pluralValue!, singularValue!, description]);
             }
+            else if (IsInstant(singularValue))
+            {
+                ObjectRuntime.CallMember(helpers, "assertInstantsEqual", [pluralValue!, singularValue!, description]);
+            }
             else if (TypeUtilities.IsPrimitive(singularValue))
             {
                 Assert.strictEqual(pluralValue, singularValue, description);
             }
             else
             {
-                // Selected PlainTime callbacks return times or strings only. Do not silently
-                // replace the upstream Duration/Instant/date-type equality branches with identity.
+                // Do not replace unsupported date-type equality branches with identity.
                 throw new TypeError("TemporalHelpers.checkPluralUnitsAccepted: unsupported callback result type");
             }
         }), "", 1)]);
