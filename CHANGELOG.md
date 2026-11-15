@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.39 - 2026-11-15
+
 - test262: port 300 additional pinned Temporal.Instant cases with byte-identical
   upstream assertions. Add ISO instant parsing, epoch factories and milliseconds,
   comparison and equality, exact time-unit arithmetic, since/until differences,
@@ -18,7 +22,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   Extend native Instant equality assertions and plural-unit checks. Broader
   date/calendar interoperation, other named time zones and Intl-aware formatting
   remain unsupported. No selected cases require eval; this batch adds no skips.
-
 - perf(compiler): reuse lexical capture facts and index scope roots during
   symbol-table analysis instead of rebuilding ancestor sets and searching
   child scopes for every binding and AST node. Index identifier writes to
@@ -26,7 +29,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   provenance, and reject incompatible array-element candidates before their
   write walks. Preserve shadowing, hoisted closure TDZ checks and fixed-point
   type inference.
-
 - test262: port 300 additional pinned Temporal.Duration cases with unchanged
   upstream assertions. Add abs, negated, with, day/time add and subtract,
   numeric compare, fixed-unit total and ISO-fallback toLocaleString.
@@ -36,7 +38,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   native Duration assertions and subclass checks. Calendar-relative operations,
   Duration.round and Intl-aware formatting remain unsupported. No selected
   cases require eval, so this batch adds no skips.
-
 - test262: port 300 additional pinned Temporal.PlainTime cases with unchanged
   upstream assertions and no skips. Add core time construction, conversion,
   branded accessors, comparison, immutable updates, exact duration arithmetic,
@@ -48,7 +49,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and annotation syntax. Extend the native Temporal
   assertion and option-observer helpers. Full Temporal date/calendar APIs,
   general Duration operations and Intl-aware formatting remain unsupported.
-
 - fix: keep duplicate-named function declaration scopes distinct and bind
   captured array/object rest patterns. Preserve native superclass replacement
   prototypes, public/private fields and private-method receivers, evaluating
@@ -56,13 +56,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   once after validation, reject invalid IANA annotation components and enforce
   exact boolean assertions in the native Temporal helpers. Generate lazy ISO
   regexes and share Temporal parsing, unit and rounding helpers.
-
 - test262: port 300 additional pinned module-goal cases without skips or
   upstream source changes: 130 expected SyntaxError cases and 170 top-level
   await syntax-acceptance cases. Verify restricted bindings, declaration
   placement, private names and await operands across module statement contexts.
   Syntax acceptance does not imply coverage of awaited values or scheduling.
-
 - test262: port 200 additional pinned primitive-conversion and binary-memory
   cases with unchanged upstream assertions and no skips. Fix TypedArray and
   ArrayBuffer call-versus-construction checks, TypedArray ToIndex and
@@ -70,7 +68,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   and prototype ordering, DataView detachment checks, and Atomics.notify
   detached-buffer validation. Preserve custom TypedArray prototypes and
   cross-realm Array iterator prototypes.
-
 - test262: port 200 additional pinned object, callable, and iterator protocol
   cases without changing upstream assertions or adding skips. Fix generator
   reentrancy and nested exception unwinding, async-generator receiver and
