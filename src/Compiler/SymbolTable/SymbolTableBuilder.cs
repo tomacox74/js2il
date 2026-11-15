@@ -381,27 +381,35 @@ namespace Jroc.SymbolTables
             {
                 ApplyNativeEsmBindings(globalScope, module);
             }
-            AnalyzeFreeVariables(globalScope);
-            MarkCapturedVariables(globalScope);
-            AnalyzeCallableMaterialization(globalScope);
-            if (module.UsesNativeStaticEsm)
+            _analysisCache = new ScopeAnalysisCache();
+            try
             {
-                FixupNativeEsmExportedCallables(globalScope);
+                AnalyzeFreeVariables(globalScope);
+                MarkCapturedVariables(globalScope);
+                AnalyzeCallableMaterialization(globalScope);
+                if (module.UsesNativeStaticEsm)
+                {
+                    FixupNativeEsmExportedCallables(globalScope);
+                }
+                AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
+                AnalyzeCompileTimeConstants(globalScope);
+
+                InferTypesToFixedPoint(globalScope);
+
+                foreach (var binding in globalScope.Bindings.Values.Where(binding => binding.IsScriptGlobalBinding))
+                {
+                    binding.IsStableType = false;
+                    binding.ClrType = null;
+                    binding.CanUseUnboxedLocal = false;
+                    binding.IsCompileTimeConstant = false;
+                }
+
+                module.SymbolTable = new SymbolTable(globalScope);
             }
-            AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
-            AnalyzeCompileTimeConstants(globalScope);
-
-            InferTypesToFixedPoint(globalScope);
-
-            foreach (var binding in globalScope.Bindings.Values.Where(binding => binding.IsScriptGlobalBinding))
+            finally
             {
-                binding.IsStableType = false;
-                binding.ClrType = null;
-                binding.CanUseUnboxedLocal = false;
-                binding.IsCompileTimeConstant = false;
+                _analysisCache = null;
             }
-
-            module.SymbolTable = new SymbolTable(globalScope);
         }
 
         private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
@@ -3173,6 +3181,22 @@ namespace Jroc.SymbolTables
         /// </summary>
         private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
         {
+            if (_analysisCache == null)
+            {
+                return CollectReferencedParentVariablesCore(childScope, targetScope);
+            }
+
+            var key = (childScope, targetScope);
+            if (!_analysisCache.ParentReferences.TryGetValue(key, out var references))
+            {
+                references = CollectReferencedParentVariablesCore(childScope, targetScope);
+                _analysisCache.ParentReferences.Add(key, references);
+            }
+            return references;
+        }
+
+        private HashSet<string> CollectReferencedParentVariablesCore(Scope childScope, Scope targetScope)
+        {
             var result = new HashSet<string>();
             if (childScope.UsesGlobalScopeSemantics)
             {
@@ -3183,15 +3207,17 @@ namespace Jroc.SymbolTables
             childLocals.UnionWith(childScope.Parameters);
             
             // Collect all ancestor variables, not just immediate parent
-            var ancestorVariables = new HashSet<string>();
-            var currentAncestor = targetScope;
-            while (currentAncestor != null)
+            if (_analysisCache == null
+                || !_analysisCache.AncestorNames.TryGetValue(targetScope, out var ancestorVariables))
             {
-                foreach (var key in currentAncestor.Bindings.Keys)
+                ancestorVariables = new HashSet<string>();
+                var currentAncestor = targetScope;
+                while (currentAncestor != null)
                 {
-                    ancestorVariables.Add(key);
+                    ancestorVariables.UnionWith(currentAncestor.Bindings.Keys);
+                    currentAncestor = currentAncestor.UsesGlobalScopeSemantics ? null : currentAncestor.Parent;
                 }
-                currentAncestor = currentAncestor.UsesGlobalScopeSemantics ? null : currentAncestor.Parent;
+                _analysisCache?.AncestorNames.Add(targetScope, ancestorVariables);
             }
             
             if (childScope.AstNode != null)

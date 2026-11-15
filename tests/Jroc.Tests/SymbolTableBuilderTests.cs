@@ -3,6 +3,7 @@ using Acornima.Ast;
 using Jroc.SymbolTables;
 using Jroc.Services;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace Jroc.Tests
@@ -645,6 +646,164 @@ namespace Jroc.Tests
             var binding = blockScope.Bindings["x"];
             Assert.True(binding.IsCaptured);
             Assert.True(binding.RequiresRuntimeTemporalDeadZoneChecks);
+        }
+
+        [Fact]
+        public void Build_WideCapturedScope_DoesNotRebuildAncestorSetsPerBinding()
+        {
+            const int count = 160;
+            var code = new StringBuilder();
+            for (var i = 0; i < count; i++)
+            {
+                code.AppendLine($"const value{i} = {i};");
+            }
+            for (var i = 0; i < count; i++)
+            {
+                code.AppendLine($"function read{i}() {{ return value{i}; }}");
+            }
+            var ast = _parser.ParseJavaScript(code.ToString(), "wide.js");
+
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var table = BuildSymbolTable(ast, "wide.js");
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.All(Enumerable.Range(0, count), i =>
+            {
+                Assert.True(table.Root.Bindings[$"value{i}"].IsCaptured);
+                Assert.Equal(typeof(double), table.Root.Bindings[$"value{i}"].ClrType);
+            });
+            Assert.True(allocated < 64 * 1024 * 1024,
+                $"Building {count} captured bindings allocated {allocated:N0} bytes (limit 64 MiB).");
+        }
+
+        [Fact]
+        public void Build_SharedCaptureReferences_PreservesPerBindingInitializationBoundaries()
+        {
+            var ast = _parser.ParseJavaScript("""
+                const initialized = 1;
+                const read = () => initialized + pending;
+                const pending = 2;
+                """, "test.js");
+
+            var table = BuildSymbolTable(ast, "test.js");
+
+            Assert.True(table.Root.Bindings["initialized"].IsCaptured);
+            Assert.False(table.Root.Bindings["initialized"].RequiresRuntimeTemporalDeadZoneChecks);
+            Assert.True(table.Root.Bindings["pending"].IsCaptured);
+            Assert.True(table.Root.Bindings["pending"].RequiresRuntimeTemporalDeadZoneChecks);
+        }
+
+        [Fact]
+        public void Build_HoistedReaderAfterClosureInitializer_PreservesTemporalDeadZoneChecks()
+        {
+            var ast = _parser.ParseJavaScript("""
+                read();
+                const callback = () => 1;
+                function read() { return callback; }
+                """, "test.js");
+
+            var table = BuildSymbolTable(ast, "test.js");
+
+            Assert.True(table.Root.Bindings["callback"].IsCaptured);
+            Assert.True(table.Root.Bindings["callback"].RequiresRuntimeTemporalDeadZoneChecks);
+        }
+
+        [Fact]
+        public void Build_ReusedBuilder_DoesNotReuseAnalysisFromPreviousModule()
+        {
+            var first = BuildSymbolTable(_parser.ParseJavaScript("""
+                let value = [];
+                function change() { value = "changed"; }
+                """, "first.js"), "first.js");
+            var second = BuildSymbolTable(_parser.ParseJavaScript("""
+                let value = [];
+                function change() { let value = ""; value = "local"; }
+                function read() { return value; }
+                """, "second.js"), "second.js");
+
+            Assert.True(first.Root.Bindings["value"].IsCaptured);
+            Assert.False(first.Root.Bindings["value"].IsStableType);
+            Assert.True(second.Root.Bindings["value"].IsCaptured);
+            Assert.True(second.Root.Bindings["value"].IsStableType);
+            Assert.Equal(typeof(JavaScriptRuntime.Array), second.Root.Bindings["value"].ClrType);
+        }
+
+        [Theory]
+        [InlineData("compatible", true)]
+        [InlineData("shadowed", true)]
+        [InlineData("parameter-default", false)]
+        [InlineData("update", false)]
+        public void Build_CapturedReferenceWrites_PreservesScopeAndTypeChecks(string scenario, bool stable)
+        {
+            var writer = scenario switch
+            {
+                "compatible" => "function write() { { value = []; } }",
+                "shadowed" => "function write() { { let value = 0; value++; } }",
+                "parameter-default" => "function write(arg = (value = 'changed')) {}",
+                "update" => "function write() { value++; }",
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario))
+            };
+            var ast = _parser.ParseJavaScript(
+                $"let value = []; {writer} function read() {{ return value; }}", "test.js");
+
+            var table = BuildSymbolTable(ast, "test.js");
+            var binding = table.Root.Bindings["value"];
+
+            Assert.True(binding.IsCaptured);
+            Assert.Equal(stable, binding.IsStableType);
+            Assert.Equal(stable ? typeof(JavaScriptRuntime.Array) : null, binding.ClrType);
+        }
+
+        [Fact]
+        public void Build_ArrayElementInference_PreservesLiteralAndAliasWriteChecks()
+        {
+            var ast = _parser.ParseJavaScript("""
+                var strings = ["first"];
+                var mixed = [1, "first"];
+                var empty = [];
+                var alias = strings;
+                alias[0] = 1;
+                empty[0] = "later";
+                function read() { return [strings, mixed, empty]; }
+                """, "test.js");
+
+            var table = BuildSymbolTable(ast, "test.js");
+
+            Assert.Equal(typeof(JavaScriptRuntime.Array), table.Root.Bindings["mixed"].ClrType);
+            Assert.Null(table.Root.Bindings["mixed"].StableElementClrType);
+            Assert.Null(table.Root.Bindings["strings"].StableElementClrType);
+            Assert.Equal(typeof(string), table.Root.Bindings["empty"].StableElementClrType);
+        }
+
+        [Theory]
+        [InlineData("identifier")]
+        [InlineData("parenthesized")]
+        [InlineData("sequence")]
+        [InlineData("conditional")]
+        [InlineData("logical")]
+        [InlineData("assignment")]
+        public void Build_NumericForwardingExpressions_PreserveHoistedReadProvenance(string scenario)
+        {
+            var expression = scenario switch
+            {
+                "identifier" => "source",
+                "parenthesized" => "(source)",
+                "sequence" => "(0, source)",
+                "conditional" => "true ? source : 2",
+                "logical" => "source || 2",
+                "assignment" => "(source = source)",
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario))
+            };
+            var ast = _parser.ParseJavaScript(
+                $"function test() {{ let forwarded = {expression}; var source = 1; return forwarded; }}",
+                "test.js");
+
+            var table = BuildSymbolTable(ast, "test.js");
+            var scope = Assert.Single(table.Root.Children);
+
+            Assert.False(scope.Bindings["source"].CanUseUnboxedLocal);
+            Assert.False(scope.Bindings["forwarded"].IsStableType);
+            Assert.Null(scope.Bindings["forwarded"].ClrType);
         }
 
         [Fact]

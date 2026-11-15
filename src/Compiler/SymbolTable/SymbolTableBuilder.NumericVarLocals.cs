@@ -79,6 +79,12 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
+                if (proposedClrTypes.TryGetValue(binding.Name, out var proposedType)
+                    && proposedType != typeof(double))
+                {
+                    continue;
+                }
+
                 var analyzer = new NumericVarDefiniteAssignmentAnalyzer(
                     this,
                     scope,
@@ -120,7 +126,8 @@ public partial class SymbolTableBuilder
             {
                 if (binding.Kind is not (BindingKind.Var or BindingKind.Let or BindingKind.Const)
                     || (binding.ClrType != null && binding.ClrType != typeof(double))
-                    || _unsafeNumericBindings.Contains(binding))
+                    || _unsafeNumericBindings.Contains(binding)
+                    || !MayHaveNumericForwardingWrites(scope, binding))
                 {
                     continue;
                 }
@@ -637,9 +644,8 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        private Scope GetScopeForNode(Scope currentScope, INode node)
-            => currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.AstNode, node))
-               ?? currentScope;
+        private Scope GetScopeForNode(Scope currentScope, Node node)
+            => _builder.FindChildScopeByAstNode(currentScope, node) ?? currentScope;
 
         private bool ResolvesToTarget(Scope currentScope, string name)
             => string.Equals(name, _target.Name, StringComparison.Ordinal)
