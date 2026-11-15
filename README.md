@@ -15,9 +15,14 @@ in C# without rewriting them.
 
 - **Run a JavaScript script from the terminal.** Compile a `.js` file and run
   the generated `.dll` with `dotnet`. Try the [Hello World example](#compile-and-run-javascript).
-- **Call a JavaScript library from C#.** `Jroc.SDK` compiles JavaScript during
-  `dotnet build` and generates strongly typed APIs for module exports. The
-  [Picocolors sample](samples/Picocolors/) shows how to call an npm package from C#.
+- **Compile an npm package into a .NET assembly.** Use `jroc --moduleid` to
+  compile a package by name. The [Picocolors sample](samples/Picocolors/)
+  shows how to compile a package during `dotnet build` with `Jroc.SDK` and
+  call its exports from C# through a strongly typed API.
+- **Compile JavaScript supplied at runtime.** Pass source text from your .NET
+  app to `Jroc.Core` to compile and load it in memory without writing an
+  assembly to disk. See the
+  [in-memory compilation tutorial](docs/sdk/tutorials/InMemoryCompileAndRun.md).
 
 JROC includes a JavaScript runtime with a growing set of supported
 [Node.js APIs](docs/nodejs/Index.md).
