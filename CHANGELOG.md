@@ -6,7 +6,14 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: port 300 additional pinned Temporal cases with byte-identical
+  upstream assertions: 158 PlainTime and 142 Instant cases. Implement
+  PlainTime.since/until, sharing exact nanosecond difference rounding and
+  Duration balancing with Instant while preserving each type's default
+  largest unit, signed rounding, option access order and positive-zero fields.
+  Expand Instant difference, formatting, coercion and metadata coverage.
+  Date/calendar interoperation remains unsupported. No selected cases require
+  eval, so this batch adds no skips.
 
 ## v0.12.39 - 2026-11-15
 

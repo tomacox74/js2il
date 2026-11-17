@@ -191,4 +191,79 @@ public static partial class Temporal
         }
         return rounded;
     }
+
+    private static double GetTemporalRoundingIncrement(object? options)
+    {
+        var raw = GetTemporalOption(options, "roundingIncrement");
+        var increment = raw is null ? 1d : System.Math.Truncate(TypeUtilities.ToNumber(raw));
+        if (!double.IsFinite(increment) || increment < 1 || increment > 1_000_000_000)
+        {
+            throw new RangeError("Invalid Temporal rounding increment");
+        }
+        return increment;
+    }
+
+    private static string? GetTemporalUnitOption(object? options, string name)
+    {
+        var value = GetTemporalOption(options, name);
+        if (value is null)
+        {
+            return null;
+        }
+        var unit = DotNet2JSConversions.ToStringRejectingSymbols(value);
+        return unit switch
+        {
+            "year" or "years" or "month" or "months" or "week" or "weeks" or "day" or "days"
+                or "hour" or "hours" or "minute" or "minutes" or "second" or "seconds"
+                or "millisecond" or "milliseconds" or "microsecond" or "microseconds"
+                or "nanosecond" or "nanoseconds" or "auto" => unit,
+            _ => throw new RangeError("Invalid Temporal unit")
+        };
+    }
+
+    private static void ValidateTimeRoundingIncrement(double increment, TimeUnit unit, bool wholeDay)
+    {
+        var maximum = wholeDay ? NanosecondsPerDay / TimeUnitLength(unit)
+            : unit switch
+            {
+                TimeUnit.Hour => 24,
+                TimeUnit.Minute or TimeUnit.Second => 60,
+                _ => 1000
+            };
+        if (increment > maximum || (!wholeDay && increment == maximum) || maximum % increment != 0)
+        {
+            throw new RangeError("Temporal rounding increment must divide its unit");
+        }
+    }
+
+    private static TemporalDuration DifferenceTimeNanoseconds(BigInteger difference, object? suppliedOptions, TimeUnit defaultLargest)
+    {
+        var options = GetTemporalOptions(suppliedOptions);
+        var largestName = GetTemporalUnitOption(options, "largestUnit");
+        var increment = GetTemporalRoundingIncrement(options);
+        var mode = GetTemporalRoundingMode(options, TemporalRoundingMode.Trunc);
+        var smallestName = GetTemporalUnitOption(options, "smallestUnit");
+        var largest = largestName is null or "auto" ? TimeUnit.Unset : GetTimeUnit(largestName, true);
+        var smallest = smallestName is null ? TimeUnit.Nanosecond : GetTimeUnit(smallestName, true);
+        if (largest == TimeUnit.Unset)
+        {
+            largest = (TimeUnit)System.Math.Min((int)defaultLargest, (int)smallest);
+        }
+        if (largest > smallest)
+        {
+            throw new RangeError("largestUnit must not be smaller than smallestUnit");
+        }
+        ValidateTimeRoundingIncrement(increment, smallest, false);
+        var rounded = RoundTimeDuration(difference, (long)increment * TimeUnitLength(smallest), mode);
+        var fields = new double[10];
+        var remainder = BigInteger.Abs(rounded);
+        for (var unit = largest; unit <= TimeUnit.Nanosecond; unit++)
+        {
+            var length = TimeUnitLength(unit);
+            var quotient = remainder / length;
+            fields[(int)unit + 4] = quotient.IsZero ? 0d : Number.ConvertBigIntegerToDouble(quotient) * rounded.Sign;
+            remainder %= length;
+        }
+        return new TemporalDuration(fields);
+    }
 }

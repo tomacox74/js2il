@@ -86,4 +86,10 @@ public sealed class ExecutionTests : InMemoryExecutionTestsBase
 
     [Fact(DisplayName = "year-zero.js")]
     public Task Port300InstantNov15_year_zero() => ExecutionTestFromFile("year-zero");
+
+    [Fact(DisplayName = "argument-string-date-with-utc-offset.js")]
+    public Task Port300Nov17_argument_string_date_with_utc_offset() => ExecutionTestFromFile("argument-string-date-with-utc-offset");
+
+    [Fact(DisplayName = "argument-string-time-zone-annotation.js")]
+    public Task Port300Nov17_argument_string_time_zone_annotation() => ExecutionTestFromFile("argument-string-time-zone-annotation");
 }
