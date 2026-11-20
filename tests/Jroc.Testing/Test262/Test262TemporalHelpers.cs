@@ -33,6 +33,7 @@ internal static partial class Test262TemporalHelpers
             (Action<object?, object?, object?>)AssertPlainTimesEqual, "assertPlainTimesEqual", 2));
         ObjectRuntime.SetItem(helpers, "assertInstantsEqual", CreateFunction(
             (Action<object?, object?, object?>)AssertInstantsEqual, "assertInstantsEqual", 2));
+        RegisterPlainDateHelpers(helpers);
         ObjectRuntime.SetItem(helpers, "assertDuration", CreateFunction(
             (BuiltinFunctionVariadic)AssertDuration, "assertDuration", 11));
         ObjectRuntime.SetItem(helpers, "assertDurationsEqual", CreateFunction(

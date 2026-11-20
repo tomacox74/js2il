@@ -418,6 +418,131 @@ public sealed class TemporalReviewRegressionTests
             """);
     }
 
+    [Fact]
+    public void PlainDateFromCoercesObjectMonthCodeToPrimitiveString()
+    {
+        Run("plaindate_monthcode_toprimitive", """
+            const calls = [];
+            const monthCode = {
+              [Symbol.toPrimitive](hint) { calls.push(hint); return "M02"; }
+            };
+            const date = Temporal.PlainDate.from({ year: 2000, monthCode, day: 1 });
+            assert.sameValue(date.toString(), "2000-02-01");
+            assert.compareArray(calls, ["string"]);
+            assert.sameValue(Temporal.PlainDate.from({ year: 2000,
+              monthCode: { toString() { return "M03"; } }, day: 1 }).month, 3);
+            for (const bad of [{ toString() { return 3; } }, { toString: undefined, valueOf: undefined }])
+              assert.throws(TypeError, () => Temporal.PlainDate.from({ year: 2000, monthCode: bad, day: 1 }));
+            assert.throws(RangeError, () => Temporal.PlainDate.from({ year: 2000,
+              monthCode: { toString() { return "M13"; } }, day: 1 }));
+            """);
+    }
+
+    [Fact]
+    public void CalendarBearingTypesRejectPrimitiveConversionAndFormatAsISO()
+    {
+        Run("calendar_objects_string_conversion", """
+            const values = [
+              [new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 300), "2000-05-02T12:34:56.9876543"],
+              [new Temporal.PlainMonthDay(5, 2), "05-02"],
+              [new Temporal.PlainYearMonth(2000, 5), "2000-05"],
+              [new Temporal.ZonedDateTime(0n, "UTC"), "1970-01-01T00:00:00+00:00[UTC]"]
+            ];
+            for (const [value, expected] of values) {
+              assert.throws(TypeError, () => value.valueOf());
+              assert.throws(TypeError, () => value < value);
+              assert.throws(TypeError, () => +value);
+              assert.sameValue(`${value}`, expected);
+              assert.sameValue(value.toJSON(), expected);
+              assert.sameValue(JSON.stringify(value), JSON.stringify(expected));
+            }
+            const dateTime = new Temporal.PlainDateTime(2000, 12, 31, 23, 59, 59, 999);
+            assert.sameValue(dateTime.toString({ smallestUnit: "minute" }), "2000-12-31T23:59");
+            assert.sameValue(dateTime.toString({ fractionalSecondDigits: 0, roundingMode: "ceil" }),
+              "2001-01-01T00:00:00");
+            assert.sameValue(dateTime.toString({ calendarName: "critical", fractionalSecondDigits: 1 }),
+              "2000-12-31T23:59:59.9[!u-ca=iso8601]");
+            assert.throws(RangeError, () => dateTime.toString({ smallestUnit: "hour" }));
+            assert.throws(RangeError, () => new Temporal.PlainDateTime(275760, 9, 13, 23, 59, 59, 999)
+              .toString({ smallestUnit: "second", roundingMode: "ceil" }));
+            assert.sameValue(new Temporal.PlainMonthDay(2, 29).toString({ calendarName: "always" }),
+              "1972-02-29[u-ca=iso8601]");
+            assert.sameValue(new Temporal.PlainYearMonth(2000, 5).toString({ calendarName: "critical" }),
+              "2000-05-01[!u-ca=iso8601]");
+            assert.sameValue(new Temporal.PlainYearMonth(2000, 5).toString({ calendarName: "never" }), "2000-05");
+            const zoned = new Temporal.ZonedDateTime(-1n, "+0130");
+            assert.sameValue(zoned.timeZoneId, "+01:30");
+            assert.sameValue(zoned.toString(), "1970-01-01T01:29:59.999999999+01:30[+01:30]");
+            assert.sameValue(zoned.toString({ smallestUnit: "second", roundingMode: "halfExpand",
+              offset: "never", timeZoneName: "critical", calendarName: "always" }),
+              "1970-01-01T01:30:00[!+01:30][u-ca=iso8601]");
+            assert.sameValue(zoned.toString({ timeZoneName: "never", fractionalSecondDigits: 3 }),
+              "1970-01-01T01:29:59.999+01:30");
+            assert.throws(RangeError, () => zoned.toString({ offset: "always" }));
+            assert.throws(RangeError, () => zoned.toString({ timeZoneName: "short" }));
+            """);
+    }
+
+    [Fact]
+    public void CalendarBearingConstructorsUseTheirOwnLimitsAndSpecOrder()
+    {
+        Run("calendar_objects_limits", """
+            assert.sameValue(new Temporal.PlainYearMonth(-271821, 4).toString(), "-271821-04");
+            assert.sameValue(new Temporal.PlainYearMonth(275760, 9).toString(), "+275760-09");
+            assert.throws(RangeError, () => new Temporal.PlainYearMonth(-271821, 3));
+            assert.throws(RangeError, () => new Temporal.PlainYearMonth(275760, 10));
+            assert.throws(RangeError, () => new Temporal.PlainYearMonth(2000, 2, "iso8601", 30));
+
+            assert.throws(RangeError, () => new Temporal.PlainDateTime(-271821, 4, 19));
+            assert.sameValue(new Temporal.PlainDateTime(-271821, 4, 19, 0, 0, 0, 0, 0, 1).toString(),
+              "-271821-04-19T00:00:00.000000001");
+            assert.sameValue(new Temporal.PlainDateTime(275760, 9, 13, 23, 59, 59, 999, 999, 999).toString(),
+              "+275760-09-13T23:59:59.999999999");
+            assert.throws(RangeError, () => new Temporal.PlainDateTime(275760, 9, 14));
+
+            assert.sameValue(new Temporal.PlainMonthDay(4, 19, "iso8601", -271821).toString(), "04-19");
+            assert.throws(RangeError, () => new Temporal.PlainMonthDay(4, 18, "iso8601", -271821));
+
+            // Calendar type and epoch range are validated before later fields.
+            assert.throws(TypeError, () => new Temporal.PlainDateTime(2000, 1, 1, 25, 0, 0, 0, 0, 0, {}));
+            assert.throws(RangeError, () => new Temporal.ZonedDateTime(2n ** 80n, {}));
+            assert.throws(RangeError, () => new Temporal.ZonedDateTime(0n, "1970-01-01T00:00Z[UTC]"));
+            """);
+    }
+
+    [Fact]
+    public void PlainDateCalendarAndMonthCodeConversionFollowSpecOrder()
+    {
+        Run("plaindate_calendar_monthcode_order", """
+            for (const calendar of ["12:00", "T12:00:00.5", "12:00+01:00[u-ca=iso8601]"])
+              assert.sameValue(Temporal.PlainDate.from({ year: 2000, month: 1, day: 1, calendar }).calendarId,
+                "iso8601", calendar);
+            for (const calendar of ["12:00Z", "25:00", "12:00[u-ca=gregory]"])
+              assert.throws(RangeError, () => Temporal.PlainDate.from({ year: 2000, month: 1, day: 1, calendar }),
+                calendar);
+
+            // Temporal objects use their calendar slot, not a "calendar" property.
+            let calendarReads = 0;
+            const yearMonth = new Temporal.PlainYearMonth(2000, 5);
+            Object.defineProperty(yearMonth, "calendar", { get() { calendarReads++; return "iso8601"; } });
+            assert.throws(TypeError, () => Temporal.PlainDate.from(yearMonth));
+            const monthDay = new Temporal.PlainMonthDay(5, 2);
+            Object.defineProperty(monthDay, "calendar", { get() { calendarReads++; return "iso8601"; } });
+            assert.throws(TypeError, () => Temporal.PlainDate.from(monthDay));
+            assert.sameValue(calendarReads, 0);
+
+            // Month-code syntax errors precede reading year; M13 does not.
+            for (const [monthCode, expected] of [["M00", ["RangeError"]], ["M00L", ["year", "RangeError"]],
+              ["M13", ["year", "RangeError"]], ["M1", ["RangeError"]]]) {
+              const log = [];
+              try {
+                Temporal.PlainDate.from({ day: 1, monthCode, get year() { log.push("year"); return 2000; } });
+              } catch (e) { log.push(e.constructor.name); }
+              assert.compareArray(log, expected, monthCode);
+            }
+            """);
+    }
+
     private static void Run(string name, string source)
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(
