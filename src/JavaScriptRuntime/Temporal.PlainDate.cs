@@ -144,7 +144,15 @@ public static partial class Temporal
             text = "1972-" + core.TrimStart('-') + annotations;
         }
         var parsed = ParseISODateTime(text, allowDateOnly: true);
-        ValidateParsedDateTime(parsed, allowUtc: true);
+        if (parsed.Date is null)
+        {
+            // A TemporalTimeString also selects a calendar (iso8601 unless annotated).
+            ParseTimeString(text);
+        }
+        else
+        {
+            ValidateParsedDateTime(parsed, allowUtc: true);
+        }
         return ValidateCalendarIdentifier(parsed.Annotations.Calendar);
     }
 
@@ -179,10 +187,15 @@ public static partial class Temporal
         }
         if (!TypeUtilities.IsPrimitive(item))
         {
-            var calendar = ObjectRuntime.GetItem(item!, "calendar");
-            if (calendar is not null)
+            // Other calendar-bearing Temporal objects supply their calendar
+            // from internal slots; only plain objects read "calendar".
+            if (item is not ITemporalCalendarRecord)
             {
-                ToCalendarIdentifier(calendar);
+                var calendar = ObjectRuntime.GetItem(item!, "calendar");
+                if (calendar is not null)
+                {
+                    ToCalendarIdentifier(calendar);
+                }
             }
             var fields = ReadDateFields(item!);
             var reject = GetRejectOverflow(GetTemporalOptions(suppliedOptions));
@@ -230,9 +243,9 @@ public static partial class Temporal
             }
             code = primitive as string ?? throw new TypeError("Temporal month code must be a string");
         }
-        // Month-code grammar precedes conversion of later fields, whereas
-        // suitability for this calendar is checked after required fields.
-        if (code is not null && !Regex.IsMatch(code, @"\AM[0-9]{2}L?\z", TemporalRegexOptions))
+        // MonthCode grammar (M00L, M01–M99, optional L) precedes conversion of
+        // later fields; suitability for this calendar is checked after them.
+        if (code is not null && !Regex.IsMatch(code, @"\A(?:M00L|M0[1-9]L?|M[1-9][0-9]L?)\z", TemporalRegexOptions))
         {
             throw new RangeError("Invalid Temporal month code");
         }

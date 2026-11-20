@@ -510,6 +510,39 @@ public sealed class TemporalReviewRegressionTests
             """);
     }
 
+    [Fact]
+    public void PlainDateCalendarAndMonthCodeConversionFollowSpecOrder()
+    {
+        Run("plaindate_calendar_monthcode_order", """
+            for (const calendar of ["12:00", "T12:00:00.5", "12:00+01:00[u-ca=iso8601]"])
+              assert.sameValue(Temporal.PlainDate.from({ year: 2000, month: 1, day: 1, calendar }).calendarId,
+                "iso8601", calendar);
+            for (const calendar of ["12:00Z", "25:00", "12:00[u-ca=gregory]"])
+              assert.throws(RangeError, () => Temporal.PlainDate.from({ year: 2000, month: 1, day: 1, calendar }),
+                calendar);
+
+            // Temporal objects use their calendar slot, not a "calendar" property.
+            let calendarReads = 0;
+            const yearMonth = new Temporal.PlainYearMonth(2000, 5);
+            Object.defineProperty(yearMonth, "calendar", { get() { calendarReads++; return "iso8601"; } });
+            assert.throws(TypeError, () => Temporal.PlainDate.from(yearMonth));
+            const monthDay = new Temporal.PlainMonthDay(5, 2);
+            Object.defineProperty(monthDay, "calendar", { get() { calendarReads++; return "iso8601"; } });
+            assert.throws(TypeError, () => Temporal.PlainDate.from(monthDay));
+            assert.sameValue(calendarReads, 0);
+
+            // Month-code syntax errors precede reading year; M13 does not.
+            for (const [monthCode, expected] of [["M00", ["RangeError"]], ["M00L", ["year", "RangeError"]],
+              ["M13", ["year", "RangeError"]], ["M1", ["RangeError"]]]) {
+              const log = [];
+              try {
+                Temporal.PlainDate.from({ day: 1, monthCode, get year() { log.push("year"); return 2000; } });
+              } catch (e) { log.push(e.constructor.name); }
+              assert.compareArray(log, expected, monthCode);
+            }
+            """);
+    }
+
     private static void Run(string name, string source)
     {
         var result = Test262SharedAssertHarness.CompileAndExecute(
