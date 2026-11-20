@@ -218,11 +218,18 @@ public static partial class Temporal
         var day = ReadNumber("day");
         var month = ReadNumber("month");
         var rawCode = ObjectRuntime.GetItem(item, "monthCode");
-        if (rawCode is not null && rawCode is not string)
+        string? code = null;
+        if (rawCode is not null)
         {
-            throw new TypeError("Temporal month code must be a string");
+            // ParseMonthCode: ToPrimitive(value, string), then require a String.
+            var primitive = rawCode;
+            if (!TypeUtilities.IsPrimitive(rawCode)
+                && !TypeUtilities.TryCoerceObjectToPrimitive(rawCode, "string", out primitive))
+            {
+                throw new TypeError("Cannot convert Temporal month code to a primitive value");
+            }
+            code = primitive as string ?? throw new TypeError("Temporal month code must be a string");
         }
-        var code = (string?)rawCode;
         // Month-code grammar precedes conversion of later fields, whereas
         // suitability for this calendar is checked after required fields.
         if (code is not null && !Regex.IsMatch(code, @"\AM[0-9]{2}L?\z", TemporalRegexOptions))
@@ -305,25 +312,36 @@ public static partial class Temporal
 
     private static string FormatPlainDate(TemporalPlainDate date, object? suppliedOptions)
     {
-        var options = GetTemporalOptions(suppliedOptions);
-        var rawCalendarName = GetTemporalOption(options, "calendarName");
-        var calendarName = rawCalendarName is null ? "auto" : DotNet2JSConversions.ToStringRejectingSymbols(rawCalendarName);
-        if (calendarName is not ("auto" or "always" or "never" or "critical"))
-        {
-            throw new RangeError("Invalid Temporal calendarName option");
-        }
-        var year = date.Year is >= 0 and <= 9999
-            ? date.Year.ToString("D4", CultureInfo.InvariantCulture)
-            : (date.Year < 0 ? "-" : "+") + System.Math.Abs(date.Year).ToString("D6", CultureInfo.InvariantCulture);
-        var result = year + "-" + date.Month.ToString("D2", CultureInfo.InvariantCulture)
-            + "-" + date.Day.ToString("D2", CultureInfo.InvariantCulture);
-        return calendarName switch
-        {
-            "always" => result + "[u-ca=iso8601]",
-            "critical" => result + "[!u-ca=iso8601]",
-            _ => result
-        };
+        var calendarName = GetTemporalStringOption(GetTemporalOptions(suppliedOptions), "calendarName",
+            ["auto", "always", "never", "critical"], "auto");
+        return FormatISODate(date.Year, date.Month, date.Day) + FormatCalendarAnnotation(calendarName);
     }
+
+    private static string GetTemporalStringOption(object? options, string name, string[] allowed, string fallback)
+    {
+        var raw = GetTemporalOption(options, name);
+        var value = raw is null ? fallback : DotNet2JSConversions.ToStringRejectingSymbols(raw);
+        return allowed.Contains(value)
+            ? value
+            : throw new RangeError("Invalid Temporal " + name + " option");
+    }
+
+    private static string PadISOYear(int year)
+        => year is >= 0 and <= 9999
+            ? year.ToString("D4", CultureInfo.InvariantCulture)
+            : (year < 0 ? "-" : "+") + System.Math.Abs(year).ToString("D6", CultureInfo.InvariantCulture);
+
+    private static string FormatISODate(int year, int month, int day)
+        => PadISOYear(year) + "-" + month.ToString("D2", CultureInfo.InvariantCulture)
+            + "-" + day.ToString("D2", CultureInfo.InvariantCulture);
+
+    // Only the ISO calendar is supported, so "auto" never shows an annotation.
+    private static string FormatCalendarAnnotation(string calendarName) => calendarName switch
+    {
+        "always" => "[u-ca=iso8601]",
+        "critical" => "[!u-ca=iso8601]",
+        _ => ""
+    };
 
     private sealed class PlainDateConstructor : JsFunctionObject
     {

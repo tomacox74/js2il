@@ -14,8 +14,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   overflow rules and intrinsic result prototypes. Add native PlainDate
   assertions and the complete five-type calendar-slot helper matrix. Supply the
   ISO constructor/field-accessor subset of PlainDateTime, PlainMonthDay,
-  PlainYearMonth and UTC/fixed-offset ZonedDateTime needed by that matrix;
-  broader operations on those types, non-ISO calendars, named-zone rules,
+  PlainYearMonth and UTC/fixed-offset ZonedDateTime needed by that matrix,
+  with their type-specific limits, ISO toString/toJSON formatting and
+  primitive-conversion TypeErrors. PlainDate.from coerces object month codes
+  to strings. Broader operations on those types, non-ISO calendars, named-zone rules,
   PlainDate differences and Intl-aware formatting remain unsupported.
   No selected cases require eval, so this batch adds no skips.
 
