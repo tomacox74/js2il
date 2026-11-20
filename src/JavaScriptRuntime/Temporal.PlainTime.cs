@@ -66,6 +66,10 @@ public static partial class Temporal
                     (BuiltinFunction1)(static (receiver, duration) => AddTime(receiver, duration, false)), 1d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "subtract",
                     (BuiltinFunction1)(static (receiver, duration) => AddTime(receiver, duration, true)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "since",
+                    (BuiltinFunction2)(static (receiver, other, options) => DifferencePlainTime(receiver, other, options, true)), 1d);
+                GlobalThis.DefineBuiltinFunctionProperty(prototype, "until",
+                    (BuiltinFunction2)(static (receiver, other, options) => DifferencePlainTime(receiver, other, options, false)), 1d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "round",
                     (BuiltinFunction1)(static (receiver, options) => RoundPlainTime(receiver, options)), 1d);
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "toString",
@@ -219,6 +223,14 @@ public static partial class Temporal
             result += NanosecondsPerDay;
         }
         return new TemporalPlainTime((long)result);
+    }
+
+    private static TemporalDuration DifferencePlainTime(object? receiver, object? other, object? options, bool since)
+    {
+        var time = RequirePlainTime(receiver);
+        var second = ToTemporalTime(other);
+        var difference = new BigInteger(second.Nanoseconds - time.Nanoseconds);
+        return DifferenceTimeNanoseconds(since ? -difference : difference, options, TimeUnit.Hour);
     }
 
     private static TemporalPlainTime RoundPlainTime(object? receiver, object? roundTo)

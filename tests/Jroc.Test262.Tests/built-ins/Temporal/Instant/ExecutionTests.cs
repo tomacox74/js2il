@@ -35,4 +35,7 @@ public sealed class ExecutionTests : InMemoryExecutionTestsBase
 
     [Fact(DisplayName = "prop-desc.js")]
     public Task Port300InstantNov15_prop_desc() => ExecutionTestFromFile("prop-desc");
+
+    [Fact(DisplayName = "subclass.js")]
+    public Task Port300Nov17_subclass() => ExecutionTestFromFile("subclass");
 }

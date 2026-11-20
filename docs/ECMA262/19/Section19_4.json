@@ -52,6 +52,9 @@
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/equals/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/round/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/since/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/until/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/toString/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/valueOf/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/Instant/prototype/toJSON/ExecutionTests.cs",
           "tests/Jroc.Tests/TemporalReviewRegressionTests.cs",
           "tests/Jroc.Test262.Tests/Integration/ExecutionTests.cs"
@@ -63,6 +66,8 @@
           "test/built-ins/Temporal/Instant/prototype/add/order-of-operations.js",
           "test/built-ins/Temporal/Instant/prototype/round/negative-instant.js",
           "test/built-ins/Temporal/Instant/prototype/since/order-of-operations.js",
+          "test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfEven.js",
+          "test/built-ins/Temporal/Instant/prototype/toString/negative-instant-rounding.js",
           "test/built-ins/Temporal/Instant/prototype/since/float64-representable-integer.js"
         ],
         "notes": "Three hundred additional pinned Instant cases are verified on the development branch. Supports the ToBigInt constructor, exact epoch factories, branded epoch getters with floor-based milliseconds, ISO date-time parsing with explicit offsets, extended Gregorian years, leap seconds and annotation validation, from, compare and equals. Instant-like objects must convert to string primitives. add/subtract accept time units and reject nonzero day/calendar fields; results preserve exact BigInt arithmetic and the Instant range. since/until create intrinsic Duration values, preserving conversion and option access order, increment validation, signed rounding, exact balancing, positive-zero fields and binary64 slot conversion. Unit names are validated on read; unit-group validation follows the remaining option reads. round supports six time units and nine timeline-directed modes, including pre-epoch instants and whole-day-dividing increments. toJSON and toString provide UTC ISO formatting; toString also supports UTC and minute-precision fixed-offset time zones, including ISO date/time strings identifying those zones and offset date rollover at the Instant boundaries. Time-zone values must be strings, not coercible objects. toLocaleString uses the base ISO representation without Intl.DateTimeFormat. Date/calendar type interoperation, toZonedDateTimeISO, other named time zones and Intl-aware formatting remain unsupported. These results do not claim full Temporal conformance."
@@ -75,6 +80,7 @@
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/NativePortBatch_Port1000.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/from/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/from/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/compare/NativePortBatch_Port1000.cs",
           "tests/Jroc.Tests/TemporalReviewRegressionTests.cs"
         ],
@@ -93,15 +99,22 @@
         "specUrl": "https://tc39.es/proposal-temporal/#sec-properties-of-the-temporal-plaintime-prototype-object",
         "testScripts": [
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/NativePortBatch_Port1000.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/add/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/since/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/until/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/subtract/NativePortBatch_Port1000.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/round/NativePortBatch_Port1000.cs",
           "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainTime/prototype/toString/NativePortBatch_Port1000.cs"
         ],
         "test262Paths": [
           "test/built-ins/Temporal/PlainTime/prototype/add/argument-object.js",
-          "test/built-ins/Temporal/PlainTime/prototype/add/order-of-operations.js"
+          "test/built-ins/Temporal/PlainTime/prototype/add/order-of-operations.js",
+          "test/built-ins/Temporal/PlainTime/prototype/since/order-of-operations.js",
+          "test/built-ins/Temporal/PlainTime/prototype/since/options-read-before-algorithmic-validation.js",
+          "test/built-ins/Temporal/PlainTime/prototype/until/round-cross-unit-boundary.js",
+          "test/built-ins/Temporal/PlainTime/prototype/until/blank-result.js"
         ],
-        "notes": "Supports with, equals, add, subtract, round, toString and toJSON, with immutable results and exact nanosecond arithmetic. Time arithmetic validates all duration fields before ignoring date units, wraps at midnight and ignores the optional second arithmetic argument. Rounding supports nine modes, six time units, increment validation and ordered option coercion. toLocaleString uses the base ECMA-262 ISO representation because Intl.DateTimeFormat is not implemented; locale-aware formatting is not claimed. since, until and broader Temporal date/calendar operations remain unsupported."
+        "notes": "Supports with, equals, add, subtract, since, until, round, toString and toJSON, with immutable results and exact nanosecond arithmetic. Time arithmetic validates all duration fields before ignoring date units, wraps at midnight and ignores the optional second arithmetic argument. since/until create intrinsic Duration values, defaulting largestUnit to hour, with exact signed differences, balancing through nanoseconds, positive-zero fields and all nine rounding modes. Conversion precedes ordered option reads; unit-group and increment validation follows option conversion. An additional 158 PlainTime and 142 Instant cases are verified on the development branch, including Instant differences and formatting. Rounding supports nine modes, six time units, increment validation and ordered option coercion. toLocaleString uses the base ECMA-262 ISO representation because Intl.DateTimeFormat is not implemented; locale-aware formatting is not claimed. Broader Temporal date/calendar operations remain unsupported."
       },
       {
         "clause": "19.4",
