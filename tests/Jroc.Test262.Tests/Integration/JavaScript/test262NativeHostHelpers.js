@@ -387,6 +387,109 @@ assert.sameValue(WellKnownIntrinsicObjects[0].name, '%ThrowTypeError%');
 assert.sameValue(WellKnownIntrinsicObjects[0].value, undefined);
 
 var temporalCalls = [];
+// PlainDate helpers must reject lookalikes and every incorrect expected field.
+assert.sameValue(TemporalHelpers.assertPlainDate.length, 5);
+assert.sameValue(TemporalHelpers.assertPlainDate.name, "assertPlainDate");
+assert.sameValue(TemporalHelpers.assertPlainDatesEqual.length, 2);
+assert.sameValue(TemporalHelpers.checkToTemporalCalendarFastPath.length, 1);
+var nativeTemporalDate = new Temporal.PlainDate(2000, 2, 29);
+var nativeDateFields = [2000, 2, "M02", 29];
+TemporalHelpers.assertPlainDate(nativeTemporalDate, ...nativeDateFields);
+for (var dateField = 0; dateField < nativeDateFields.length; dateField++) {
+    var wrongDateFields = nativeDateFields.slice();
+    wrongDateFields[dateField] = dateField === 2 ? "M03" : wrongDateFields[dateField] + 1;
+    assert.throws(assert.AssertionError, function() {
+        TemporalHelpers.assertPlainDate(nativeTemporalDate, ...wrongDateFields);
+    });
+}
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDate({year: 2000, month: 2, monthCode: "M02", day: 29}, ...nativeDateFields);
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDate(nativeTemporalDate, ...nativeDateFields, "", "ce");
+});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDate(nativeTemporalDate, ...nativeDateFields, "", undefined, 2000);
+});
+Object.defineProperty(nativeTemporalDate, "era", {value: "ce", configurable: true});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDate(nativeTemporalDate, ...nativeDateFields);
+});
+delete nativeTemporalDate.era;
+Object.defineProperty(nativeTemporalDate, "eraYear", {value: 2000, configurable: true});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDate(nativeTemporalDate, ...nativeDateFields);
+});
+delete nativeTemporalDate.eraYear;
+TemporalHelpers.assertPlainDatesEqual(nativeTemporalDate, new Temporal.PlainDate(2000, 2, 29));
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDatesEqual(nativeTemporalDate, new Temporal.PlainDate(2000, 3, 1));
+});
+var nativeOtherCalendarDate = new Temporal.PlainDate(2000, 2, 29);
+Object.defineProperty(nativeOtherCalendarDate, "calendarId", {value: "other"});
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDatesEqual(nativeTemporalDate, nativeOtherCalendarDate);
+});
+assert.sameValue(TemporalHelpers.canonicalizeCalendarEra("gregory", "bc"), "bce");
+assert.sameValue(TemporalHelpers.canonicalizeCalendarEra("japanese", "ad"), "ce");
+assert.sameValue(TemporalHelpers.canonicalizeCalendarEra("iso8601", undefined), undefined);
+assert.throws(Test262Error, function() {
+    TemporalHelpers.canonicalizeCalendarEra("gregory", "unknown");
+});
+var nativeCalendarBrands = [];
+var nativeDateTime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
+assert.compareArray([
+    nativeDateTime.year, nativeDateTime.month, nativeDateTime.monthCode, nativeDateTime.day,
+    nativeDateTime.hour, nativeDateTime.minute, nativeDateTime.second,
+    nativeDateTime.millisecond, nativeDateTime.microsecond, nativeDateTime.nanosecond
+], [2000, 5, "M05", 2, 12, 34, 56, 987, 654, 321]);
+var nativeMonthDay = new Temporal.PlainMonthDay(2, 29);
+assert.sameValue(nativeMonthDay.monthCode, "M02");
+assert.sameValue(nativeMonthDay.day, 29);
+var nativeYearMonth = new Temporal.PlainYearMonth(2000, 5);
+assert.compareArray([nativeYearMonth.year, nativeYearMonth.month, nativeYearMonth.monthCode], [2000, 5, "M05"]);
+var nativeZoned = new Temporal.ZonedDateTime(-1n, "+01:00");
+assert.compareArray([
+    nativeZoned.year, nativeZoned.month, nativeZoned.day,
+    nativeZoned.hour, nativeZoned.minute, nativeZoned.second,
+    nativeZoned.millisecond, nativeZoned.microsecond, nativeZoned.nanosecond
+], [1970, 1, 1, 0, 59, 59, 999, 999, 999]);
+assert.sameValue(nativeZoned.epochNanoseconds, -1n);
+assert.sameValue(nativeZoned.timeZoneId, "+01:00");
+assert.sameValue(nativeZoned.calendarId, "iso8601");
+[
+    [Temporal.PlainDateTime, "year", nativeMonthDay],
+    [Temporal.PlainMonthDay, "day", nativeYearMonth],
+    [Temporal.PlainYearMonth, "year", nativeTemporalDate],
+    [Temporal.ZonedDateTime, "epochNanoseconds", new Temporal.Instant(0n)]
+].forEach(function(entry) {
+    var getter = Object.getOwnPropertyDescriptor(entry[0].prototype, entry[1]).get;
+    assert.throws(TypeError, function() { getter.call(entry[2]); });
+});
+assert.throws(TypeError, function() { Temporal.PlainDateTime(2000, 5, 2); });
+assert.throws(TypeError, function() { Temporal.PlainMonthDay(5, 2); });
+assert.throws(TypeError, function() { Temporal.PlainYearMonth(2000, 5); });
+assert.throws(TypeError, function() { Temporal.ZonedDateTime(0n, "UTC"); });
+assert.throws(RangeError, function() { new Temporal.PlainDateTime(2000, 2, 30); });
+assert.throws(RangeError, function() { new Temporal.PlainDateTime(2000, 5, 2, 24); });
+assert.throws(RangeError, function() { new Temporal.PlainMonthDay(2, 30); });
+assert.throws(RangeError, function() { new Temporal.PlainYearMonth(2000, 13); });
+assert.throws(RangeError, function() { new Temporal.ZonedDateTime(8640000000000000000001n, "UTC"); });
+assert.throws(TypeError, function() { new Temporal.ZonedDateTime(0n, {}); });
+assert.throws(TypeError, function() { new Temporal.PlainDateTime(2000, 5, 2, 0, 0, 0, 0, 0, 0, null); });
+assert.throws(RangeError, function() { new Temporal.PlainMonthDay(5, 2, "gregory"); });
+TemporalHelpers.checkToTemporalCalendarFastPath(function(value) {
+    nativeCalendarBrands.push(Object.prototype.toString.call(value));
+    assert.throws(Test262Error, function() { return value.calendar; });
+    assert.throws(Test262Error, function() { return value.calendarId; });
+    var converted = Temporal.PlainDate.from({year: 2000, month: 5, day: 2, calendar: value});
+    TemporalHelpers.assertPlainDate(converted, 2000, 5, "M05", 2);
+});
+assert.compareArray(nativeCalendarBrands, [
+    "[object Temporal.PlainDate]", "[object Temporal.PlainDateTime]",
+    "[object Temporal.PlainMonthDay]", "[object Temporal.PlainYearMonth]",
+    "[object Temporal.ZonedDateTime]"
+]);
 var temporalTarget = {};
 TemporalHelpers.observeProperty(temporalCalls, temporalTarget, Symbol.iterator, undefined, "items");
 assert.sameValue(temporalTarget[Symbol.iterator], undefined);

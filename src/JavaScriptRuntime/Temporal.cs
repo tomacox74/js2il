@@ -18,6 +18,8 @@ public static partial class Temporal
         GlobalThis.DefineIntrinsicDataProperty(value, "Instant", GetInstantConstructor(intrinsics));
         GlobalThis.DefineIntrinsicDataProperty(value, "PlainTime", GetPlainTimeConstructor(intrinsics));
         GlobalThis.DefineIntrinsicDataProperty(value, "Duration", GetDurationConstructor(intrinsics));
+        GlobalThis.DefineIntrinsicDataProperty(value, "PlainDate", GetPlainDateConstructor(intrinsics));
+        ConfigureCalendarBearingTypes(value, intrinsics);
     }
 
     private static InstantConstructor GetInstantConstructor(RuntimeIntrinsics intrinsics)

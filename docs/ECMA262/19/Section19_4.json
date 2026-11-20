@@ -38,6 +38,40 @@
     "entries": [
       {
         "clause": "19.4",
+        "feature": "Temporal.PlainDate ISO construction, comparison and calendar arithmetic",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-plaindate-objects",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/from/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/compare/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/equals/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/add/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/subtract/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/dayOfWeek/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/dayOfYear/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/daysInMonth/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/inLeapYear/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/toString/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/Temporal/PlainDate/prototype/toJSON/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/Integration/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Temporal/PlainDate/limits.js",
+          "test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-iso-string.js",
+          "test/built-ins/Temporal/PlainDate/from/calendar-temporal-object.js",
+          "test/built-ins/Temporal/PlainDate/from/month-code-wrong-type.js",
+          "test/built-ins/Temporal/PlainDate/from/negative-month-or-day.js",
+          "test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string-invalid.js",
+          "test/built-ins/Temporal/PlainDate/prototype/add/order-of-operations.js",
+          "test/built-ins/Temporal/PlainDate/prototype/add/balance-smaller-units.js",
+          "test/built-ins/Temporal/PlainDate/prototype/subtract/limits.js",
+          "test/built-ins/Temporal/PlainDate/prototype/toString/calendarname-critical.js"
+        ],
+        "notes": "Three hundred new pinned PlainDate cases are verified on the development branch. Supports ISO construction, from, compare, equals, branded Gregorian date/calendar accessors, add/subtract, toString and toJSON. Conversion accepts ISO strings, property bags and calendar-bearing Temporal slots without reading overridden calendar accessors; constructor calendars accept identifiers only. Enforces date limits, positive month/day fields, string-only month codes, month-code consistency, constrain/reject overflow and observable validation/option order. Calendar arithmetic constrains or rejects the target month before adding weeks and exact whole days, including time-unit balancing towards zero, and always creates intrinsic PlainDate results. Native assertions preserve all date fields, eras and the five-type calendar-slot matrix. PlainDateTime, PlainMonthDay, PlainYearMonth and ZonedDateTime expose only an initial ISO constructor/field-accessor subset for calendar conversion; ZonedDateTime is limited to UTC and minute-precision fixed offsets. Broader operations and cross-type interoperability, PlainDate differences, with/withCalendar, ISO week accessors, other calendars, named-zone rules and Intl-aware formatting remain unsupported or unverified. toLocaleString returns the base ISO representation, not localized output. These results do not imply full Temporal conformance."
+      },
+      {
+        "clause": "19.4",
         "feature": "Temporal.Instant conversion, arithmetic, differences and rounding",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/proposal-temporal/#sec-temporal-instant-objects",
