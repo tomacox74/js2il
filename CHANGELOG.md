@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.12.40 - 2026-11-20
+
 - test262: port 300 new pinned Temporal.PlainDate cases with byte-identical
   upstream assertions. Add ISO date construction, from/compare/equals, branded
   Gregorian field accessors, calendar-aware add/subtract with exact whole-day
@@ -20,7 +24,6 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
   to strings. Broader operations on those types, non-ISO calendars, named-zone rules,
   PlainDate differences and Intl-aware formatting remain unsupported.
   No selected cases require eval, so this batch adds no skips.
-
 - test262: port 300 additional pinned Temporal cases with byte-identical
   upstream assertions: 158 PlainTime and 142 Instant cases. Implement
   PlainTime.since/until, sharing exact nanosecond difference rounding and
