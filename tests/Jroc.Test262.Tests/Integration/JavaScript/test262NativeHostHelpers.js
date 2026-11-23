@@ -390,6 +390,13 @@ var temporalCalls = [];
 // PlainDate helpers must reject lookalikes and every incorrect expected field.
 assert.sameValue(TemporalHelpers.assertPlainDate.length, 5);
 assert.sameValue(TemporalHelpers.assertPlainDate.name, "assertPlainDate");
+assert.sameValue(TemporalHelpers.assertPlainDateTime.name, "assertPlainDateTime");
+assert.sameValue(TemporalHelpers.assertPlainDateTime.length, 11);
+var nativeDateTime = new Temporal.PlainDateTime(2000, 2, 29, 1, 2, 3, 4, 5, 6);
+TemporalHelpers.assertPlainDateTime(nativeDateTime, 2000, 2, "M02", 29, 1, 2, 3, 4, 5, 6);
+assert.throws(assert.AssertionError, function() {
+    TemporalHelpers.assertPlainDateTime(nativeDateTime, 2000, 2, "M02", 29, 1, 2, 3, 4, 5, 7);
+});
 assert.sameValue(TemporalHelpers.assertPlainDatesEqual.length, 2);
 assert.sameValue(TemporalHelpers.checkToTemporalCalendarFastPath.length, 1);
 var nativeTemporalDate = new Temporal.PlainDate(2000, 2, 29);

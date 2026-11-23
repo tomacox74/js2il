@@ -14,7 +14,12 @@ internal static partial class Test262TemporalHelpers
             (Func<object?, object?, object?>)CanonicalizeCalendarEra, "canonicalizeCalendarEra", 2));
         ObjectRuntime.SetItem(helpers, "assertPlainDate", CreateFunction(
             (BuiltinFunctionVariadic)((object? _, in JsCallArguments args) =>
-                AssertPlainDate(helpers, args)), "assertPlainDate", 5));
+                AssertCalendarFields(helpers, args, "PlainDate", ["year", "month", "monthCode", "day"])), "assertPlainDate", 5));
+        ObjectRuntime.SetItem(helpers, "assertPlainDateTime", CreateFunction(
+            (BuiltinFunctionVariadic)((object? _, in JsCallArguments args) =>
+                AssertCalendarFields(helpers, args, "PlainDateTime",
+                    ["year", "month", "monthCode", "day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond"])),
+            "assertPlainDateTime", 11));
         ObjectRuntime.SetItem(helpers, "assertPlainDatesEqual", CreateFunction(
             (Action<object?, object?, object?>)AssertPlainDatesEqual, "assertPlainDatesEqual", 2));
         ObjectRuntime.SetItem(helpers, "checkToTemporalCalendarFastPath", CreateFunction(
@@ -22,9 +27,12 @@ internal static partial class Test262TemporalHelpers
     }
 
     private static bool IsPlainDate(object? value)
+        => IsCalendarType(value, "PlainDate");
+
+    private static bool IsCalendarType(object? value, string kind)
     {
         var temporal = ObjectRuntime.GetItem(GlobalThis.globalThis, "Temporal");
-        return Operators.InstanceOf(value, ObjectRuntime.GetItem(temporal!, "PlainDate"));
+        return Operators.InstanceOf(value, ObjectRuntime.GetItem(temporal!, kind));
     }
 
     private static object? CanonicalizeCalendarEra(object? calendar, object? era)
@@ -60,18 +68,17 @@ internal static partial class Test262TemporalHelpers
         throw CreateTest262Error("Unsupported era name: " + StringValue(era));
     }
 
-    private static object? AssertPlainDate(object helpers, in JsCallArguments args)
+    private static object? AssertCalendarFields(object helpers, in JsCallArguments args, string kind, ReadOnlySpan<string> fields)
     {
         var date = args.GetArgument(0);
-        var prefix = DescriptionPrefix(args.GetArgument(5));
-        Assert.strictEqual(IsPlainDate(date), true, prefix + "instanceof");
+        var prefix = DescriptionPrefix(args.GetArgument(fields.Length + 1));
+        Assert.strictEqual(IsCalendarType(date, kind), true, prefix + "instanceof");
         var actualEra = ObjectRuntime.CallMember(helpers, "canonicalizeCalendarEra",
             [ObjectRuntime.GetItem(date!, "calendarId")!, ObjectRuntime.GetItem(date!, "era")!]);
         var expectedEra = ObjectRuntime.CallMember(helpers, "canonicalizeCalendarEra",
-            [ObjectRuntime.GetItem(date!, "calendarId")!, args.GetArgument(6)!]);
+            [ObjectRuntime.GetItem(date!, "calendarId")!, args.GetArgument(fields.Length + 2)!]);
         Assert.strictEqual(actualEra, expectedEra, prefix + "era result:");
-        Assert.strictEqual(ObjectRuntime.GetItem(date!, "eraYear"), args.GetArgument(7), prefix + "eraYear result:");
-        string[] fields = ["year", "month", "monthCode", "day"];
+        Assert.strictEqual(ObjectRuntime.GetItem(date!, "eraYear"), args.GetArgument(fields.Length + 3), prefix + "eraYear result:");
         for (var i = 0; i < fields.Length; i++)
         {
             Assert.strictEqual(ObjectRuntime.GetItem(date!, fields[i]), args.GetArgument(i + 1), prefix + fields[i] + " result:");
