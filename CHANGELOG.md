@@ -6,7 +6,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- test262: verify 164 additional pinned Temporal.PlainDate and PlainDateTime
+  cases. Add ISO week number and week-based year accessors to both types,
+  including year-boundary rollover.
 
 ## v0.12.40 - 2026-11-20
 

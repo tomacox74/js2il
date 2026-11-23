@@ -55,6 +55,8 @@ public static partial class Temporal
                     var date = RequirePlainDate(receiver);
                     return (double)(date.EpochDays - ISODaysFromEpoch(new ISODate(date.Year, 1, 1)) + 1);
                 });
+                DefineTemporalGetter(prototype, "weekOfYear", receiver => (double)ISOWeek(RequirePlainDate(receiver).EpochDays).Week);
+                DefineTemporalGetter(prototype, "yearOfWeek", receiver => (double)ISOWeek(RequirePlainDate(receiver).EpochDays).Year);
                 DefineTemporalGetter(prototype, "daysInWeek", receiver => { RequirePlainDate(receiver); return 7d; });
                 DefineTemporalGetter(prototype, "daysInMonth", receiver =>
                 {
@@ -96,6 +98,15 @@ public static partial class Temporal
         => month == 2 ? IsISOLeapYear(year) ? 29 : 28 : month is 4 or 6 or 9 or 11 ? 30 : 31;
 
     private static int ISODayOfWeek(long epochDays) => (int)(((epochDays + 3) % 7 + 7) % 7 + 1);
+
+    private static (int Year, int Week) ISOWeek(long epochDays)
+    {
+        // An ISO week belongs to the year containing its Thursday.
+        var thursday = epochDays + 4 - ISODayOfWeek(epochDays);
+        var year = ISODateFromEpochDays(thursday).Year;
+        var firstDay = ISODaysFromEpoch(new ISODate(year, 1, 1));
+        return (year, (int)((thursday - firstDay) / 7) + 1);
+    }
 
     // Constructors accept identifiers only; conversion of calendar-like values
     // additionally accepts ISO strings and calendar-bearing Temporal slots.

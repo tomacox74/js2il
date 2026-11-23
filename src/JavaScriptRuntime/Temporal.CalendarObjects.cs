@@ -73,6 +73,17 @@ public static partial class Temporal
                         DefineTemporalGetter(prototype, TimeFieldNames[i], receiver => (double)Require(receiver).Time.GetField(index));
                     }
                 }
+                if (kind == "PlainDateTime")
+                {
+                    (int Year, int Week) GetISOWeek(object? receiver)
+                    {
+                        var date = Require(receiver);
+                        return ISOWeek(ISODaysFromEpoch(new ISODate(date.Year, date.Month, date.Day)));
+                    }
+
+                    DefineTemporalGetter(prototype, "weekOfYear", receiver => (double)GetISOWeek(receiver).Week);
+                    DefineTemporalGetter(prototype, "yearOfWeek", receiver => (double)GetISOWeek(receiver).Year);
+                }
                 if (kind == "ZonedDateTime")
                 {
                     DefineTemporalGetter(prototype, "epochNanoseconds", receiver => Require(receiver).EpochNanoseconds);
