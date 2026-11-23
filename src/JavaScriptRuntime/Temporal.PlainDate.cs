@@ -225,22 +225,30 @@ public static partial class Temporal
 
     private static (double? Year, double? Month, string? MonthCode, double? Day) ReadDateFields(object item)
     {
-        double? ReadNumber(string key)
+        var day = ReadDateNumber(item, "day");
+        var month = ReadDateNumber(item, "month");
+        var code = ReadTemporalMonthCode(item);
+        var year = ReadDateNumber(item, "year");
+        return (year, month, code, day);
+    }
+
+    private static double? ReadDateNumber(object item, string key)
+    {
+        var value = ObjectRuntime.GetItem(item, key);
+        if (value is null)
         {
-            var value = ObjectRuntime.GetItem(item, key);
-            if (value is null)
-            {
-                return null;
-            }
-            var number = ToIntegerWithTruncation(value);
-            if (key is "day" or "month" && number <= 0)
-            {
-                throw new RangeError("Temporal date month and day must be positive");
-            }
-            return number;
+            return null;
         }
-        var day = ReadNumber("day");
-        var month = ReadNumber("month");
+        var number = ToIntegerWithTruncation(value);
+        if (key is "day" or "month" && number <= 0)
+        {
+            throw new RangeError("Temporal date month and day must be positive");
+        }
+        return number;
+    }
+
+    private static string? ReadTemporalMonthCode(object item)
+    {
         var rawCode = ObjectRuntime.GetItem(item, "monthCode");
         string? code = null;
         if (rawCode is not null)
@@ -260,11 +268,16 @@ public static partial class Temporal
         {
             throw new RangeError("Invalid Temporal month code");
         }
-        var year = ReadNumber("year");
-        return (year, month, code, day);
+        return code;
     }
 
     private static TemporalPlainDate RegulateDate(double? year, double? month, string? code, double? day, bool reject)
+    {
+        var date = RegulateISODate(year, month, code, day, reject);
+        return new TemporalPlainDate(date.Year, date.Month, date.Day);
+    }
+
+    private static ISODate RegulateISODate(double? year, double? month, string? code, double? day, bool reject)
     {
         if (year is null || day is null || month is null && code is null)
         {
@@ -294,7 +307,7 @@ public static partial class Temporal
         {
             throw new RangeError("Temporal date day is outside its valid range");
         }
-        return new TemporalPlainDate(y, m, (int)System.Math.Clamp(day.Value, 1, maximum));
+        return new ISODate(y, m, (int)System.Math.Clamp(day.Value, 1, maximum));
     }
 
     private static TemporalPlainDate AddPlainDate(object? receiver, object? value, object? options, bool subtract)

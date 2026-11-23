@@ -40,6 +40,14 @@ public static partial class Temporal
                     Value = GetCalendarObjectPrototype(intrinsics, kind),
                     Writable = false, Enumerable = false, Configurable = false
                 });
+                if (kind == "PlainDateTime")
+                {
+                    GlobalThis.DefineBuiltinFunctionProperty(constructor, "from",
+                        (BuiltinFunction2)((_, item, options) => ToTemporalDateTime(item, options, intrinsics)), 1d);
+                    GlobalThis.DefineBuiltinFunctionProperty(constructor, "compare",
+                        (BuiltinFunction2)((_, first, second) => (double)CompareDateTimes(
+                            ToTemporalDateTime(first, null, intrinsics), ToTemporalDateTime(second, null, intrinsics))), 2d);
+                }
             });
 
     internal static JsObject GetCalendarObjectPrototype(RuntimeIntrinsics intrinsics, string kind)
@@ -75,14 +83,34 @@ public static partial class Temporal
                 }
                 if (kind == "PlainDateTime")
                 {
+                    long GetEpochDays(TemporalCalendarObject date)
+                        => ISODaysFromEpoch(new ISODate(date.Year, date.Month, date.Day));
+
                     (int Year, int Week) GetISOWeek(object? receiver)
+                        => ISOWeek(GetEpochDays(Require(receiver)));
+
+                    DefineTemporalGetter(prototype, "era", receiver => { Require(receiver); return null; });
+                    DefineTemporalGetter(prototype, "eraYear", receiver => { Require(receiver); return null; });
+                    DefineTemporalGetter(prototype, "dayOfWeek", receiver => (double)ISODayOfWeek(GetEpochDays(Require(receiver))));
+                    DefineTemporalGetter(prototype, "dayOfYear", receiver =>
                     {
                         var date = Require(receiver);
-                        return ISOWeek(ISODaysFromEpoch(new ISODate(date.Year, date.Month, date.Day)));
-                    }
-
+                        return (double)(GetEpochDays(date) - ISODaysFromEpoch(new ISODate(date.Year, 1, 1)) + 1);
+                    });
                     DefineTemporalGetter(prototype, "weekOfYear", receiver => (double)GetISOWeek(receiver).Week);
                     DefineTemporalGetter(prototype, "yearOfWeek", receiver => (double)GetISOWeek(receiver).Year);
+                    DefineTemporalGetter(prototype, "daysInWeek", receiver => { Require(receiver); return 7d; });
+                    DefineTemporalGetter(prototype, "daysInMonth", receiver =>
+                    {
+                        var date = Require(receiver);
+                        return (double)ISODaysInMonth(date.Year, date.Month);
+                    });
+                    DefineTemporalGetter(prototype, "daysInYear", receiver => IsISOLeapYear(Require(receiver).Year) ? 366d : 365d);
+                    DefineTemporalGetter(prototype, "monthsInYear", receiver => { Require(receiver); return 12d; });
+                    DefineTemporalGetter(prototype, "inLeapYear", receiver => IsISOLeapYear(Require(receiver).Year));
+                    GlobalThis.DefineBuiltinFunctionProperty(prototype, "equals",
+                        (BuiltinFunction1)((receiver, other) => CompareDateTimes(
+                            Require(receiver), ToTemporalDateTime(other, null, intrinsics)) == 0), 1d);
                 }
                 if (kind == "ZonedDateTime")
                 {
@@ -98,6 +126,73 @@ public static partial class Temporal
                 GlobalThis.DefineBuiltinFunctionProperty(prototype, "valueOf",
                     (BuiltinFunction0)(_ => throw new TypeError("Cannot convert Temporal." + kind + " to a primitive value")), 0d);
             });
+
+    private static int CompareDateTimes(TemporalCalendarObject first, TemporalCalendarObject second)
+    {
+        var days = ISODaysFromEpoch(new ISODate(first.Year, first.Month, first.Day))
+            .CompareTo(ISODaysFromEpoch(new ISODate(second.Year, second.Month, second.Day)));
+        return days == 0 ? first.Time.Nanoseconds.CompareTo(second.Time.Nanoseconds) : days;
+    }
+
+    private static TemporalCalendarObject ToTemporalDateTime(object? item, object? options, RuntimeIntrinsics intrinsics)
+    {
+        ISODate date;
+        long time = 0;
+        if (item is TemporalCalendarObject calendarObject && calendarObject.Kind is "PlainDateTime" or "ZonedDateTime")
+        {
+            GetRejectOverflow(GetTemporalOptions(options));
+            date = new ISODate(calendarObject.Year, calendarObject.Month, calendarObject.Day);
+            time = calendarObject.Time.Nanoseconds;
+        }
+        else if (item is TemporalPlainDate plainDate)
+        {
+            GetRejectOverflow(GetTemporalOptions(options));
+            date = new ISODate(plainDate.Year, plainDate.Month, plainDate.Day);
+        }
+        else if (!TypeUtilities.IsPrimitive(item))
+        {
+            if (item is not ITemporalCalendarRecord && ObjectRuntime.GetItem(item!, "calendar") is object calendar)
+            {
+                ToCalendarIdentifier(calendar);
+            }
+
+            var day = ReadDateNumber(item!, "day");
+            var fields = new double[6];
+            // Temporal reads field names in alphabetical order, not clock order.
+            fields[(int)TimeUnit.Hour] = ReadDateNumber(item!, "hour") ?? 0;
+            fields[(int)TimeUnit.Microsecond] = ReadDateNumber(item!, "microsecond") ?? 0;
+            fields[(int)TimeUnit.Millisecond] = ReadDateNumber(item!, "millisecond") ?? 0;
+            fields[(int)TimeUnit.Minute] = ReadDateNumber(item!, "minute") ?? 0;
+            var month = ReadDateNumber(item!, "month");
+            var monthCode = ReadTemporalMonthCode(item!);
+            fields[(int)TimeUnit.Nanosecond] = ReadDateNumber(item!, "nanosecond") ?? 0;
+            fields[(int)TimeUnit.Second] = ReadDateNumber(item!, "second") ?? 0;
+            var year = ReadDateNumber(item!, "year");
+            var reject = GetRejectOverflow(GetTemporalOptions(options));
+            date = RegulateISODate(year, month, monthCode, day, reject);
+            time = RegulateTime(fields, reject);
+        }
+        else
+        {
+            if (item is not string text)
+            {
+                throw new TypeError("Temporal date-time must be a string or an object");
+            }
+            var parsed = ParseISODateTime(text, allowDateOnly: true);
+            date = ValidateParsedDateTime(parsed, allowUtc: false);
+            ValidateCalendarIdentifier(parsed.Annotations.Calendar);
+            time = parsed.Clock.Length == 0 ? 0 : ParseInstantClock(parsed);
+            GetRejectOverflow(GetTemporalOptions(options));
+        }
+        if (!ISODateTimeWithinLimits(ISODaysFromEpoch(date), time))
+        {
+            throw new RangeError("Temporal.PlainDateTime is outside its valid range");
+        }
+        var result = new TemporalCalendarObject("PlainDateTime", date.Year, date.Month, date.Day,
+            time, default, null, 0);
+        PrototypeChain.SetPrototype(result, GetCalendarObjectPrototype(intrinsics, "PlainDateTime"));
+        return result;
+    }
 
     private static string FormatCalendarObject(TemporalCalendarObject value, object? suppliedOptions)
     {
